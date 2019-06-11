@@ -34,6 +34,45 @@ twcheese.image['timber'] = 'graphic/holz.png';
 twcheese.image['clay'] = 'graphic/lehm.png';
 twcheese.image['iron'] = 'graphic/eisen.png';
 
+// avoid flooding the server with requests
+(function () {
+
+    class RateLimiter {
+        constructor(maxBurstsPerSecond) {
+            this.maxBurstsPerSecond = maxBurstsPerSecond;
+            this.recentRequests = new Array(maxBurstsPerSecond);
+        }
+
+        requestWasMade() {
+            this.recentRequests.unshift(performance.now());
+            this.recentRequests.pop();
+        }
+
+        async sleepIfNeeded() {
+            let anchorTimestamp = this.recentRequests[this.maxBurstsPerSecond - 1];
+            if (typeof anchorTimestamp === 'undefined') {
+                return;
+            }
+            let delayMs = anchorTimestamp + 1000 - performance.now();
+            if (delayMs <= 0) {
+                return;
+            }
+            return new Promise(function(resolve, reject) {
+                setTimeout(resolve, delayMs);
+            });
+        }
+    }
+
+    twcheese.rateLimiter = new RateLimiter(5);
+
+    let oldSend = XMLHttpRequest.prototype.send;
+    XMLHttpRequest.prototype.send = function() {
+        twcheese.rateLimiter.requestWasMade();
+        oldSend.apply(this, arguments);
+    }
+
+})();
+
 /*==== cache functions ====*/
 
 /**
@@ -210,6 +249,8 @@ twcheese.scrapeCommand = function (gameDoc) {
  *	@resolve {HTMLBodyElement}
  */
 twcheese.requestDocumentBody = async function (targetUrl) {
+    await twcheese.rateLimiter.sleepIfNeeded();
+
     return new Promise(function(resolve, reject) {
         var xmlhttp;
         if (window.XMLHttpRequest)

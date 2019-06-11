@@ -146,30 +146,24 @@ twcheese.getServerTime = function () {
 };
 
 
-
-/*==== templates ====*/
-
-/**
- *	declarations for command template
- */
 twcheese.Command = function () {
     this.command_id;
     this.arrival = new Date();
     this.timber = 0;
     this.clay = 0;
-    this.iron = 0;    
-    this.haulPerformance = {
-        loot: 0,
-        capacity: 0,
-        percent() {
-            if (this.capacity === 0) {
-                return 0;
-            }
-            return Math.round(this.loot / this.capacity * 100);
-        }
-    }
-
+    this.iron = 0;
+    this.haulCapacity = 0;
 };
+twcheese.Command.prototype.sumLoot = function() {
+    return this.timber + this.clay + this.iron;
+}
+twcheese.Command.prototype.calcHaulPercent = function() {
+    if (this.haulCapacity === 0) {
+        return 0;
+    }
+    return Math.round(100 * this.sumLoot() / this.haulCapacity);
+}
+
 
 /*==== calculator functions ====*/
 /**
@@ -189,8 +183,7 @@ twcheese.sumCommandAttributes = function (startTime, endTime, commands) {
         result.timber += command.timber;
         result.clay += command.clay;
         result.iron += command.iron;
-        result.haulPerformance.loot += command.haulPerformance.loot;
-        result.haulPerformance.capacity += command.haulPerformance.capacity;
+        result.haulCapacity += command.haulCapacity;
     }
     return result;
 };
@@ -221,8 +214,7 @@ twcheese.scrapeCommand = function (gameDoc) {
         if (haulText.search('\\|') !== -1) {
             haulText = haulText.substring(haulText.search('\\|') + 7);
             let performance = haulText.split('/');
-            command.haulPerformance.loot = parseInt(performance[0]);
-            command.haulPerformance.capacity = parseInt(performance[1]);
+            command.haulCapacity = parseInt(performance[1]);
         }
     }
     catch (e) {
@@ -428,8 +420,8 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
         resultsContainer.innerHTML = '<img src="' + twcheese.image['timber'] + '"></img>' + results.timber + ' ';
         resultsContainer.innerHTML += '<img src="' + twcheese.image['clay'] + '"></img>' + results.clay + ' ';
         resultsContainer.innerHTML += '<img src="' + twcheese.image['iron'] + '"></img>' + results.iron + ' &nbsp&nbsp| ';
-        resultsContainer.innerHTML += results.haulPerformance.loot + '/' + results.haulPerformance.capacity + ' (';
-        resultsContainer.innerHTML += results.haulPerformance.percent() + '%)';
+        resultsContainer.innerHTML += results.sumLoot() + '/' + results.haulCapacity + ' (';
+        resultsContainer.innerHTML += results.calcHaulPercent() + '%)';
     };
 
     var titleBar = document.createElement('h4');
@@ -594,8 +586,8 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
         summaryTable.rows[row].cells[1].innerHTML = result.timber;
         summaryTable.rows[row].cells[2].innerHTML = result.clay;
         summaryTable.rows[row].cells[3].innerHTML = result.iron;
-        summaryTable.rows[row].cells[4].innerHTML = result.haulPerformance.loot + '/' + result.haulPerformance.capacity;
-        summaryTable.rows[row].cells[5].innerHTML = result.haulPerformance.percent() + '%';
+        summaryTable.rows[row].cells[4].innerHTML = result.sumLoot() + '/' + result.haulCapacity;
+        summaryTable.rows[row].cells[5].innerHTML = result.calcHaulPercent() + '%';
 
 
         rowStartTime = new Date(rowStartTime.getTime() + 3600000); // +1 hour
@@ -668,7 +660,7 @@ twcheese.includeHaulInfo = async function (gameDoc) {
         ironCell.innerHTML = command.iron;
 
         var performanceCell = commandsTable.rows[i].insertCell(-1);
-        performanceCell.innerHTML = command.haulPerformance.loot + '/' + command.haulPerformance.capacity + ' (' + command.haulPerformance.percent() + '%)';
+        performanceCell.innerHTML = command.sumLoot() + '/' + command.haulCapacity + ' (' + command.calcHaulPercent() + '%)';
     }
     if (selectorRow) {
         commandsTable.rows[commandsTable.rows.length - 1].cells[0].colSpan = 19;

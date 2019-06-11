@@ -146,23 +146,33 @@ twcheese.getServerTime = function () {
 };
 
 
-twcheese.Command = function () {
-    this.command_id;
-    this.arrival = new Date();
-    this.timber = 0;
-    this.clay = 0;
-    this.iron = 0;
-    this.haulCapacity = 0;
-};
-twcheese.Command.prototype.sumLoot = function() {
-    return this.timber + this.clay + this.iron;
-}
-twcheese.Command.prototype.calcHaulPercent = function() {
-    if (this.haulCapacity === 0) {
-        return 0;
+(function () {
+
+    class Command {
+        constructor() {
+            this.command_id;
+            this.arrival = new Date();
+            this.timber = 0;
+            this.clay = 0;
+            this.iron = 0;
+            this.haulCapacity = 0;
+        }        
+
+        sumLoot() {
+            return this.timber + this.clay + this.iron;
+        }
+
+        calcHaulPercent() {
+            if (this.haulCapacity === 0) {
+                return 0;
+            }
+            return Math.round(100 * this.sumLoot() / this.haulCapacity);
+        }
     }
-    return Math.round(100 * this.sumLoot() / this.haulCapacity);
-}
+
+    twcheese.Command = Command;
+
+})();
 
 
 /*==== calculator functions ====*/

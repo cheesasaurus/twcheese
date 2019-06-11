@@ -670,8 +670,10 @@ twcheese.includeHaulInfo = function (gameDoc) {
         var command = twcheese.scrapeCommand(twcheese.requestDocumentBody(commandUrl));
 
         /*==== add command to list if it is returning ====*/
-        if (commandsTable.rows[i].cells[0].getElementsByTagName('img')[0].src.search('return.png') != -1)
+        var command_type = $(commandsTable.rows[i].cells[0]).find('.own_command').data('command-type');
+        if (command_type === 'return') {
             twcheese.commands.commandsList.push(command);
+        }    
 
         var timberCell = commandsTable.rows[i].insertCell(-1);
         timberCell.innerHTML = command.timber;

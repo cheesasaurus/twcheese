@@ -157,8 +157,13 @@ twcheese.Command = function () {
     this.arrival = new Date();
     this.timber = 0;
     this.clay = 0;
-    this.iron = 0;
-    this.haulPerformance = [0, 0, 0]; //haul,capacity,percent
+    this.iron = 0;    
+    this.haulPerformance = {
+        loot: 0,
+        capacity: 0,
+        percent: 0
+    }
+
 };
 
 /*==== calculator functions ====*/
@@ -179,14 +184,14 @@ twcheese.sumCommandAttributes = function (startTime, endTime, commands) {
         result.timber += command.timber;
         result.clay += command.clay;
         result.iron += command.iron;
-        result.haulPerformance[0] += command.haulPerformance[0];
-        result.haulPerformance[1] += command.haulPerformance[1];
+        result.haulPerformance.loot += command.haulPerformance.loot;
+        result.haulPerformance.capacity += command.haulPerformance.capacity;
     }
 
-    if (result.haulPerformance[1] > 0) {
-        result.haulPerformance[2] = Math.round(result.haulPerformance[0] / result.haulPerformance[1] * 100);
+    if (result.haulPerformance.capacity > 0) {
+        result.haulPerformance.percent = Math.round(result.haulPerformance.loot / result.haulPerformance.capacity * 100);
     }
-    
+
     return result;
 };
 
@@ -214,14 +219,14 @@ twcheese.scrapeCommand = function (gameDoc) {
 
         var haulText = resCell.innerHTML;
         if (haulText.search('\\|') == -1)
-            command.haulPerformance[2] = 0;
+            command.haulPerformance.percent = 0;
         else {
             haulText = haulText.substring(haulText.search('\\|') + 7);
-            command.haulPerformance = haulText.split('/');
-            command.haulPerformance[0] = parseInt(command.haulPerformance[0]);
-            command.haulPerformance[1] = parseInt(command.haulPerformance[1]);
-            if (command.haulPerformance[1] > 0)
-                command.haulPerformance[2] = command.haulPerformance[0] / command.haulPerformance[1] * 100;
+            let performance = haulText.split('/');
+            command.haulPerformance.loot = parseInt(performance[0]);
+            command.haulPerformance.capacity = parseInt(performance[1]);
+            if (command.haulPerformance.capacity > 0)
+                command.haulPerformance.percent = command.haulPerformance.loot / command.haulPerformance.capacity * 100;
         }
     }
     catch (e) {
@@ -427,8 +432,8 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
         resultsContainer.innerHTML = '<img src="' + twcheese.image['timber'] + '"></img>' + results.timber + ' ';
         resultsContainer.innerHTML += '<img src="' + twcheese.image['clay'] + '"></img>' + results.clay + ' ';
         resultsContainer.innerHTML += '<img src="' + twcheese.image['iron'] + '"></img>' + results.iron + ' &nbsp&nbsp| ';
-        resultsContainer.innerHTML += results.haulPerformance[0] + '/' + results.haulPerformance[1] + ' (';
-        resultsContainer.innerHTML += results.haulPerformance[2] + '%)';
+        resultsContainer.innerHTML += results.haulPerformance.loot + '/' + results.haulPerformance.capacity + ' (';
+        resultsContainer.innerHTML += results.haulPerformance.percent + '%)';
     };
 
     var titleBar = document.createElement('h4');
@@ -593,8 +598,8 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
         summaryTable.rows[row].cells[1].innerHTML = result.timber;
         summaryTable.rows[row].cells[2].innerHTML = result.clay;
         summaryTable.rows[row].cells[3].innerHTML = result.iron;
-        summaryTable.rows[row].cells[4].innerHTML = result.haulPerformance[0] + '/' + result.haulPerformance[1];
-        summaryTable.rows[row].cells[5].innerHTML = Math.round(result.haulPerformance[2]) + '%';
+        summaryTable.rows[row].cells[4].innerHTML = result.haulPerformance.loot + '/' + result.haulPerformance.capacity;
+        summaryTable.rows[row].cells[5].innerHTML = Math.round(result.haulPerformance.percent) + '%';
 
 
         rowStartTime = new Date(rowStartTime.getTime() + 3600000); // +1 hour
@@ -667,7 +672,7 @@ twcheese.includeHaulInfo = async function (gameDoc) {
         ironCell.innerHTML = command.iron;
 
         var performanceCell = commandsTable.rows[i].insertCell(-1);
-        performanceCell.innerHTML = command.haulPerformance[0] + '/' + command.haulPerformance[1] + ' (' + Math.round(command.haulPerformance[2]) + '%)';
+        performanceCell.innerHTML = command.haulPerformance.loot + '/' + command.haulPerformance.capacity + ' (' + Math.round(command.haulPerformance.percent) + '%)';
     }
     if (selectorRow) {
         commandsTable.rows[commandsTable.rows.length - 1].cells[0].colSpan = 19;

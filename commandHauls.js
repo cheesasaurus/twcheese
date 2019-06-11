@@ -25,32 +25,6 @@
 if (!twcheese)
     var twcheese = {};
 
-/*==== script API ====*/
-{
-    twcheese.compatability = 8.20;
-    twcheese.scriptName = 'Commands Overview - display hauls';
-    twcheese.author = 'Nick Toby';
-    twcheese.email = 'cheesasaurus@gmail.com';
-    try {
-        ScriptAPI.register(twcheese.scriptName, twcheese.compatability, twcheese.author, twcheese.email);
-    }
-    catch (e) {
-        if (e == 'Version incompatible!') {
-            if ((String(twcheese.compatability).split('.')[0] >= game_data.majorVersion.split('.')[0]) && (String(twcheese.compatability).split('.')[1] > game_data.majorVersion.split('.')[1])) //tw needs to be updated
-            {
-
-                var scriptList = document.getElementById('script_list').innerHTML;
-                var forumAddress = document.getElementById('footer_left').getElementsByTagName('a')[0].href;
-                var scriptWarning = document.getElementById('script_warning');
-                scriptWarning.innerHTML = 'The activated scripts may be incompatible with the current game version.<br/>';
-                scriptWarning.innerHTML += '<ul id="script_list">' + scriptList + '</ul>';
-                scriptWarning.innerHTML += 'Your server is running an old version of Tribal Wars. Please be patient and wait for it to be updated.<br/>';
-                scriptWarning.innerHTML += 'Scheduled updates are usually announced in the <a href="' + forumAddress + '" target="_blank">forum</a>.';
-            }
-        }
-    }
-}
-
 /*==== graphics ====*/
 twcheese.image = [];
 twcheese.image['plus'] = 'graphic/plus.png';

@@ -128,7 +128,7 @@ twcheese.formatDateToNamed = function (date) {
 };
 
 /**
- *	@return serverTime:Date()
+ *	@return {Date} serverTime()
  */
 twcheese.getServerTime = function () {
     var serverTime = new Date();
@@ -398,17 +398,6 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
     var startTime = twcheese.getServerTime();
     var endTime = commandsList[commandsList.length - 1].arrival;
     var today = new Date(Math.floor((twcheese.getServerTime()).getTime() / 86400000) * 86400000 + (twcheese.getServerTime()).getTimezoneOffset() * 60 * 1000) / 86400000; //used for finding time differences. 00:00:00 today
-
-    /*==== sort commands by arrival time (earliest times first)====*/
-    var compareArrival = function (a, b) {
-        if (a.arrival < b.arrival)
-            return -1;
-        else if (a.arrival > b.arrival)
-            return 1;
-        else
-            return 0;
-    }
-    commandsList = commandsList.sort(compareArrival);
 
     /**
      *	changes the results displayed in the summation section of the pillaging stats widget

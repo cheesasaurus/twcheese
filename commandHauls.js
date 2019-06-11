@@ -1,17 +1,10 @@
 /*	twcheese_commandHauls.js
  *	Commands Overview - show returning hauls
- *	version 3.0.5
- *	last updated: 2 Oct 2013
- *	game compatability: version 18699 8.16
  *	market: uk, us, en, {all}
  *	author Nick Toby (cheesasaurus@gmail.com)
 
  *	use script on: game.php?screen=overview_villages&mode=commands&type=return (the commands overview, with the return filter on)
  *	effect: includes 'haul' as part of the information for the listed commands. Also shows statistics about the incoming resources
- 
- * changelog:
-    -12 sep 2013 - changed to reference elements by position instead of searching for text, in an effort to make compatible for all markets
-    -2 oct 2013 - updated for compatibility with 8.16
  
  *	Copyright (C) 2011  Nick Toby
 

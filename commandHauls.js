@@ -156,7 +156,7 @@ twcheese.getServerTime = function () {
             this.clay = 0;
             this.iron = 0;
             this.haulCapacity = 0;
-        }        
+        } 
 
         sumLoot() {
             return this.timber + this.clay + this.iron;
@@ -168,35 +168,32 @@ twcheese.getServerTime = function () {
             }
             return Math.round(100 * this.sumLoot() / this.haulCapacity);
         }
+
+        arrivesDuring(fromTime, toTime) {
+            return this.arrival >= fromTime && this.arrival <= toTime;
+        }
+
+        static sumProps(commands) {
+            var sum = new Command();
+
+            for (let command of commands) {
+                sum.timber += command.timber;
+                sum.clay += command.clay;
+                sum.iron += command.iron;
+                sum.haulCapacity += command.haulCapacity;
+            }
+            return sum;
+        }
+
+        static sumPropsFromTimeframe(commands, fromTime, toTime) {
+            let relevantCommands = commands.filter(command => command.arrivesDuring(fromTime, toTime));
+            return Command.sumProps(relevantCommands);
+        }
     }
 
     twcheese.Command = Command;
 
 })();
-
-
-/*==== calculator functions ====*/
-/**
- *	sums attributes from a list of commands
- *	@param	{Date} startTime minimum arrival time of command to be included in summation
- *	@param	{Date} endTime maximum arrival time of command to be included in summation
- *	@param	{twcheese.Command[]} commands
- *	@return	{twcheese.Command} the attributes of this command are equal to the sums of all the other commands' respective attributes. Example: result.timber is the total timber hauled from commands within the target time.
- */
-twcheese.sumCommandAttributes = function (startTime, endTime, commands) {
-    var result = new twcheese.Command();
-
-    for (let command of commands) {
-        if (command.arrival < startTime || command.arrival > endTime) {
-            continue;
-        }
-        result.timber += command.timber;
-        result.clay += command.clay;
-        result.iron += command.iron;
-        result.haulCapacity += command.haulCapacity;
-    }
-    return result;
-};
 
 /*==== scraper functions ====*/
 
@@ -424,7 +421,7 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
             startTime = endTime;
             endTime = tmpTime;
         }
-        var results = twcheese.sumCommandAttributes(startTime, endTime, commandsList);
+        var results = twcheese.Command.sumPropsFromTimeframe(commandsList, startTime, endTime);
 
         var resultsContainer = document.getElementById('twcheese_pillaging_results');
         resultsContainer.innerHTML = '<img src="' + twcheese.image['timber'] + '"></img>' + results.timber + ' ';
@@ -582,7 +579,7 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
                 summaryTable.rows[row].cells[col].style.background = '#FFE0A2';
         }
 
-        var result = twcheese.sumCommandAttributes(rowStartTime, new Date(rowStartTime.getTime() + 3599999), commandsList);
+        var result = twcheese.Command.sumPropsFromTimeframe(commandsList, rowStartTime, new Date(rowStartTime.getTime() + 3599999));
 
         var arrivalDay = rowStartTime.getTime() / 86400000;
 

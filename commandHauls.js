@@ -155,50 +155,38 @@ twcheese.getServerTime = function () {
 twcheese.Command = function () {
     this.command_id;
     this.arrival = new Date();
-    this.timber = '0';
-    this.clay = '0';
-    this.iron = '0';
+    this.timber = 0;
+    this.clay = 0;
+    this.iron = 0;
     this.haulPerformance = [0, 0, 0]; //haul,capacity,percent
 };
 
 /*==== calculator functions ====*/
 /**
  *	sums attributes from a list of commands
- *	@param	startTime:Date	- minimum arrival time of command to be included in summation
- *	@param	endTime:Date	- maximum arrival time of command to be included in summation
- *	@param	commandsList:Array(command1:twcheese.Command,command2:twcheese.Command ...)
- *	@return	result:twcheese.Command	- the attributes of this command are equal to the sums of all the other commands' respective attributes. Example: result.timber is the total timber hauled from commands within the target time.
+ *	@param	{Date} startTime minimum arrival time of command to be included in summation
+ *	@param	{Date} endTime maximum arrival time of command to be included in summation
+ *	@param	{twcheese.Command[]} commands
+ *	@return	{twcheese.Command} the attributes of this command are equal to the sums of all the other commands' respective attributes. Example: result.timber is the total timber hauled from commands within the target time.
  */
-twcheese.sumCommandAttributes = function (startTime, endTime, commandsList) {
+twcheese.sumCommandAttributes = function (startTime, endTime, commands) {
     var result = new twcheese.Command();
 
-    /*==== sort commands by arrival time (earliest times first)====*/
-    var compareArrival = function (a, b) {
-        if (a.arrival < b.arrival)
-            return -1;
-        else if (a.arrival > b.arrival)
-            return 1;
-        else
-            return 0;
-    }
-    commandsList = commandsList.sort(compareArrival);
-
-    for (var i = 0; i < commandsList.length; i++) {
-        if (commandsList[i].arrival >= startTime && commandsList[i].arrival <= endTime) //command's arrival is within the target time
-        {
-            result.timber = Number(commandsList[i].timber) + Number(result.timber);
-            result.clay = Number(commandsList[i].clay) + Number(result.clay);
-            result.iron = Number(commandsList[i].iron) + Number(result.iron);
-            result.haulPerformance[0] = Number(commandsList[i].haulPerformance[0]) + Number(result.haulPerformance[0]);
-            result.haulPerformance[1] = Number(commandsList[i].haulPerformance[1]) + Number(result.haulPerformance[1]);
+    for (let command of commands) {
+        if (command.arrival < startTime || command.arrival > endTime) {
+            continue;
         }
-        if (commandsList[i].arrival > endTime)
-            i = commandsList.length; //end loop
+        result.timber += command.timber;
+        result.clay += command.clay;
+        result.iron += command.iron;
+        result.haulPerformance[0] += command.haulPerformance[0];
+        result.haulPerformance[1] += command.haulPerformance[1];
     }
 
-    if (result.haulPerformance[1] > 0)
+    if (result.haulPerformance[1] > 0) {
         result.haulPerformance[2] = Math.round(result.haulPerformance[0] / result.haulPerformance[1] * 100);
-
+    }
+    
     return result;
 };
 
@@ -230,8 +218,8 @@ twcheese.scrapeCommand = function (gameDoc) {
         else {
             haulText = haulText.substring(haulText.search('\\|') + 7);
             command.haulPerformance = haulText.split('/');
-            command.haulPerformance[0] = Number(command.haulPerformance[0]);
-            command.haulPerformance[1] = Number(command.haulPerformance[1]);
+            command.haulPerformance[0] = parseInt(command.haulPerformance[0]);
+            command.haulPerformance[1] = parseInt(command.haulPerformance[1]);
             if (command.haulPerformance[1] > 0)
                 command.haulPerformance[2] = command.haulPerformance[0] / command.haulPerformance[1] * 100;
         }
@@ -273,7 +261,7 @@ twcheese.requestDocumentBody = async function (targetUrl) {
 /**
  * reads a HTMLElement with the timber count, clay count, and iron count, and converts it to an array of Numbers
  * @param	resElement:HTMLElement	the html of the resources
- * @return	resources:Array(timber:Number,clay:Number,iron:Number)
+ * @return	resources:Array(timber:int, clay:int, iron:int)
  */
 twcheese.resElementToNumbers = function (resElement) {
     var resElementBackupHTML = resElement.innerHTML;
@@ -294,17 +282,17 @@ twcheese.resElementToNumbers = function (resElement) {
         for (var i = 0; i < icons.length; i++) {
             /*==== if timber icon is found, set timber ====*/
             if (icons[i].className == resIconNames[0])
-                resources[0] = Number(icons[i].nextSibling.data);
+                resources[0] = parseInt(icons[i].nextSibling.data);
 
 
             /*==== if clay icon is found, set clay ====*/
             if (icons[i].className == resIconNames[1])
-                resources[1] = Number(icons[i].nextSibling.data);
+                resources[1] = parseInt(icons[i].nextSibling.data);
 
 
             /*==== if iron icon is found, set iron ====*/
             if (icons[i].className == resIconNames[2])
-                resources[2] = Number(icons[i].nextSibling.data);
+                resources[2] = parseInt(icons[i].nextSibling.data);
 
         }
     }
@@ -312,17 +300,17 @@ twcheese.resElementToNumbers = function (resElement) {
         for (var i = 0; i < icons.length; i++) {
             /*==== if timber icon is found, set timber ====*/
             if (icons[i].className == resIconNames[0]) {
-                resources[0] = Number(icons[i].nextSibling.wholeText);
+                resources[0] = parseInt(icons[i].nextSibling.wholeText);
             }
 
             /*==== if clay icon is found, set clay ====*/
             if (icons[i].className == resIconNames[1]) {
-                resources[1] = Number(icons[i].nextSibling.wholeText);
+                resources[1] = parseInt(icons[i].nextSibling.wholeText);
             }
 
             /*==== if iron icon is found, set iron ====*/
             if (icons[i].className == resIconNames[2]) {
-                resources[2] = Number(icons[i].nextSibling.wholeText);
+                resources[2] = parseInt(icons[i].nextSibling.wholeText);
             }
         }
     }

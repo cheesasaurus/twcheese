@@ -115,15 +115,6 @@ twcheese.getServerTime = function () {
  */
 twcheese.Command = function () {
     this.command_id;
-    this.origin_player_id;
-    this.origin_village_id;
-    this.origin_x;
-    this.origin_y;
-    this.dest_player_id;
-    this.dest_village_id;
-    this.dest_x;
-    this.dest_y;
-    this.duration;
     this.arrival = new Date();
     this.timber = '0';
     this.clay = '0';
@@ -208,18 +199,6 @@ twcheese.scrapeCommand = function (gameDoc) {
     }
     catch (e) {
     }
-
-    /*==== todo ====
-    command.origin_player_id;
-    command.origin_village_id;
-    command.origin_x;
-    command.origin_y;
-    command.dest_player_id;
-    command.dest_village_id;
-    command.dest_x;
-    command.dest_y;
-    command.duration;
-    */
 
     return command;
 };

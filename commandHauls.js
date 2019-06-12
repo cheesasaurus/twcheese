@@ -408,12 +408,6 @@ twcheese.toggleWidget = function (widgetId, icon) {
  *	@param commandsList:Array(command1:twcheese.Command,command2:twcheese.Command ...)	- an array of commands to use for the stats
  */
 twcheese.createPillagingStatsWidget = function (commandsList) {
-    var container = document.createElement('div');
-    container.className = 'vis widget';
-    container.id = 'twcheese_show_pillaging_statistics';
-
-    var startTime = twcheese.Timing.newServerDate();
-    var endTime = commandsList[commandsList.length - 1].arrival;
 
     function buildDayHint(date) {
         if (date.isTodayOnServer()) {
@@ -424,28 +418,13 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
         }
         return ' (' + date.toLocaleDateString('en-US', {month: 'short', day: '2-digit'}) + ')';
     }
-
-    let titleBar = `
-        <h4>
-            Pillaging Statistics
-            <img id="twcheese_pillaging_stats_toggle" src="${twcheese.images.plus}" style="float:right; cursor: pointer;">
-            <span style="font-size: 8px; font-style: normal; font-weight: normal; margin-right: 25px; float: right;">
-                created by <a href="http://forum.tribalwars.net/member.php?u=28484">cheesasaurus</a>
-            </span>
-        </h4>
-    `;
-    $(container).append(titleBar);
-
-    var widgetContent = document.createElement('div');
-    widgetContent.className = 'widget_content';
-    widgetContent.style.display = 'none';
-
-    // prepare hourly things
     
     let summationFromOptions = [];
     let summationToOptions = [];
     let hourlyBreakdowns = [];
 
+    var startTime = twcheese.Timing.newServerDate();
+    var endTime = commandsList[commandsList.length - 1].arrival;
     var hoursNeeded = endTime.getTime() / 3600000 - Math.floor(startTime.getTime() / 3600000); //number of hours between the start of the current hour and the latest incoming haul
     var hourStartTime = startTime.dateAtHourStart();
 
@@ -474,20 +453,6 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
         hourStartTime = hourStartTime.addHours(1);
     }
 
-    let summationContainer = `
-        <div>
-            <div style="text-align: center; width: 100%; margin-top: 5px; margin-bottom: 5px;">
-                From <select id="twcheese_pillaging_stats_from">${summationFromOptions.join('')}</select>
-                to <select id="twcheese_pillaging_stats_to">${summationToOptions.join('')}</select>
-            </div>
-            <div id="twcheese_pillaging_results" style="text-align: center;">
-                Results displayed here...
-            </div>
-            <br/>
-        </div>
-    `;
-    $(widgetContent).append(summationContainer);
-
     let pageInfo = '';
     var currentPage = $('#paged_view_content').children('table:eq(0)').find('strong').html();
     if (currentPage) {
@@ -495,27 +460,46 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
             pageInfo = ' from Page ' + currentPage.match('[0-9]{1,}');
     }
 
-    let summaryTable = `
-        <table width="100%">
-            <tbody>
-                <tr><td colspan="6" style="text-align: center; font-size: 16px;">Incoming Resources${pageInfo}</td></tr>
-                <tr>
-                    <th>Arrival</th>
-                    <th><img src="${twcheese.images.timber}"></img></th>
-                    <th><img src="${twcheese.images.clay}"></img></th>
-                    <th><img src="${twcheese.images.iron}"></img></th>
-                    <th colspan="2">Performance</th>
-                </tr>
-                ${hourlyBreakdowns.join('')}
-            </tbody>
-        </table>
+    let html = `
+        <div id="twcheese_show_pillaging_statistics" class="vis widget">
+            <h4>
+                Pillaging Statistics
+                <img id="twcheese_pillaging_stats_toggle" src="${twcheese.images.plus}" style="float:right; cursor: pointer;">
+                <span style="font-size: 8px; font-style: normal; font-weight: normal; margin-right: 25px; float: right;">
+                    created by <a href="http://forum.tribalwars.net/member.php?u=28484">cheesasaurus</a>
+                </span>
+            </h4>
+            <div class="widget_content" style="display: none;">
+                <!-- summation -->
+                <div>
+                    <div style="text-align: center; width: 100%; margin-top: 5px; margin-bottom: 5px;">
+                        From <select id="twcheese_pillaging_stats_from">${summationFromOptions.join('')}</select>
+                        to <select id="twcheese_pillaging_stats_to">${summationToOptions.join('')}</select>
+                    </div>
+                    <div id="twcheese_pillaging_results" style="text-align: center;">
+                        Results displayed here...
+                    </div>
+                    <br/>
+                </div>
+                
+                <!-- hourly breakdown -->
+                <table width="100%">
+                    <tbody>
+                        <tr><td colspan="6" style="text-align: center; font-size: 16px;">Incoming Resources${pageInfo}</td></tr>
+                        <tr>
+                            <th>Arrival</th>
+                            <th><img src="${twcheese.images.timber}"></img></th>
+                            <th><img src="${twcheese.images.clay}"></img></th>
+                            <th><img src="${twcheese.images.iron}"></img></th>
+                            <th colspan="2">Performance</th>
+                        </tr>
+                        ${hourlyBreakdowns.join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     `;
-    $(widgetContent).append(summaryTable);
-
-    container.appendChild(widgetContent);
-
-    /*==== place the widget into the document tree ====*/
-    $('.modemenu:eq(1)').after(container);
+    $('.modemenu:eq(1)').after(html);
 
     /**
      *	changes the results displayed in the summation section of the pillaging stats widget

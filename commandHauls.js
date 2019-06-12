@@ -35,7 +35,6 @@ twcheese.images = {
     popupBackground: 'graphic/popup/content_background.png',
     popupBorder: 'graphic/popup/border.png',
     servant: 'graphic/paladin_new.png',
-    tableHeaderBackground: 'graphic/screen/tableheader_bg3.png',
     loadingSpinner: 'graphic/throbber.gif'
 };
 
@@ -416,7 +415,7 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
     var startTime = twcheese.Timing.newServerDate();
     var endTime = commandsList[commandsList.length - 1].arrival;
 
-    function dayHint(date) {
+    function buildDayHint(date) {
         if (date.isTodayOnServer()) {
             return '';
         }
@@ -439,157 +438,122 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
         }
         var results = twcheese.Command.sumPropsFromTimeframe(commandsList, startTime, endTime);
 
-        var resultsContainer = document.getElementById('twcheese_pillaging_results');
-        resultsContainer.innerHTML = '<img src="' + twcheese.images.timber + '"></img>' + results.timber + ' ';
-        resultsContainer.innerHTML += '<img src="' + twcheese.images.clay + '"></img>' + results.clay + ' ';
-        resultsContainer.innerHTML += '<img src="' + twcheese.images.iron + '"></img>' + results.iron + ' &nbsp&nbsp| ';
-        resultsContainer.innerHTML += results.sumLoot() + '/' + results.haulCapacity + ' (';
-        resultsContainer.innerHTML += results.calcHaulPercent() + '%)';
+        $('#twcheese_pillaging_results').html(`
+            <img src="${twcheese.images.timber}"> ${results.timber}
+            <img src="${twcheese.images.clay}"> ${results.clay}
+            <img src="${twcheese.images.iron}"> ${results.iron}
+            &nbsp;&nbsp;| ${results.sumLoot()}/${results.haulCapacity} (${results.calcHaulPercent()}%)
+        `);
     };
 
-    var titleBar = document.createElement('h4');
-    titleBar.innerHTML = 'Pillaging Statistics';
-
-    var toggleButton = document.createElement('img');
-    toggleButton.src = 'graphic/plus.png';
-    toggleButton.style.cssFloat = 'right';
-    toggleButton.style.cursor = 'pointer';
-    toggleButton.onclick = function () { twcheese.toggleWidget('twcheese_show_pillaging_statistics', this) };
-    titleBar.appendChild(toggleButton);
-
-
-    var narcismElement = document.createElement('span');
-    narcismElement.innerHTML = 'created by <a href="http://forum.tribalwars.net/member.php?u=28484">cheesasaurus</a>';
-    narcismElement.style.fontSize = '8px';
-    narcismElement.style.fontStyle = 'normal';
-    narcismElement.style.fontWeight = 'normal';
-    narcismElement.style.marginRight = '25px';
-    narcismElement.style.cssFloat = 'right';
-    titleBar.appendChild(narcismElement);
-
-    container.appendChild(titleBar);
+    let titleBar = `
+        <h4>
+            Pillaging Statistics
+            <img id="twcheese_pillaging_stats_toggle" src="${twcheese.images.plus}" style="float:right; cursor: pointer;">
+            <span style="font-size: 8px; font-style: normal; font-weight: normal; margin-right: 25px; float: right;">
+                created by <a href="http://forum.tribalwars.net/member.php?u=28484">cheesasaurus</a>
+            </span>
+        </h4>
+    `;
+    $(container).append(titleBar);
 
     var widgetContent = document.createElement('div');
     widgetContent.className = 'widget_content';
     widgetContent.style.display = 'none';
 
-    var summationContainer = document.createElement('div');
-    var selectionContainer = document.createElement('div');
-    selectionContainer.style.textAlign = 'center';
-    selectionContainer.style.width = '100%';
-    selectionContainer.style.marginTop = '5px';
-    selectionContainer.style.marginBottom = '5px';
-    selectionContainer.innerHTML = 'From ';
-    var summationFrom = document.createElement('select');
-    summationFrom.id = 'twcheese_pillaging_stats_from';
-
     /*==== create options for From menu ====*/
-    summationFrom.innerHTML = '';
     var optionsNeeded = endTime.getTime() / 3600000 - Math.floor(startTime.getTime() / 3600000); //number of hours between the start of the current hour and the latest incoming haul
     var optionStartTime = startTime.dateAtHourStart();
 
+    let summationFromOptions = '';
     for (var i = 0; i <= optionsNeeded; i++) {
-        var option = document.createElement('option');
-        option.value = optionStartTime.getTime();
-        option.innerHTML = optionStartTime.getServerHours() + ':00 ' + dayHint(optionStartTime);
-        summationFrom.appendChild(option);
+        let time = optionStartTime.getTime();
+        let hourOfDay = optionStartTime.getServerHours();
+        let dayHint = buildDayHint(optionStartTime);
+        summationFromOptions += `<option value=${time}>${hourOfDay}:00 ${dayHint}</option>`;
 
         optionStartTime = optionStartTime.addHours(1);
     }
-
-    selectionContainer.appendChild(summationFrom);
-
-    selectionContainer.innerHTML += ' to ';
-    var summationTo = document.createElement('select');
-    summationTo.id = 'twcheese_pillaging_stats_to';
 
     /*==== create options for To menu ====*/
-    summationTo.innerHTML = '';
     var optionsNeeded = endTime.getTime() / 3600000 - Math.floor(startTime.getTime() / 3600000); //number of hours between the start of the current hour and the latest incoming haul
     var optionStartTime = startTime.dateAtHourStart();
 
-    for (var i = 0; i <= optionsNeeded; i++) {
-        var option = document.createElement('option');
-        option.value = optionStartTime.getTime() + 3599999;
-        option.innerHTML = optionStartTime.getServerHours() + ':59 ' + dayHint(optionStartTime);
-        summationTo.appendChild(option);
-
+    let summationToOptions  = '';
+    for (var i = 0; i <= optionsNeeded; i++) {        
+        let time = optionStartTime.getTime() + 3599999;
+        let hourOfDay = optionStartTime.getServerHours();
+        let dayHint = buildDayHint(optionStartTime);
+        summationToOptions += `<option value="${time}">${hourOfDay}:59 ${dayHint}</option>`;
         optionStartTime = optionStartTime.addHours(1);
     }
 
-    selectionContainer.appendChild(summationTo);
-    summationContainer.appendChild(selectionContainer);
+    let summationContainer = `
+        <div>
+            <div style="text-align: center; width: 100%; margin-top: 5px; margin-bottom: 5px;">
+                From <select id="twcheese_pillaging_stats_from">${summationFromOptions}</select>
+                to <select id="twcheese_pillaging_stats_to">${summationToOptions}</select>
+            </div>
+            <div id="twcheese_pillaging_results" style="text-align: center;">
+                Results displayed here...
+            </div>
+            <br/>
+        </div>
+    `;
+    $(widgetContent).append(summationContainer);
 
-    var summationResults = document.createElement('div');
-    summationResults.id = 'twcheese_pillaging_results';
-    summationResults.style.textAlign = 'center';
-    summationResults.innerHTML = 'Results displayed here';
-    summationContainer.appendChild(summationResults);
-    summationContainer.innerHTML += '<br/>';
+    // hourly breakdown
 
-
-    widgetContent.appendChild(summationContainer);
-
-    var summaryTable = document.createElement('table');
-    summaryTable.width = '100%';
-
-    /*==== table title ====*/
-    summaryTable.insertRow(-1);
-    summaryTable.rows[0].insertCell(-1);
-    summaryTable.rows[0].cells[0].colSpan = 6;
-    summaryTable.rows[0].cells[0].innerHTML = 'Incoming Resources';
-    summaryTable.rows[0].cells[0].style.textAlign = 'center';
-    summaryTable.rows[0].cells[0].style.fontSize = '16px';
-
-    /*==== get page information ===*/
+    let pageInfo = '';
     var currentPage = $('#paged_view_content').children('table:eq(0)').find('strong').html();
     if (currentPage) {
         if (currentPage.search('all') == -1)
-            summaryTable.rows[0].cells[0].innerHTML += ' from Page ' + currentPage.match('[0-9]{1,}');
+            pageInfo = ' from Page ' + currentPage.match('[0-9]{1,}');
     }
 
-    /*==== table headers ====*/
-    summaryTable.insertRow(-1);
-    for (var i = 0; i < 5; i++) {
-        summaryTable.rows[1].insertCell(-1);
-        summaryTable.rows[1].cells[i].style.backgroundImage = 'url("' + twcheese.images.tableHeaderBackground + '")';
-        summaryTable.rows[1].cells[i].style.backgroundRepeat = 'repeat-x';
-        summaryTable.rows[1].cells[i].style.fontSize = '9pt';
-        summaryTable.rows[1].cells[i].style.fontWeight = 700;
-    }
-    summaryTable.rows[1].cells[0].innerHTML = '<b>Arrival</b>';
-    summaryTable.rows[1].cells[1].innerHTML = '<img src=' + twcheese.images.timber + '></img>';
-    summaryTable.rows[1].cells[2].innerHTML = '<img src=' + twcheese.images.clay + '></img>';
-    summaryTable.rows[1].cells[3].innerHTML = '<img src=' + twcheese.images.iron + '></img>';
-    summaryTable.rows[1].cells[4].innerHTML = '<b>Performance</b>';
-    summaryTable.rows[1].cells[4].colSpan = 2;
+    let hourlyBreakdown = '';
 
-    /*==== table contents ====*/
     var startTime = twcheese.Timing.newServerDate();
 
     var rowsNeeded = endTime.getTime() / 3600000 - Math.floor(startTime.getTime() / 3600000); //number of hours between the start of the current hour and the latest incoming haul
     var rowStartTime = startTime.dateAtHourStart();
 
-    for (var row = 2; row <= rowsNeeded + 2; row++) {
-        summaryTable.insertRow(-1);
-        for (var col = 0; col < 6; col++) {
-            summaryTable.rows[row].insertCell(-1);
-            if (row % 2 > 0)
-                summaryTable.rows[row].cells[col].style.background = '#FFE0A2';
-        }
+    for (let row = 0; row < rowsNeeded; row++) {
+        let result = twcheese.Command.sumPropsFromTimeframe(commandsList, rowStartTime, rowStartTime.addHours(1).addSeconds(-1));
+        let style = row % 2 > 0 ? 'background: #FFE0A2;' : '';
+        let hourOfDay = rowStartTime.getServerHours();
+        let dayHint = buildDayHint(rowStartTime);
 
-        var result = twcheese.Command.sumPropsFromTimeframe(commandsList, rowStartTime, rowStartTime.addHours(1).addSeconds(-1));
-
-        summaryTable.rows[row].cells[0].innerHTML = rowStartTime.getServerHours() + ':00' + '-' + rowStartTime.getServerHours() + ':59 ' + dayHint(rowStartTime);
-        summaryTable.rows[row].cells[1].innerHTML = result.timber;
-        summaryTable.rows[row].cells[2].innerHTML = result.clay;
-        summaryTable.rows[row].cells[3].innerHTML = result.iron;
-        summaryTable.rows[row].cells[4].innerHTML = result.sumLoot() + '/' + result.haulCapacity;
-        summaryTable.rows[row].cells[5].innerHTML = result.calcHaulPercent() + '%';
+        hourlyBreakdown += `
+            <tr>
+                <td style="${style}">${hourOfDay}:00 - ${hourOfDay}:59 ${dayHint}</td>
+                <td style="${style}">${result.timber}</td>
+                <td style="${style}">${result.clay}</td>
+                <td style="${style}">${result.iron}</td>
+                <td style="${style}">${result.sumLoot()}/${result.haulCapacity}</td>
+                <td style="${style}">${result.calcHaulPercent()}%</td>
+            </tr>
+        `;
 
         rowStartTime = rowStartTime.addHours(1);
     }
-    widgetContent.appendChild(summaryTable);
+
+    summaryTable = `
+        <table width="100%">
+            <tbody>
+                <tr><td colspan="6" style="text-align: center; font-size: 16px;">Incoming Resources${pageInfo}</td></tr>
+                <tr>
+                    <th>Arrival</th>
+                    <th><img src="${twcheese.images.timber}"></img></th>
+                    <th><img src="${twcheese.images.clay}"></img></th>
+                    <th><img src="${twcheese.images.iron}"></img></th>
+                    <th colspan="2">Performance</th>
+                </tr>
+                ${hourlyBreakdown}
+            </tbody>
+        </table>
+    `;
+    $(widgetContent).append(summaryTable);
 
     container.appendChild(widgetContent);
 
@@ -597,6 +561,10 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
     $('.modemenu:eq(1)').after(container);
 
     /*==== initialize interactive components ====*/
+    $('#twcheese_pillaging_stats_toggle').on('click', function(e) {
+        e.preventDefault();
+        twcheese.toggleWidget('twcheese_show_pillaging_statistics', this);
+    });
     document.getElementById('twcheese_pillaging_stats_from').onchange = container.showResults;
     document.getElementById('twcheese_pillaging_stats_to').onchange = container.showResults;
     document.getElementById('twcheese_pillaging_stats_to').childNodes[document.getElementById('twcheese_pillaging_stats_to').childNodes.length - 1].selected = "selected";

@@ -335,40 +335,37 @@ twcheese.scrapeResources = function (resourcesContainer) {
 /*==== widgets ====*/
 
 twcheese.popupShowHaulsPrompt = function () {
-    var container = document.createElement('div');
-    container.id = 'twcheese_showHaulsPrompt';
-    container.style.width = '500px';
-    twcheese.style.popup(container);
-
-    container.innerHTML = `
-        <div style="height: 100%; width: 100%; background: url('${twcheese.images.popupBackground}')">
-            <div style="background: no-repeat url('${twcheese.images.servant}');">
-                <h3 style="margin: 0 3px 5px 120px;">My liege,</h3>
-                <div id="twcheese_servant_text" style="margin-left: 120px; height: 50px; margin-top: 30px;">
-                    Dost thou wish hauls to be included on thine screen?
-                </div>
-                <div class="quest-goal">
-                    <table width="100%">
-                        <tbody>
-                            <tr>
-                                <td style="width: 120px; height: 80px;"></td>
-                                <td id="twcheese_servant_info" style="padding-right: 70px;">
-                                    <h5>Load haul information?</h5>
-                                    <p>This could take a while if you have a lot of commands.</p>
-                                    <div class="confirmation-buttons">
-                                        <button id="twcheese_hauls_prompt_confirm" class="btn btn-confirm-yes">Yes</button>
-                                        <button id="twcheese_hauls_prompt_cancel" class="btn btn-default">Cancel</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+    let popupHtml = `
+        <div id="twcheese_showHaulsPrompt" class="twcheese-popup" style="width: 500px;">
+            <div style="height: 100%; width: 100%; background: url('${twcheese.images.popupBackground}')">
+                <div style="background: no-repeat url('${twcheese.images.servant}');">
+                    <h3 style="margin: 0 3px 5px 120px;">My liege,</h3>
+                    <div id="twcheese_servant_text" style="margin-left: 120px; height: 50px; margin-top: 30px;">
+                        Dost thou wish hauls to be included on thine screen?
+                    </div>
+                    <div class="quest-goal">
+                        <table width="100%">
+                            <tbody>
+                                <tr>
+                                    <td style="width: 120px; height: 80px;"></td>
+                                    <td id="twcheese_servant_info" style="padding-right: 70px;">
+                                        <h5>Load haul information?</h5>
+                                        <p>This could take a while if you have a lot of commands.</p>
+                                        <div class="confirmation-buttons">
+                                            <button id="twcheese_hauls_prompt_confirm" class="btn btn-confirm-yes">Yes</button>
+                                            <button id="twcheese_hauls_prompt_cancel" class="btn btn-default">Cancel</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>    
+        </div>
     `;
 
-    document.body.appendChild(container);
+    $('body').append(popupHtml);
     twcheese.fadeGameContent();
 
     $('#twcheese_hauls_prompt_confirm').on('click', function(e) {
@@ -378,7 +375,8 @@ twcheese.popupShowHaulsPrompt = function () {
 
     $('#twcheese_hauls_prompt_cancel').on('click', function(e) {
         e.preventDefault();
-        $('#fader, #twcheese_showHaulsPrompt').remove();
+        $('#twcheese_showHaulsPrompt').remove();
+        twcheese.unfadeGameContent();
     });
 };
 
@@ -667,44 +665,40 @@ twcheese.includeHaulInfo = async function (gameDoc) {
 };
 
 twcheese.fadeGameContent = function () {
-    var fader = document.createElement('div');
-    fader.id = 'fader';
-    fader.style.position = 'fixed';
-    fader.style.height = '100%';
-    fader.style.width = '100%';
-    fader.style.backgroundColor = 'black';
-    fader.style.top = '0px';
-    fader.style.left = '0px';
-    fader.style.opacity = '0.6';
-    fader.style.zIndex = '12000';
-    document.body.appendChild(fader);
+    $('body').append('<div id="fader" class="fader">');
 };
+twcheese.unfadeGameContent = function() {
+    $('#fader').remove();
+}
 
 /*==== styles ====*/
-if (!twcheese.style)
-    twcheese.style = {};
+if (!twcheese.style) {
+    twcheese.style = {
+        cssInitd: [],
 
-twcheese.style.popup = function (element) {
-    element.style.zIndex = 13000;
-    element.style.display = 'block';
-    element.style.position = 'fixed';
-    element.style.top = '60px';
-
-    var browser = '';
-    if (/AppleWebKit/.test(navigator.userAgent))
-        browser = '-webkit-';
-    else if (window.opera)
-        browser = '-o-';
-
-    element.style.border = '19px solid #804000';
-    $(element).css(browser + 'border-image', 'url("' + twcheese.images.popupBorder + '") 19 19 19 19 repeat');
-
-    //center
-    element.style.marginLeft = (window.innerWidth - $(element).width()) / 2 + 'px';
-    window.onresize = function () {
-        element.style.marginLeft = (window.innerWidth - $(element).width()) / 2 + 'px';
+        initCss(css) {
+            if (this.cssInitd.includes(css)) {
+                return;
+            }
+            $(`<style>${css}</style>`).appendTo('head');
+            this.cssInitd.push(css);
+        }
     };
-};
+}
+
+twcheese.style.initCss(`
+    .twcheese-popup {
+        z-index: 13000;
+        display: block;
+        position: fixed;
+        top: 60px;
+        border: 19px solid #804000;
+        border-image: url(${twcheese.images.popupBorder}) 19 19 19 19 repeat;
+        left: 50%;
+        -webkit-transform: translateX(-50%);
+        transform: translateX(-50%);
+    }
+`);
 
 twcheese.loadHaulInfo = function () {
     document.getElementById('twcheese_servant_text').innerHTML = 'May the cheese be with you.';

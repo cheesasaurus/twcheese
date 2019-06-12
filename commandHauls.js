@@ -178,18 +178,6 @@ twcheese.loadConfig = function () {
 })();
 
 
-/**
- *	formats a date with the month name and day# (example: Nov 6)
- *	@param	date:Date
- *	@return	dateString:String
- */
-twcheese.formatDateToNamed = function (date) {
-    var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    var dateString = monthNames[date.getMonth()] + ' ' + date.getDate();
-    return dateString;
-};
-
-
 (function () {
 
     class Command {
@@ -475,7 +463,7 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
         else if (date.isTomorrowOnServer()) {
             return ' (tomorrow)';
         }
-        return ' (' + twcheese.formatDateToNamed(optionStartTime) + ')';
+        return ' (' + optionStartTime.toLocaleDateString('en-US', {month: 'short', day: '2-digit'}) + ')';
     }
 
     /**

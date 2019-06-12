@@ -347,7 +347,6 @@ twcheese.popupShowHaulsPrompt = function () {
     content.style.width = '100%';
 
     var servantDivStr = '';
-    servantDivStr += "<a id=\"popup_box_close\" href=\"#\" onclick=\"$( '#fader,#twcheese_showHaulsPrompt' ).remove(); return false;\"> <\/a>";
     servantDivStr += "<div style=\"background: no-repeat url('" + twcheese.images.servant + "');\">";
     servantDivStr += "<h3 style=\"margin: 0 3px 5px 120px;\">My liege,<\/h3>";
     servantDivStr += "<div id=\"twcheese_servant_text\" style=\"margin-left:120px;height:50px;margin-top:30px\">Dost thou wish hauls to be included on thine screen?<\/div>";
@@ -362,8 +361,8 @@ twcheese.popupShowHaulsPrompt = function () {
     servantDivStr += "<h5>Load haul information?<\/h5>";
     servantDivStr += "<p>This could take a while if you have a lot of commands.<\/p>";
     servantDivStr += "<div class=\"confirmation-buttons\">";
-    servantDivStr += "<button class=\"btn btn-confirm-yes\" aria-label'ok'=\"\" onclick=\"twcheese.loadHaulInfo()\">Yes<\/button>";
-    servantDivStr += "<button class=\"btn-default evt-cancel-btn\" aria-label'cancel'=\"\" onclick=\"$( '#fader,#twcheese_showHaulsPrompt' ).remove(); return false;\">Cancel<\/button>";
+    servantDivStr += "<button id=\"twcheese_hauls_prompt_confirm\" class=\"btn btn-confirm-yes\">Yes<\/button>";
+    servantDivStr += "<button id=\"twcheese_hauls_prompt_cancel\" class=\"btn-default\" >Cancel<\/button>";
     servantDivStr += "<\/div>";
     servantDivStr += "<\/td>";
     servantDivStr += "<\/tr>";
@@ -376,6 +375,16 @@ twcheese.popupShowHaulsPrompt = function () {
     container.appendChild(content);
     document.body.appendChild(container);
     twcheese.fadeGameContent();
+
+    $('#twcheese_hauls_prompt_confirm').on('click', function(e) {
+        e.preventDefault();
+        twcheese.loadHaulInfo();
+    });
+
+    $('#twcheese_hauls_prompt_cancel').on('click', function(e) {
+        e.preventDefault();
+        $('#fader, #twcheese_showHaulsPrompt').remove();
+    });
 };
 
 twcheese.toggleWidget = function (widgetId, icon) {

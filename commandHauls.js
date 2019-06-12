@@ -422,7 +422,7 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
         else if (date.isTomorrowOnServer()) {
             return ' (tomorrow)';
         }
-        return ' (' + optionStartTime.toLocaleDateString('en-US', {month: 'short', day: '2-digit'}) + ')';
+        return ' (' + date.toLocaleDateString('en-US', {month: 'short', day: '2-digit'}) + ')';
     }
 
     let titleBar = `
@@ -440,24 +440,38 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
     widgetContent.className = 'widget_content';
     widgetContent.style.display = 'none';
 
-    // create options for summationContainer
+    // prepare hourly things
     
     let summationFromOptions = [];
     let summationToOptions = [];
+    let hourlyBreakdowns = [];
 
-    var optionsNeeded = endTime.getTime() / 3600000 - Math.floor(startTime.getTime() / 3600000); //number of hours between the start of the current hour and the latest incoming haul
-    var optionStartTime = startTime.dateAtHourStart();
+    var hoursNeeded = endTime.getTime() / 3600000 - Math.floor(startTime.getTime() / 3600000); //number of hours between the start of the current hour and the latest incoming haul
+    var hourStartTime = startTime.dateAtHourStart();
 
-    for (var i = 0; i <= optionsNeeded; i++) {
-        let timeFrom = optionStartTime.getTime();
+    for (let hour = 0; hour <= hoursNeeded; hour++) {
+        let timeFrom = hourStartTime.getTime();
         let timeTo = timeFrom + 3599999;
-        let hourOfDay = optionStartTime.getServerHours();
-        let dayHint = buildDayHint(optionStartTime);
+        let hourOfDay = hourStartTime.getServerHours();
+        let dayHint = buildDayHint(hourStartTime);
 
         summationFromOptions.push(`<option value=${timeFrom}>${hourOfDay}:00 ${dayHint}</option>`);
         summationToOptions.push(`<option value="${timeTo}">${hourOfDay}:59 ${dayHint}</option>`);
 
-        optionStartTime = optionStartTime.addHours(1);
+        let result = twcheese.Command.sumPropsFromTimeframe(commandsList, hourStartTime, hourStartTime.addHours(1).addSeconds(-1));
+        let style = hour % 2 > 0 ? 'background: #FFE0A2;' : '';
+        hourlyBreakdowns.push(`
+            <tr>
+                <td style="${style}">${hourOfDay}:00 - ${hourOfDay}:59 ${dayHint}</td>
+                <td style="${style}">${result.timber}</td>
+                <td style="${style}">${result.clay}</td>
+                <td style="${style}">${result.iron}</td>
+                <td style="${style}">${result.sumLoot()}/${result.haulCapacity}</td>
+                <td style="${style}">${result.calcHaulPercent()}%</td>
+            </tr>
+        `);
+
+        hourStartTime = hourStartTime.addHours(1);
     }
 
     let summationContainer = `
@@ -474,8 +488,6 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
     `;
     $(widgetContent).append(summationContainer);
 
-    // hourly breakdown
-
     let pageInfo = '';
     var currentPage = $('#paged_view_content').children('table:eq(0)').find('strong').html();
     if (currentPage) {
@@ -483,34 +495,7 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
             pageInfo = ' from Page ' + currentPage.match('[0-9]{1,}');
     }
 
-    let hourlyBreakdown = '';
-
-    var startTime = twcheese.Timing.newServerDate();
-
-    var rowsNeeded = endTime.getTime() / 3600000 - Math.floor(startTime.getTime() / 3600000); //number of hours between the start of the current hour and the latest incoming haul
-    var rowStartTime = startTime.dateAtHourStart();
-
-    for (let row = 0; row < rowsNeeded; row++) {
-        let result = twcheese.Command.sumPropsFromTimeframe(commandsList, rowStartTime, rowStartTime.addHours(1).addSeconds(-1));
-        let style = row % 2 > 0 ? 'background: #FFE0A2;' : '';
-        let hourOfDay = rowStartTime.getServerHours();
-        let dayHint = buildDayHint(rowStartTime);
-
-        hourlyBreakdown += `
-            <tr>
-                <td style="${style}">${hourOfDay}:00 - ${hourOfDay}:59 ${dayHint}</td>
-                <td style="${style}">${result.timber}</td>
-                <td style="${style}">${result.clay}</td>
-                <td style="${style}">${result.iron}</td>
-                <td style="${style}">${result.sumLoot()}/${result.haulCapacity}</td>
-                <td style="${style}">${result.calcHaulPercent()}%</td>
-            </tr>
-        `;
-
-        rowStartTime = rowStartTime.addHours(1);
-    }
-
-    summaryTable = `
+    let summaryTable = `
         <table width="100%">
             <tbody>
                 <tr><td colspan="6" style="text-align: center; font-size: 16px;">Incoming Resources${pageInfo}</td></tr>
@@ -521,7 +506,7 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
                     <th><img src="${twcheese.images.iron}"></img></th>
                     <th colspan="2">Performance</th>
                 </tr>
-                ${hourlyBreakdown}
+                ${hourlyBreakdowns.join('')}
             </tbody>
         </table>
     `;

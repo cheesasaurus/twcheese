@@ -425,27 +425,6 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
         return ' (' + optionStartTime.toLocaleDateString('en-US', {month: 'short', day: '2-digit'}) + ')';
     }
 
-    /**
-     *	changes the results displayed in the summation section of the pillaging stats widget
-     */
-    container.showResults = function () {
-        var startTime = twcheese.Timing.newServerDate(Number(document.getElementById('twcheese_pillaging_stats_from').value));
-        var endTime = twcheese.Timing.newServerDate(Number(document.getElementById('twcheese_pillaging_stats_to').value));
-        if (startTime > endTime) {
-            tmpTime = startTime;
-            startTime = endTime;
-            endTime = tmpTime;
-        }
-        var results = twcheese.Command.sumPropsFromTimeframe(commandsList, startTime, endTime);
-
-        $('#twcheese_pillaging_results').html(`
-            <img src="${twcheese.images.timber}"> ${results.timber}
-            <img src="${twcheese.images.clay}"> ${results.clay}
-            <img src="${twcheese.images.iron}"> ${results.iron}
-            &nbsp;&nbsp;| ${results.sumLoot()}/${results.haulCapacity} (${results.calcHaulPercent()}%)
-        `);
-    };
-
     let titleBar = `
         <h4>
             Pillaging Statistics
@@ -560,15 +539,36 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
     /*==== place the widget into the document tree ====*/
     $('.modemenu:eq(1)').after(container);
 
+    /**
+     *	changes the results displayed in the summation section of the pillaging stats widget
+     */
+    let showResults = function () {
+        var startTime = twcheese.Timing.newServerDate(Number(document.getElementById('twcheese_pillaging_stats_from').value));
+        var endTime = twcheese.Timing.newServerDate(Number(document.getElementById('twcheese_pillaging_stats_to').value));
+        if (startTime > endTime) {
+            tmpTime = startTime;
+            startTime = endTime;
+            endTime = tmpTime;
+        }
+        var results = twcheese.Command.sumPropsFromTimeframe(commandsList, startTime, endTime);
+
+        $('#twcheese_pillaging_results').html(`
+            <img src="${twcheese.images.timber}"> ${results.timber}
+            <img src="${twcheese.images.clay}"> ${results.clay}
+            <img src="${twcheese.images.iron}"> ${results.iron}
+            &nbsp;&nbsp;| ${results.sumLoot()}/${results.haulCapacity} (${results.calcHaulPercent()}%)
+        `);
+    };
+
     /*==== initialize interactive components ====*/
     $('#twcheese_pillaging_stats_toggle').on('click', function(e) {
         e.preventDefault();
         twcheese.toggleWidget('twcheese_show_pillaging_statistics', this);
     });
-    document.getElementById('twcheese_pillaging_stats_from').onchange = container.showResults;
-    document.getElementById('twcheese_pillaging_stats_to').onchange = container.showResults;
+    document.getElementById('twcheese_pillaging_stats_from').onchange = showResults;
+    document.getElementById('twcheese_pillaging_stats_to').onchange = showResults;
     document.getElementById('twcheese_pillaging_stats_to').childNodes[document.getElementById('twcheese_pillaging_stats_to').childNodes.length - 1].selected = "selected";
-    container.showResults();
+    showResults();
 
 };
 

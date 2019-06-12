@@ -395,9 +395,12 @@ twcheese.toggleWidget = function (widgetId, icon) {
         toggleState = 0;
     }
 
-    /*==== save settings ====*/
-    eval('if(!twcheese.userConfig.' + game_data.mode + ')twcheese.userConfig.' + game_data.mode + '={}');
-    eval('twcheese.userConfig.' + game_data.mode + '.' + widgetId.substring(9) + '=' + toggleState);
+    // save settings
+    if (typeof twcheese.userConfig[game_data.mode] === 'undefined') {
+        twcheese.userConfig[game_data.mode] = {};
+    }
+    twcheese.userConfig[game_data.mode][widgetId.substring(9)] = toggleState; // substring(9) discards twcheese_ prefix
+
     localStorage.setItem('twcheese.userConfig', JSON.stringify(twcheese.userConfig));
 };
 
@@ -451,7 +454,6 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
     toggleButton.src = 'graphic/plus.png';
     toggleButton.style.cssFloat = 'right';
     toggleButton.style.cursor = 'pointer';
-    //toggleButton.onclick = "twcheese.toggleWidget( 'twcheese_show_pillaging_statistics',this)";
     toggleButton.onclick = function () { twcheese.toggleWidget('twcheese_show_pillaging_statistics', this) };
     titleBar.appendChild(toggleButton);
 

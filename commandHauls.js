@@ -26,13 +26,18 @@ if (!twcheese)
     var twcheese = {};
 
 /*==== graphics ====*/
-twcheese.image = [];
-twcheese.image['plus'] = 'graphic/plus.png';
-twcheese.image['minus'] = 'graphic/minus.png';
-
-twcheese.image['timber'] = 'graphic/holz.png';
-twcheese.image['clay'] = 'graphic/lehm.png';
-twcheese.image['iron'] = 'graphic/eisen.png';
+twcheese.images = {
+    plus: 'graphic/plus.png',
+    minus: 'graphic/minus.png',
+    timber: 'graphic/holz.png',
+    clay: 'graphic/lehm.png',
+    iron: 'graphic/eisen.png',
+    popupBackground: 'graphic/popup/content_background.png',
+    popupBorder: 'graphic/popup/border.png',
+    servant: 'graphic/paladin_new.png',
+    tableHeaderBackground: 'graphic/screen/tableheader_bg3.png',
+    loadingSpinner: 'graphic/throbber.gif'
+};
 
 // avoid flooding the server with requests
 (function () {
@@ -376,13 +381,13 @@ twcheese.popupShowHaulsPrompt = function () {
     twcheese.style.popup(container);
 
     var content = document.createElement('div');
-    content.style.background = 'url("http://cdn2.tribalwars.net/8.16/18699/graphic/popup/content_background.png")';
+    content.style.background = 'url("' + twcheese.images.popupBackground + '")';
     content.style.height = '100%';
     content.style.width = '100%';
 
     var servantDivStr = '';
     servantDivStr += "<a id=\"popup_box_close\" href=\"#\" onclick=\"$( '#fader,#twcheese_showHaulsPrompt' ).remove(); return false;\"> <\/a>";
-    servantDivStr += "<div style=\"background: no-repeat url('\/graphic\/paladin_new.png');\">";
+    servantDivStr += "<div style=\"background: no-repeat url('" + twcheese.images.servant + "');\">";
     servantDivStr += "<h3 style=\"margin: 0 3px 5px 120px;\">My liege,<\/h3>";
     servantDivStr += "<div id=\"twcheese_servant_text\" style=\"margin-left:120px;height:50px;margin-top:30px\">Dost thou wish hauls to be included on thine screen?<\/div>";
     servantDivStr += "";
@@ -391,7 +396,7 @@ twcheese.popupShowHaulsPrompt = function () {
     servantDivStr += "<table width=\"100%\">";
     servantDivStr += "<tbody>";
     servantDivStr += "<tr>";
-    servantDivStr += "<td style=\"width: 120px; height: 80px; background: url( 'http:\/\/cdn2.tribalwars.net\/graphic\/quests\/change_text.png?' ) center no-repeat;\"> <\/td>";
+    servantDivStr += "<td style=\"width: 120px; height: 80px;\"> <\/td>";
     servantDivStr += "<td id=\"twcheese_servant_info\" style=\"padding-right: 70px;\">";
     servantDivStr += "<h5>Load haul information?<\/h5>";
     servantDivStr += "<p>This could take a while if you have a lot of commands.<\/p>";
@@ -417,12 +422,12 @@ twcheese.toggleWidget = function (widgetId, icon) {
 
     var toggleState;
     if (icon.src.search('plus') != -1) {
-        icon.src = twcheese.image['minus'];
+        icon.src = twcheese.images.minus;
         content.show(200);
         toggleState = 1;
     }
     else {
-        icon.src = twcheese.image['plus'];
+        icon.src = twcheese.images.plus;
         content.hide(200);
         toggleState = 0;
     }
@@ -469,9 +474,9 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
         var results = twcheese.Command.sumPropsFromTimeframe(commandsList, startTime, endTime);
 
         var resultsContainer = document.getElementById('twcheese_pillaging_results');
-        resultsContainer.innerHTML = '<img src="' + twcheese.image['timber'] + '"></img>' + results.timber + ' ';
-        resultsContainer.innerHTML += '<img src="' + twcheese.image['clay'] + '"></img>' + results.clay + ' ';
-        resultsContainer.innerHTML += '<img src="' + twcheese.image['iron'] + '"></img>' + results.iron + ' &nbsp&nbsp| ';
+        resultsContainer.innerHTML = '<img src="' + twcheese.images.timber + '"></img>' + results.timber + ' ';
+        resultsContainer.innerHTML += '<img src="' + twcheese.images.clay + '"></img>' + results.clay + ' ';
+        resultsContainer.innerHTML += '<img src="' + twcheese.images.iron + '"></img>' + results.iron + ' &nbsp&nbsp| ';
         resultsContainer.innerHTML += results.sumLoot() + '/' + results.haulCapacity + ' (';
         resultsContainer.innerHTML += results.calcHaulPercent() + '%)';
     };
@@ -582,15 +587,15 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
     summaryTable.insertRow(-1);
     for (var i = 0; i < 5; i++) {
         summaryTable.rows[1].insertCell(-1);
-        summaryTable.rows[1].cells[i].style.backgroundImage = 'url("http://cdn2.tribalwars.net/graphic/screen/tableheader_bg3.png?2cef7")';
+        summaryTable.rows[1].cells[i].style.backgroundImage = 'url("' + twcheese.images.tableHeaderBackground + '")';
         summaryTable.rows[1].cells[i].style.backgroundRepeat = 'repeat-x';
         summaryTable.rows[1].cells[i].style.fontSize = '9pt';
         summaryTable.rows[1].cells[i].style.fontWeight = 700;
     }
     summaryTable.rows[1].cells[0].innerHTML = '<b>Arrival</b>';
-    summaryTable.rows[1].cells[1].innerHTML = '<img src=' + twcheese.image['timber'] + '></img>';
-    summaryTable.rows[1].cells[2].innerHTML = '<img src=' + twcheese.image['clay'] + '></img>';
-    summaryTable.rows[1].cells[3].innerHTML = '<img src=' + twcheese.image['iron'] + '></img>';
+    summaryTable.rows[1].cells[1].innerHTML = '<img src=' + twcheese.images.timber + '></img>';
+    summaryTable.rows[1].cells[2].innerHTML = '<img src=' + twcheese.images.clay + '></img>';
+    summaryTable.rows[1].cells[3].innerHTML = '<img src=' + twcheese.images.iron + '></img>';
     summaryTable.rows[1].cells[4].innerHTML = '<b>Performance</b>';
     summaryTable.rows[1].cells[4].colSpan = 2;
 
@@ -647,15 +652,15 @@ twcheese.includeHaulInfo = async function (gameDoc) {
     /*==== add haul headers to the commands table ====*/
     var timberHeader = document.createElement('th');
     commandsTable.rows[0].appendChild(timberHeader);
-    timberHeader.innerHTML = '<img src="/graphic/holz.png?1" title="Wood" alt="Timber" />';
+    timberHeader.innerHTML = '<img src="' + twcheese.images.timber + '" title="Wood" alt="Timber" />';
 
     var clayHeader = document.createElement('th');
     commandsTable.rows[0].appendChild(clayHeader);
-    clayHeader.innerHTML = '<img src="/graphic/lehm.png?1" title="Clay" alt="Clay" />';
+    clayHeader.innerHTML = '<img src="' + twcheese.images.clay + '" title="Clay" alt="Clay" />';
 
     var ironHeader = document.createElement('th');
     commandsTable.rows[0].appendChild(ironHeader);
-    ironHeader.innerHTML = '<img src="/graphic/eisen.png?1" title="Iron" alt="Iron" />';
+    ironHeader.innerHTML = '<img src="' + twcheese.images.iron + '" title="Iron" alt="Iron" />';
 
     var performanceHeader = document.createElement('th');
     commandsTable.rows[0].appendChild(performanceHeader);
@@ -727,7 +732,7 @@ twcheese.style.popup = function (element) {
         browser = '-o-';
 
     element.style.border = '19px solid #804000';
-    $(element).css(browser + 'border-image', 'url("http://cdn2.tribalwars.net/8.16/18699/graphic/popup/border.png?cbbcd") 19 19 19 19 repeat');
+    $(element).css(browser + 'border-image', 'url("' + twcheese.images.popupBorder + '") 19 19 19 19 repeat');
 
     //center
     element.style.marginLeft = (window.innerWidth - $(element).width()) / 2 + 'px';
@@ -738,7 +743,7 @@ twcheese.style.popup = function (element) {
 
 twcheese.loadHaulInfo = function () {
     document.getElementById('twcheese_servant_text').innerHTML = 'May the cheese be with you.';
-    document.getElementById('twcheese_servant_info').innerHTML = 'loading... <img src="graphic/throbber.gif"></img>';
+    document.getElementById('twcheese_servant_info').innerHTML = 'loading... <img src="' + twcheese.images.loadingSpinner + '"></img>';
     setTimeout(
         async function () {
             await twcheese.includeHaulInfo((window.frames.length > 0) ? window.main.document : document);

@@ -612,55 +612,38 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
  */
 twcheese.includeHaulInfo = async function (gameDoc) {
     var commandsTable = gameDoc.getElementById('commands_table');
-    var fillerSpan = commandsTable.rows[0].cells.length;
 
-    /*==== add haul headers to the commands table ====*/
-    var timberHeader = document.createElement('th');
-    commandsTable.rows[0].appendChild(timberHeader);
-    timberHeader.innerHTML = '<img src="' + twcheese.images.timber + '" title="Wood" alt="Timber" />';
-
-    var clayHeader = document.createElement('th');
-    commandsTable.rows[0].appendChild(clayHeader);
-    clayHeader.innerHTML = '<img src="' + twcheese.images.clay + '" title="Clay" alt="Clay" />';
-
-    var ironHeader = document.createElement('th');
-    commandsTable.rows[0].appendChild(ironHeader);
-    ironHeader.innerHTML = '<img src="' + twcheese.images.iron + '" title="Iron" alt="Iron" />';
-
-    var performanceHeader = document.createElement('th');
-    commandsTable.rows[0].appendChild(performanceHeader);
-    performanceHeader.innerHTML = 'Performance';
-
+    $(commandsTable.rows[0]).append(`
+        <th><img src="${twcheese.images.timber}" title="Wood" alt="Timber"></th>
+        <th><img src="${twcheese.images.clay}" title="Clay" alt="Clay"></th>
+        <th><img src="${twcheese.images.iron}" title="Iron" alt="Iron"></th>
+        <th>Performance</th>
+    `);
 
     /*==== append resources hauled to each row in the commands table ====*/
-    var selectorRow = 1;
-    if (document.URL.search('return') != -1)
-        selectorRow = 0;    
+    for (let row of commandsTable.rows) {
+        let firstCell = row.cells[0];
+        if (firstCell.tagName.toLowerCase() === 'th') {
+            // no command here! this is a header row. e.g. the "select all" bar
+            row.cells[row.cells.length - 1].colSpan += 4;
+            continue;
+        }
 
-    for (var i = 1; i < commandsTable.rows.length - selectorRow; i++) {
-        var commandUrl = commandsTable.rows[i].cells[0].getElementsByTagName('a')[0].href;
+        var commandUrl = firstCell.getElementsByTagName('a')[0].href;
         var command = twcheese.scrapeCommand(await twcheese.requestDocumentBody(commandUrl));
 
         /*==== add command to list if it is returning ====*/
-        var command_type = $(commandsTable.rows[i].cells[0]).find('.own_command').data('command-type');
-        if (command_type === 'return') {
+        var command_type = $(firstCell).find('.own_command').data('command-type');
+        if (command_type === 'return') {            
             twcheese.commands.commandsList.push(command);
-        }    
+        }
 
-        var timberCell = commandsTable.rows[i].insertCell(-1);
-        timberCell.innerHTML = command.timber;
-
-        var clayCell = commandsTable.rows[i].insertCell(-1);
-        clayCell.innerHTML = command.clay;
-
-        var ironCell = commandsTable.rows[i].insertCell(-1);
-        ironCell.innerHTML = command.iron;
-
-        var performanceCell = commandsTable.rows[i].insertCell(-1);
-        performanceCell.innerHTML = command.sumLoot() + '/' + command.haulCapacity + ' (' + command.calcHaulPercent() + '%)';
-    }
-    if (selectorRow) {
-        commandsTable.rows[commandsTable.rows.length - 1].cells[0].colSpan = 19;
+        $(row).append(`
+            <td>${command.timber}</td>
+            <td>${command.clay}</td>
+            <td>${command.iron}</td>
+            <td>${command.sumLoot()}/${command.haulCapacity} (${command.calcHaulPercent()}%)</td>
+        `);
     }
 
     twcheese.haulsIncluded = true;

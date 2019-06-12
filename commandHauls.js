@@ -440,38 +440,31 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
     widgetContent.className = 'widget_content';
     widgetContent.style.display = 'none';
 
-    /*==== create options for From menu ====*/
+    // create options for summationContainer
+    
+    let summationFromOptions = [];
+    let summationToOptions = [];
+
     var optionsNeeded = endTime.getTime() / 3600000 - Math.floor(startTime.getTime() / 3600000); //number of hours between the start of the current hour and the latest incoming haul
     var optionStartTime = startTime.dateAtHourStart();
 
-    let summationFromOptions = '';
     for (var i = 0; i <= optionsNeeded; i++) {
-        let time = optionStartTime.getTime();
+        let timeFrom = optionStartTime.getTime();
+        let timeTo = timeFrom + 3599999;
         let hourOfDay = optionStartTime.getServerHours();
         let dayHint = buildDayHint(optionStartTime);
-        summationFromOptions += `<option value=${time}>${hourOfDay}:00 ${dayHint}</option>`;
 
-        optionStartTime = optionStartTime.addHours(1);
-    }
+        summationFromOptions.push(`<option value=${timeFrom}>${hourOfDay}:00 ${dayHint}</option>`);
+        summationToOptions.push(`<option value="${timeTo}">${hourOfDay}:59 ${dayHint}</option>`);
 
-    /*==== create options for To menu ====*/
-    var optionsNeeded = endTime.getTime() / 3600000 - Math.floor(startTime.getTime() / 3600000); //number of hours between the start of the current hour and the latest incoming haul
-    var optionStartTime = startTime.dateAtHourStart();
-
-    let summationToOptions  = '';
-    for (var i = 0; i <= optionsNeeded; i++) {        
-        let time = optionStartTime.getTime() + 3599999;
-        let hourOfDay = optionStartTime.getServerHours();
-        let dayHint = buildDayHint(optionStartTime);
-        summationToOptions += `<option value="${time}">${hourOfDay}:59 ${dayHint}</option>`;
         optionStartTime = optionStartTime.addHours(1);
     }
 
     let summationContainer = `
         <div>
             <div style="text-align: center; width: 100%; margin-top: 5px; margin-bottom: 5px;">
-                From <select id="twcheese_pillaging_stats_from">${summationFromOptions}</select>
-                to <select id="twcheese_pillaging_stats_to">${summationToOptions}</select>
+                From <select id="twcheese_pillaging_stats_from">${summationFromOptions.join('')}</select>
+                to <select id="twcheese_pillaging_stats_to">${summationToOptions.join('')}</select>
             </div>
             <div id="twcheese_pillaging_results" style="text-align: center;">
                 Results displayed here...

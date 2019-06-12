@@ -172,6 +172,10 @@ twcheese.loadConfig = function () {
                 ret = ret.addMilliseconds(0 - serverOffsetFromUtc - localOffsetFromUtc);
             }
             return ret;
+        },
+
+        monthNumber(monthName) {
+            return (new Date(monthName + ' 1 1970')).getMonth();
         }
     };
 
@@ -241,7 +245,7 @@ twcheese.scrapeCommand = function (gameDoc) {
         var content = $(gameDoc).find('#content_value').get()[0];
 
         var arrivalCell = content.getElementsByTagName('table')[0].rows[6].cells[1];
-        command.arrival = twcheese.scrapeArrival(arrivalCell.innerHTML);
+        command.arrival = twcheese.parseArrival($(arrivalCell).text());
 
         var resCell = content.getElementsByTagName('table')[2].rows[0].cells[1];
         var haul = twcheese.resElementToNumbers(resCell);
@@ -263,29 +267,14 @@ twcheese.scrapeCommand = function (gameDoc) {
 };
 
 /**
- * @param	arrivalString - formatted the way tw does it
- * @return	arrival:Date
+ * @param {string} text formatted the way tw does it
+ * @return {TwCheeseDate}
  */
-twcheese.scrapeArrival = function (arrivalString) {
-    var month = arrivalString.substring(0, 3);
-    var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    for (var i = 0; i < 12; i++) {
-        if (month == monthNames[i])
-            month = i;
-    }
-
-    var day = arrivalString.substring(4, 6);
-    var year = arrivalString.substring(8, 13);
-    var hours = arrivalString.substring(14, 16);
-    var minutes = arrivalString.substring(17, 19);
-    var seconds = arrivalString.substring(20, 22);
-    var milliseconds = 0;
-    if (arrivalString.search('grey') != -1)
-        milliseconds = arrivalString.substring(arrivalString.indexOf('grey') + 7, arrivalString.indexOf('grey') + 10);
-
-    //alert(month + '\n' + day + '\n' + year + '\n' + hour + '\n' + minutes + '\n' + seconds + '\n' + milliseconds);
-
-    return twcheese.Timing.newServerDate(year, month, day, hours, minutes, seconds, milliseconds);
+twcheese.parseArrival = function (text) {
+    let expr = /(\D{3}) (\d{1,2}), (\d{4})  (\d{2}):(\d{2}):(\d{2}):?(\d{3})?/;
+    [, monthName, day, year, hours, minutes, seconds, millis] = text.match(expr);
+    let month = twcheese.Timing.monthNumber(monthName);
+    return twcheese.Timing.newServerDate(year, month, day, hours, minutes, seconds, millis || 0);
 };
 
 /**

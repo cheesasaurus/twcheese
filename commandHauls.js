@@ -272,10 +272,11 @@ twcheese.scrapeCommand = function (gameDoc) {
 };
 
 /**
- * @param {string} text formatted the way tw does it
+ * @param {string} text formatted the way tw does it. e.g. "Jun 12, 2019  15:36:23:000"
  * @return {TwCheeseDate}
  */
 twcheese.parseArrival = function (text) {
+    // note: some worlds have milliseconds disabled
     let expr = /(\D{3}) (\d{1,2}), (\d{4})  (\d{2}):(\d{2}):(\d{2}):?(\d{3})?/;
     [, monthName, day, year, hours, minutes, seconds, millis] = text.match(expr);
     let month = twcheese.Timing.monthNumber(monthName);

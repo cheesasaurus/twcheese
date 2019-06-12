@@ -338,41 +338,36 @@ twcheese.popupShowHaulsPrompt = function () {
     var container = document.createElement('div');
     container.id = 'twcheese_showHaulsPrompt';
     container.style.width = '500px';
-    //container.style.height = '300px';
     twcheese.style.popup(container);
 
-    var content = document.createElement('div');
-    content.style.background = 'url("' + twcheese.images.popupBackground + '")';
-    content.style.height = '100%';
-    content.style.width = '100%';
+    container.innerHTML = `
+        <div style="height: 100%; width: 100%; background: url('${twcheese.images.popupBackground}')">
+            <div style="background: no-repeat url('${twcheese.images.servant}');">
+                <h3 style="margin: 0 3px 5px 120px;">My liege,</h3>
+                <div id="twcheese_servant_text" style="margin-left: 120px; height: 50px; margin-top: 30px;">
+                    Dost thou wish hauls to be included on thine screen?
+                </div>
+                <div class="quest-goal">
+                    <table width="100%">
+                        <tbody>
+                            <tr>
+                                <td style="width: 120px; height: 80px;"></td>
+                                <td id="twcheese_servant_info" style="padding-right: 70px;">
+                                    <h5>Load haul information?</h5>
+                                    <p>This could take a while if you have a lot of commands.</p>
+                                    <div class="confirmation-buttons">
+                                        <button id="twcheese_hauls_prompt_confirm" class="btn btn-confirm-yes">Yes</button>
+                                        <button id="twcheese_hauls_prompt_cancel" class="btn btn-default">Cancel</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>    
+    `;
 
-    var servantDivStr = '';
-    servantDivStr += "<div style=\"background: no-repeat url('" + twcheese.images.servant + "');\">";
-    servantDivStr += "<h3 style=\"margin: 0 3px 5px 120px;\">My liege,<\/h3>";
-    servantDivStr += "<div id=\"twcheese_servant_text\" style=\"margin-left:120px;height:50px;margin-top:30px\">Dost thou wish hauls to be included on thine screen?<\/div>";
-    servantDivStr += "";
-    servantDivStr += "<div class=\"quest-goal\">";
-    servantDivStr += "";
-    servantDivStr += "<table width=\"100%\">";
-    servantDivStr += "<tbody>";
-    servantDivStr += "<tr>";
-    servantDivStr += "<td style=\"width: 120px; height: 80px;\"> <\/td>";
-    servantDivStr += "<td id=\"twcheese_servant_info\" style=\"padding-right: 70px;\">";
-    servantDivStr += "<h5>Load haul information?<\/h5>";
-    servantDivStr += "<p>This could take a while if you have a lot of commands.<\/p>";
-    servantDivStr += "<div class=\"confirmation-buttons\">";
-    servantDivStr += "<button id=\"twcheese_hauls_prompt_confirm\" class=\"btn btn-confirm-yes\">Yes<\/button>";
-    servantDivStr += "<button id=\"twcheese_hauls_prompt_cancel\" class=\"btn-default\" >Cancel<\/button>";
-    servantDivStr += "<\/div>";
-    servantDivStr += "<\/td>";
-    servantDivStr += "<\/tr>";
-    servantDivStr += "<\/tbody>";
-    servantDivStr += "<\/table>";
-    servantDivStr += "<\/div>";
-
-    content.innerHTML = servantDivStr;
-
-    container.appendChild(content);
     document.body.appendChild(container);
     twcheese.fadeGameContent();
 

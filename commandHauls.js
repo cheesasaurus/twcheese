@@ -85,64 +85,97 @@ twcheese.loadConfig = function () {
     else
         twcheese.userConfig = {};
     return twcheese.userConfig;
-}
+};
 
-/*==== time functions ====*/
+/*==== timing ====*/
 
-twcheese.Timing = {
-    serverOffsetFromUtc: window.server_utc_diff * 1000,
-    localOffsetFromUtc: new Date().getTimezoneOffset() * 60000,
+(function() {
+    'use strict';
 
-    getCurrentServerTime() {
-        return new Date(Timing.getCurrentServerTime());
-    },
+    let serverOffsetFromUtc = window.server_utc_diff * 1000;
+    let localOffsetFromUtc = new Date().getTimezoneOffset() * 60000;
 
-    convertLocalBuiltServerTimeToUtc(date) {
-        return new Date(date.getTime() - this.serverOffsetFromUtc - this.localOffsetFromUtc);
-    },
+    class TwCheeseDate extends Date {
+        constructor() {
+            if (arguments.length === 0) {
+                super(Timing.getCurrentServerTime());
+            } else {
+                super(...arguments);
+            }
+        }
 
-    isTodayOnServer(date) {
-        let dateAdjusted = new Date(date.getTime() + this.serverOffsetFromUtc);
-        let nowAdjusted = new Date(this.getCurrentServerTime().getTime() + this.serverOffsetFromUtc);
-        return this.isSameDayInUtc(dateAdjusted, nowAdjusted);
-    },
+        clone() {
+            return new TwCheeseDate(this.getTime());
+        }
 
-    isTomorrowOnServer(date) {
-        let dateAdjusted = new Date(date.getTime() + this.serverOffsetFromUtc);
-        let nowAdjusted = new Date(this.getCurrentServerTime().getTime() + this.serverOffsetFromUtc);
+        addDays(days) {
+            let ret = this.clone();
+            ret.setUTCDate(this.getUTCDate() + days);
+            return ret;
+        }
 
-        var tomorrow = new Date(nowAdjusted.getTime());
-        tomorrow.setDate(nowAdjusted.getDate() + 1);
+        addHours(hours) {
+            let ret = this.clone();
+            ret.setUTCHours(this.getUTCHours() + hours);
+            return ret;
+        }
 
-        return this.isSameDayInUtc(dateAdjusted, tomorrow);
-    },
+        addSeconds(seconds) {
+            let ret = this.clone();
+            ret.setUTCSeconds(this.getUTCSeconds() + seconds);
+            return ret;
+        }
 
-    isSameDayInUtc(dateA, dateB) {
-        return dateA.getUTCFullYear() === dateB.getUTCFullYear()
-            && dateA.getUTCMonth() === dateB.getUTCMonth()
-            && dateA.getUTCDate() === dateB.getUTCDate();
-    },
+        addMilliseconds(milliseconds) {
+            let ret = this.clone();
+            ret.setUTCMilliseconds(this.getUTCMilliseconds() + milliseconds);
+            return ret;
+        }
 
-    getServerHours(date) {
-        let dateAdjusted = new Date(date.getTime() + this.serverOffsetFromUtc);
-        return dateAdjusted.getUTCHours();
-    },
+        getServerHours() {
+            return this.addMilliseconds(serverOffsetFromUtc).getUTCHours();
+        }
 
-    dateAtHourStart(date) {
-        var ret = new Date(date);
-        ret.setUTCMinutes(0);
-        ret.setUTCSeconds(0);
-        ret.setUTCMilliseconds(0);
-        return ret;
-    },
+        isTodayOnServer() {
+            let dateAdjusted = this.addMilliseconds(serverOffsetFromUtc);
+            let nowAdjusted = new TwCheeseDate().addMilliseconds(serverOffsetFromUtc);
+            return dateAdjusted.isSameDayInUtc(nowAdjusted);
+        }
 
-    addHours(date, hours) {
-        var ret = new Date(date);
-        ret.setUTCHours(date.getUTCHours() + hours);
-        return ret;
+        isTomorrowOnServer() {
+            let dateAdjusted = this.addMilliseconds(serverOffsetFromUtc);
+            let nowAdjusted = new TwCheeseDate().addMilliseconds(serverOffsetFromUtc);
+            let tomorrow = nowAdjusted.addDays(1);    
+            return dateAdjusted.isSameDayInUtc(tomorrow);
+        }
+
+        isSameDayInUtc(otherDate) {
+            return this.getUTCFullYear() === otherDate.getUTCFullYear()
+                && this.getUTCMonth() === otherDate.getUTCMonth()
+                && this.getUTCDate() === otherDate.getUTCDate();
+        }
+
+        dateAtHourStart() {
+            let ret = this.clone();
+            ret.setUTCMinutes(0);
+            ret.setUTCSeconds(0);
+            ret.setUTCMilliseconds(0);
+            return ret;
+        }
     }
 
-};
+
+    twcheese.Timing = {
+        newServerDate() {
+            let ret = new TwCheeseDate(...arguments);
+            if (arguments.length > 1) {
+                ret = ret.addMilliseconds(0 - serverOffsetFromUtc - localOffsetFromUtc);
+            }
+            return ret;
+        }
+    };
+
+})();
 
 
 /**
@@ -162,7 +195,7 @@ twcheese.formatDateToNamed = function (date) {
     class Command {
         constructor() {
             this.command_id;
-            this.arrival = new Date();
+            this.arrival = twcheese.Timing.newServerDate();
             this.timber = 0;
             this.clay = 0;
             this.iron = 0;
@@ -264,8 +297,7 @@ twcheese.scrapeArrival = function (arrivalString) {
 
     //alert(month + '\n' + day + '\n' + year + '\n' + hour + '\n' + minutes + '\n' + seconds + '\n' + milliseconds);
 
-    var arrivalTime = new Date(year, month, day, hours, minutes, seconds, milliseconds);
-    return twcheese.Timing.convertLocalBuiltServerTimeToUtc(arrivalTime);
+    return twcheese.Timing.newServerDate(year, month, day, hours, minutes, seconds, milliseconds);
 };
 
 /**
@@ -433,14 +465,14 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
     container.className = 'vis widget';
     container.id = 'twcheese_show_pillaging_statistics';
 
-    var startTime = twcheese.Timing.getCurrentServerTime();
+    var startTime = twcheese.Timing.newServerDate();
     var endTime = commandsList[commandsList.length - 1].arrival;
 
     function dayHint(date) {
-        if (twcheese.Timing.isTodayOnServer(date)) {
+        if (date.isTodayOnServer()) {
             return '';
         }
-        else if (twcheese.Timing.isTomorrowOnServer(date)) {
+        else if (date.isTomorrowOnServer()) {
             return ' (tomorrow)';
         }
         return ' (' + twcheese.formatDateToNamed(optionStartTime) + ')';
@@ -450,8 +482,8 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
      *	changes the results displayed in the summation section of the pillaging stats widget
      */
     container.showResults = function () {
-        var startTime = new Date(Number(document.getElementById('twcheese_pillaging_stats_from').value));
-        var endTime = new Date(Number(document.getElementById('twcheese_pillaging_stats_to').value));
+        var startTime = twcheese.Timing.newServerDate(Number(document.getElementById('twcheese_pillaging_stats_from').value));
+        var endTime = twcheese.Timing.newServerDate(Number(document.getElementById('twcheese_pillaging_stats_to').value));
         if (startTime > endTime) {
             tmpTime = startTime;
             startTime = endTime;
@@ -507,15 +539,15 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
     /*==== create options for From menu ====*/
     summationFrom.innerHTML = '';
     var optionsNeeded = endTime.getTime() / 3600000 - Math.floor(startTime.getTime() / 3600000); //number of hours between the start of the current hour and the latest incoming haul
-    var optionStartTime = twcheese.Timing.dateAtHourStart(startTime);
+    var optionStartTime = startTime.dateAtHourStart();
 
     for (var i = 0; i <= optionsNeeded; i++) {
         var option = document.createElement('option');
         option.value = optionStartTime.getTime();
-        option.innerHTML = twcheese.Timing.getServerHours(optionStartTime) + ':00 ' + dayHint(optionStartTime);
+        option.innerHTML = optionStartTime.getServerHours() + ':00 ' + dayHint(optionStartTime);
         summationFrom.appendChild(option);
 
-        optionStartTime = twcheese.Timing.addHours(optionStartTime, 1);
+        optionStartTime = optionStartTime.addHours(1);
     }
 
     selectionContainer.appendChild(summationFrom);
@@ -527,15 +559,15 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
     /*==== create options for To menu ====*/
     summationTo.innerHTML = '';
     var optionsNeeded = endTime.getTime() / 3600000 - Math.floor(startTime.getTime() / 3600000); //number of hours between the start of the current hour and the latest incoming haul
-    var optionStartTime = twcheese.Timing.dateAtHourStart(startTime);
+    var optionStartTime = startTime.dateAtHourStart();
 
     for (var i = 0; i <= optionsNeeded; i++) {
         var option = document.createElement('option');
         option.value = optionStartTime.getTime() + 3599999;
-        option.innerHTML = twcheese.Timing.getServerHours(optionStartTime) + ':59 ' + dayHint(optionStartTime);
+        option.innerHTML = optionStartTime.getServerHours() + ':59 ' + dayHint(optionStartTime);
         summationTo.appendChild(option);
 
-        optionStartTime = twcheese.Timing.addHours(optionStartTime, 1);
+        optionStartTime = optionStartTime.addHours(1);
     }
 
     selectionContainer.appendChild(summationTo);
@@ -586,10 +618,10 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
     summaryTable.rows[1].cells[4].colSpan = 2;
 
     /*==== table contents ====*/
-    var startTime = twcheese.Timing.getCurrentServerTime();
+    var startTime = twcheese.Timing.newServerDate();
 
     var rowsNeeded = endTime.getTime() / 3600000 - Math.floor(startTime.getTime() / 3600000); //number of hours between the start of the current hour and the latest incoming haul
-    var rowStartTime = twcheese.Timing.dateAtHourStart(startTime);
+    var rowStartTime = startTime.dateAtHourStart();
 
     for (var row = 2; row <= rowsNeeded + 2; row++) {
         summaryTable.insertRow(-1);
@@ -599,16 +631,16 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
                 summaryTable.rows[row].cells[col].style.background = '#FFE0A2';
         }
 
-        var result = twcheese.Command.sumPropsFromTimeframe(commandsList, rowStartTime, new Date(rowStartTime.getTime() + 3599999));
+        var result = twcheese.Command.sumPropsFromTimeframe(commandsList, rowStartTime, rowStartTime.addHours(1).addSeconds(-1));
 
-        summaryTable.rows[row].cells[0].innerHTML = twcheese.Timing.getServerHours(rowStartTime) + ':00' + '-' + twcheese.Timing.getServerHours(rowStartTime) + ':59 ' + dayHint(rowStartTime);
+        summaryTable.rows[row].cells[0].innerHTML = rowStartTime.getServerHours() + ':00' + '-' + rowStartTime.getServerHours() + ':59 ' + dayHint(rowStartTime);
         summaryTable.rows[row].cells[1].innerHTML = result.timber;
         summaryTable.rows[row].cells[2].innerHTML = result.clay;
         summaryTable.rows[row].cells[3].innerHTML = result.iron;
         summaryTable.rows[row].cells[4].innerHTML = result.sumLoot() + '/' + result.haulCapacity;
         summaryTable.rows[row].cells[5].innerHTML = result.calcHaulPercent() + '%';
 
-        rowStartTime = twcheese.Timing.addHours(rowStartTime, 1);
+        rowStartTime = rowStartTime.addHours(1);
     }
     widgetContent.appendChild(summaryTable);
 

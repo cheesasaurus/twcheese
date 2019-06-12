@@ -253,10 +253,10 @@ twcheese.scrapeCommand = function (gameDoc) {
         command.arrival = twcheese.parseArrival($(arrivalCell).text());
 
         var resCell = content.getElementsByTagName('table')[2].rows[0].cells[1];
-        var haul = twcheese.resElementToNumbers(resCell);
-        command.timber = haul[0];
-        command.clay = haul[1];
-        command.iron = haul[2];
+        var haul = twcheese.scrapeResources(resCell);
+        command.timber = haul.timber;
+        command.clay = haul.clay;
+        command.iron = haul.iron;
 
         var haulText = resCell.innerHTML;
         if (haulText.search('\\|') !== -1) {
@@ -311,65 +311,25 @@ twcheese.requestDocumentBody = async function (targetUrl) {
     });
 };
 
-/**
- * reads a HTMLElement with the timber count, clay count, and iron count, and converts it to an array of Numbers
- * @param	resElement:HTMLElement	the html of the resources
- * @return	resources:Array(timber:int, clay:int, iron:int)
- */
-twcheese.resElementToNumbers = function (resElement) {
-    var resElementBackupHTML = resElement.innerHTML;
-    var resIconNames = new Array('icon header wood', 'icon header stone', 'icon header iron');
-    var resources = new Array(0, 0, 0);
+ /**
+  * @param {HTMLElement} resourcesContainer an element containing timber/clay/iron amounts
+  * @return {Object} {timber: timberAmount, clay: clayAmount, iron: ironAmount}
+  */
+twcheese.scrapeResources = function (resourcesContainer) {
+    // remove grey periods used as thousands separators
+    $res = $(resourcesContainer).clone().remove('.grey'); 
 
-    /*==== remove the grey periods ====*/
-    $(resElement).children('.grey').remove();
-
-    /*==== remove haul performance ====*/
-    if (resElement.innerHTML.search('\\|') != -1)
-        resElement.innerHTML = resElement.innerHTML.substring(0, resElement.innerHTML.indexOf('|') - 1);
-
-    /*==== set resources ====*/
-    var icons = resElement.getElementsByTagName('span');
-
-    if (navigator.appName == 'Microsoft Internet Explorer') /* internet explorer */ {
-        for (var i = 0; i < icons.length; i++) {
-            /*==== if timber icon is found, set timber ====*/
-            if (icons[i].className == resIconNames[0])
-                resources[0] = parseInt(icons[i].nextSibling.data);
-
-
-            /*==== if clay icon is found, set clay ====*/
-            if (icons[i].className == resIconNames[1])
-                resources[1] = parseInt(icons[i].nextSibling.data);
-
-
-            /*==== if iron icon is found, set iron ====*/
-            if (icons[i].className == resIconNames[2])
-                resources[2] = parseInt(icons[i].nextSibling.data);
-
-        }
-    }
-    else /* if(navigator.appName == 'Opera' || navigator.appName == 'Netscape') //opera, netscape */ {
-        for (var i = 0; i < icons.length; i++) {
-            /*==== if timber icon is found, set timber ====*/
-            if (icons[i].className == resIconNames[0]) {
-                resources[0] = parseInt(icons[i].nextSibling.wholeText);
-            }
-
-            /*==== if clay icon is found, set clay ====*/
-            if (icons[i].className == resIconNames[1]) {
-                resources[1] = parseInt(icons[i].nextSibling.wholeText);
-            }
-
-            /*==== if iron icon is found, set iron ====*/
-            if (icons[i].className == resIconNames[2]) {
-                resources[2] = parseInt(icons[i].nextSibling.wholeText);
-            }
-        }
+    let resAmount = function(resIconCssClass) {
+        // note: sometimes, if the res amount is 0, the game excludes it (and its icon) instead of showing 0
+        let icon = $res.find('span.' + resIconCssClass).get(0);
+        return icon ? parseInt($(icon.nextSibling).text()) : 0;
     }
 
-    resElement.innerHTML = resElementBackupHTML;
-    return resources;
+    return {
+        timber: resAmount('wood'),
+        clay: resAmount('stone'),
+        iron: resAmount('iron')
+    };
 };
 
 /*==== widgets ====*/

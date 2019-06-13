@@ -190,7 +190,6 @@ twcheese.loadConfig = function () {
 
     class Command {
         constructor() {
-            this.command_id;
             this.arrival = twcheese.Timing.newServerDate();
             this.timber = 0;
             this.clay = 0;
@@ -214,7 +213,7 @@ twcheese.loadConfig = function () {
         }
 
         static sumProps(commands) {
-            var sum = new Command();
+            let sum = new Command();
 
             for (let command of commands) {
                 sum.timber += command.timber;

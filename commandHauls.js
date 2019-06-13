@@ -331,6 +331,14 @@ twcheese.scrapeResources = function (resourcesContainer) {
     };
 };
 
+twcheese.scrapePageNumber = function() {
+    let currentPage = $('#paged_view_content').children('table:eq(0)').find('strong').html();
+    if (currentPage && !currentPage.includes('all')) {
+        return parseInt(currentPage.match(/\d+/)[0]);
+    }
+    return null;
+};
+
 /*==== widgets ====*/
 
 twcheese.popupShowHaulsPrompt = function () {
@@ -450,12 +458,8 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
         hourStartTime = hourStartTime.addHours(1);
     }
 
-    let pageInfo = '';
-    var currentPage = $('#paged_view_content').children('table:eq(0)').find('strong').html();
-    if (currentPage) {
-        if (currentPage.search('all') == -1)
-            pageInfo = ' from Page ' + currentPage.match('[0-9]{1,}');
-    }
+    let pageNumber = twcheese.scrapePageNumber();
+    let pageInfo = pageNumber ? `from Page ${pageNumber}` : '';
 
     let html = `
         <div id="twcheese_show_pillaging_statistics" class="vis widget">
@@ -482,7 +486,7 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
                 <!-- hourly breakdown -->
                 <table class="twcheese-pillaging-stats-hourly-breakdown" width="100%">
                     <tbody>
-                        <tr><td colspan="6" style="text-align: center; font-size: 16px;">Incoming Resources${pageInfo}</td></tr>
+                        <tr><td colspan="6" style="text-align: center; font-size: 16px;">Incoming Resources ${pageInfo}</td></tr>
                         <tr>
                             <th>Arrival</th>
                             <th><img src="${twcheese.images.timber}"></img></th>

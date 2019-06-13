@@ -423,12 +423,10 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
     let summationToOptions = [];
     let hourlyBreakdowns = [];
 
-    var startTime = twcheese.Timing.newServerDate();
-    var endTime = commandsList[commandsList.length - 1].arrival;
-    var hoursNeeded = endTime.getTime() / 3600000 - Math.floor(startTime.getTime() / 3600000); //number of hours between the start of the current hour and the latest incoming haul
-    var hourStartTime = startTime.dateAtHourStart();
+    let latestCommandArrival = commandsList[commandsList.length - 1].arrival;
+    let hourStartTime = twcheese.Timing.newServerDate().dateAtHourStart();
 
-    for (let hour = 0; hour <= hoursNeeded; hour++) {
+    while (hourStartTime < latestCommandArrival) {
         let timeFrom = hourStartTime.getTime();
         let timeTo = timeFrom + 3599999;
         let hourOfDay = hourStartTime.getServerHours();

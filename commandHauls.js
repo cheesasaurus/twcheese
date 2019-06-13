@@ -315,7 +315,7 @@ twcheese.requestDocumentBody = async function (targetUrl) {
   */
 twcheese.scrapeResources = function (resourcesContainer) {
     // remove grey periods used as thousands separators
-    $res = $(resourcesContainer).clone().remove('.grey'); 
+    let $res = $(resourcesContainer).clone().remove('.grey'); 
 
     let resAmount = function(resIconCssClass) {
         // note: sometimes, if the res amount is 0, the game excludes it (and its icon) instead of showing 0

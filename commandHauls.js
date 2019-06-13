@@ -77,19 +77,58 @@ twcheese.images = {
 
 })();
 
-/*==== cache functions ====*/
+// config
+(function() {
+    'use strict';
 
-/**
- *  loads the user's configuration for twcheese scripts into twcheese.userConfig
- *	@return	config:Object - the contents of twcheese.userConfig
- */
-twcheese.loadConfig = function () {
-    if (localStorage.getItem('twcheese.userConfig'))
-        twcheese.userConfig = JSON.parse(localStorage.getItem('twcheese.userConfig'));
-    else
-        twcheese.userConfig = {};
-    return twcheese.userConfig;
-};
+    class Config {
+        constructor(id) {
+            this.id = id;
+            this.props = {};
+            this.load();
+        }
+
+        load() {
+            let saved = localStorage.getItem(this.id);
+            if (saved) {
+                this.props = JSON.parse(saved);
+            }
+        }
+
+        save() {
+            localStorage.setItem(this.id, JSON.stringify(this.props));
+        }
+
+        get(prop, defaultValue) {
+            let obj = this.props;
+            let tokens = prop.split('.');
+            for (let i = 0; i < tokens.length - 1; i++) {
+                let token = tokens[i];
+                if (typeof obj[token] !== 'object' || token === null) {
+                    return defaultValue;
+                }
+                obj = obj[token];
+            }
+            return obj[tokens[tokens.length - 1]];
+        }
+
+        set(prop, value) {
+            let obj = this.props;
+            let tokens = prop.split('.');
+            for (let i = 0; i < tokens.length - 1; i++) {
+                let token = tokens[i];
+                if (typeof obj[token] !== 'object' || token === null) {
+                    obj[token] = {};
+                }
+                obj = obj[token];
+            }
+            obj[tokens[tokens.length - 1]] = value;
+            this.save();
+        }
+    }
+
+    twcheese.userConfig = new Config('twcheese.userConfig');
+})();
 
 /*==== timing ====*/
 
@@ -428,25 +467,19 @@ twcheese.popupShowHaulsPrompt = function () {
 twcheese.toggleWidget = function (widgetId, icon) {
     var content = $('#' + widgetId).children('div:first');
 
-    var toggleState;
-    if (icon.src.search('plus') != -1) {
+    let showWidget;
+    if (icon.src.includes('plus')) {
         icon.src = twcheese.images.minus;
         content.show(200);
-        toggleState = 1;
+        showWidget = true;
     }
     else {
         icon.src = twcheese.images.plus;
         content.hide(200);
-        toggleState = 0;
+        showWidget = false;
     }
 
-    // save settings
-    if (typeof twcheese.userConfig[game_data.mode] === 'undefined') {
-        twcheese.userConfig[game_data.mode] = {};
-    }
-    twcheese.userConfig[game_data.mode][widgetId.substring(9)] = toggleState; // substring(9) discards twcheese_ prefix
-
-    localStorage.setItem('twcheese.userConfig', JSON.stringify(twcheese.userConfig));
+    twcheese.userConfig.set('commandHauls.showStats', showWidget);
 };
 
 /**
@@ -670,10 +703,9 @@ twcheese.loadHaulInfo = function () {
             twcheese.createPillagingStatsWidget(twcheese.commands.commandsList);
 
             /*==== apply user configuration ====*/
-            try {
-                if (twcheese.userConfig.commands.show_pillaging_statistics)
-                    $('#twcheese_show_pillaging_statistics').find('img:first').click(); //show pillaging statistics widget
-            } catch (e) { };
+            if (twcheese.userConfig.get('commandHauls.showStats', true)) {
+                $('#twcheese_show_pillaging_statistics').find('img:first').click(); //show pillaging statistics widget
+            }
 
             $('#fader,#twcheese_showHaulsPrompt').remove();
         }
@@ -682,7 +714,6 @@ twcheese.loadHaulInfo = function () {
 
 /*==== main ====*/
 
-twcheese.loadConfig();
 if (!twcheese.commands)
     twcheese.commands = {};
 

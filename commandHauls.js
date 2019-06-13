@@ -312,6 +312,39 @@ twcheese.images = {
 
 })();
 
+(function() {
+
+    class ProgressMonitor {
+        constructor() {
+            this.progress = 0;
+            this.goal = 0;
+            this.progressHandlers = [];
+        }
+    
+        goalDetermined(size) {
+            this.goal = size;
+            this.notifyChange();
+        }
+    
+        progressMade(size) {
+            this.progress += size;
+            this.notifyChange();
+        }
+    
+        notifyChange() {
+            for (let handler of this.progressHandlers) {
+                handler({progress: this.progress, goal: this.goal});
+            }
+        }
+    
+        onChange(handler) {
+            this.progressHandlers.push(handler);
+        }
+    }
+
+    twcheese.ProgressMonitor = ProgressMonitor;
+})();
+
 /*==== scraper functions ====*/
 
 /**
@@ -432,12 +465,21 @@ twcheese.popupShowHaulsPrompt = function () {
                             <tbody>
                                 <tr>
                                     <td style="width: 120px; height: 80px;"></td>
-                                    <td id="twcheese_servant_info" style="padding-right: 70px;">
+                                    <td id="twcheese_servant_info_prompt" style="padding-right: 70px;">
                                         <h5>Load haul information?</h5>
                                         <p>This could take a while if you have a lot of commands.</p>
                                         <div class="confirmation-buttons">
                                             <button id="twcheese_hauls_prompt_confirm" class="btn btn-confirm-yes">Yes</button>
                                             <button id="twcheese_hauls_prompt_cancel" class="btn btn-default">Cancel</button>
+                                        </div>
+                                    </td>
+                                    <td id="twcheese_servant_info_loading" style="padding-right: 70px; display: none;">
+                                        <h5>Loading hauls</h5>
+                                        <div>
+                                            <span id="twcheese_hauls_loading_bar">
+                                                <div class="filler"></div>
+                                            </span>
+                                            <span id="twcheese_hauls_loading_text"></span>
                                         </div>
                                     </td>
                                 </tr>
@@ -449,15 +491,55 @@ twcheese.popupShowHaulsPrompt = function () {
         </div>
     `;
 
+    twcheese.style.initCss(`
+        #twcheese_hauls_loading_bar {
+            display: inline-block;
+            border: 2px solid black;
+            background-color: darkgrey;
+            width: 200px;
+            height: 16px;
+            vertical-align: middle;
+        }
+        #twcheese_hauls_loading_bar .filler {
+            display: block;
+            width: 0;
+            height: 100%;
+            background-color: darkorange;
+            -webkit-transition-duration: 300ms;
+            -mos-transition-duration: 300ms;
+            -o-transition-duration: 300ms;
+            transition-duration: 300ms;
+        }
+        #twcheese_hauls_loading_text {
+            line-height: 16px;
+            vertical-align: middle;
+            font-size: 10px;
+            margin: 5px;
+        }
+    `);
+
     $('body').append(popupHtml);
     twcheese.fadeGameContent();
+
+    // init progress bar
+    let $progressBarFiller = $('#twcheese_hauls_loading_bar').find('.filler');
+    let $progressText = $('#twcheese_hauls_loading_text');
+    let updateProgress = function(progress, goal) {
+        let percent = 100 * progress / goal;
+        $progressBarFiller.css({width: `${percent}%`});
+        $progressText.html(`${progress}/${goal}`);
+    }
 
     $('#twcheese_hauls_prompt_confirm').on('click', async function(e) {
         e.preventDefault();
         document.getElementById('twcheese_servant_text').innerHTML = 'May the cheese be with you.';
-        document.getElementById('twcheese_servant_info').innerHTML = 'loading... <img src="' + twcheese.images.loadingSpinner + '"></img>';
+        $('#twcheese_servant_info_prompt').hide();
+        $('#twcheese_servant_info_loading').show();
 
-        await twcheese.enhanceScreenWithHaulInfo();
+        let progressMonitor = new twcheese.ProgressMonitor();
+        progressMonitor.onChange((e) => updateProgress(e.progress, e.goal));
+
+        await twcheese.enhanceScreenWithHaulInfo(progressMonitor);
 
         $('#twcheese_showHaulsPrompt').remove();
         twcheese.unfadeGameContent();
@@ -619,7 +701,10 @@ twcheese.createPillagingStatsWidget = function(commands, collapsed) {
 
 /*==== enhancement functions ====*/
 
-twcheese.appendHaulColsToCommandsTable = async function () {
+/**
+ * @param {ProgressMonitor} progressMonitor
+ */
+twcheese.appendHaulColsToCommandsTable = async function (progressMonitor) {
     let commandsTable = document.getElementById('commands_table');
 
     $(commandsTable.rows[0]).append(`
@@ -628,6 +713,9 @@ twcheese.appendHaulColsToCommandsTable = async function () {
         <th><img src="${twcheese.images.iron}" title="Iron" alt="Iron"></th>
         <th>Performance</th>
     `);
+
+    let totalCommands = $(commandsTable).find('.rename-icon').length;
+    progressMonitor.goalDetermined(totalCommands);
 
     /*==== append resources hauled to each row in the commands table ====*/
     for (let row of commandsTable.rows) {
@@ -653,6 +741,8 @@ twcheese.appendHaulColsToCommandsTable = async function () {
             <td>${command.iron}</td>
             <td>${command.sumLoot()}/${command.haulCapacity} (${command.calcHaulPercent()}%)</td>
         `);
+
+        progressMonitor.progressMade(1);
     }
 };
 
@@ -692,8 +782,8 @@ twcheese.style.initCss(`
     }
 `);
 
-twcheese.enhanceScreenWithHaulInfo = async function () {
-    await twcheese.appendHaulColsToCommandsTable(document);
+twcheese.enhanceScreenWithHaulInfo = async function (progressMonitor) {
+    await twcheese.appendHaulColsToCommandsTable(progressMonitor);
 
     let collapseStats = twcheese.userConfig.get('commandHauls.collapseStats', false);
     twcheese.createPillagingStatsWidget(twcheese.commands.commandsList, collapseStats);

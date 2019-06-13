@@ -464,29 +464,12 @@ twcheese.popupShowHaulsPrompt = function () {
     });
 };
 
-twcheese.toggleWidget = function (widgetId, icon) {
-    var content = $('#' + widgetId).children('div:first');
-
-    let showWidget;
-    if (icon.src.includes('plus')) {
-        icon.src = twcheese.images.minus;
-        content.show(200);
-        showWidget = true;
-    }
-    else {
-        icon.src = twcheese.images.plus;
-        content.hide(200);
-        showWidget = false;
-    }
-
-    twcheese.userConfig.set('commandHauls.showStats', showWidget);
-};
-
 /**
  *	creates a widget with statistics about the returning hauls
- *	@param commandsList:Array(command1:twcheese.Command,command2:twcheese.Command ...)	- an array of commands to use for the stats
+ *	@param {Command[]} commands
+ *  @param {boolean} collapsed
  */
-twcheese.createPillagingStatsWidget = function (commandsList) {
+twcheese.createPillagingStatsWidget = function(commands, collapsed) {
 
     function buildDayHint(date) {
         if (date.isTodayOnServer()) {
@@ -502,7 +485,7 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
     let summationToOptions = [];
     let hourlyBreakdowns = [];
 
-    let latestCommandArrival = commandsList[commandsList.length - 1].arrival;
+    let latestCommandArrival = commands[commands.length - 1].arrival;
     let startOfHour = twcheese.Timing.newServerDate().startOfHour();
 
     while (startOfHour < latestCommandArrival) {
@@ -513,7 +496,7 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
         summationFromOptions.push(`<option value=${startOfHour.getTime()}>${hourOfDay}:00 ${dayHint}</option>`);
         summationToOptions.push(`<option value="${endOfHour.getTime()}">${hourOfDay}:59 ${dayHint}</option>`);
 
-        let result = twcheese.Command.sumPropsFromTimeframe(commandsList, startOfHour, endOfHour);
+        let result = twcheese.Command.sumPropsFromTimeframe(commands, startOfHour, endOfHour);
         hourlyBreakdowns.push(`
             <tr>
                 <td>${hourOfDay}:00 - ${hourOfDay}:59 ${dayHint}</td>
@@ -531,16 +514,19 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
     let pageNumber = twcheese.scrapePageNumber();
     let pageInfo = pageNumber ? `from Page ${pageNumber}` : '';
 
+    let toggleIconSrc = collapsed ? twcheese.images.plus : twcheese.images.minus;
+    let contentDisplay = collapsed ? 'none' : 'block';
+
     let html = `
-        <div id="twcheese_show_pillaging_statistics" class="vis widget">
+        <div id="twcheese_pillaging_stats" class="vis widget">
             <h4>
                 Pillaging Statistics
-                <img id="twcheese_pillaging_stats_toggle" src="${twcheese.images.plus}" style="float:right; cursor: pointer;">
+                <img id="twcheese_pillaging_stats_toggle" src="${toggleIconSrc}" style="float:right; cursor: pointer;">
                 <span style="font-size: 8px; font-style: normal; font-weight: normal; margin-right: 25px; float: right;">
                     created by <a href="http://forum.tribalwars.net/member.php?u=28484">cheesasaurus</a>
                 </span>
             </h4>
-            <div class="widget_content" style="display: none;">
+            <div id="twcheese_pillaging_stats_content" style="display: ${contentDisplay};">
                 <!-- summation -->
                 <div>
                     <div style="text-align: center; width: 100%; margin-top: 5px; margin-bottom: 5px;">
@@ -589,7 +575,7 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
             startTime = endTime;
             endTime = tmpTime;
         }
-        var results = twcheese.Command.sumPropsFromTimeframe(commandsList, startTime, endTime);
+        var results = twcheese.Command.sumPropsFromTimeframe(commands, startTime, endTime);
 
         $('#twcheese_pillaging_results').html(`
             <img src="${twcheese.images.timber}"> ${results.timber}
@@ -599,10 +585,24 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
         `);
     };
 
+    let toggleCollapse = function() {
+        let icon = document.getElementById('twcheese_pillaging_stats_toggle');
+        let content = $('#twcheese_pillaging_stats_content');
+
+        content.toggle({
+            duration: 200,
+            start: function() {
+                let willCollapse = icon.src.includes(twcheese.images.minus);
+                icon.src = willCollapse ? twcheese.images.plus : twcheese.images.minus;
+                twcheese.userConfig.set('commandHauls.collapseStats', willCollapse);
+            }
+        });
+    }
+
     /*==== initialize interactive components ====*/
     $('#twcheese_pillaging_stats_toggle').on('click', function(e) {
         e.preventDefault();
-        twcheese.toggleWidget('twcheese_show_pillaging_statistics', this);
+        toggleCollapse();
     });
     document.getElementById('twcheese_pillaging_stats_from').onchange = showResults;
     document.getElementById('twcheese_pillaging_stats_to').onchange = showResults;
@@ -699,13 +699,8 @@ twcheese.loadHaulInfo = function () {
         async function () {
             await twcheese.includeHaulInfo((window.frames.length > 0) ? window.main.document : document);
 
-            /*==== stats ====*/
-            twcheese.createPillagingStatsWidget(twcheese.commands.commandsList);
-
-            /*==== apply user configuration ====*/
-            if (twcheese.userConfig.get('commandHauls.showStats', true)) {
-                $('#twcheese_show_pillaging_statistics').find('img:first').click(); //show pillaging statistics widget
-            }
+            let collapseStats = twcheese.userConfig.get('commandHauls.collapseStats', false);
+            twcheese.createPillagingStatsWidget(twcheese.commands.commandsList, collapseStats);
 
             $('#fader,#twcheese_showHaulsPrompt').remove();
         }

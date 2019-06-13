@@ -124,6 +124,12 @@ twcheese.loadConfig = function () {
             return ret;
         }
 
+        addMinutes(minutes) {
+            let ret = this.clone();
+            ret.setUTCMinutes(this.getUTCMinutes() + minutes);
+            return ret;
+        }
+
         addSeconds(seconds) {
             let ret = this.clone();
             ret.setUTCSeconds(this.getUTCSeconds() + seconds);
@@ -134,6 +140,26 @@ twcheese.loadConfig = function () {
             let ret = this.clone();
             ret.setUTCMilliseconds(this.getUTCMilliseconds() + milliseconds);
             return ret;
+        }
+
+        subDays(days) {
+            return this.addDays(-days);        
+        }
+
+        subHours(hours) {
+            return this.addHours(-hours);
+        }
+
+        subMinutes(minutes) {
+            return this.addMinutes(-minutes);
+        }
+
+        subSeconds(seconds) {
+            return this.addSeconds(-seconds);
+        }
+
+        subMilliseconds(milliseconds) {
+            return this.addMilliseconds(-milliseconds);
         }
 
         getServerHours() {
@@ -159,17 +185,30 @@ twcheese.loadConfig = function () {
                 && this.getUTCDate() === otherDate.getUTCDate();
         }
 
-        dateAtHourStart() {
+        startOfHour() {
             let ret = this.clone();
             ret.setUTCMinutes(0);
             ret.setUTCSeconds(0);
             ret.setUTCMilliseconds(0);
             return ret;
         }
+
+        endOfHour() {
+            let ret = this.clone();
+            ret.setUTCMinutes(59);
+            ret.setUTCSeconds(59);
+            ret.setUTCMilliseconds(999);
+            return ret;
+        }
     }
 
 
     twcheese.Timing = {
+
+        /**
+         * @params whatever would be passed to a Date constructor
+         * @return {TwCheeseDate}
+         */
         newServerDate() {
             let ret = new TwCheeseDate(...arguments);
             if (arguments.length > 1) {
@@ -431,18 +470,17 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
     let hourlyBreakdowns = [];
 
     let latestCommandArrival = commandsList[commandsList.length - 1].arrival;
-    let hourStartTime = twcheese.Timing.newServerDate().dateAtHourStart();
+    let startOfHour = twcheese.Timing.newServerDate().startOfHour();
 
-    while (hourStartTime < latestCommandArrival) {
-        let timeFrom = hourStartTime.getTime();
-        let timeTo = timeFrom + 3599999;
-        let hourOfDay = hourStartTime.getServerHours();
-        let dayHint = buildDayHint(hourStartTime);
+    while (startOfHour < latestCommandArrival) {
+        let endOfHour = startOfHour.endOfHour();
+        let hourOfDay = startOfHour.getServerHours();
+        let dayHint = buildDayHint(startOfHour);
 
-        summationFromOptions.push(`<option value=${timeFrom}>${hourOfDay}:00 ${dayHint}</option>`);
-        summationToOptions.push(`<option value="${timeTo}">${hourOfDay}:59 ${dayHint}</option>`);
+        summationFromOptions.push(`<option value=${startOfHour.getTime()}>${hourOfDay}:00 ${dayHint}</option>`);
+        summationToOptions.push(`<option value="${endOfHour.getTime()}">${hourOfDay}:59 ${dayHint}</option>`);
 
-        let result = twcheese.Command.sumPropsFromTimeframe(commandsList, hourStartTime, hourStartTime.addHours(1).addSeconds(-1));
+        let result = twcheese.Command.sumPropsFromTimeframe(commandsList, startOfHour, endOfHour);
         hourlyBreakdowns.push(`
             <tr>
                 <td>${hourOfDay}:00 - ${hourOfDay}:59 ${dayHint}</td>
@@ -454,7 +492,7 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
             </tr>
         `);
 
-        hourStartTime = hourStartTime.addHours(1);
+        startOfHour = startOfHour.addHours(1);
     }
 
     let pageNumber = twcheese.scrapePageNumber();

@@ -438,15 +438,14 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
         summationToOptions.push(`<option value="${timeTo}">${hourOfDay}:59 ${dayHint}</option>`);
 
         let result = twcheese.Command.sumPropsFromTimeframe(commandsList, hourStartTime, hourStartTime.addHours(1).addSeconds(-1));
-        let style = hour % 2 > 0 ? 'background: #FFE0A2;' : '';
         hourlyBreakdowns.push(`
             <tr>
-                <td style="${style}">${hourOfDay}:00 - ${hourOfDay}:59 ${dayHint}</td>
-                <td style="${style}">${result.timber}</td>
-                <td style="${style}">${result.clay}</td>
-                <td style="${style}">${result.iron}</td>
-                <td style="${style}">${result.sumLoot()}/${result.haulCapacity}</td>
-                <td style="${style}">${result.calcHaulPercent()}%</td>
+                <td>${hourOfDay}:00 - ${hourOfDay}:59 ${dayHint}</td>
+                <td>${result.timber}</td>
+                <td>${result.clay}</td>
+                <td>${result.iron}</td>
+                <td>${result.sumLoot()}/${result.haulCapacity}</td>
+                <td>${result.calcHaulPercent()}%</td>
             </tr>
         `);
 
@@ -483,7 +482,7 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
                 </div>
                 
                 <!-- hourly breakdown -->
-                <table width="100%">
+                <table class="twcheese-pillaging-stats-hourly-breakdown" width="100%">
                     <tbody>
                         <tr><td colspan="6" style="text-align: center; font-size: 16px;">Incoming Resources${pageInfo}</td></tr>
                         <tr>
@@ -500,6 +499,12 @@ twcheese.createPillagingStatsWidget = function (commandsList) {
         </div>
     `;
     $('.modemenu:eq(1)').after(html);
+
+    twcheese.style.initCss(`
+        .twcheese-pillaging-stats-hourly-breakdown tr:nth-child(even) td {
+            background: #FFE0A2;
+        }
+    `);
 
     /**
      *	changes the results displayed in the summation section of the pillaging stats widget

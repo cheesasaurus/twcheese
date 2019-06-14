@@ -716,6 +716,7 @@ twcheese.createPillagingStatsWidget = function(commands, collapsed) {
 
 /**
  * @param {ProgressMonitor} progressMonitor
+ * @return {Command[]} returning commands from the table
  */
 twcheese.appendHaulColsToCommandsTable = async function (progressMonitor) {
     let commandsTable = document.getElementById('commands_table');
@@ -727,10 +728,10 @@ twcheese.appendHaulColsToCommandsTable = async function (progressMonitor) {
         <th>Performance</th>
     `);
 
-    let totalCommands = $(commandsTable).find('.rename-icon').length;
-    progressMonitor.goalDetermined(totalCommands);
+    let commandCount = $(commandsTable).find('.rename-icon').length;
+    progressMonitor.goalDetermined(commandCount);
+    let returningCommands = [];
 
-    /*==== append resources hauled to each row in the commands table ====*/
     for (let row of commandsTable.rows) {
         let firstCell = row.cells[0];
         if (firstCell.tagName.toLowerCase() === 'th') {
@@ -739,13 +740,11 @@ twcheese.appendHaulColsToCommandsTable = async function (progressMonitor) {
             continue;
         }
 
-        var commandUrl = firstCell.getElementsByTagName('a')[0].href;
-        var command = twcheese.scrapeCommand(await twcheese.requestDocumentBody(commandUrl));
-
-        /*==== add command to list if it is returning ====*/
-        var command_type = $(firstCell).find('.own_command').data('command-type');
-        if (command_type === 'return') {            
-            twcheese.commands.commandsList.push(command);
+        let commandUrl = firstCell.getElementsByTagName('a')[0].href;
+        let command = twcheese.scrapeCommand(await twcheese.requestDocumentBody(commandUrl));
+        let commandType = $(firstCell).find('.own_command').data('command-type');
+        if (commandType === 'return') {            
+            returningCommands.push(command);
         }
 
         $(row).append(`
@@ -757,6 +756,8 @@ twcheese.appendHaulColsToCommandsTable = async function (progressMonitor) {
 
         progressMonitor.progressMade(1);
     }
+
+    return returningCommands;
 };
 
 twcheese.fadeGameContent = function () {
@@ -796,20 +797,15 @@ twcheese.style.initCss(`
 `);
 
 twcheese.enhanceScreenWithHaulInfo = async function (progressMonitor) {
-    await twcheese.appendHaulColsToCommandsTable(progressMonitor);
+    let returningCommands = await twcheese.appendHaulColsToCommandsTable(progressMonitor);
 
     let collapseStats = twcheese.userConfig.get('commandHauls.collapseStats', false);
-    twcheese.createPillagingStatsWidget(twcheese.commands.commandsList, collapseStats);
+    twcheese.createPillagingStatsWidget(returningCommands, collapseStats);
 
     twcheese.haulsIncluded = true;
 };
 
 /*==== main ====*/
-
-if (!twcheese.commands)
-    twcheese.commands = {};
-
-twcheese.commands.commandsList = new Array();
 
 if (!twcheese.haulsIncluded) {
     if (game_data.screen == 'overview_villages' && game_data.mode == 'commands') {

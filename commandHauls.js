@@ -456,16 +456,15 @@ twcheese.popupShowHaulsPrompt = function () {
         <div id="twcheese_showHaulsPrompt" class="twcheese-popup" style="width: 500px;">
             <div style="height: 100%; width: 100%; background: url('${twcheese.images.popupBackground}')">
                 <div style="background: no-repeat url('${twcheese.images.servant}');">
-                    <h3 style="margin: 0 3px 5px 120px;">My liege,</h3>
-                    <div id="twcheese_servant_text" style="margin-left: 120px; height: 50px; margin-top: 30px;">
-                        Dost thou wish hauls to be included on thine screen?
+                    <div id="twcheese_servant_text">
+                        <p style="font-size: 16px;">My liege,</p>
+                        <p>Dost thou wish hauls to be included on thine screen?</p>
                     </div>
                     <div class="quest-goal">
                         <table width="100%">
                             <tbody>
                                 <tr>
-                                    <td style="width: 120px; height: 80px;"></td>
-                                    <td id="twcheese_servant_info_prompt" style="padding-right: 70px;">
+                                    <td id="twcheese_servant_info_prompt" class="twcheese-servant-info">
                                         <h5>Load haul information?</h5>
                                         <p>This could take a while if you have a lot of commands.</p>
                                         <div class="confirmation-buttons">
@@ -473,13 +472,13 @@ twcheese.popupShowHaulsPrompt = function () {
                                             <button id="twcheese_hauls_prompt_cancel" class="btn btn-default">Cancel</button>
                                         </div>
                                     </td>
-                                    <td id="twcheese_servant_info_loading" style="padding-right: 70px; display: none;">
+                                    <td id="twcheese_servant_info_loading" class="twcheese-servant-info" style="display: none;">
                                         <h5>Loading hauls</h5>
-                                        <div>
+                                        <div style="margin-top: 10px;">
                                             <span id="twcheese_hauls_loading_bar">
                                                 <div class="filler"></div>
                                             </span>
-                                            <span id="twcheese_hauls_loading_text"></span>
+                                            <span id="twcheese_hauls_loading_text">999/1000</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -492,6 +491,12 @@ twcheese.popupShowHaulsPrompt = function () {
     `;
 
     twcheese.style.initCss(`
+        #twcheese_servant_text {
+            box-sizing: border-box;
+            height: 100px;
+            margin-left: 120px;
+            padding-top: 10px;
+        }
         #twcheese_hauls_loading_bar {
             display: inline-block;
             border: 2px solid black;
@@ -499,6 +504,7 @@ twcheese.popupShowHaulsPrompt = function () {
             width: 200px;
             height: 16px;
             vertical-align: middle;
+            margin-left: 60px;
         }
         #twcheese_hauls_loading_bar .filler {
             display: block;
@@ -511,10 +517,17 @@ twcheese.popupShowHaulsPrompt = function () {
             transition-duration: 300ms;
         }
         #twcheese_hauls_loading_text {
+            display: inline-block;
             line-height: 16px;
             vertical-align: middle;
             font-size: 10px;
             margin: 5px;
+            width: 60px;
+            text-align: left;
+        }
+        .twcheese-servant-info {
+            text-align: center;
+            height: 80px;
         }
     `);
 
@@ -532,7 +545,7 @@ twcheese.popupShowHaulsPrompt = function () {
 
     $('#twcheese_hauls_prompt_confirm').on('click', async function(e) {
         e.preventDefault();
-        document.getElementById('twcheese_servant_text').innerHTML = 'May the cheese be with you.';
+        document.getElementById('twcheese_servant_text').innerHTML = '<br/>May the cheese be with you.';
         $('#twcheese_servant_info_prompt').hide();
         $('#twcheese_servant_info_loading').show();
 

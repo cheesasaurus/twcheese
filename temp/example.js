@@ -1,5 +1,5 @@
 (function() {
-    let script = '/build/templates/launch-esm.js';
+    let script = '/src/ToolSetup/example.js';
 
     let useTool = function() {
         ___TOOL_USE___

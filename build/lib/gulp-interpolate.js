@@ -24,8 +24,18 @@ let interpolate = function(string, replacements, file) {
 
 
 /**
- * @param {Map<string|RegExp><string|function>} replacements
- *      todo: document
+ * @callback createReplacement
+ * @param {Vinyl} file
+ * @return string
+ */
+
+/**
+ * @param {Map.<string|RegExp, string|createReplacement>} replacements mapping of patterns to replacements
+ * 
+ *      A pattern can be a string or RegExp.
+ * 
+ *      A replacement can be a string or function. If it's a function, it will be passed one param:
+ *          - the Vinyl being processed
  */
 module.exports = function(replacements) {
     return new Transform({

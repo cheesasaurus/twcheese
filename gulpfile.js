@@ -28,14 +28,14 @@ let esmReplacements = new Map([
     ['___HOSTING_ROOT___', hostingRoot]
 ]);
 
-function testBuildEsLaunchers() {
+function buildEsModuleLaunchers() {
     return src('src/ToolSetup/*.js')
         .pipe(replaceContent(templateLaunchESM))
         .pipe(interpolate(esmReplacements))
         .pipe(beautify())
-        .pipe(dest('temp/'));
+        .pipe(dest('launch/esm/'));
 }
 
 // todo: build dist
 
-exports.testBuildEsLaunchers = series(testBuildEsLaunchers);
+exports.buildEsModuleLaunchers = series(buildEsModuleLaunchers);

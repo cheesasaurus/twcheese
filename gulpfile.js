@@ -56,7 +56,8 @@ function compileToolSetup() {
             },
             optimization: {
                 minimize: true
-            }
+            },
+            mode: 'production'
         }))
         .pipe(dest(compiledToolSetupDir));;
 }

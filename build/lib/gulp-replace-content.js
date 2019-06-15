@@ -10,9 +10,7 @@ const PLUGIN_NAME = 'replace-content';
 module.exports = function(newContent) {
     return new Transform({
         objectMode: true,
-        transform: function(file, encoding, callback) {
-            let filename = file.path.replace(file.cwd, '').replace(/\\/g, '/');
-        
+        transform: function(file, encoding, callback) {        
             if (file.isNull()) {
                 return callback(null, file);
             }

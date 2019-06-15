@@ -1,4 +1,5 @@
 const { series, src, dest } = require('gulp');
+const beautify = require('gulp-jsbeautifier');
 const interpolate = require('./build/lib/gulp-interpolate.js');
 const replaceContent = require('./build/lib/gulp-replace-content.js');
 const fs = require('fs');
@@ -31,9 +32,9 @@ function testBuildEsLaunchers() {
     return src('src/ToolSetup/*.js')
         .pipe(replaceContent(templateLaunchESM))
         .pipe(interpolate(esmReplacements))
+        .pipe(beautify())
         .pipe(dest('temp/'));
 }
-// todo: step to fix indentation after interpolating multi-line stuff
 
 // todo: build dist
 

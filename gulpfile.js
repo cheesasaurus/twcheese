@@ -1,4 +1,4 @@
-const { series, src, dest } = require('gulp');
+const { series, parallel, src, dest } = require('gulp');
 const beautify = require('gulp-jsbeautifier');
 const interpolate = require('./build/lib/gulp-interpolate.js');
 const replaceContent = require('./build/lib/gulp-replace-content.js');
@@ -76,3 +76,4 @@ function buildDist() {
 
 exports.buildEsModuleLaunchers = series(buildEsModuleLaunchers);
 exports.buildDist = series(compileToolSetup, buildDist);
+exports.default = parallel(buildEsModuleLaunchers, buildDist);

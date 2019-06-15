@@ -1,5 +1,4 @@
 const { series, src, dest } = require('gulp');
-const interpolateFilename = require('./build/lib/gulp-interpolate-filename.js');
 const interpolate = require('./build/lib/gulp-interpolate.js');
 const replaceContent = require('./build/lib/gulp-replace-content.js');
 const fs = require('fs');
@@ -26,12 +25,6 @@ function testSpawnTemplates() {
         .pipe(dest('temp/'));
 }
 
-function testInterpolateFilename() {
-    return src('build/templates/launch-esm.js')
-        .pipe(interpolateFilename('___SCRIPT___'))
-        .pipe(dest('temp/'));
-}
-
 function testInterpolate() {
     return src('build/templates/launch-esm.js')
         .pipe(interpolate(esmReplacements))
@@ -39,5 +32,4 @@ function testInterpolate() {
 }
 
 exports.testInterpolate = series(testInterpolate);
-exports.testInterpolateFilename = series(testInterpolateFilename);
 exports.testSpawnTemplates = series(testSpawnTemplates);

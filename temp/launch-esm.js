@@ -1,7 +1,7 @@
 (function() {
-    let script = '/src/ToolSetup/example.js';
+    let script = '/build/templates/launch-esm.js';
 
-    let useTool = function() {
+    let blahBlahBlucci = function() {
         ___TOOL_USE___
     };
 
@@ -9,9 +9,9 @@
     
     if (TwCheese.scripts.includes(script)) {
         console.log('using...'); // TODO: remove this after tested
-        useTool();
+        blahBlahBlucci();
     } else {
         console.log('preparing script...'); // TODO: remove this after tested
-        TwCheese.prepareScript(script, useTool);
+        TwCheese.prepareScript(script, blahBlahBlucci);
     }
 })();

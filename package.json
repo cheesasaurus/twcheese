@@ -1,0 +1,26 @@
+{
+  "name": "twcheese",
+  "version": "1.0.0",
+  "description": "tribal wars scripts",
+  "main": "launch/",
+  "dependencies": {
+    "rollup": "^1.15.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cheesasaurus/twcheese.git"
+  },
+  "keywords": [
+    "tribal wars"
+  ],
+  "author": "Nicholas Toby",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/cheesasaurus/twcheese/issues"
+  },
+  "homepage": "https://github.com/cheesasaurus/twcheese#readme"
+}

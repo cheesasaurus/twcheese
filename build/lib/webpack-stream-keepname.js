@@ -1,4 +1,5 @@
 // from https://github.com/shama/webpack-stream/
+// modified to keep filename unless configured to replace it
 
 'use strict';
 
@@ -92,8 +93,10 @@ module.exports = function (options, wp, done) {
   var webpack = wp || require('webpack');
   var entry = [];
   var entries = Object.create(null);
+  var file;
 
-  var stream = through(function (file) {
+  var stream = through(function (fileIn) {
+    file = fileIn;
     if (file.isNull()) {
       return;
     }
@@ -125,7 +128,7 @@ module.exports = function (options, wp, done) {
 
       config.entry = config.entry || entry;
       config.output.path = config.output.path || process.cwd();
-      config.output.filename = config.output.filename || '[hash].js';
+      config.output.filename = config.output.filename || file.relative;
       config.watch = options.watch;
       entry = [];
 

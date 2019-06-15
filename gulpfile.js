@@ -10,26 +10,31 @@ let projectFilename = function(file) {
             .replace(/\\/g, '/');
 }
 
+let toolUse = function(file) {
+    return fs.readFileSync(`src/ToolUse/${file.relative}`, 'utf8');
+}
+
+let twcheese = fs.readFileSync('src/TwCheese.js', 'utf8');
+let hostingRoot = fs.readFileSync('conf/host', 'utf8');
+
+// build esm launchers
 
 let templateLaunchESM = fs.readFileSync('build/templates/launch-esm.js', 'utf8');
 let esmReplacements = new Map([
     ['___SCRIPT___', projectFilename],
-    [/useTool/g, 'blahBlahBlucci']
+    ['___TOOL_USE___', toolUse],
+    ['___TWCHEESE___', twcheese],
+    ['___HOSTING_ROOT___', hostingRoot]
 ]);
 
-
-function testSpawnTemplates() {
+function testBuildEsLaunchers() {
     return src('src/ToolSetup/*.js')
         .pipe(replaceContent(templateLaunchESM))
-        .pipe(interpolateFilename('___SCRIPT___'))
-        .pipe(dest('temp/'));
-}
-
-function testInterpolate() {
-    return src('build/templates/launch-esm.js')
         .pipe(interpolate(esmReplacements))
         .pipe(dest('temp/'));
 }
+// todo: step to fix indentation after interpolating multi-line stuff
 
-exports.testInterpolate = series(testInterpolate);
-exports.testSpawnTemplates = series(testSpawnTemplates);
+// todo: build dist
+
+exports.testBuildEsLaunchers = series(testBuildEsLaunchers);

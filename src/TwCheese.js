@@ -1,6 +1,6 @@
 if (typeof window.TwCheese === 'undefined') {
     window.TwCheese = {
-        ROOT: ___REPLACE_ME___,
+        ROOT: '___HOSTING_ROOT___',
         scripts: [],
         actions: {},
         prepareScript: function(script, onready) {

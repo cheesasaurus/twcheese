@@ -4,6 +4,9 @@
   "description": "tribal wars scripts",
   "main": "launch/",
   "dependencies": {
+    "gulp": "^4.0.2",
+    "gulp-cli": "^2.2.0",
+    "gulp-replace": "^1.0.0",
     "webpack": "^4.34.0",
     "webpack-cli": "^3.3.4"
   },

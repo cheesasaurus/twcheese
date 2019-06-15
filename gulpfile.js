@@ -63,7 +63,7 @@ function compileToolSetup() {
 
 let templateDist= fs.readFileSync('build/templates/dist.js', 'utf8');
 
-function buildDist() {
+function applyDistTemplate() {
     return src('src/ToolSetup/*.js')
         .pipe(replaceContent(templateDist))
         .pipe(interpolate(replacements))
@@ -74,6 +74,8 @@ function buildDist() {
         .pipe(dest('dist/'));
 }
 
+let buildDist = series(compileToolSetup, applyDistTemplate);
+
 exports.buildEsModuleLaunchers = series(buildEsModuleLaunchers);
-exports.buildDist = series(compileToolSetup, buildDist);
+exports.buildDist = buildDist;
 exports.default = parallel(buildEsModuleLaunchers, buildDist);

@@ -11,7 +11,7 @@
 
     if (typeof window.TwCheese === 'undefined') {
         window.TwCheese = {
-            ROOT: 'https://playground/twcheese',
+            ROOT: 'https://cheesasaurus.github.io/twcheese',
             scripts: [],
             actions: {},
             prepareScript: function(script, onready) {

@@ -23,13 +23,12 @@
  */
 
 import { requestDocumentBody } from '/twcheese/src/Util/Network.js';
-import { userConfig } from '/twcheese/src/Util/UserConfig.js';
-import { TwCheeseDate } from '/twcheese/src/Models/TwCheeseDate.js';
 import { Command } from '/twcheese/src/Models/Command.js';
 import { ProgressMonitor } from '/twcheese/src/Models/ProgressMonitor.js';
 import { scrapeCommand } from '/twcheese/src/Scrape/command.js';
 import { scrapePageNumber } from '/twcheese/src/Scrape/pagination.js';
 import { ImageSrc, initCss, fadeGameContent, unfadeGameContent } from '/twcheese/src/Util/UI.js';
+import { HaulStatsWidget } from '/twcheese/src/Widget/HaulStatsWidget.js';
 
 
 function popupShowHaulsPrompt() {
@@ -146,152 +145,6 @@ function popupShowHaulsPrompt() {
     });
 };
 
-/**
- *	creates a widget with statistics about the returning hauls
- *	@param {Command[]} commands
- *  @param {boolean} collapsed
- */
-function createPillagingStatsWidget(commands, collapsed) {
-
-    function buildDayHint(date) {
-        if (date.isTodayOnServer()) {
-            return '';
-        }
-        else if (date.isTomorrowOnServer()) {
-            return ' (tomorrow)';
-        }
-        return ' (' + date.toLocaleDateString('en-US', {month: 'short', day: '2-digit'}) + ')';
-    }
-    
-    let summationFromOptions = [];
-    let summationToOptions = [];
-    let hourlyBreakdowns = [];
-
-    let latestCommandArrival = commands[commands.length - 1].arrival;
-    let startOfHour = TwCheeseDate.newServerDate().startOfHour();
-
-    while (startOfHour < latestCommandArrival) {
-        let endOfHour = startOfHour.endOfHour();
-        let hourOfDay = startOfHour.getServerHours();
-        let dayHint = buildDayHint(startOfHour);
-
-        summationFromOptions.push(`<option value=${startOfHour.getTime()}>${hourOfDay}:00 ${dayHint}</option>`);
-        summationToOptions.push(`<option value="${endOfHour.getTime()}">${hourOfDay}:59 ${dayHint}</option>`);
-
-        let result = Command.sumPropsFromTimeframe(commands, startOfHour, endOfHour);
-        hourlyBreakdowns.push(`
-            <tr>
-                <td>${hourOfDay}:00 - ${hourOfDay}:59 ${dayHint}</td>
-                <td>${result.timber}</td>
-                <td>${result.clay}</td>
-                <td>${result.iron}</td>
-                <td>${result.sumLoot()}/${result.haulCapacity}</td>
-                <td>${result.calcHaulPercent()}%</td>
-            </tr>
-        `);
-
-        startOfHour = startOfHour.addHours(1);
-    }
-
-    let pageNumber = scrapePageNumber();
-    let pageInfo = pageNumber ? `from Page ${pageNumber}` : '';
-
-    let toggleIconSrc = collapsed ? ImageSrc.plus : ImageSrc.minus;
-    let contentDisplay = collapsed ? 'none' : 'block';
-
-    let html = `
-        <div id="twcheese_pillaging_stats" class="vis widget">
-            <h4>
-                Pillaging Statistics
-                <img id="twcheese_pillaging_stats_toggle" src="${toggleIconSrc}" style="float:right; cursor: pointer;">
-                <span style="font-size: 8px; font-style: normal; font-weight: normal; margin-right: 25px; float: right;">
-                    created by <a href="http://forum.tribalwars.net/member.php?u=28484">cheesasaurus</a>
-                </span>
-            </h4>
-            <div id="twcheese_pillaging_stats_content" style="display: ${contentDisplay};">
-                <!-- summation -->
-                <div>
-                    <div style="text-align: center; width: 100%; margin-top: 5px; margin-bottom: 5px;">
-                        From <select id="twcheese_pillaging_stats_from">${summationFromOptions.join('')}</select>
-                        to <select id="twcheese_pillaging_stats_to">${summationToOptions.join('')}</select>
-                    </div>
-                    <div id="twcheese_pillaging_results" style="text-align: center;">
-                        Results displayed here...
-                    </div>
-                    <br/>
-                </div>
-                
-                <!-- hourly breakdown -->
-                <table class="twcheese-pillaging-stats-hourly-breakdown" width="100%">
-                    <tbody>
-                        <tr><td colspan="6" style="text-align: center; font-size: 16px;">Incoming Resources ${pageInfo}</td></tr>
-                        <tr>
-                            <th>Arrival</th>
-                            <th><img src="${ImageSrc.timber}"></img></th>
-                            <th><img src="${ImageSrc.clay}"></img></th>
-                            <th><img src="${ImageSrc.iron}"></img></th>
-                            <th colspan="2">Performance</th>
-                        </tr>
-                        ${hourlyBreakdowns.join('')}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    `;
-    $('.modemenu:eq(1)').after(html);
-
-    initCss(`
-        .twcheese-pillaging-stats-hourly-breakdown tr:nth-child(even) td {
-            background: #FFE0A2;
-        }
-    `);
-
-    /**
-     *	changes the results displayed in the summation section of the pillaging stats widget
-     */
-    let showResults = function () {
-        var startTime = TwCheeseDate.newServerDate(Number(document.getElementById('twcheese_pillaging_stats_from').value));
-        var endTime = TwCheeseDate.newServerDate(Number(document.getElementById('twcheese_pillaging_stats_to').value));
-        if (startTime > endTime) {
-            tmpTime = startTime;
-            startTime = endTime;
-            endTime = tmpTime;
-        }
-        var results = Command.sumPropsFromTimeframe(commands, startTime, endTime);
-
-        $('#twcheese_pillaging_results').html(`
-            <img src="${ImageSrc.timber}"> ${results.timber}
-            <img src="${ImageSrc.clay}"> ${results.clay}
-            <img src="${ImageSrc.iron}"> ${results.iron}
-            &nbsp;&nbsp;| ${results.sumLoot()}/${results.haulCapacity} (${results.calcHaulPercent()}%)
-        `);
-    };
-
-    let toggleCollapse = function() {
-        let icon = document.getElementById('twcheese_pillaging_stats_toggle');
-        let content = $('#twcheese_pillaging_stats_content');
-
-        content.toggle({
-            duration: 200,
-            start: function() {
-                let willCollapse = icon.src.includes(ImageSrc.minus);
-                icon.src = willCollapse ? ImageSrc.plus : ImageSrc.minus;
-                userConfig.set('commandHauls.collapseStats', willCollapse);
-            }
-        });
-    }
-
-    /*==== initialize interactive components ====*/
-    $('#twcheese_pillaging_stats_toggle').on('click', function(e) {
-        e.preventDefault();
-        toggleCollapse();
-    });
-    document.getElementById('twcheese_pillaging_stats_from').onchange = showResults;
-    document.getElementById('twcheese_pillaging_stats_to').onchange = showResults;
-    document.getElementById('twcheese_pillaging_stats_to').childNodes[document.getElementById('twcheese_pillaging_stats_to').childNodes.length - 1].selected = "selected";
-    showResults();
-};
-
 
 /**
  * @param {ProgressMonitor} progressMonitor
@@ -345,8 +198,8 @@ let haulsIncluded = false;
 async function enhanceScreenWithHaulInfo(progressMonitor) {
     let returningCommands = await appendHaulColsToCommandsTable(progressMonitor);
 
-    let collapseStats = userConfig.get('commandHauls.collapseStats', false);
-    createPillagingStatsWidget(returningCommands, collapseStats);
+    (new HaulStatsWidget(returningCommands, scrapePageNumber()))
+        .insertAfter($('.modemenu:eq(1)'));
 
     haulsIncluded = true;
 };

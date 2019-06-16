@@ -25,6 +25,7 @@
 import { throttle } from '/twcheese/src/Util/ServerRequestThrottle.js';
 import { userConfig } from '/twcheese/src/Util/UserConfig.js';
 import { TwCheeseDate } from '/twcheese/src/Models/TwCheeseDate.js';
+import { Command } from '/twcheese/src/Models/Command.js';
 
 if (!twcheese)
     var twcheese = {};
@@ -41,55 +42,6 @@ twcheese.images = {
     servant: 'graphic/paladin_new.png',
     loadingSpinner: 'graphic/throbber.gif'
 };
-
-
-(function () {
-
-    class Command {
-        constructor() {
-            this.arrival = TwCheeseDate.newServerDate();
-            this.timber = 0;
-            this.clay = 0;
-            this.iron = 0;
-            this.haulCapacity = 0;
-        } 
-
-        sumLoot() {
-            return this.timber + this.clay + this.iron;
-        }
-
-        calcHaulPercent() {
-            if (this.haulCapacity === 0) {
-                return 0;
-            }
-            return Math.round(100 * this.sumLoot() / this.haulCapacity);
-        }
-
-        arrivesDuring(fromTime, toTime) {
-            return this.arrival >= fromTime && this.arrival <= toTime;
-        }
-
-        static sumProps(commands) {
-            let sum = new Command();
-
-            for (let command of commands) {
-                sum.timber += command.timber;
-                sum.clay += command.clay;
-                sum.iron += command.iron;
-                sum.haulCapacity += command.haulCapacity;
-            }
-            return sum;
-        }
-
-        static sumPropsFromTimeframe(commands, fromTime, toTime) {
-            let relevantCommands = commands.filter(command => command.arrivesDuring(fromTime, toTime));
-            return Command.sumProps(relevantCommands);
-        }
-    }
-
-    twcheese.Command = Command;
-
-})();
 
 (function() {
 
@@ -132,7 +84,7 @@ twcheese.images = {
  *	@return command:twcheese_Command	an object representing the command.
  */
 twcheese.scrapeCommand = function (gameDoc) {
-    var command = new twcheese.Command();
+    var command = new Command();
 
     try {//note: being lazy - catching exception thrown for returning scouts and outgoing troops instead of checking for them
         var content = $(gameDoc).find('#content_value').get()[0];
@@ -376,7 +328,7 @@ twcheese.createPillagingStatsWidget = function(commands, collapsed) {
         summationFromOptions.push(`<option value=${startOfHour.getTime()}>${hourOfDay}:00 ${dayHint}</option>`);
         summationToOptions.push(`<option value="${endOfHour.getTime()}">${hourOfDay}:59 ${dayHint}</option>`);
 
-        let result = twcheese.Command.sumPropsFromTimeframe(commands, startOfHour, endOfHour);
+        let result = Command.sumPropsFromTimeframe(commands, startOfHour, endOfHour);
         hourlyBreakdowns.push(`
             <tr>
                 <td>${hourOfDay}:00 - ${hourOfDay}:59 ${dayHint}</td>
@@ -455,7 +407,7 @@ twcheese.createPillagingStatsWidget = function(commands, collapsed) {
             startTime = endTime;
             endTime = tmpTime;
         }
-        var results = twcheese.Command.sumPropsFromTimeframe(commands, startTime, endTime);
+        var results = Command.sumPropsFromTimeframe(commands, startTime, endTime);
 
         $('#twcheese_pillaging_results').html(`
             <img src="${twcheese.images.timber}"> ${results.timber}

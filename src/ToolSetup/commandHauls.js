@@ -26,6 +26,7 @@ import { throttle } from '/twcheese/src/Util/ServerRequestThrottle.js';
 import { userConfig } from '/twcheese/src/Util/UserConfig.js';
 import { TwCheeseDate } from '/twcheese/src/Models/TwCheeseDate.js';
 import { Command } from '/twcheese/src/Models/Command.js';
+import { ProgressMonitor } from '/twcheese/src/Models/ProgressMonitor.js';
 
 if (!twcheese)
     var twcheese = {};
@@ -42,39 +43,6 @@ twcheese.images = {
     servant: 'graphic/paladin_new.png',
     loadingSpinner: 'graphic/throbber.gif'
 };
-
-(function() {
-
-    class ProgressMonitor {
-        constructor() {
-            this.progress = 0;
-            this.goal = 0;
-            this.progressHandlers = [];
-        }
-    
-        goalDetermined(size) {
-            this.goal = size;
-            this.notifyChange();
-        }
-    
-        progressMade(size) {
-            this.progress += size;
-            this.notifyChange();
-        }
-    
-        notifyChange() {
-            for (let handler of this.progressHandlers) {
-                handler({progress: this.progress, goal: this.goal});
-            }
-        }
-    
-        onChange(handler) {
-            this.progressHandlers.push(handler);
-        }
-    }
-
-    twcheese.ProgressMonitor = ProgressMonitor;
-})();
 
 /*==== scraper functions ====*/
 
@@ -280,7 +248,7 @@ let popupShowHaulsPrompt = function () {
         $('#twcheese_servant_info_prompt').hide();
         $('#twcheese_servant_info_loading').show();
 
-        let progressMonitor = new twcheese.ProgressMonitor();
+        let progressMonitor = new ProgressMonitor();
         progressMonitor.onChange((e) => updateProgress(e.progress, e.goal));
 
         await twcheese.enhanceScreenWithHaulInfo(progressMonitor);

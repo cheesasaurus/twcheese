@@ -22,7 +22,7 @@
     along with this program.  If not, see http://www.gnu.org/licenses/
  */
 
-import { throttle } from '/twcheese/src/Util/ServerRequestThrottle.js';
+import { requestDocumentBody } from '/twcheese/src/Util/Network.js';
 import { userConfig } from '/twcheese/src/Util/UserConfig.js';
 import { TwCheeseDate } from '/twcheese/src/Models/TwCheeseDate.js';
 import { Command } from '/twcheese/src/Models/Command.js';
@@ -44,34 +44,6 @@ twcheese.images = {
     popupBorder: 'graphic/popup/border.png',
     servant: 'graphic/paladin_new.png',
     loadingSpinner: 'graphic/throbber.gif'
-};
-
-/**
- *	requests the body from an html document and returns it as an HTML element
- *	@param	{string} targetUrl	the url of the page to get the document body from
- *  @return {Promise}
- *	@resolve {HTMLBodyElement}
- */
-twcheese.requestDocumentBody = async function (targetUrl) {
-    await throttle.sleepIfNeeded();
-
-    return new Promise(function(resolve, reject) {
-        var xmlhttp;
-        if (window.XMLHttpRequest)
-            xmlhttp = new XMLHttpRequest();
-        else
-            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-        xmlhttp.open("GET", targetUrl);
-        xmlhttp.onload = function() {
-            let requestedDocumentBody = document.createElement("body");
-            requestedDocumentBody.innerHTML = xmlhttp.responseText;
-            resolve(requestedDocumentBody);
-        };
-        xmlhttp.onerror = function() {
-            reject('failed to load ' + targetUrl);
-        }
-        xmlhttp.send("");
-    });
 };
 
 /*==== widgets ====*/
@@ -366,7 +338,7 @@ twcheese.appendHaulColsToCommandsTable = async function (progressMonitor) {
         }
 
         let commandUrl = firstCell.getElementsByTagName('a')[0].href;
-        let command = scrapeCommand(await twcheese.requestDocumentBody(commandUrl));
+        let command = scrapeCommand(await requestDocumentBody(commandUrl));
         let commandType = $(firstCell).find('.own_command').data('command-type');
         if (commandType === 'return') {            
             returningCommands.push(command);

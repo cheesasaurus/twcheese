@@ -1,0 +1,8 @@
+Commands Overview - show returning hauls
+market: uk, us, en, {all}
+author Nick Toby (cheesasaurus@gmail.com)
+
+use script on: game.php?screen=overview_villages&mode=commands&type=return (the commands overview, with the return filter on)
+effect: includes 'haul' as part of the information for the listed commands. Also shows statistics about the incoming resources
+ 
+Copyright (C) 2011  Nick Toby

@@ -9,6 +9,7 @@
 |conf/|configuration|
 |src/ToolSetup/|Modules that set up globally-accessible actions, to be used by scripts in ToolUse|
 |src/ToolUse/|Scripts that perform globally-accessible actions. **Cannot import modules**, because scripts here won't be executed in module context.|
+|src/ToolDoc/|Plaintext documentation about what scripts in src/ToolUse/ do.|
 |src/Models/|Modules containing only Domain Logic. If it touches the dom, it doesn't belong here.|
 |src/Scrape/|Modules to search the dom for various data needed. These often return Models.|
 |src/Prompt/|Modules that pop open some kind of fancy prompt, when [window.prompt](https://developer.mozilla.org/en-US/docs/Web/API/Window/prompt) isn't good enough. Any non-presentation logic should be handled via callbacks or similar (meaning: the logic doesn't go in these modules!)|

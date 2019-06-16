@@ -75,7 +75,7 @@ function compileToolSetup(done) {
                     }
                 },
                 optimization: {
-                    minimize: true
+                    minimize: false
                 },
                 mode: 'production'
             });
@@ -93,7 +93,7 @@ function applyDistTemplate() {
         .pipe(interpolate(replacements))
         .pipe(beautify())
         .pipe(interpolate([
-            ['___COMPILED_TOOL_SETUP___', compiledToolSetup]
+            ['___COMPILED_TOOL_SETUP___', (file) => prependToEachLine(' '.repeat(8), compiledToolSetup(file))]
         ]))
         .pipe(dest('dist/'));
 }

@@ -3,7 +3,8 @@ const beautify = require('gulp-jsbeautifier');
 const interpolate = require('./build/lib/gulp-interpolate.js');
 const replaceContent = require('./build/lib/gulp-replace-content.js');
 const fs = require('fs');
-const webpack = require('./build/lib/webpack-stream-keepname.js');
+const webpack = require('webpack');
+const path = require('path');
 
 
 let projectFilename = function(file) {
@@ -40,26 +41,35 @@ function buildEsModuleLaunchers() {
 
 // build dist
 
-let compiledToolSetupDir = 'temp/webpack/';
+let compiledToolSetupDir = './temp/webpack/';
 
 let compiledToolSetup = function(file) {
     return fs.readFileSync(compiledToolSetupDir + file.relative, 'utf8');
 }
 
-function compileToolSetup() {
-    return src('src/ToolSetup/example.js')
-        .pipe(webpack({
-            resolve: {
-                alias: {
-                    '/twcheese': __dirname
-                }
-            },
-            optimization: {
-                minimize: true
-            },
-            mode: 'production'
-        }))
-        .pipe(dest(compiledToolSetupDir));;
+function compileToolSetup(done) {    
+    fs.readdir('./src/ToolSetup', function(err, items) {
+        let webpackConfigs = [];
+        for (item of items) {
+            webpackConfigs.push({
+                entry: './src/ToolSetup/' + item,
+                output: {
+                    path: path.resolve(compiledToolSetupDir),
+                    filename: item
+                },
+                resolve: {
+                    alias: {
+                        '/twcheese': __dirname
+                    }
+                },
+                optimization: {
+                    minimize: true
+                },
+                mode: 'production'
+            });
+        }
+        webpack(webpackConfigs, (err, stats) => done());
+    });
 }
 
 let templateDist= fs.readFileSync('build/templates/dist.js', 'utf8');

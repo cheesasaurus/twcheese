@@ -29,30 +29,19 @@ import { Command } from '/twcheese/src/Models/Command.js';
 import { ProgressMonitor } from '/twcheese/src/Models/ProgressMonitor.js';
 import { scrapeCommand } from '/twcheese/src/Scrape/command.js';
 import { scrapePageNumber } from '/twcheese/src/Scrape/pagination.js';
+import { ImageSrc, initCss, fadeGameContent, unfadeGameContent } from '/twcheese/src/Util/UI.js';
 
 if (!twcheese)
     var twcheese = {};
 
-/*==== graphics ====*/
-twcheese.images = {
-    plus: 'graphic/plus.png',
-    minus: 'graphic/minus.png',
-    timber: 'graphic/holz.png',
-    clay: 'graphic/lehm.png',
-    iron: 'graphic/eisen.png',
-    popupBackground: 'graphic/popup/content_background.png',
-    popupBorder: 'graphic/popup/border.png',
-    servant: 'graphic/paladin_new.png',
-    loadingSpinner: 'graphic/throbber.gif'
-};
 
 /*==== widgets ====*/
 
 let popupShowHaulsPrompt = function () {
     let popupHtml = `
         <div id="twcheese_showHaulsPrompt" class="twcheese-popup" style="width: 500px;">
-            <div style="height: 100%; width: 100%; background: url('${twcheese.images.popupBackground}')">
-                <div style="background: no-repeat url('${twcheese.images.servant}');">
+            <div style="height: 100%; width: 100%; background: url('${ImageSrc.popupBackground}')">
+                <div style="background: no-repeat url('${ImageSrc.servant}');">
                     <div id="twcheese_servant_text">
                         <p style="font-size: 16px;">My liege,</p>
                         <p>Dost thou wish hauls to be included on thine screen?</p>
@@ -87,7 +76,7 @@ let popupShowHaulsPrompt = function () {
         </div>
     `;
 
-    twcheese.style.initCss(`
+    initCss(`
         #twcheese_servant_text {
             box-sizing: border-box;
             height: 100px;
@@ -129,7 +118,7 @@ let popupShowHaulsPrompt = function () {
     `);
 
     $('body').append(popupHtml);
-    twcheese.fadeGameContent();
+    fadeGameContent();
 
     // init progress bar
     let $progressBarFiller = $('#twcheese_hauls_loading_bar').find('.filler');
@@ -152,13 +141,13 @@ let popupShowHaulsPrompt = function () {
         await twcheese.enhanceScreenWithHaulInfo(progressMonitor);
 
         $('#twcheese_showHaulsPrompt').remove();
-        twcheese.unfadeGameContent();
+        unfadeGameContent();
     });
 
     $('#twcheese_hauls_prompt_cancel').on('click', function(e) {
         e.preventDefault();
         $('#twcheese_showHaulsPrompt').remove();
-        twcheese.unfadeGameContent();
+        unfadeGameContent();
     });
 };
 
@@ -212,7 +201,7 @@ twcheese.createPillagingStatsWidget = function(commands, collapsed) {
     let pageNumber = scrapePageNumber();
     let pageInfo = pageNumber ? `from Page ${pageNumber}` : '';
 
-    let toggleIconSrc = collapsed ? twcheese.images.plus : twcheese.images.minus;
+    let toggleIconSrc = collapsed ? ImageSrc.plus : ImageSrc.minus;
     let contentDisplay = collapsed ? 'none' : 'block';
 
     let html = `
@@ -243,9 +232,9 @@ twcheese.createPillagingStatsWidget = function(commands, collapsed) {
                         <tr><td colspan="6" style="text-align: center; font-size: 16px;">Incoming Resources ${pageInfo}</td></tr>
                         <tr>
                             <th>Arrival</th>
-                            <th><img src="${twcheese.images.timber}"></img></th>
-                            <th><img src="${twcheese.images.clay}"></img></th>
-                            <th><img src="${twcheese.images.iron}"></img></th>
+                            <th><img src="${ImageSrc.timber}"></img></th>
+                            <th><img src="${ImageSrc.clay}"></img></th>
+                            <th><img src="${ImageSrc.iron}"></img></th>
                             <th colspan="2">Performance</th>
                         </tr>
                         ${hourlyBreakdowns.join('')}
@@ -256,7 +245,7 @@ twcheese.createPillagingStatsWidget = function(commands, collapsed) {
     `;
     $('.modemenu:eq(1)').after(html);
 
-    twcheese.style.initCss(`
+    initCss(`
         .twcheese-pillaging-stats-hourly-breakdown tr:nth-child(even) td {
             background: #FFE0A2;
         }
@@ -276,9 +265,9 @@ twcheese.createPillagingStatsWidget = function(commands, collapsed) {
         var results = Command.sumPropsFromTimeframe(commands, startTime, endTime);
 
         $('#twcheese_pillaging_results').html(`
-            <img src="${twcheese.images.timber}"> ${results.timber}
-            <img src="${twcheese.images.clay}"> ${results.clay}
-            <img src="${twcheese.images.iron}"> ${results.iron}
+            <img src="${ImageSrc.timber}"> ${results.timber}
+            <img src="${ImageSrc.clay}"> ${results.clay}
+            <img src="${ImageSrc.iron}"> ${results.iron}
             &nbsp;&nbsp;| ${results.sumLoot()}/${results.haulCapacity} (${results.calcHaulPercent()}%)
         `);
     };
@@ -290,8 +279,8 @@ twcheese.createPillagingStatsWidget = function(commands, collapsed) {
         content.toggle({
             duration: 200,
             start: function() {
-                let willCollapse = icon.src.includes(twcheese.images.minus);
-                icon.src = willCollapse ? twcheese.images.plus : twcheese.images.minus;
+                let willCollapse = icon.src.includes(ImageSrc.minus);
+                icon.src = willCollapse ? ImageSrc.plus : ImageSrc.minus;
                 userConfig.set('commandHauls.collapseStats', willCollapse);
             }
         });
@@ -319,9 +308,9 @@ twcheese.appendHaulColsToCommandsTable = async function (progressMonitor) {
     let commandsTable = document.getElementById('commands_table');
 
     $(commandsTable.rows[0]).append(`
-        <th><img src="${twcheese.images.timber}" title="Wood" alt="Timber"></th>
-        <th><img src="${twcheese.images.clay}" title="Clay" alt="Clay"></th>
-        <th><img src="${twcheese.images.iron}" title="Iron" alt="Iron"></th>
+        <th><img src="${ImageSrc.timber}" title="Wood" alt="Timber"></th>
+        <th><img src="${ImageSrc.clay}" title="Clay" alt="Clay"></th>
+        <th><img src="${ImageSrc.iron}" title="Iron" alt="Iron"></th>
         <th>Performance</th>
     `);
 
@@ -357,41 +346,6 @@ twcheese.appendHaulColsToCommandsTable = async function (progressMonitor) {
     return returningCommands;
 };
 
-twcheese.fadeGameContent = function () {
-    $('body').append('<div id="fader" class="fader">');
-};
-twcheese.unfadeGameContent = function() {
-    $('#fader').remove();
-}
-
-/*==== styles ====*/
-if (!twcheese.style) {
-    twcheese.style = {
-        cssInitd: [],
-
-        initCss(css) {
-            if (this.cssInitd.includes(css)) {
-                return;
-            }
-            $(`<style>${css}</style>`).appendTo('head');
-            this.cssInitd.push(css);
-        }
-    };
-}
-
-twcheese.style.initCss(`
-    .twcheese-popup {
-        z-index: 13000;
-        display: block;
-        position: fixed;
-        top: 60px;
-        border: 19px solid #804000;
-        border-image: url(${twcheese.images.popupBorder}) 19 19 19 19 repeat;
-        left: 50%;
-        -webkit-transform: translateX(-50%);
-        transform: translateX(-50%);
-    }
-`);
 
 let haulsIncluded = false;
 

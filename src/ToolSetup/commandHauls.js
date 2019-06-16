@@ -22,6 +22,9 @@
     along with this program.  If not, see http://www.gnu.org/licenses/
  */
 
+import { throttle } from '/twcheese/src/Util/ServerRequestThrottle.js';
+import { userConfig } from '/twcheese/src/Util/UserConfig.js';
+
 if (!twcheese)
     var twcheese = {};
 
@@ -37,98 +40,6 @@ twcheese.images = {
     servant: 'graphic/paladin_new.png',
     loadingSpinner: 'graphic/throbber.gif'
 };
-
-// avoid flooding the server with requests
-(function () {
-
-    class RateLimiter {
-        constructor(maxBurstsPerSecond) {
-            this.maxBurstsPerSecond = maxBurstsPerSecond;
-            this.recentRequests = new Array(maxBurstsPerSecond);
-        }
-
-        requestWasMade() {
-            this.recentRequests.unshift(performance.now());
-            this.recentRequests.pop();
-        }
-
-        async sleepIfNeeded() {
-            let anchorTimestamp = this.recentRequests[this.maxBurstsPerSecond - 1];
-            if (typeof anchorTimestamp === 'undefined') {
-                return;
-            }
-            let delayMs = anchorTimestamp + 1000 - performance.now();
-            if (delayMs <= 0) {
-                return;
-            }
-            return new Promise(function(resolve, reject) {
-                setTimeout(resolve, delayMs);
-            });
-        }
-    }
-
-    twcheese.rateLimiter = new RateLimiter(5);
-
-    let oldSend = XMLHttpRequest.prototype.send;
-    XMLHttpRequest.prototype.send = function() {
-        twcheese.rateLimiter.requestWasMade();
-        oldSend.apply(this, arguments);
-    }
-
-})();
-
-// config
-(function() {
-    'use strict';
-
-    class Config {
-        constructor(id) {
-            this.id = id;
-            this.props = {};
-            this.load();
-        }
-
-        load() {
-            let saved = localStorage.getItem(this.id);
-            if (saved) {
-                this.props = JSON.parse(saved);
-            }
-        }
-
-        save() {
-            localStorage.setItem(this.id, JSON.stringify(this.props));
-        }
-
-        get(prop, defaultValue) {
-            let obj = this.props;
-            let tokens = prop.split('.');
-            for (let i = 0; i < tokens.length - 1; i++) {
-                let token = tokens[i];
-                if (typeof obj[token] !== 'object' || token === null) {
-                    return defaultValue;
-                }
-                obj = obj[token];
-            }
-            return obj[tokens[tokens.length - 1]];
-        }
-
-        set(prop, value) {
-            let obj = this.props;
-            let tokens = prop.split('.');
-            for (let i = 0; i < tokens.length - 1; i++) {
-                let token = tokens[i];
-                if (typeof obj[token] !== 'object' || token === null) {
-                    obj[token] = {};
-                }
-                obj = obj[token];
-            }
-            obj[tokens[tokens.length - 1]] = value;
-            this.save();
-        }
-    }
-
-    twcheese.userConfig = new Config('twcheese.userConfig');
-})();
 
 /*==== timing ====*/
 
@@ -399,7 +310,7 @@ twcheese.parseArrival = function (text) {
  *	@resolve {HTMLBodyElement}
  */
 twcheese.requestDocumentBody = async function (targetUrl) {
-    await twcheese.rateLimiter.sleepIfNeeded();
+    await throttle.sleepIfNeeded();
 
     return new Promise(function(resolve, reject) {
         var xmlhttp;
@@ -695,7 +606,7 @@ twcheese.createPillagingStatsWidget = function(commands, collapsed) {
             start: function() {
                 let willCollapse = icon.src.includes(twcheese.images.minus);
                 icon.src = willCollapse ? twcheese.images.plus : twcheese.images.minus;
-                twcheese.userConfig.set('commandHauls.collapseStats', willCollapse);
+                userConfig.set('commandHauls.collapseStats', willCollapse);
             }
         });
     }
@@ -801,7 +712,7 @@ let haulsIncluded = false;
 twcheese.enhanceScreenWithHaulInfo = async function (progressMonitor) {
     let returningCommands = await twcheese.appendHaulColsToCommandsTable(progressMonitor);
 
-    let collapseStats = twcheese.userConfig.get('commandHauls.collapseStats', false);
+    let collapseStats = userConfig.get('commandHauls.collapseStats', false);
     twcheese.createPillagingStatsWidget(returningCommands, collapseStats);
 
     haulsIncluded = true;

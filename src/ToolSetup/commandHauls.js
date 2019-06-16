@@ -31,13 +31,8 @@ import { scrapeCommand } from '/twcheese/src/Scrape/command.js';
 import { scrapePageNumber } from '/twcheese/src/Scrape/pagination.js';
 import { ImageSrc, initCss, fadeGameContent, unfadeGameContent } from '/twcheese/src/Util/UI.js';
 
-if (!twcheese)
-    var twcheese = {};
 
-
-/*==== widgets ====*/
-
-let popupShowHaulsPrompt = function () {
+function popupShowHaulsPrompt() {
     let popupHtml = `
         <div id="twcheese_showHaulsPrompt" class="twcheese-popup" style="width: 500px;">
             <div style="height: 100%; width: 100%; background: url('${ImageSrc.popupBackground}')">
@@ -138,7 +133,7 @@ let popupShowHaulsPrompt = function () {
         let progressMonitor = new ProgressMonitor();
         progressMonitor.onChange((e) => updateProgress(e.progress, e.goal));
 
-        await twcheese.enhanceScreenWithHaulInfo(progressMonitor);
+        await enhanceScreenWithHaulInfo(progressMonitor);
 
         $('#twcheese_showHaulsPrompt').remove();
         unfadeGameContent();
@@ -156,7 +151,7 @@ let popupShowHaulsPrompt = function () {
  *	@param {Command[]} commands
  *  @param {boolean} collapsed
  */
-twcheese.createPillagingStatsWidget = function(commands, collapsed) {
+function createPillagingStatsWidget(commands, collapsed) {
 
     function buildDayHint(date) {
         if (date.isTodayOnServer()) {
@@ -295,16 +290,14 @@ twcheese.createPillagingStatsWidget = function(commands, collapsed) {
     document.getElementById('twcheese_pillaging_stats_to').onchange = showResults;
     document.getElementById('twcheese_pillaging_stats_to').childNodes[document.getElementById('twcheese_pillaging_stats_to').childNodes.length - 1].selected = "selected";
     showResults();
-
 };
 
-/*==== enhancement functions ====*/
 
 /**
  * @param {ProgressMonitor} progressMonitor
  * @return {Command[]} returning commands from the table
  */
-twcheese.appendHaulColsToCommandsTable = async function (progressMonitor) {
+async function appendHaulColsToCommandsTable(progressMonitor) {
     let commandsTable = document.getElementById('commands_table');
 
     $(commandsTable.rows[0]).append(`
@@ -349,11 +342,11 @@ twcheese.appendHaulColsToCommandsTable = async function (progressMonitor) {
 
 let haulsIncluded = false;
 
-twcheese.enhanceScreenWithHaulInfo = async function (progressMonitor) {
-    let returningCommands = await twcheese.appendHaulColsToCommandsTable(progressMonitor);
+async function enhanceScreenWithHaulInfo(progressMonitor) {
+    let returningCommands = await appendHaulColsToCommandsTable(progressMonitor);
 
     let collapseStats = userConfig.get('commandHauls.collapseStats', false);
-    twcheese.createPillagingStatsWidget(returningCommands, collapseStats);
+    createPillagingStatsWidget(returningCommands, collapseStats);
 
     haulsIncluded = true;
 };

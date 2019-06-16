@@ -24,6 +24,7 @@
 
 import { throttle } from '/twcheese/src/Util/ServerRequestThrottle.js';
 import { userConfig } from '/twcheese/src/Util/UserConfig.js';
+import { TwCheeseDate } from '/twcheese/src/Models/TwCheeseDate.js';
 
 if (!twcheese)
     var twcheese = {};
@@ -41,145 +42,12 @@ twcheese.images = {
     loadingSpinner: 'graphic/throbber.gif'
 };
 
-/*==== timing ====*/
-
-(function() {
-    'use strict';
-
-    let serverOffsetFromUtc = window.server_utc_diff * 1000;
-    let localOffsetFromUtc = new Date().getTimezoneOffset() * 60000;
-
-    class TwCheeseDate extends Date {
-        constructor() {
-            if (arguments.length === 0) {
-                super(Timing.getCurrentServerTime());
-            } else {
-                super(...arguments);
-            }
-        }
-
-        clone() {
-            return new TwCheeseDate(this.getTime());
-        }
-
-        addDays(days) {
-            let ret = this.clone();
-            ret.setUTCDate(this.getUTCDate() + days);
-            return ret;
-        }
-
-        addHours(hours) {
-            let ret = this.clone();
-            ret.setUTCHours(this.getUTCHours() + hours);
-            return ret;
-        }
-
-        addMinutes(minutes) {
-            let ret = this.clone();
-            ret.setUTCMinutes(this.getUTCMinutes() + minutes);
-            return ret;
-        }
-
-        addSeconds(seconds) {
-            let ret = this.clone();
-            ret.setUTCSeconds(this.getUTCSeconds() + seconds);
-            return ret;
-        }
-
-        addMilliseconds(milliseconds) {
-            let ret = this.clone();
-            ret.setUTCMilliseconds(this.getUTCMilliseconds() + milliseconds);
-            return ret;
-        }
-
-        subDays(days) {
-            return this.addDays(-days);        
-        }
-
-        subHours(hours) {
-            return this.addHours(-hours);
-        }
-
-        subMinutes(minutes) {
-            return this.addMinutes(-minutes);
-        }
-
-        subSeconds(seconds) {
-            return this.addSeconds(-seconds);
-        }
-
-        subMilliseconds(milliseconds) {
-            return this.addMilliseconds(-milliseconds);
-        }
-
-        getServerHours() {
-            return this.addMilliseconds(serverOffsetFromUtc).getUTCHours();
-        }
-
-        isTodayOnServer() {
-            let dateAdjusted = this.addMilliseconds(serverOffsetFromUtc);
-            let nowAdjusted = new TwCheeseDate().addMilliseconds(serverOffsetFromUtc);
-            return dateAdjusted.isSameDayInUtc(nowAdjusted);
-        }
-
-        isTomorrowOnServer() {
-            let dateAdjusted = this.addMilliseconds(serverOffsetFromUtc);
-            let nowAdjusted = new TwCheeseDate().addMilliseconds(serverOffsetFromUtc);
-            let tomorrow = nowAdjusted.addDays(1);    
-            return dateAdjusted.isSameDayInUtc(tomorrow);
-        }
-
-        isSameDayInUtc(otherDate) {
-            return this.getUTCFullYear() === otherDate.getUTCFullYear()
-                && this.getUTCMonth() === otherDate.getUTCMonth()
-                && this.getUTCDate() === otherDate.getUTCDate();
-        }
-
-        startOfHour() {
-            let ret = this.clone();
-            ret.setUTCMinutes(0);
-            ret.setUTCSeconds(0);
-            ret.setUTCMilliseconds(0);
-            return ret;
-        }
-
-        endOfHour() {
-            let ret = this.clone();
-            ret.setUTCMinutes(59);
-            ret.setUTCSeconds(59);
-            ret.setUTCMilliseconds(999);
-            return ret;
-        }
-    }
-
-
-    twcheese.Timing = {
-
-        /**
-         * @params whatever would be passed to a Date constructor
-         * @return {TwCheeseDate}
-         */
-        newServerDate() {
-            let ret = new TwCheeseDate(...arguments);
-            if (arguments.length > 1) {
-                ret = ret.addMilliseconds(0 - serverOffsetFromUtc - localOffsetFromUtc);
-            }
-            return ret;
-        },
-
-        monthNumber(monthName) {
-            return (new Date(monthName + ' 1 1970')).getMonth();
-        }
-    };
-
-})();
-
 
 (function () {
 
     class Command {
         constructor() {
-            this.arrival = twcheese.Timing.newServerDate();
+            this.arrival = TwCheeseDate.newServerDate();
             this.timber = 0;
             this.clay = 0;
             this.iron = 0;
@@ -298,9 +166,9 @@ twcheese.scrapeCommand = function (gameDoc) {
 twcheese.parseArrival = function (text) {
     // note: some worlds have milliseconds disabled
     let expr = /(\D{3}) (\d{1,2}), (\d{4})  (\d{2}):(\d{2}):(\d{2}):?(\d{3})?/;
-    [, monthName, day, year, hours, minutes, seconds, millis] = text.match(expr);
-    let month = twcheese.Timing.monthNumber(monthName);
-    return twcheese.Timing.newServerDate(year, month, day, hours, minutes, seconds, millis || 0);
+    let [, monthName, day, year, hours, minutes, seconds, millis] = text.match(expr);    
+    let month = TwCheeseDate.monthNumber(monthName);
+    return TwCheeseDate.newServerDate(year, month, day, hours, minutes, seconds, millis || 0);
 };
 
 /**
@@ -498,7 +366,7 @@ twcheese.createPillagingStatsWidget = function(commands, collapsed) {
     let hourlyBreakdowns = [];
 
     let latestCommandArrival = commands[commands.length - 1].arrival;
-    let startOfHour = twcheese.Timing.newServerDate().startOfHour();
+    let startOfHour = TwCheeseDate.newServerDate().startOfHour();
 
     while (startOfHour < latestCommandArrival) {
         let endOfHour = startOfHour.endOfHour();
@@ -580,8 +448,8 @@ twcheese.createPillagingStatsWidget = function(commands, collapsed) {
      *	changes the results displayed in the summation section of the pillaging stats widget
      */
     let showResults = function () {
-        var startTime = twcheese.Timing.newServerDate(Number(document.getElementById('twcheese_pillaging_stats_from').value));
-        var endTime = twcheese.Timing.newServerDate(Number(document.getElementById('twcheese_pillaging_stats_to').value));
+        var startTime = TwCheeseDate.newServerDate(Number(document.getElementById('twcheese_pillaging_stats_from').value));
+        var endTime = TwCheeseDate.newServerDate(Number(document.getElementById('twcheese_pillaging_stats_to').value));
         if (startTime > endTime) {
             tmpTime = startTime;
             startTime = endTime;

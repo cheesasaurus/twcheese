@@ -1,5 +1,5 @@
 (function() {
-    let script = '___SCRIPT___';
+    let tool = '___SCRIPT___';
 
     let useTool = function() {
         ___TOOL_USE___
@@ -7,9 +7,9 @@
 
     ___TWCHEESE___
     
-    if (TwCheese.scripts.includes(script)) {
+    if (TwCheese.isToolLoaded(tool)) {
         useTool();
     } else {
-        TwCheese.prepareScript(script, useTool);
+        TwCheese.loadTool(tool, useTool);
     }
 })();

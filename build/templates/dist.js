@@ -1,13 +1,13 @@
 (function() {
-    let script = '___SCRIPT___';
+    let tool = '___SCRIPT___';
 
     ___TWCHEESE___
 
-    if (!TwCheese.scripts.includes(script)) {
+    if (!TwCheese.isToolLoaded(tool)) {
         // compiled from ___HOSTING_ROOT______SCRIPT___
         ___COMPILED_TOOL_SETUP___
 
-        TwCheese.scripts.push(script);
+        TwCheese.markToolLoaded(tool);
     }
 
     ___TOOL_USE___

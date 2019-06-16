@@ -1,18 +1,23 @@
 if (typeof window.TwCheese === 'undefined') {
     window.TwCheese = {
         ROOT: '___HOSTING_ROOT___',
-        scripts: [],
+        toolsLoaded: [],
         actions: {},
-        prepareScript: function(script, onready) {
+        loadTool: function(url, onready) {
             let module = document.createElement('script');
             module.type = 'module';
             module.onload = () => {
-                console.log('loaded module successfully');
-                this.scripts.push(script);
+                this.markToolLoaded(url);
                 onready();
             }    
-            module.src = this.ROOT + script;
+            module.src = this.ROOT + url;
             document.head.appendChild(module);
-        }        
+        },
+        isToolLoaded: function(url) {
+            return this.toolsLoaded.includes(url);
+        },
+        markToolLoaded: function(url) {
+            this.toolsLoaded.push(url);
+        }
     };
 }

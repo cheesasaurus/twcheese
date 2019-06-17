@@ -9,27 +9,28 @@ import { scrapeResources } from '/twcheese/src/Scrape/res.js';
  */
 function scrapeCommand(gameDoc) {
     var command = new Command();
+    
+    var content = $(gameDoc).find('#content_value').get()[0];
+    let tables = content.getElementsByTagName('table');
 
-    try {//note: being lazy - catching exception thrown for returning scouts and outgoing troops instead of checking for them
-        var content = $(gameDoc).find('#content_value').get()[0];
+    let arrivalCell = tables[0].rows[6].cells[1];
+    command.arrival = parseArrival($(arrivalCell).text());
 
-        var arrivalCell = content.getElementsByTagName('table')[0].rows[6].cells[1];
-        command.arrival = parseArrival($(arrivalCell).text());
-
-        var resCell = content.getElementsByTagName('table')[2].rows[0].cells[1];
-        var haul = scrapeResources(resCell);
-        command.timber = haul.timber;
-        command.clay = haul.clay;
-        command.iron = haul.iron;
-
-        var haulText = resCell.innerHTML;
-        if (haulText.search('\\|') !== -1) {
-            haulText = haulText.substring(haulText.search('\\|') + 7);
-            let performance = haulText.split('/');
-            command.haulCapacity = parseInt(performance[1]);
-        }
+    if (tables.length < 3) {
+        return command;
     }
-    catch (e) {
+
+    let resCell = tables[2].rows[0].cells[1];
+    let haul = scrapeResources(resCell);
+    command.timber = haul.timber;
+    command.clay = haul.clay;
+    command.iron = haul.iron;
+
+    var haulText = resCell.innerHTML;
+    if (haulText.search('\\|') !== -1) {
+        haulText = haulText.substring(haulText.search('\\|') + 7);
+        let performance = haulText.split('/');
+        command.haulCapacity = parseInt(performance[1]);
     }
 
     return command;

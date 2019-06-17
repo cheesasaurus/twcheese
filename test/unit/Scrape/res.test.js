@@ -1,16 +1,6 @@
-import { scrapeResources } from '../../../src/Scrape/res.js';
+import { scrapeResources } from '/twcheese/src/Scrape/res.js';
 const fs = require('fs');
 const assert = require('assert');
-
-// init dom and jquery
-const jsdom = require('jsdom');
-const { JSDOM } = jsdom;
-const { window } = new JSDOM('');
-const { document } = window;
-global.document = document;
-global.jQuery = require('jquery')(window);
-global.$ = jQuery;
-
 
 function domSample(filename) {
     let html = fs.readFileSync(`test/data/html/${filename}`).toString();

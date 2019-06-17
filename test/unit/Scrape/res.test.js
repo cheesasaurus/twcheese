@@ -1,11 +1,6 @@
 import { scrapeResources } from '/twcheese/src/Scrape/res.js';
-const fs = require('fs');
+import { domSample } from '/twcheese/test/util.js';
 const assert = require('assert');
-
-function domSample(filename) {
-    let html = fs.readFileSync(`test/data/html/${filename}`).toString();
-    return jQuery.parseHTML(html);
-}
 
 
 describe('scrapeResources', function() {

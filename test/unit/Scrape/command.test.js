@@ -1,15 +1,9 @@
 import { Command } from '/twcheese/src/Models/Command.js';
 import { TwCheeseDate } from '/twcheese/src/Models/TwCheeseDate.js';
 import { scrapeCommand } from '/twcheese/src/Scrape/command.js';
-
-const fs = require('fs');
+import { domSample } from '/twcheese/test/util.js';
 const assert = require('assert');
 
-
-function domSample(filename) {
-    let html = fs.readFileSync(`test/data/html/${filename}`).toString();
-    return jQuery.parseHTML(html.trim());
-}
 
 function assertCommand(actual, propsExpected) {
     assert(actual instanceof Command);

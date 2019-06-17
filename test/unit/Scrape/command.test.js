@@ -79,9 +79,27 @@ describe('scrapeCommand', function() {
         });
     });
 
-    it('should handle support return from barb'); // todo: get a sample
+    it('should handle support withdrawn from player', function() {
+        let actual = scrapeCommand(domSample('command/support-withdrawn-from-player'));
+        assertCommand(actual, {
+            arrival: TwCheeseDate.newServerDate(2019, 5, 17, 19, 55, 13, 0),
+            timber: 0,
+            clay: 0,
+            iron: 0,
+            haulCapacity: 0
+        });
+    });
 
-    it('should handle support return from player'); // todo: get a sample
+    it('should handle support withdrawn from playerless', function() {
+        let actual = scrapeCommand(domSample('command/support-withdrawn-from-playerless'));
+        assertCommand(actual, {
+            arrival: TwCheeseDate.newServerDate(2019, 5, 17, 19, 44, 36, 0),
+            timber: 0,
+            clay: 0,
+            iron: 0,
+            haulCapacity: 0
+        });
+    });
 
     it('should handle attack cancelled', function() {
         let actual = scrapeCommand(domSample('command/attack-cancelled'));

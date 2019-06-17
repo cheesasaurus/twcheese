@@ -4,6 +4,7 @@
   "description": "tribal wars scripts",
   "main": "launch/",
   "dependencies": {
+    "crypto": "^1.0.1",
     "esm": "^3.2.25",
     "gulp": "^4.0.2",
     "gulp-cli": "^2.2.0",

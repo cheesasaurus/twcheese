@@ -1,0 +1,1 @@
+$('<script>').attr('src','___DIST_URL___?___DIST_HASH___').appendTo('head');

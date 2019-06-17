@@ -6,6 +6,7 @@ const replaceContent = require('./build/lib/gulp-replace-content.js');
 const fs = require('fs');
 const webpack = require('webpack');
 const path = require('path');
+const crypto = require('crypto');
 const { prependToEachLine } = require('./build/lib/string.js');
 
 
@@ -100,6 +101,31 @@ function applyDistTemplate() {
 
 let buildDist = series(compileToolSetup, applyDistTemplate);
 
+// build dist launchers
+
+let templateDistLaunch = fs.readFileSync('build/templates/launch-dist.js', 'utf8');
+
+let fileHash = function(file) {
+    let contents = fs.readFileSync(file.path, 'utf8');
+    return crypto.createHash('md5').update(contents).digest('hex');
+}
+
+function buildDistLaunchers() {
+    return src('dist/*.js')
+        .pipe(replaceContent(templateDistLaunch))
+        .pipe(interpolate([
+            ['___DIST_URL___', (file) => `${hostingRoot}/dist/${file.relative}`],
+            ['___DIST_HASH___', fileHash],
+        ]))
+        .pipe(dest('launch/'));
+}
+
+
 exports.buildEsModuleLaunchers = series(buildEsModuleLaunchers);
 exports.buildDist = buildDist;
-exports.default = parallel(buildEsModuleLaunchers, buildDist);
+exports.buildDistLaunchers = buildDistLaunchers;
+
+exports.default = parallel(
+    buildEsModuleLaunchers,
+    series(buildDist, buildDistLaunchers)
+);

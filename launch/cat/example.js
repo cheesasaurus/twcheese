@@ -1,1 +1,0 @@
-// todo: decide how to launch dist/example.js

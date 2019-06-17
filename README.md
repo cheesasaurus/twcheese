@@ -16,6 +16,8 @@
 |src/Transform/|Modules that transform existing stuff in the dom. E.g. adding extra columns to a table|
 |src/Widget/|Modules that spawn some standalone UI component, which could be inserted anywhere into the dom.|
 |src/Util/|Miscellaneous singletons and procedures. Maybe this won't be a thing after some refactoring. |
+|test/data/|Sampled data from the game, to test against|
+|test/unit/|Unit tests for modules in src/|
 
 How come scripts in src/ToolUse/ can't import modules?
 - Scripts here get embedded into launchers via the build pipeline.
@@ -30,3 +32,8 @@ Make sure you have [nodejs](https://nodejs.org/en/) installed.
 2. cd to the project root
 3. `npm install`
 4. `npm run build`
+
+## How to test
+1. cd to the project root
+2. `npm run test`
+

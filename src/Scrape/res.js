@@ -4,12 +4,13 @@
  */
 function scrapeResources(resourcesContainer) {
     // remove grey periods used as thousands separators
-    let $res = $(resourcesContainer).clone().remove('.grey'); 
+    let $res = $(resourcesContainer).clone();
+    $res.find('.grey').remove();
 
     let resAmount = function(resIconCssClass) {
         // note: sometimes, if the res amount is 0, the game excludes it (and its icon) instead of showing 0
         let icon = $res.find('span.' + resIconCssClass).get(0);
-        return icon ? parseInt($(icon.nextSibling).text()) : 0;
+        return icon ? parseInt($(icon).parent().text()) : 0;
     }
 
     return {

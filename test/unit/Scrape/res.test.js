@@ -1,10 +1,26 @@
-import { scrapeResources } from '../../../src/Scrape/res.js'; 
+import { scrapeResources } from '../../../src/Scrape/res.js';
+const fs = require('fs');
+const assert = require('assert');
 
-var assert = require('assert');
-describe('Array', function() {
-    describe('#indexOf()', function() {
-        it('should return -1 when the value is not present', function() {
-            assert.equal([1, 2, 3].indexOf(4), -1);
-        });
+// init dom and jquery
+const jsdom = require('jsdom');
+const { JSDOM } = jsdom;
+const { window } = new JSDOM('');
+const { document } = window;
+global.document = document;
+global.jQuery = require('jquery')(window);
+global.$ = jQuery;
+
+
+function domSample(filename) {
+    let html = fs.readFileSync(`test/data/html/${filename}`).toString();
+    return jQuery.parseHTML(html);
+}
+
+
+describe('scrapeResources', function() {
+    it('should handle no clay', function() {
+        let actual = scrapeResources(domSample('haul-no-clay'));
+        assert.deepEqual({timber: 28, clay: 0, iron: 24}, actual);
     });
 });

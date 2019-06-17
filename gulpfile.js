@@ -3,6 +3,7 @@ const beautify = require('gulp-jsbeautifier');
 const header = require('gulp-header');
 const interpolate = require('./build/lib/gulp-interpolate.js');
 const replaceContent = require('./build/lib/gulp-replace-content.js');
+const rename = require('gulp-rename');
 const fs = require('fs');
 const webpack = require('webpack');
 const path = require('path');
@@ -120,12 +121,28 @@ function buildDistLaunchers() {
         .pipe(dest('launch/'));
 }
 
+// build quickbar links
+
+let templateQuickbarLinks = fs.readFileSync('build/templates/quickbar-links', 'utf8');
+
+function buildQuickbarLinks() {
+    return (src('launch/*.js'))
+        .pipe(replaceContent(templateQuickbarLinks))
+        .pipe(interpolate([
+            ['___HOSTING_ROOT___', hostingRoot],
+            ['___FILE___', (file) => file.relative]
+        ]))
+        .pipe(rename((path) => path.extname = ""))
+        .pipe(dest('quickbar/'));
+}
+
 
 exports.buildEsModuleLaunchers = series(buildEsModuleLaunchers);
 exports.buildDist = buildDist;
 exports.buildDistLaunchers = buildDistLaunchers;
+exports.buildQuickbarLinks = buildQuickbarLinks;
 
-exports.default = parallel(
-    buildEsModuleLaunchers,
-    series(buildDist, buildDistLaunchers)
+exports.default = series(
+    parallel(buildEsModuleLaunchers, series(buildDist, buildDistLaunchers)),
+    buildQuickbarLinks
 );

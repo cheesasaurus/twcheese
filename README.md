@@ -3,6 +3,7 @@
 ## Project structure
 |dir|purpose|
 |---|---|
+|quickbar/|Links for players to copy into their quickbars.|
 |launch/|Script launchers. Quickbar links point here. Used for cache control.|
 |dist/|Compiled scripts|
 |build/|stuff needed to build the script launchers and compiled scripts|

@@ -1,0 +1,9 @@
+===== run distributable script ======
+
+javascript:$.getScript('___HOSTING_ROOT___/launch/___FILE___');void 0;
+
+
+===== run modular script (recommended for development) =====
+
+javascript:$.getScript('___HOSTING_ROOT___/launch/esm/___FILE___');void 0;
+

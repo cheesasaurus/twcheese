@@ -35,9 +35,12 @@ class HaulStatsWidget extends AbstractWidget {
         let summationFromOptions = [];
         let summationToOptions = [];
         let hourlyBreakdowns = [];
-    
-        let latestCommandArrival = this.commands[this.commands.length - 1].arrival;
+
         let startOfHour = TwCheeseDate.newServerDate().startOfHour();
+        let latestCommandArrival;
+        if (this.commands.length > 0) {
+            latestCommandArrival = this.commands[this.commands.length - 1].arrival;
+        }        
     
         while (startOfHour < latestCommandArrival) {
             let endOfHour = startOfHour.endOfHour();

@@ -5,6 +5,7 @@ const gulp = require('gulp');
 const { src, dest, series } = gulp;
 const beautify = require('gulp-jsbeautifier');
 const header = require('gulp-header');
+const minify = require('gulp-minify');
 const fs = require('fs');
 const webpack = require('webpack');
 const interpolate = require(`${ROOT}/build/lib/gulp-interpolate.js`);
@@ -55,6 +56,12 @@ function applyDistTemplate() {
         .pipe(interpolate([
             ['___COMPILED_TOOL_SETUP___', (file) => prependToEachLine(' '.repeat(8), compiledToolSetup(file))]
         ]))
+        .pipe(minify({
+            preserveComments: 'some',
+            ext: {
+                min: '.min.js'
+            }
+        }))
         .pipe(dest(`${ROOT}/dist/`));
 }
 

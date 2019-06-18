@@ -16,10 +16,10 @@ let fileHash = function(file) {
 }
 
 gulp.task('buildDistLaunchers', function() {
-    return src('dist/*.js')
+    return src(['dist/*.js', '!**/*.min.js'])
         .pipe(replaceContent(templateDistLaunch))
         .pipe(interpolate([
-            ['___DIST_URL___', (file) => `${config.hostingRoot}/dist/${file.relative}`],
+            ['___DIST_URL___', (file) => `${config.hostingRoot}/dist/${file.stem}.min.js`],
             ['___DIST_HASH___', fileHash],
         ]))
         .pipe(minify({

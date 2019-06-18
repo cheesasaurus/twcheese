@@ -2,6 +2,7 @@ const gulp = require('gulp');
 const { src, dest } = gulp;
 const fs = require('fs');
 const crypto = require('crypto');
+const minify = require('gulp-minify');
 const interpolate = require('../lib/gulp-interpolate.js');
 const replaceContent = require('../lib/gulp-replace-content.js');
 
@@ -21,5 +22,11 @@ gulp.task('buildDistLaunchers', function() {
             ['___DIST_URL___', (file) => `${config.hostingRoot}/dist/${file.relative}`],
             ['___DIST_HASH___', fileHash],
         ]))
+        .pipe(minify({
+            noSource: true,
+            ext: {
+                min: '.js'
+            }
+        }))
         .pipe(dest('launch/'));
 });

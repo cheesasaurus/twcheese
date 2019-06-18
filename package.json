@@ -22,7 +22,8 @@
   "devDependencies": {},
   "scripts": {
     "build": "./node_modules/.bin/gulp",
-    "test": "./node_modules/.bin/mocha"
+    "test": "./node_modules/.bin/mocha",
+    "postinstall": "npm run build"
   },
   "repository": {
     "type": "git",

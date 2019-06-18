@@ -26,13 +26,16 @@ How come scripts in src/ToolUse/ can't import modules?
     - A module can only be executed once. Quickbar scripts should be usable multiple times without reloading the game!
 
 
-## How to build
+## How to install
 Make sure you have [nodejs](https://nodejs.org/en/) installed.
-
 1. edit conf/host
 2. cd to the project root
 3. `npm install`
-4. `npm run build`
+
+## How to build
+You'll most likely want to rebuild after changing anything in src/
+1. cd to the project root
+2. `npm run build`
 
 ## How to test
 1. cd to the project root

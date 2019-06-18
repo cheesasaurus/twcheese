@@ -19,6 +19,8 @@
 |src/Util/|Miscellaneous singletons and procedures. Maybe this won't be a thing after some refactoring. |
 |test/data/|Sampled data from the game, to test against|
 |test/unit/|Unit tests for modules in src/|
+|doc/player/|Documentation about the tools, for players|
+|doc/developer/|Documentation about the project|
 
 How come scripts in src/ToolUse/ can't import modules?
 - Scripts here get embedded into launchers via the build pipeline.

@@ -8,8 +8,8 @@
 |dist/|Compiled scripts|
 |build/|stuff needed to build the script launchers and compiled scripts|
 |conf/|configuration|
-|src/ToolSetup/|Modules that set up globally-accessible actions, to be used by scripts in ToolUse|
-|src/ToolDoc/|Plaintext documentation about what scripts in src/ToolUse/ do.|
+|src/ToolSetup/|Modules that set up tools, to be used by launchers and compiled scripts|
+|src/ToolDoc/|Plaintext documentation about what the tools do.|
 |src/Models/|Modules containing only Domain Logic. If it touches the dom, it doesn't belong here.|
 |src/Scrape/|Modules to search the dom for various data needed. These often return Models.|
 |src/Prompt/|Modules that pop open some kind of fancy prompt, when [window.prompt](https://developer.mozilla.org/en-US/docs/Web/API/Window/prompt) isn't good enough. Any non-presentation logic should be handled via callbacks or similar (meaning: the logic doesn't go in these modules!)|

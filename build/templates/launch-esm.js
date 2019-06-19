@@ -1,5 +1,5 @@
 (function() {
-    let tool = '___SCRIPT___';
+    let tool = '___TOOL_ID___';
 
     let useTool = function() {
         ___TOOL_USE___

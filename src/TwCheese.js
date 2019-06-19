@@ -3,14 +3,14 @@ if (typeof window.TwCheese === 'undefined') {
         ROOT: '___HOSTING_ROOT___',
         toolsLoaded: [],
         actions: {},
-        loadTool: function(url, onready) {
+        loadTool: function(toolId, onready) {
             let module = document.createElement('script');
             module.type = 'module';
             module.onload = () => {
-                this.markToolLoaded(url);
+                this.markToolLoaded(toolId);
                 onready();
             }    
-            module.src = this.ROOT + url;
+            module.src = `${this.ROOT}/src/ToolSetup/${toolId}.js`;
             document.head.appendChild(module);
         },
         isToolLoaded: function(url) {

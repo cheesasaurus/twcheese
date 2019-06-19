@@ -16,10 +16,16 @@ async function enhanceScreenWithHaulInfo(progressMonitor) {
 };
 
 
-window.TwCheese.actions.promptCommandHauls = function() {
-    if (haulsIncluded) {
-        UI.InfoMessage('This is already active.', 3000, 'error');
-        return;
+window.TwCheese.registerTool('OverviewHauls', function() {
+    let here = document.location.toString();
+    if (here.includes('screen=overview_villages') && here.includes('mode=commands')) {
+        if (haulsIncluded) {
+            UI.InfoMessage('This is already active.', 3000, 'error');
+            return;
+        }
+        promptLoadHauls(enhanceScreenWithHaulInfo);
     }
-    promptLoadHauls(enhanceScreenWithHaulInfo);
-}
+    else {
+        alert('To use this, you must be on the commands overview. It\'s recommended to use the \'return\' filter, since outgoing troops don\'t carry resources :)');
+    }
+});

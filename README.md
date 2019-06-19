@@ -9,7 +9,6 @@
 |build/|stuff needed to build the script launchers and compiled scripts|
 |conf/|configuration|
 |src/ToolSetup/|Modules that set up globally-accessible actions, to be used by scripts in ToolUse|
-|src/ToolUse/|Scripts that perform globally-accessible actions. **Cannot import modules**, because scripts here won't be executed in module context.|
 |src/ToolDoc/|Plaintext documentation about what scripts in src/ToolUse/ do.|
 |src/Models/|Modules containing only Domain Logic. If it touches the dom, it doesn't belong here.|
 |src/Scrape/|Modules to search the dom for various data needed. These often return Models.|
@@ -21,11 +20,6 @@
 |test/unit/|Unit tests for modules in src/|
 |doc/player/|Documentation about the tools, for players|
 |doc/developer/|Documentation about the project|
-
-How come scripts in src/ToolUse/ can't import modules?
-- Scripts here get embedded into launchers via the build pipeline.
-- A script can't "import" unless it's a module itself.
-    - A module can only be executed once. Quickbar scripts should be usable multiple times without reloading the game!
 
 
 ## How to install

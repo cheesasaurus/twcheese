@@ -23,7 +23,6 @@ module.exports = {
         ['___SCRIPT___', (file) => file.path.replace(file.cwd, '').replace(/\\/g, '/') ],
         ['___TOOL_ID___', (file) => file.stem ],
         ['___TOOL_DOC___', (file) => prependToEachLine(' * ', toolDoc(file)) ],
-        ['___TOOL_USE___', (file) => fs.readFileSync(`${ROOT}/src/ToolUse/${file.relative}`, 'utf8') ],
         ['___TWCHEESE___', fs.readFileSync(`${ROOT}/src/TwCheese.js`, 'utf8') ],
         ['___HOSTING_ROOT___', hostingRoot]
     ])

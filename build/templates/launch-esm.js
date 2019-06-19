@@ -1,15 +1,11 @@
 (function() {
-    let tool = '___TOOL_ID___';
-
-    let useTool = function() {
-        ___TOOL_USE___
-    };
+    let toolId = '___TOOL_ID___';
 
     ___TWCHEESE___
     
-    if (TwCheese.isToolLoaded(tool)) {
-        useTool();
+    if (TwCheese.hasTool(toolId)) {
+        TwCheese.useTool(toolId);
     } else {
-        TwCheese.loadTool(tool, useTool);
+        TwCheese.loadTool(toolId, () => TwCheese.useTool(toolId) );
     }
 })();

@@ -1,23 +1,25 @@
 if (typeof window.TwCheese === 'undefined') {
     window.TwCheese = {
         ROOT: '___HOSTING_ROOT___',
-        toolsLoaded: [],
         actions: {},
+        tools: {},
         loadTool: function(toolId, onready) {
             let module = document.createElement('script');
             module.type = 'module';
             module.onload = () => {
-                this.markToolLoaded(toolId);
                 onready();
             }    
             module.src = `${this.ROOT}/src/ToolSetup/${toolId}.js`;
             document.head.appendChild(module);
         },
-        isToolLoaded: function(url) {
-            return this.toolsLoaded.includes(url);
+        hasTool: function(toolId) {
+            return typeof this.tools[toolId] === 'function';
         },
-        markToolLoaded: function(url) {
-            this.toolsLoaded.push(url);
+        registerTool: function(toolId, func) {
+            this.tools[toolId] = func;
+        },
+        useTool: function(toolId) {
+            this.tools[toolId]();
         }
     };
 }

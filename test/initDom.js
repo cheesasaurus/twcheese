@@ -1,8 +1,8 @@
-const jsdom = require('jsdom');
-const { JSDOM } = jsdom;
-const { window } = new JSDOM('');
-const { document } = window;
-global.document = document;
-global.jQuery = require('jquery')(window);
+const { JSDOM } = require('jsdom');
+const w = (new JSDOM('')).window;
+global.jQuery = require('jquery')(w);
 global.$ = jQuery;
-global.window = window;
+
+// must be done after requiring jquery
+global.window = w;
+global.document = w.document;

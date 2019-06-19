@@ -1,6 +1,7 @@
 ===== run distributable script ======
 
-javascript:$.getScript('___HOSTING_ROOT___/launch/___FILE___');void 0;
+javascript:$.ajax('___HOSTING_ROOT___/launch/___FILE___?'+~~((new Date())/3e5),{cache:0});void 0;
+
 
 
 ===== run modular script (recommended for development) =====

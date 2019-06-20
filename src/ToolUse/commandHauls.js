@@ -1,4 +1,5 @@
-if (game_data.screen === 'overview_villages' && game_data.mode === 'commands') {
+let here = document.location.toString();
+if (here.includes('screen=overview_villages') && here.includes('mode=commands')) {
     TwCheese.actions.promptCommandHauls();
 }
 else {

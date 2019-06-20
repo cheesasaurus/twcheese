@@ -6,11 +6,12 @@ let hub = new HubRegistry(['build/tasks/*.js']);
 gulp.registry(hub);
 
 gulp.task('buildAll', series(
+    'purge',
     parallel(
         'buildEsModuleLaunchers',
         series('buildDist', 'buildDistLaunchers')
     ),
-    series('buildQuickbarLinks')
+    'buildQuickbarLinks'
 ));
 
 gulp.task('default', series('buildAll'));

@@ -4,7 +4,7 @@ const ROOT = path.resolve(__dirname, '../');
 const fs = require('fs');
 const { prependToEachLine } = require(`${ROOT}/build/lib/string.js`);
 
-let hostingRoot = fs.readFileSync(`${ROOT}/conf/host`, 'utf8');
+let hostingRoot = fs.readFileSync(`${ROOT}/conf/host`, 'utf8').trim();
 
 let headerTemplate = fs.readFileSync(`${ROOT}/build/templates/header`, 'utf8');
 let license = fs.readFileSync(`${ROOT}/build/templates/gpl-3.0`, 'utf8');

@@ -1,21 +1,21 @@
 const path = require('path');
 const ROOT = path.resolve(__dirname, '../../');
 const gulp = require('gulp');
-const rimraf = require('rimraf');
+const clean = require('clean-directory');
 
-let globs = [
-    `${ROOT}/quickbar/**`,
-    `${ROOT}/launch/**`,
-    `${ROOT}/dist/**`,
-    `${ROOT}/temp/**`
+let dirs = [
+    `${ROOT}/quickbar/`,
+    `${ROOT}/launch/`,
+    `${ROOT}/dist/`,
+    `${ROOT}/temp/`
 ];
 
-let rmrf = async function(glob) {
+let cleanAsync = async function(dir) {
     return new Promise(function(resolve) {
-        rimraf(glob, resolve);
+        clean(dir, [], {}, resolve);
     });
 };
 
 gulp.task('purge', async function() {
-    return Promise.all(globs.map(rmrf));
+    return Promise.all(dirs.map(cleanAsync));
 });

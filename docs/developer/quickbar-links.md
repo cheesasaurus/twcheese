@@ -29,7 +29,7 @@ Math.floor((new Date('2019-06-19T04:20:00.000Z'))/300000)   // 5203060
 
 These tricks save 11 characters. keeping the quickbar script compact, for easy sharing.
 
-To demonstrate this resulting in differing values, in 10 minute intervals:
+To demonstrate this resulting in differing values, in 5 minute intervals:
 
 4 minutes and 59 seconds later:
 ```

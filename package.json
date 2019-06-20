@@ -23,8 +23,10 @@
   },
   "devDependencies": {},
   "scripts": {
+    "prebuild": "node ./build/checkConfigurationAttempted.js",
     "build": "./node_modules/.bin/gulp",
     "test": "./node_modules/.bin/mocha",
+    "preinstall": "node ./build/checkConfigurationAttempted.js",
     "postinstall": "npm run build"
   },
   "repository": {

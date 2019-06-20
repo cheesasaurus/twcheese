@@ -1,4 +1,4 @@
-### use distributable
+### use distributable (recommended for playing)
 
 ```javascript
 javascript:

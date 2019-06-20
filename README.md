@@ -24,9 +24,10 @@
 
 ## How to install
 Make sure you have [nodejs](https://nodejs.org/en/) installed.
-1. edit conf/host
-2. cd to the project root
-3. `npm install`
+1. copy `conf/host.example` to `conf/host`
+2. edit `conf/host`
+3. cd to the project root
+4. `npm install`
 
 ## How to build
 You'll most likely want to rebuild after changing anything in src/

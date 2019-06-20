@@ -1,2 +1,6 @@
+/conf/
+/dist/
+/launch/
 /node_modules
+/quickbar/
 /temp/

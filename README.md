@@ -10,7 +10,7 @@
 |conf/|configuration|
 |src/ToolSetup/|Modules that set up tools, to be used by launchers and compiled scripts|
 |src/ToolDoc/|Plaintext documentation about what the tools do.|
-|src/Models/|Modules containing only Domain Logic. If it touches the dom, it doesn't belong here.|
+|src/Models/|Modules containing only Domain Logic. If it touches the document, it doesn't belong here.|
 |src/Scrape/|Modules to search the dom for various data needed. These often return Models.|
 |src/Prompt/|Modules that pop open some kind of fancy prompt, when [window.prompt](https://developer.mozilla.org/en-US/docs/Web/API/Window/prompt) isn't good enough. Any non-presentation logic should be handled via callbacks or similar (meaning: the logic doesn't go in these modules!)|
 |src/Transform/|Modules that transform existing stuff in the dom. E.g. adding extra columns to a table|

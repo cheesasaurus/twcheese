@@ -1,11 +1,11 @@
+/*! Tool setup compiled from ___SCRIPT___
+ *---------------------------------------------------------------------*/
 (function() {
     let toolId = '___TOOL_ID___';
 
     ___TWCHEESE___
 
-    if (!TwCheese.hasTool(toolId)) {
-        // compiled from ___HOSTING_ROOT______SCRIPT___
-        
+    if (!TwCheese.hasTool(toolId)) {        
         ___COMPILED_TOOL_SETUP___
     }
 

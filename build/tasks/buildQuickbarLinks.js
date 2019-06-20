@@ -11,10 +11,7 @@ let templateQuickbarLinks = fs.readFileSync('build/templates/quickbar-links', 'u
 gulp.task('buildQuickbarLinks', function() {
     return (src('launch/*.js'))
         .pipe(replaceContent(templateQuickbarLinks))
-        .pipe(interpolate([
-            ['___HOSTING_ROOT___', config.hostingRoot],
-            ['___FILE___', (file) => file.relative]
-        ]))
+        .pipe(interpolate(config.interpolate))
         .pipe(rename((path) => path.extname = ""))
         .pipe(dest('quickbar/'));
 });

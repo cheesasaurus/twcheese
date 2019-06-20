@@ -20,6 +20,13 @@ if (typeof window.TwCheese === 'undefined') {
         },
         useTool: function(toolId) {
             this.tools[toolId]();
+        },
+        tryUseTool: function(toolId) {
+            if (!this.hasTool(toolId)) {
+                return false;
+            }
+            this.useTool(toolId);
+            return true;
         }
     };
 }

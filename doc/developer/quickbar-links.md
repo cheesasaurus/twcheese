@@ -2,7 +2,10 @@
 
 example:
 ```
-javascript:$.ajax('https://cheesasaurus.github.io/twcheese/launch/commandHauls.js?'+~~((new Date())/3e5),{cache:0});void 0;
+javascript:
+(window.TwCheese && TwCheese.tryUseTool('OverviewHauls'))
+|| $.ajax('https://cheesasaurus.github.io/twcheese/launch/OverviewHauls.js?'
++~~((new Date())/3e5),{cache:1})
 ```
 
 Q: Why `$.ajax` instead of `$.getScript`?\

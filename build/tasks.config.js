@@ -20,6 +20,7 @@ module.exports = {
         header: headerTemplate
     },
     interpolate: new Map([
+        ['___FILE___', (file) => file.relative ],
         ['___SCRIPT___', (file) => file.path.replace(file.cwd, '').replace(/\\/g, '/') ],
         ['___TOOL_ID___', (file) => file.stem ],
         ['___TOOL_DOC___', (file) => prependToEachLine(' * ', toolDoc(file)) ],

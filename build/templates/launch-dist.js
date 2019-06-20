@@ -1,1 +1,1 @@
-$.ajax('___DIST_URL___?___DIST_HASH___',{cache:0});
+$.ajax('___DIST_URL___?___DIST_HASH___',{cache:1});

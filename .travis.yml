@@ -1,6 +1,22 @@
 language: node_js
 node_js:
  - "node"
+
 before_install:
  - sudo ln -s $PWD /twcheese
  - echo $TWCHEESE_HOST > conf/host
+
+before_deploy:
+ - rm .gitignore
+ - echo /node_modules >> .gitignore
+ - echo /temp >> .gitignore
+
+deploy:
+  provider: pages
+  target: gh-pages  
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  keep_history: false
+  on:
+    branch: master
+  

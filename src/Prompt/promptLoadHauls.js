@@ -1,5 +1,6 @@
 import { ProgressMonitor } from '/twcheese/src/Models/ProgressMonitor.js';
-import { ImageSrc, initCss, fadeGameContent, unfadeGameContent } from '/twcheese/src/Util/UI.js';
+import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
+import { initCss, fadeGameContent, unfadeGameContent } from '/twcheese/src/Util/UI.js';
 
 
 /**

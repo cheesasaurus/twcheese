@@ -1,4 +1,4 @@
-import { ImageSrc } from '/twcheese/src/Util/UI.js';
+import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 
 let serverOffsetFromUtc = window.server_utc_diff * 1000;
 let localOffsetFromUtc = new Date().getTimezoneOffset() * 60000;

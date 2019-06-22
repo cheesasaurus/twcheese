@@ -1,13 +1,15 @@
 import { TwCheeseDate } from '/twcheese/src/Models/TwCheeseDate.js';
+import { Resource } from '/twcheese/src/Models/Resource.js';
+import { Resources } from '/twcheese/src/Models/Resources.js';
 
 class Command {
     constructor() {
         this.arrival = TwCheeseDate.newServerDate();
-        this.timber = 0;
-        this.clay = 0;
-        this.iron = 0;
+        this.timber = new Resource(Resources.TYPE_TIMBER, 0);
+        this.clay = new Resource(Resources.TYPE_CLAY, 0);
+        this.iron = new Resource(Resources.TYPE_IRON, 0);
         this.haulCapacity = 0;
-    } 
+    }
 
     sumLoot() {
         return this.timber + this.clay + this.iron;
@@ -22,6 +24,17 @@ class Command {
 
     arrivesDuring(fromTime, toTime) {
         return this.arrival >= fromTime && this.arrival <= toTime;
+    }
+
+    /**
+     * @param {Object} other 
+     */
+    equals(other) {
+        return this.arrival.equals(other.arrival)
+            && this.timber.valueOf() === other.timber.valueOf()
+            && this.clay.valueOf() === other.clay.valueOf()
+            && this.iron.valueOf() === other.iron.valueOf()
+            && this.haulCapacity === other.haulCapacity;
     }
 
     static sumProps(commands) {

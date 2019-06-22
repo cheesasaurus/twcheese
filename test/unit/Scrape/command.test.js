@@ -7,7 +7,7 @@ const assert = require('assert');
 
 function assertCommand(actual, propsExpected) {
     assert(actual instanceof Command);
-    assert.deepEqual(propsExpected, actual);
+    assert(actual.equals(propsExpected));
 }
 
 

@@ -1,5 +1,12 @@
+import { ImageSrc } from '/twcheese/src/Util/UI.js';
+
 let serverOffsetFromUtc = window.server_utc_diff * 1000;
 let localOffsetFromUtc = new Date().getTimezoneOffset() * 60000;
+
+let pretendServerIsUTC = function(cheeseDate) {
+    return cheeseDate.addMilliseconds(serverOffsetFromUtc)
+}
+
 
 class TwCheeseDate extends Date {
     constructor() {
@@ -65,20 +72,20 @@ class TwCheeseDate extends Date {
     }
 
     getServerHours() {
-        return this.addMilliseconds(serverOffsetFromUtc).getUTCHours();
+        return pretendServerIsUTC(this).getUTCHours();
     }
 
     isTodayOnServer() {
-        let dateAdjusted = this.addMilliseconds(serverOffsetFromUtc);
-        let nowAdjusted = new TwCheeseDate().addMilliseconds(serverOffsetFromUtc);
-        return dateAdjusted.isSameDayInUtc(nowAdjusted);
+        let date = pretendServerIsUTC(this);
+        let now = pretendServerIsUTC(new TwCheeseDate());
+        return date.isSameDayInUtc(now);
     }
 
     isTomorrowOnServer() {
-        let dateAdjusted = this.addMilliseconds(serverOffsetFromUtc);
-        let nowAdjusted = new TwCheeseDate().addMilliseconds(serverOffsetFromUtc);
-        let tomorrow = nowAdjusted.addDays(1);    
-        return dateAdjusted.isSameDayInUtc(tomorrow);
+        let date = pretendServerIsUTC(this);
+        let now = pretendServerIsUTC(new TwCheeseDate());
+        let tomorrow = now.addDays(1);    
+        return date.isSameDayInUtc(tomorrow);
     }
 
     isSameDayInUtc(otherDate) {
@@ -101,6 +108,23 @@ class TwCheeseDate extends Date {
         ret.setUTCSeconds(59);
         ret.setUTCMilliseconds(999);
         return ret;
+    }
+
+    toDebugString() {
+        let d = pretendServerIsUTC(this);
+        let year = d.getUTCFullYear();
+        let month = d.getUTCMonth().toString().padStart(2, '0');
+        let day = d.getUTCDate().toString().padStart(2, '0');
+        let hours = d.getUTCHours().toString().padStart(2, '0');
+        let minutes = d.getUTCMinutes().toString().padStart(2, '0');
+        let seconds = d.getUTCSeconds().toString().padStart(2, '0');
+        let ms = d.getUTCMilliseconds().toString().padStart(3, '0');
+        let offsetHours = Math.round(serverOffsetFromUtc / 360000) / 10;        
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${ms} ServerTime(UTC+${offsetHours})`;
+    }
+
+    imageSrc() {
+        return ImageSrc.calendar;
     }
 
     /**

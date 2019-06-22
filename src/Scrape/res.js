@@ -1,6 +1,8 @@
+import { Resources } from '/twcheese/src/Models/Resources.js';
+
 /**
  * @param {HTMLElement} resourcesContainer an element containing timber/clay/iron amounts
- * @return {Object} {timber: timberAmount, clay: clayAmount, iron: ironAmount}
+ * @return {Resources}
  */
 function scrapeResources(resourcesContainer) {
     // remove grey periods used as thousands separators
@@ -13,11 +15,11 @@ function scrapeResources(resourcesContainer) {
         return icon ? parseInt($(icon).parent().text()) : 0;
     }
 
-    return {
-        timber: resAmount('wood'),
-        clay: resAmount('stone'),
-        iron: resAmount('iron')
-    };
+    return new Resources(
+        resAmount('wood'),
+        resAmount('stone'),
+        resAmount('iron')
+    );
 };
 
 export { scrapeResources };

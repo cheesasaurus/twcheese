@@ -110,6 +110,10 @@ class TwCheeseDate extends Date {
         return ret;
     }
 
+    equals(date) {
+        return this.getTime() === date.getTime();
+    }
+
     toDebugString() {
         let d = pretendServerIsUTC(this);
         let year = d.getUTCFullYear();

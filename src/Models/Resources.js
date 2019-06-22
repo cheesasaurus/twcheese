@@ -7,6 +7,18 @@ class Resources {
         this.iron = new Resource(Resource.TYPE_IRON, ironAmount);
     }
 
+    sum() {
+        return this.timber + this.clay + this.iron;
+    }
+
+    add(other) {
+        return new Resources(
+            this.timber + other.timber,
+            this.clay + other.clay,
+            this.iron + other.iron
+        );
+    }
+
     /**
      * @param {Objecet} other 
      */

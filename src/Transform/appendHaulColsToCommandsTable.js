@@ -36,10 +36,10 @@ async function appendHaulColsToCommandsTable(progressMonitor) {
         }
 
         $(row).append(`
-            <td>${command.timber}</td>
-            <td>${command.clay}</td>
-            <td>${command.iron}</td>
-            <td>${command.sumLoot()}/${command.haulCapacity} (${command.calcHaulPercent()}%)</td>
+            <td>${command.haul.timber}</td>
+            <td>${command.haul.clay}</td>
+            <td>${command.haul.iron}</td>
+            <td>${command.haul.sum()}/${command.haulCapacity} (${command.calcHaulPercent()}%)</td>
         `);
 
         progressMonitor.progressMade(1);

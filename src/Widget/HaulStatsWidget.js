@@ -55,9 +55,9 @@ class HaulStatsWidget extends AbstractWidget {
             hourlyBreakdowns.push(`
                 <tr>
                     <td>${hourOfDay}:00 - ${hourOfDay}:59 ${dayHint}</td>
-                    <td>${result.timber}</td>
-                    <td>${result.clay}</td>
-                    <td>${result.iron}</td>
+                    <td>${result.haul.timber}</td>
+                    <td>${result.haul.clay}</td>
+                    <td>${result.haul.iron}</td>
                     <td>${result.sumLoot()}/${result.haulCapacity}</td>
                     <td>${result.calcHaulPercent()}%</td>
                 </tr>
@@ -150,9 +150,9 @@ class HaulStatsWidget extends AbstractWidget {
         let sum = Command.sumPropsFromTimeframe(this.commands, startTime, endTime);
 
         this.$sum.html(`
-            <img src="${ImageSrc.timber}"> ${sum.timber}
-            <img src="${ImageSrc.clay}"> ${sum.clay}
-            <img src="${ImageSrc.iron}"> ${sum.iron}
+            <img src="${ImageSrc.timber}"> ${sum.haul.timber}
+            <img src="${ImageSrc.clay}"> ${sum.haul.clay}
+            <img src="${ImageSrc.iron}"> ${sum.haul.iron}
             &nbsp;&nbsp;| ${sum.sumLoot()}/${sum.haulCapacity} (${sum.calcHaulPercent()}%)
         `);
     }

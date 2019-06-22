@@ -1,18 +1,15 @@
 import { TwCheeseDate } from '/twcheese/src/Models/TwCheeseDate.js';
-import { Resource } from '/twcheese/src/Models/Resource.js';
 import { Resources } from '/twcheese/src/Models/Resources.js';
 
 class Command {
     constructor() {
         this.arrival = TwCheeseDate.newServerDate();
-        this.timber = new Resource(Resources.TYPE_TIMBER, 0);
-        this.clay = new Resource(Resources.TYPE_CLAY, 0);
-        this.iron = new Resource(Resources.TYPE_IRON, 0);
+        this.haul = new Resources(0, 0, 0);
         this.haulCapacity = 0;
     }
 
     sumLoot() {
-        return this.timber + this.clay + this.iron;
+        return this.haul.sum();
     }
 
     calcHaulPercent() {
@@ -31,9 +28,7 @@ class Command {
      */
     equals(other) {
         return this.arrival.equals(other.arrival)
-            && this.timber.valueOf() === other.timber.valueOf()
-            && this.clay.valueOf() === other.clay.valueOf()
-            && this.iron.valueOf() === other.iron.valueOf()
+            && this.haul.equals(other.haul)
             && this.haulCapacity === other.haulCapacity;
     }
 
@@ -41,9 +36,7 @@ class Command {
         let sum = new Command();
 
         for (let command of commands) {
-            sum.timber += command.timber;
-            sum.clay += command.clay;
-            sum.iron += command.iron;
+            sum.haul = sum.haul.add(command.haul);
             sum.haulCapacity += command.haulCapacity;
         }
         return sum;

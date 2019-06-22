@@ -21,10 +21,7 @@ function scrapeCommand(gameDoc) {
     }
 
     let resCell = tables[2].rows[0].cells[1];
-    let haul = scrapeResources(resCell);
-    command.timber = haul.timber;
-    command.clay = haul.clay;
-    command.iron = haul.iron;
+    command.haul = scrapeResources(resCell);
 
     var haulText = resCell.innerHTML;
     if (haulText.search('\\|') !== -1) {

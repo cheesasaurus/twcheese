@@ -1,6 +1,6 @@
 import { requestDocumentBody } from '/twcheese/src/Util/Network.js';
 import { scrapeCommand } from '/twcheese/src/Scrape/command.js';
-import { ImageSrc } from '/twcheese/src/Util/UI.js';
+import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 
 /**
  * @param {ProgressMonitor} progressMonitor

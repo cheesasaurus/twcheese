@@ -1,6 +1,7 @@
 import { AbstractWidget } from '/twcheese/src/Widget/AbstractWidget.js';
 import { Command } from '/twcheese/src/Models/Command.js';
-import { ImageSrc, initCss } from '/twcheese/src/Util/UI.js';
+import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
+import { initCss } from '/twcheese/src/Util/UI.js';
 import { TwCheeseDate } from '/twcheese/src/Models/TwCheeseDate.js';
 import { userConfig } from '/twcheese/src/Util/UserConfig.js';
 

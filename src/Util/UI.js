@@ -1,18 +1,4 @@
-let twCheeseImagePath = window.TwCheese.ROOT + '/assets/images';
-
-let ImageSrc = {
-    plus: 'graphic/plus.png',
-    minus: 'graphic/minus.png',
-    timber: 'graphic/holz.png',
-    clay: 'graphic/lehm.png',
-    iron: 'graphic/eisen.png',
-    popupBackground: 'graphic/popup/content_background.png',
-    popupBorder: 'graphic/popup/border.png',
-    servant: 'graphic/paladin_new.png',
-    loadingSpinner: 'graphic/throbber.gif',
-    calendar: twCheeseImagePath + '/calendar.png'
-};
-
+import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 
 function fadeGameContent () {
     $('body').append('<div id="fader" class="fader">');
@@ -21,7 +7,6 @@ function fadeGameContent () {
 function unfadeGameContent() {
     $('#fader').remove();
 }
-
 
 ////// css //////
 
@@ -50,4 +35,4 @@ initCss(`
 `);
 
 
-export { ImageSrc, initCss, fadeGameContent, unfadeGameContent };
+export { initCss, fadeGameContent, unfadeGameContent };

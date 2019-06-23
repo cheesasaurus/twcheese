@@ -1,6 +1,6 @@
-import { Correctness } from '/twcheese/src/Debug/Correctness.js';
-import { Question } from '/twcheese/src/Debug/Question.js';
-import { Option } from '/twcheese/src/Debug/Option.js';
+import { Correctness } from '/twcheese/src/Models/Debug/Correctness.js';
+import { Question } from '/twcheese/src/Models/Debug/Question.js';
+import { Option } from '/twcheese/src/Models/Debug/Option.js';
 
 
 const OPTION_INCORRECT = 1;
@@ -8,7 +8,7 @@ const OPTION_NOT_SURE = 2;
 
 class QuestionValue extends Question {
 
-    construct(questionText, valueQuestioned) {
+    constructor(questionText, valueQuestioned) {
         super(questionText);
         this.value = valueQuestioned;
         this.options = [

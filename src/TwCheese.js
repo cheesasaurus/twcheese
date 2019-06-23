@@ -13,13 +13,13 @@ if (typeof window.TwCheese === 'undefined') {
             document.head.appendChild(module);
         },
         hasTool: function(toolId) {
-            return typeof this.tools[toolId] === 'function';
+            return typeof this.tools[toolId] !== 'undefined';
         },
-        registerTool: function(toolId, func) {
-            this.tools[toolId] = func;
+        registerTool: function(tool) {
+            this.tools[tool.id] = tool;
         },
         useTool: function(toolId) {
-            this.tools[toolId]();
+            this.tools[toolId].use();
         },
         tryUseTool: function(toolId) {
             if (!this.hasTool(toolId)) {

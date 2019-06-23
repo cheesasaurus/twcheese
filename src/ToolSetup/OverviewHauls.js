@@ -4,7 +4,7 @@ import { promptLoadHauls } from '/twcheese/src/Prompt/promptLoadHauls.js';
 import { suggestRedirect } from '/twcheese/src/Prompt/suggestRedirect.js';
 import { alertPremiumRequired } from '/twcheese/src/Prompt/alertPremiumRequired.js';
 import { appendHaulColsToCommandsTable } from '/twcheese/src/Transform/appendHaulColsToCommandsTable.js';
-
+import { debugProcess } from '/twcheese/src/ToolDebug/OverviewHauls.js';
 
 
 let haulsIncluded = false;
@@ -33,7 +33,7 @@ function suggestRedirectToCommandsOverview() {
 }
 
 
-window.TwCheese.registerTool('OverviewHauls', function() {
+function useTool() {
     if (haulsIncluded) {
         window.UI.InfoMessage('This is already active.', 3000, 'error');
         return;
@@ -50,4 +50,11 @@ window.TwCheese.registerTool('OverviewHauls', function() {
     }
 
     promptLoadHauls(enhanceScreenWithHaulInfo);
+}
+
+
+window.TwCheese.registerTool({
+    id: 'OverviewHauls',
+    use: useTool,
+    getDebugProcess: () => debugProcess
 });

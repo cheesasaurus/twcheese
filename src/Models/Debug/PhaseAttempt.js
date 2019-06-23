@@ -1,4 +1,4 @@
-import { Phase } from '/twcheese/src/Debug/Phase.js';
+import { Phase } from '/twcheese/src/Models/Debug/Phase.js';
 
 const Status = {
     SUCCESS: 'success',

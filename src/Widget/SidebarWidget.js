@@ -15,6 +15,7 @@ class SidebarWidget extends AbstractWidget {
         this.contents = {
             bugReporter: (new DebuggerWidget()).appendTo(this.$content)
         };
+        this.watchContents();
     }
 
     initStructure() {
@@ -52,7 +53,16 @@ class SidebarWidget extends AbstractWidget {
                 this.expandHoriz();
             }
         });
-        // todo
+    }
+
+    watchContents() {
+        $.each(this.contents, (key, content) => {
+            $(content).on('change', () => {
+                if (this.activeMenuItem) {
+                    this.$el.width(this.$el[0].scrollWidth);
+                }                
+            })
+        });
     }
 
     async toggleExpand() {
@@ -90,7 +100,7 @@ class SidebarWidget extends AbstractWidget {
         return new Promise((resolve, reject) => {
             let options = {
                 duration: durationMs,
-                complete: resolve()
+                complete: resolve
             };
             this.$el.animate({
                 height: '100%',
@@ -107,16 +117,19 @@ class SidebarWidget extends AbstractWidget {
     }
 
     expandHoriz(durationMs) {
+        let options = {
+            duration: durationMs,
+        };
         this.$el.animate({
             width: this.$el[0].scrollWidth
-        }, durationMs);
+        }, options);
     }
 
     async shrinkHoriz(durationMs) {
         return new Promise((resolve, reject) => {
             let options = {
                 duration: durationMs,
-                complete: resolve()
+                complete: resolve
             };
             this.$el.animate({
                 width: '50px'
@@ -136,6 +149,7 @@ initCss(`
         top: 0;
         left: 0;
         height: 50px;
+        max-height: 100%;
         overflow-x: hidden;
         overflow-y: hidden;
         width: 50px;

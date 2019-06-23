@@ -33,8 +33,8 @@ async function tryScrapeCommandScreen(commandUrl) {
 let debugProcess = DebugProcess.create('Tool: OverviewHauls');
 debugProcess.enqueuePhase(
     PhaseQuestion.create('Entry')
-        .addQuestion(Question.create(`What's wrong?`)
-            .addOption(Option.create('Wrong values are shown in the commands list', 'wrong_values', 'twcheese-debug-option-TODO')
+        .addQuestion(Question.create(`What's broken?`)
+            .addOption(Option.create('Wrong values shown in commands list', 'wrong_values', 'twcheese-debug-option-TODO')
                 .addFollowUp(PhaseAttempt.create('select a problematic row', trySelectCommandFromTable)
                     .onSuccess(function(commandUrl) {
                         debugProcess.insertPhase(PhaseAttempt.create('read selected command', async () => tryScrapeCommandScreen(commandUrl))

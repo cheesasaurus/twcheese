@@ -19,8 +19,14 @@ function compileToolSetup(done) {
     fs.readdir(`${ROOT}/src/ToolSetup`, function(err, items) {
         let webpackConfigs = [];
         for (item of items) {
+            if (item === 'Sidebar.js') {
+                continue;
+            }
             webpackConfigs.push({
-                entry: path.resolve(`${ROOT}/src/ToolSetup`, item),
+                entry: [
+                    path.resolve(`${ROOT}/src/ToolSetup`, item),
+                    `${ROOT}/src/ToolSetup/Sidebar.js`
+                ],
                 output: {
                     path: stagingDir,
                     filename: item
@@ -48,7 +54,7 @@ let compiledToolSetup = function(file) {
 let templateDist= fs.readFileSync(`${ROOT}/build/templates/dist.js`, 'utf8');
 
 function applyDistTemplate() {
-    return src(`${ROOT}/src/ToolSetup/*.js`)
+    return src([`${ROOT}/src/ToolSetup/*.js`, `!${ROOT}/src/ToolSetup/Sidebar.js`])
         .pipe(replaceContent(templateDist))
         .pipe(header(config.templates.header))
         .pipe(interpolate(config.interpolate))

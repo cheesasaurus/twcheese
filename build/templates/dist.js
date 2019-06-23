@@ -5,8 +5,14 @@
 
     ___TWCHEESE___
 
-    if (!TwCheese.hasTool(toolId)) {        
+    if (!TwCheese.hasTool(toolId)) {
+        let sidebarInitd = TwCheese.hasTool('Sidebar');
+        
         ___COMPILED_TOOL_SETUP___
+
+        if (!sidebarInitd) {
+            TwCheese.useTool('Sidebar');
+        }    
     }
 
     TwCheese.useTool(toolId);

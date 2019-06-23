@@ -1,9 +1,9 @@
-import { DebugProcess } from '/twcheese/src/Debug/DebugProcess.js';
-import { PhaseQuestion } from '/twcheese/src/Debug/PhaseQuestion.js';
-import { PhaseAttempt } from '/twcheese/src/Debug/PhaseAttempt.js';
-import { Question } from '/twcheese/src/Debug/Question.js';
-import { QuestionValue } from '/twcheese/src/Debug/QuestionValue.js';
-import { Option } from '/twcheese/src/Debug/Option.js';
+import { DebugProcess } from '/twcheese/src/Models/Debug/DebugProcess.js';
+import { PhaseQuestion } from '/twcheese/src/Models/Debug/PhaseQuestion.js';
+import { PhaseAttempt } from '/twcheese/src/Models/Debug/PhaseAttempt.js';
+import { Question } from '/twcheese/src/Models/Debug/Question.js';
+import { QuestionValue } from '/twcheese/src/Models/Debug/QuestionValue.js';
+import { Option } from '/twcheese/src/Models/Debug/Option.js';
 
 
 import { requestDocument } from '/twcheese/src/Util/Network.js';

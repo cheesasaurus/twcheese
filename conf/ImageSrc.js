@@ -11,7 +11,9 @@ let ImageSrc = {
     popupBorder: game + 'popup/border.png',
     servant: game + 'paladin_new.png',
     loadingSpinner: game + 'throbber.gif',
-    calendar: self + 'calendar.png'
+    calendar: self + 'calendar.png',
+    sidebarMain: self + 'sidebar/gear.png',
+    sidebarBug: self + 'sidebar/bug.png'
 };
 
 export { ImageSrc };

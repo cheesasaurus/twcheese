@@ -1,6 +1,7 @@
 
 class Phase {
-    construct() {
+    constructor(phaseName) {
+        this.phaseName = phaseName;
         this.followsUpOn = null;
     }
 

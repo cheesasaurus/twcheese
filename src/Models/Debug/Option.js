@@ -1,6 +1,6 @@
 
 class Option {
-    construct(humanText, value, className) {
+    constructor(humanText, value, className) {
         this.text = humanText;
         this.value = value;
         this.className = className;

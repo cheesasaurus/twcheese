@@ -8,10 +8,12 @@ class DebugProcess {
 
     enqueuePhase(phase) {
         this.phases.push(phase);
+        return this;
     }
 
     insertPhase(phase) {
         this.phases.splice(this.currentPhaseIndex + 1, 0, phase);
+        return this;
     }
 
     static create(processName) {

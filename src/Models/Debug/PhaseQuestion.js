@@ -1,9 +1,9 @@
-import { Phase } from '/twcheese/src/Debug/Phase.js';
+import { Phase } from '/twcheese/src/Models/Debug/Phase.js';
 
 
 class PhaseQuestion extends Phase {
     constructor(phaseName) {
-        this.phaseName = phaseName;
+        super(phaseName);
         this.questions = [];
         this.examined_html;
     }

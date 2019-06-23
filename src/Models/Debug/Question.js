@@ -11,7 +11,7 @@ class Question {
         return this;
     }
 
-    static create() {
+    static create(text) {
         return new Question(text);
     }
 }

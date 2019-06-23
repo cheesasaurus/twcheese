@@ -10,12 +10,24 @@ class DebugProcess {
 
     enqueuePhase(phase) {
         this.phases.push(phase);
+        this.watchPhase(phase);
         return this;
     }
 
     insertPhase(phase) {
         this.phases.splice(this.currentPhaseIndex + 1, 0, phase);
+        this.watchPhase(phase);
         return this;
+    }
+
+    watchPhase(phase) {
+        let events = [
+            DebugEvents.PHASE_COMPLETION_READY,
+            DebugEvents.PHASE_COMPLETION_NOT_READY,
+            DebugEvents.PHASE_CHANGED
+        ];
+
+        $(phase).on(events.join(' '), (e) => $(this).trigger(e.type, e));
     }
 
     start() {

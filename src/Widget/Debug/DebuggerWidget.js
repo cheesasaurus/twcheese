@@ -2,20 +2,26 @@ import { AbstractWidget } from '/twcheese/src/Widget/AbstractWidget.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { initCss } from '/twcheese/src/Util/UI.js';
 import { DebugEvents } from '/twcheese/src/Models/Debug/DebugEvents.js';
+import { PhaseQuestion } from '/twcheese/src/Models/Debug/PhaseQuestion.js';
+import { QuestionWidget } from '/twcheese/src/Widget/Debug/QuestionWidget.js';
+
 
 class DebuggerWidget extends AbstractWidget {
     constructor() {
         super();
         this.initStructure();
         this.watchSelf();
+        this.watchGlobal();
         this.process = null;
     }
 
     initStructure() {
         this.$el = $(this.createHtml().trim());
-        this.$prev = this.$el.find('.twcheese-debugger-prev');
-        this.$next = this.$el.find('.twcheese-debugger-next');
+        this.$header = this.$el.find('.twcheese-debugger-header');
         this.$content = this.$el.find('.twcheese-debugger-content');
+        this.$nav = this.$el.find('.twcheese-debugger-nav');
+        this.$prev = this.$el.find('.twcheese-debugger-prev');
+        this.$next = this.$el.find('.twcheese-debugger-next');        
         this.$processName = this.$el.find('.twcheese-debugger-process-name');
     }
 
@@ -42,6 +48,10 @@ class DebuggerWidget extends AbstractWidget {
         this.$prev.on('click', () => {
             this.process.goToPrevPhase();
         });
+    }
+
+    watchGlobal() {
+        $(window).on('resize', () => this.updateScrolling());
     }
 
     startProcessForLastUsedToolIfSensible() {
@@ -78,19 +88,50 @@ class DebuggerWidget extends AbstractWidget {
         if (!this.process.hasPrevPhase()) {
             this.$prev.hide();
         }
+
+        let phase = this.process.getCurrentPhase();
+        if (phase instanceof PhaseQuestion) {
+            this._renderPhaseQuestion(phase);
+        }
         // todo
+
+        this.updateScrolling();
+        $(this).trigger('change');
+    }
+
+    _renderPhaseQuestion(phase) {
+        for (let question of phase.questions) {
+            (new QuestionWidget(question)).appendTo(this.$content);
+        }
+    }
+
+    updateScrolling() {
+        // https://github.com/rochal/jQuery-slimScroll/issues/16
+        if (this.$content.parent('.slimScrollDiv').size() > 0) {
+            this.$content.parent().replaceWith(this.$content);
+        }
+
+        let availableVert = this.$el.innerHeight() - this.$header.outerHeight() - this.$nav.outerHeight();
+
+        this.$content.slimScroll({
+            height: Math.min(availableVert, this.$content.outerHeight()),
+            color: 'rgb(150, 150, 150)',
+            opacity: 0.3,
+            borderRadius: 0,
+            alwaysVisible: true
+        });
     }
 
 }
 
 
 initCss(`
-    .twcheese-debugger-contents {
-        padding: 2px 3px;
+    .twcheese-debugger {
+        height: 100%;
+        min-width: 300px;
     }
 
     .twcheese-debugger-header {
-        min-width: 200px;
         background-color: rgb(56, 56, 56);
         padding: 9px 20px;
         font-weight: 700;
@@ -106,8 +147,14 @@ initCss(`
         white-space: nowrap;
     }
 
+    .twcheese-debugger-content {
+        box-sizing: border-box;
+        padding: 20px;
+    }
+
     .twcheese-debugger-nav {
-        padding: 10px;
+        padding: 20px 10px;
+        height: 20px;
     }
 
     .twcheese-debugger-prev,

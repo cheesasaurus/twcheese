@@ -1,4 +1,5 @@
 import { Phase } from '/twcheese/src/Models/Debug/Phase.js';
+import { DebugEvents } from '/twcheese/src/Models/Debug/DebugEvents.js';
 
 const Status = {
     SUCCESS: 'success',
@@ -21,9 +22,12 @@ class PhaseAttempt extends Phase {
         try {
             let data = await this.attempt();
             this.success(data);
+            this.status = Status.SUCCESS;
         } catch (err) {
             this.fail(err);
-        }      
+            this.status = Status.FAIL;
+        }
+        this.checkCompletionReady();
     }
 
     onSuccess(cb) {
@@ -34,6 +38,16 @@ class PhaseAttempt extends Phase {
     onFail(cb) {
         this.fail = cb;
         return this;
+    }
+
+    checkCompletionReady() {
+        if (this.status !== Status.NOT_ATTEMPTED) {
+            $(this).trigger(DebugEvents.PHASE_COMPLETION_READY);
+        }
+    }
+
+    getThingsToFollowUpOn() {
+        return [];
     }
     
     static create(phaseNum, functionToAttempt) {

@@ -24,12 +24,14 @@ class DebugProcess {
     }
 
     goToNextPhase() {
+        this.removeFuturePhasesFollowingUpOnIrrelevantThings();
         if (!this.hasNextPhase()) {
             throw `there's no next phase`;
         }
         this.currentPhaseIndex++;
         // todo
         $(this).trigger(DebugEvents.PHASE_CHANGED);
+        this.getCurrentPhase().checkCompletionReady();
     }
 
     hasNextPhase() {
@@ -51,6 +53,23 @@ class DebugProcess {
 
     getCurrentPhase() {
         return this.phases[this.currentPhaseIndex];
+    }
+
+    removeFuturePhasesFollowingUpOnIrrelevantThings() {
+        let relevantThings = this.getRelevantThingsToFollowUpOn();
+
+        for (let i = this.currentPhaseIndex + 1; i < this.phases.length; i++) {
+            let phase = this.phases[i];
+            if (phase.followsUpOn && !relevantThings.includes(phase.followsUpOn)) {
+                this.phases.splice(i, 1);
+                i--;
+            }
+        }
+    }
+
+    getRelevantThingsToFollowUpOn() {
+        return this.phases.slice(0, this.currentPhaseIndex + 1)
+            .reduce((acc, phase) => acc.concat(phase.getThingsToFollowUpOn()), []);
     }
 
     static create(processName) {

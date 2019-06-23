@@ -3,6 +3,7 @@ if (typeof window.TwCheese === 'undefined') {
         ROOT: '___HOSTING_ROOT___',
         actions: {},
         tools: {},
+        lastToolUsedId: null,
         loadTool: function(toolId, onready) {
             let module = document.createElement('script');
             module.type = 'module';
@@ -19,6 +20,7 @@ if (typeof window.TwCheese === 'undefined') {
             this.tools[tool.id] = tool;
         },
         useTool: function(toolId) {
+            this.lastToolUsedId = toolId;
             this.tools[toolId].use();
         },
         tryUseTool: function(toolId) {
@@ -27,6 +29,12 @@ if (typeof window.TwCheese === 'undefined') {
             }
             this.useTool(toolId);
             return true;
+        },
+        newDebugProcess: function(toolId) {
+            if (!this.hasTool(toolId)) {
+                return null;
+            }
+            return this.tools[toolId].getDebugProcess();
         }
     };
 }

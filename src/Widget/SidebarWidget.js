@@ -1,4 +1,5 @@
 import { AbstractWidget } from '/twcheese/src/Widget/AbstractWidget.js';
+import { DebuggerWidget } from '/twcheese/src/Widget/Debug/DebuggerWidget.js';
 import { initCss } from '/twcheese/src/Util/UI.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 
@@ -10,6 +11,10 @@ class SidebarWidget extends AbstractWidget {
         this.watchSelf();
         this.isExpandedVert = false;
         this.activeMenuItem = null;
+
+        this.contents = {
+            bugReporter: (new DebuggerWidget()).appendTo(this.$content)
+        };
     }
 
     initStructure() {
@@ -17,6 +22,7 @@ class SidebarWidget extends AbstractWidget {
         this.$menuMain = this.$el.find('.menu-item.main');
         this.$mainIcon = this.$menuMain.find('.icon');
         this.$menuBug = this.$el.find('.menu-item.bug');
+        this.$content = this.$el.find('.twcheese-sidebar-content');
     }
 
     createHtml() {
@@ -26,10 +32,7 @@ class SidebarWidget extends AbstractWidget {
                     <div class="menu-item main"><div class="icon"></div></div>
                     <div class="menu-item bug"><div class="icon"></div></div>
                 </div>
-                <div class="twcheese-sidebar-content">
-                    <div style="width: 300px;"></div>
-                    hey uh hows it goin
-                </div>
+                <div class="twcheese-sidebar-content"></div>
             </div>
         `;
     }
@@ -43,6 +46,7 @@ class SidebarWidget extends AbstractWidget {
                 this.activeMenuItem = null;
                 this.shrinkHoriz();
             } else {
+                this.contents.bugReporter.startProcessForLastUsedToolIfSensible();
                 this.$menuBug.addClass('active');
                 this.activeMenuItem = 'bug';
                 this.expandHoriz();
@@ -204,8 +208,7 @@ initCss(`
         height: 100%;
         top: 0;
         background-color: rgb(37, 37, 37);
-        color: #f8f8f2;
-        padding: 2px 3px;
+        color: rgb(187, 187, 187);
     }
 
 

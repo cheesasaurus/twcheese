@@ -29,10 +29,8 @@ async function tryScrapeCommandScreen(commandUrl) {
     };
 }
 
-console.log(Option.create('Wrong values are shown in the commands list', 'wrong_values', 'twcheese-debug-option-TODO'));
 
-
-let debugProcess = DebugProcess.create('OverviewHauls');
+let debugProcess = DebugProcess.create('Tool: OverviewHauls');
 debugProcess.enqueuePhase(
     PhaseQuestion.create('Entry')
         .addQuestion(Question.create(`What's wrong?`)

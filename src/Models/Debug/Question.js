@@ -1,14 +1,35 @@
+import { DebugEvents } from '/twcheese/src/Models/Debug/DebugEvents.js';
+
 
 class Question {
     constructor(text) {
         this.text = text;
         this.options = [];
-        this.selectedOption = 0;
+        this.selectedOptionIndex = null;
     }
 
     addOption(option) {
         this.options.push(option);
         return this;
+    }
+
+    setSelectedOption(index) {
+        this.selectedOptionIndex = index;
+        $(this).trigger(DebugEvents.QUESTION_ANSWERED);
+        return this;
+    }
+
+    isAnswered() {
+        return this.selectedOptionIndex !== null;
+    }
+
+    getSelectedOption() {
+        return this.options[this.selectedOptionIndex];
+    }
+
+    getThingsToFollowUpOn() {
+        let option = this.getSelectedOption();
+        return (option.followUpPhases.length > 0) ? [option] : [];
     }
 
     static create(text) {

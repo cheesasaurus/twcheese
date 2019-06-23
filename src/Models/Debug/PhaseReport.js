@@ -7,6 +7,16 @@ class PhaseReport extends Phase {
         this.process = process;
     }
 
+    checkCompletionReady() {
+        // todo
+        throw 'not implemented';
+    }
+
+    getThingsToFollowUpOn() {
+        // todo
+        throw 'not implemented';
+    }
+
     static create(process) {
         return new PhaseReport(process);
     }

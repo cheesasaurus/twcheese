@@ -16,7 +16,7 @@ class QuestionValue extends Question {
             Option.create('Incorrect', Correctness.INCORRECT, 'twcheese-debug-option-incorrect'),
             Option.create('Not sure', Correctness.NOT_SURE, 'twcheese-debug-option-not-sure')
         ];
-        this.selectedOption = OPTION_NOT_SURE;
+        this.setSelectedOption(OPTION_NOT_SURE);
     }
 
     addFollowUp(phase) {

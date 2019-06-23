@@ -1,4 +1,5 @@
 import { Phase } from '/twcheese/src/Models/Debug/Phase.js';
+import { DebugEvents } from '/twcheese/src/Models/Debug/DebugEvents.js';
 
 
 class PhaseQuestion extends Phase {
@@ -15,7 +16,24 @@ class PhaseQuestion extends Phase {
 
     addQuestion(question) {
         this.questions.push(question);
+        $(question).on(DebugEvents.QUESTION_ANSWERED, () => {
+            this.checkCompletionReady();
+        });
         return this;
+    }
+
+    checkCompletionReady() {
+        for (let question of this.questions) {
+            if (!question.isAnswered()) {
+                $(this).trigger(DebugEvents.PHASE_COMPLETION_NOT_READY);
+                return;
+            }
+        }
+        $(this).trigger(DebugEvents.PHASE_COMPLETION_READY);
+    }
+
+    getThingsToFollowUpOn() {
+        return this.questions.reduce((acc, question) => acc.concat(question.getThingsToFollowUpOn()), []);
     }
 
     static create(phaseName) {

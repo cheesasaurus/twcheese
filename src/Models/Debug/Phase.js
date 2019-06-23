@@ -13,6 +13,14 @@ class Phase {
     setAutoComplete(auto) {
         this.autoComplete = auto;
     }
+
+    checkCompletionReady() {
+        throw 'not implemented';
+    }
+
+    getThingsToFollowUpOn() {
+        throw 'not implemented';
+    }
     
 }
 

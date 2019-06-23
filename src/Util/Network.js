@@ -9,12 +9,12 @@ window.XMLHttpRequest.prototype.send = function() {
 }
 
 /**
- *	requests the body from an html document and returns it as an HTML element
- *	@param	{string} url the url of the page to get the document body from
+ *	requests the document from a url
+ *	@param	{string} url the url of the page to get the document from
  *  @return {Promise}
- *	@resolve {HTMLBodyElement}
+ *	@resolve {HTMLDocment}
  */
-async function requestDocumentBody(url) {
+async function requestDocument(url) {
     await throttle.sleepIfNeeded();
 
     return new Promise(function(resolve, reject) {
@@ -25,9 +25,8 @@ async function requestDocumentBody(url) {
             xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
         xmlhttp.open("GET", url);
         xmlhttp.onload = function() {
-            let requestedDocumentBody = document.createElement("body");
-            requestedDocumentBody.innerHTML = xmlhttp.responseText;
-            resolve(requestedDocumentBody);
+            let doc = (new DOMParser()).parseFromString(xmlhttp.responseText, 'text/html')
+            resolve(doc);
         };
         xmlhttp.onerror = function() {
             reject('failed to load ' + url);
@@ -36,4 +35,4 @@ async function requestDocumentBody(url) {
     });
 };
 
-export { requestDocumentBody };
+export { requestDocument };

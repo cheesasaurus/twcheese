@@ -6,7 +6,7 @@ import { QuestionValue } from '/twcheese/src/Debug/QuestionValue.js';
 import { Option } from '/twcheese/src/Debug/Option.js';
 
 
-import { requestDocumentBody } from '/twcheese/src/Util/Network.js';
+import { requestDocument } from '/twcheese/src/Util/Network.js';
 import { scrapeCommand } from '/twcheese/src/Scrape/command.js';
 
 
@@ -21,11 +21,10 @@ async function trySelectCommandFromTable() {
 
 
 async function tryScrapeCommandScreen(commandUrl) {
-    let commandDocBody = await requestDocumentBody(commandUrl); // todo: request full document instead, then get body from that, for the scraper
-
+    let commandDoc = await requestDocument(commandUrl);
     return {
-        document: scrapeCommand(commandDocBody), // todo: full document instead
-        command: command
+        document: commandDoc,
+        command: scrapeCommand(commandDoc)
     };
 }
 

@@ -6,43 +6,39 @@ import { Question } from '/twcheese/src/Models/Debug/Question.js';
 import { QuestionValue } from '/twcheese/src/Models/Debug/QuestionValue.js';
 import { Option } from '/twcheese/src/Models/Debug/Option.js';
 
-import { fadeGameContentExcept, unfadeGameContent } from '/twcheese/src/Util/UI.js';
+import { fadeGameContentExcept, unfadeGameContent, Mousetrap } from '/twcheese/src/Util/UI.js';
 import { requestDocument } from '/twcheese/src/Util/Network.js';
 import { scrapeCommand, scrapeCommandUrlFromRow } from '/twcheese/src/Scrape/command.js';
 
 
 async function trySelectCommandFromTable() {
     let $commandsTable = $('#commands_table');
+    let $commandRows = $commandsTable.children().children();
 
     fadeGameContentExcept($commandsTable);
     $(document).scrollTop($commandsTable.offset().top);
 
-    let handleMouseover = function() {
-        $(this).css({outline: '3px solid magenta'});
-    };
+    let mousetrap = (new Mousetrap()).spawn();
+    mousetrap
+        .on('mouseover', $commandRows, function() {
+            $(this).css({outline: '3px solid magenta'});
+        })
+        .on('mouseout', $commandRows, function() {
+            $(this).css({outline: 'none'})
+        });
 
-    let handleMouseout = function() {
-        $(this).css({outline: 'none'});
-    };
-
-    let $ownRows = $commandsTable.children().children();
-    $ownRows.on('mouseover', handleMouseover)
-        .on('mouseout', handleMouseout);
-
-    return new Promise(function(resolve) {
+    return new Promise(function(resolve, reject) {
         let handleRowSelected = function() {
             unfadeGameContent();
-
-            $ownRows.off('mouseover', handleMouseover)
-                .off('mouseout', handleMouseout)
-                .off('click', handleRowSelected)
-                .css({outline: 'none'});
-
-            let url = scrapeCommandUrlFromRow(this);
-            resolve(url);
+            mousetrap.destruct();
+            $commandRows.css({outline: 'none'});
+            try {
+                resolve(scrapeCommandUrlFromRow(this));
+            } catch (err) {
+                reject(err);
+            }
         }
-
-        $ownRows.on('click', handleRowSelected);
+        mousetrap.on('click', $commandRows, handleRowSelected);
     });
 }
 

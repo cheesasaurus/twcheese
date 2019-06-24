@@ -12,9 +12,9 @@ class QuestionValue extends Question {
         super(questionText);
         this.value = valueQuestioned;
         this.options = [
-            Option.create('Correct', Correctness.CORRECT, 'twcheese-debug-option-correct'),
-            Option.create('Incorrect', Correctness.INCORRECT, 'twcheese-debug-option-incorrect'),
-            Option.create('Not sure', Correctness.NOT_SURE, 'twcheese-debug-option-not-sure')
+            Option.create('Correct', Correctness.CORRECT, 'correct'),
+            Option.create('Incorrect', Correctness.INCORRECT, 'incorrect'),
+            Option.create('Not sure', Correctness.NOT_SURE, 'not-sure')
         ];
         this.setSelectedOption(OPTION_NOT_SURE);
     }

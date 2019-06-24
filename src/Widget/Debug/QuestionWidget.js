@@ -1,6 +1,7 @@
 import { AbstractWidget } from '/twcheese/src/Widget/AbstractWidget.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { initCss } from '/twcheese/src/Util/UI.js';
+import { QuestionValue } from '/twcheese/src/Models/Debug/QuestionValue.js';
 
 
 class QuestionWidget extends AbstractWidget {
@@ -28,6 +29,13 @@ class QuestionWidget extends AbstractWidget {
             `);
         }
 
+        if (this.question instanceof QuestionValue) {
+            return this._createHtmlQuestionAboutValue(options);
+        }
+        return this._createHtmlQuestionGeneric(options);        
+    }
+
+    _createHtmlQuestionGeneric(options) {
         return `
             <div class="twcheese-debug-question">
                 <div class="twcheese-debug-question-text">${this.question.text}</div>
@@ -35,6 +43,47 @@ class QuestionWidget extends AbstractWidget {
                 ${options.join('')}
             </div>
         `;
+    }
+
+    _createHtmlQuestionAboutValue(options) {
+        let valueRendered = this.createHtmlForValue(this.question.value);
+
+        return `
+            <div class="twcheese-debug-question">
+                <div class="twcheese-debug-question-text">${this.question.text}</div>
+                <hr/>
+                <div class="twcheese-debug-question-content">
+                    <div class="twcheese-debug-question-value">${valueRendered}</div>
+                    <div style="padding-left: 10px;">${options.join('')}</div>
+                </div>                
+            </div>
+        `;
+    }
+
+    createHtmlForValue(value) {
+        if (typeof value === 'undefined' || value === null) {
+            return '<span class="non-existent">non-existent</span>';
+        }
+        if (typeof value.toDebugString === 'function') {
+            return value.toDebugString();
+        }
+        if (typeof value === 'object') {
+            return Object.entries(value).map((input) => {
+                let [propName, propVal] = input;
+                return `<div class="twcheese-debug-value-iter">
+                    <div class="key">${this.createLabelForValue(propVal, propName)}</div>
+                    <div class="value">${this.createHtmlForValue(propVal)}</div>
+                </div>`;
+            }).join('');
+        }
+        return value.toString();
+    }
+
+    createLabelForValue(value, defaultLabel) {
+        if (typeof value.imageSrc === 'function') {
+            return `<image src="${value.imageSrc()}" />`;
+        }
+        return defaultLabel;
     }
 
     watchSelf() {
@@ -64,6 +113,23 @@ initCss(`
         background-color: white;
         border: none;
         opacity: 0.2;
+    }
+
+    .twcheese-debug-question-content {
+        display: flex;
+        justify-content: space-between;        
+        align-items: center;
+    }
+
+    .twcheese-debug-question-value {
+        line-height: 20px;
+    }
+    .twcheese-debug-question-value img {
+        vertical-align: middle;
+    }
+
+    .twcheese-debug-question-value .non-existent {
+        font-style: italic;
     }
 
     .twcheese-debug-question-answer {
@@ -104,6 +170,13 @@ initCss(`
     }
     .twcheese-debug-question-answer.incorrect.active {
         border-color: rgb(250, 0, 0);
+    }
+
+    .twcheese-debug-value-iter {
+        display: flex;
+    }
+    .twcheese-debug-value-iter > div:nth-child(2) {
+        padding-left: 5px;
     }
 
 `);

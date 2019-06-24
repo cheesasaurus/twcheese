@@ -5,33 +5,45 @@ import { PhaseReport } from '/twcheese/src/Models/Debug/PhaseReport.js';
 import { Question } from '/twcheese/src/Models/Debug/Question.js';
 import { QuestionValue } from '/twcheese/src/Models/Debug/QuestionValue.js';
 import { Option } from '/twcheese/src/Models/Debug/Option.js';
+
 import { fadeGameContentExcept, unfadeGameContent } from '/twcheese/src/Util/UI.js';
-
-
 import { requestDocument } from '/twcheese/src/Util/Network.js';
-import { scrapeCommand } from '/twcheese/src/Scrape/command.js';
+import { scrapeCommand, scrapeCommandUrlFromRow } from '/twcheese/src/Scrape/command.js';
 
 
 async function trySelectCommandFromTable() {
-    fadeGameContentExcept($('#commands_table'));
+    let $commandsTable = $('#commands_table');
 
+    fadeGameContentExcept($commandsTable);
+    $(document).scrollTop($commandsTable.offset().top);
 
-    // "Select a problematic row"
-    // todo
-    // player selects a row
+    let handleMouseover = function() {
+        $(this).css({outline: '3px solid magenta'});
+    };
 
-    // scrape url from row
+    let handleMouseout = function() {
+        $(this).css({outline: 'none'});
+    };
 
-    // todo: remove debug
+    let $ownRows = $commandsTable.children().children();
+    $ownRows.on('mouseover', handleMouseover)
+        .on('mouseout', handleMouseout);
+
     return new Promise(function(resolve) {
-        let url = 'https://en108.tribalwars.net/game.php?village=20373&screen=info_command&id=1576301282&type=own';
-        setTimeout(() => {
+        let handleRowSelected = function() {
             unfadeGameContent();
-            resolve(url);
-        }, 3000);
-    });
 
-    //return commandUrl;
+            $ownRows.off('mouseover', handleMouseover)
+                .off('mouseout', handleMouseout)
+                .off('click', handleRowSelected)
+                .css({outline: 'none'});
+
+            let url = scrapeCommandUrlFromRow(this);
+            resolve(url);
+        }
+
+        $ownRows.on('click', handleRowSelected);
+    });
 }
 
 
@@ -61,6 +73,7 @@ debugProcess.enqueuePhase(
         .addQuestion(Question.create(`What's broken?`)
             .addOption(Option.create('Wrong values shown in commands list', 'wrong_values')
                 .addFollowUp(PhaseAttempt.create('determine command url', trySelectCommandFromTable)
+                    .setInstructions('Select a problematic row.')
                     .onSuccess(function(commandUrl) {
                         debugProcess.insertPhase(PhaseAttempt.create('read selected command', async () => tryScrapeCommandScreen(commandUrl))
                             .setDataSummarizer(summarizeTryScrapeCommandScreen)

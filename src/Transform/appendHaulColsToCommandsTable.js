@@ -1,5 +1,5 @@
 import { requestDocument } from '/twcheese/src/Util/Network.js';
-import { scrapeCommand } from '/twcheese/src/Scrape/command.js';
+import { scrapeCommand, scrapeCommandUrlFromRow } from '/twcheese/src/Scrape/command.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 
 /**
@@ -28,7 +28,7 @@ async function appendHaulColsToCommandsTable(progressMonitor) {
             continue;
         }
 
-        let commandUrl = firstCell.getElementsByTagName('a')[0].href;
+        let commandUrl = scrapeCommandUrlFromRow(row);
         let command = scrapeCommand(await requestDocument(commandUrl));
         let commandType = $(firstCell).find('.own_command').data('command-type');
         if (commandType === 'return') {            

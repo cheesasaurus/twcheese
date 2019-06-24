@@ -33,4 +33,15 @@ function scrapeCommand(gameDoc) {
     return command;
 };
 
-export { scrapeCommand } 
+
+function scrapeCommandUrlFromRow(row) {
+    let firstCell = row.cells[0];
+    let links = firstCell.getElementsByTagName('a');
+    if (links.length < 1) {
+        throw `failed to find command link`;
+    }
+    return links[0].href;
+}
+
+
+export { scrapeCommand, scrapeCommandUrlFromRow } 

@@ -11,6 +11,7 @@ const Status = {
 class PhaseAttempt extends Phase {
     constructor(phaseName, asyncFunctionToAttempt) {
         super(phaseName);
+        this.instructions;
         this.attempt = asyncFunctionToAttempt;
         this.success = async () => {};
         this.fail = async () => {};
@@ -29,10 +30,16 @@ class PhaseAttempt extends Phase {
             this.status = Status.SUCCESS;
         } catch (err) {
             this.status = Status.FAIL;
+            this.error = err;
             await this.fail(err);
         }
         console.log(this.status);
         this.checkCompletionReady();
+    }
+
+    setInstructions(instructions) {
+        this.instructions = instructions;
+        return this;
     }
 
     setDataSummarizer(func) {
@@ -70,9 +77,21 @@ class PhaseAttempt extends Phase {
         return {
             phaseName: this.name,
             status: this.status,
-            data: this.summarizeData(this.data),
-            error: this.error
+            data: typeof this.data === 'undefined' ? this.data : this.summarizeData(this.data),
+            error: this.summarizeError()
         }
+    }
+
+    summarizeError() {
+        let err = this.error;
+        if (!(err instanceof Error)) {
+            return err;
+        }
+        return {
+            message: err.message,
+            name: err.name,
+            stack: err.stack
+        };
     }
     
     static create(phaseNum, functionToAttempt) {

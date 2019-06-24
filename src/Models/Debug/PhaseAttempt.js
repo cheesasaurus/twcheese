@@ -90,6 +90,7 @@ class PhaseAttempt extends Phase {
         return {
             message: err.message,
             name: err.name,
+            extra: err.extra,
             stack: err.stack
         };
     }

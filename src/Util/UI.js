@@ -163,4 +163,109 @@ function fadeGameContentExcept(el) {
 }
 
 
-export { initCss, fadeGameContent, fadeGameContentExcept, unfadeGameContent };
+// mousetrap ///////////////////////////////
+
+let mouseEvents = ['click', 'mousemove', 'mousenter', 'mouseleave', 'mouseover', 'mouseout', 'mousedown', 'mouseup'];
+let mouseBubbleEvents = ['click', 'mousemove', 'mouseover', 'mouseout', 'mousedown', 'mouseup'];
+let mouseEventsNeedSpecial = ['mousenter', 'mouseleave', 'mouseover', 'mouseout'];
+
+class Mousetrap {
+    constructor() {
+        this.$trap = $('<div class="twcheese-mousetrap">').css({
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: 'cyan',
+            opacity: 0.001,
+            zIndex: 12000
+        })
+        this.prevIntendedTarget;
+
+        this.watchers = {
+            // example:
+            // click: [{$elements, handler}, {$elements, handler}]
+            mouseout: []
+        }
+
+        this.setupHandling();
+    }
+
+    spawn() {
+        this.$trap.appendTo('body');
+        return this;
+    }
+
+    destruct() {
+        this.$trap.remove();
+    }
+
+    setupHandling() {
+        let trapEvents = mouseEvents.filter(name => !mouseEventsNeedSpecial.includes(name));
+
+        this.$trap.on(trapEvents.join(' '), (e) => {
+            this.$trap.hide();
+            let intendedTarget = document.elementFromPoint(e.offsetX, e.offsetY);
+            this.$trap.show();
+
+            this.notifyWatchers(e.type, e, intendedTarget);
+
+            if (e.type === 'mousemove' && intendedTarget !== this.prevIntendedTarget) {
+                this.notifyWatchers('mousenter', e, intendedTarget);
+                this.notifyWatchers('mouseleave', e, this.prevIntendedTarget);
+                this.notifyWatchers('mouseover', e, intendedTarget);
+
+                // mouseout
+                for (let watcher of this.watchers.mouseout) {
+                    watcher.$elements.each((i, el) => {
+                        if (
+                            this.doesElMatch(el, 'mouseover', this.prevIntendedTarget)
+                            && !this.doesElMatch(el, 'mouseover', intendedTarget)
+                        ) {
+                            watcher.handler.call(el, e);
+                        }
+                    });
+                }
+            }
+
+            this.prevIntendedTarget = intendedTarget;
+        });
+    }
+
+    notifyWatchers(eventName, e, intendedTarget) {
+        if (typeof this.watchers[eventName] === 'undefined') {
+            return;
+        }
+        for (let watcher of this.watchers[eventName]) {
+            watcher.$elements.each((i, el) => {
+                if (this.doesElMatch(el, eventName, intendedTarget)) {
+                    watcher.handler.call(el, e);
+                }
+            });
+        }
+    }
+
+    doesElMatch(el, eventName, intendedTarget) {
+        return el === intendedTarget
+        || (mouseBubbleEvents.includes(eventName) && $.contains(el, intendedTarget));
+    }
+
+    on(eventName, $elements, handler) {
+        if (typeof this.watchers[eventName] === 'undefined') {
+            this.watchers[eventName] = [];
+        }
+        this.watchers[eventName].push({$elements, handler});
+        return this;
+    }
+
+}
+
+
+export {
+    initCss,
+    fadeGameContent,
+    fadeGameContentExcept,
+    unfadeGameContent,
+    Mousetrap
+};

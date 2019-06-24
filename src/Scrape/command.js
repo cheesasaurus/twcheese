@@ -38,7 +38,9 @@ function scrapeCommandUrlFromRow(row) {
     let firstCell = row.cells[0];
     let links = firstCell.getElementsByTagName('a');
     if (links.length < 1) {
-        throw `failed to find command link`;
+        let err = new Error('failed to find command link');
+        err.extra = { rowHtml: row.outerHTML};
+        throw err;
     }
     return links[0].href;
 }

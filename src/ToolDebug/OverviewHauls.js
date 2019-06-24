@@ -21,7 +21,7 @@ async function trySelectCommandFromTable() {
     // todo: remove debug
     return new Promise(function(resolve) {
         let url = 'https://en108.tribalwars.net/game.php?village=20373&screen=info_command&id=1576301282&type=own';
-        setTimeout(() => resolve(url), 3000);
+        setTimeout(() => resolve(url), 750);
     });
 
     //return commandUrl;

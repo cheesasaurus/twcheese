@@ -81,11 +81,30 @@ initCss(`
     .twcheese-debug-question-answer:hover {
         border-color: rgb(150, 150, 150);
     }
-
     .twcheese-debug-question-answer.active {
         border-color: darkOrange;
         background-color: black;
-    }    
+    }
+    
+    .twcheese-debug-question-answer.correct {
+        border-color: rgb(0, 70, 0);
+    }
+    .twcheese-debug-question-answer.correct:hover {
+        border-color: rgb(0, 100, 0);
+    }
+    .twcheese-debug-question-answer.correct.active {
+        border-color: rgb(0, 150, 0);
+    }
+
+    .twcheese-debug-question-answer.incorrect {
+        border-color: rgb(100, 0, 0);
+    }
+    .twcheese-debug-question-answer.incorrect:hover {
+        border-color: rgb(175, 0, 0);
+    }
+    .twcheese-debug-question-answer.incorrect.active {
+        border-color: rgb(250, 0, 0);
+    }
 
 `);
 

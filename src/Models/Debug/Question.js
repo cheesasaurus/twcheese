@@ -32,6 +32,13 @@ class Question {
         return (option.followUpPhases.length > 0) ? [option] : [];
     }
 
+    getSummary() {
+        return {
+            question: this.text,
+            answer: this.getSelectedOption().value
+        };
+    }
+
     static create(text) {
         return new Question(text);
     }

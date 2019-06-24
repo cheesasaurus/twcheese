@@ -40,6 +40,13 @@ class PhaseQuestion extends Phase {
         return this.questions.reduce((acc, question) => acc.concat(question.getThingsToFollowUpOn()), []);
     }
 
+    getSummary() {
+        return {
+            phaseName: this.name,
+            questions: this.questions.map(question => question.getSummary())
+        };
+    }
+
     static create(phaseName) {
         return new PhaseQuestion(phaseName);
     }

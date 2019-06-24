@@ -17,11 +17,14 @@ class PhaseAttempt extends Phase {
         this.status = Status.NOT_ATTEMPTED;
         this.autoComplete = true;
         this.error;
+        this.data;
+        this.summarizeData = d => d;
     }
 
     async doAttempt() {
         try {
             let data = await this.attempt();
+            this.data = data;
             await this.success(data);
             this.status = Status.SUCCESS;
         } catch (err) {
@@ -30,6 +33,11 @@ class PhaseAttempt extends Phase {
         }
         console.log(this.status);
         this.checkCompletionReady();
+    }
+
+    setDataSummarizer(func) {
+        this.summarizeData = func;
+        return this;
     }
 
     onSuccess(cb) {
@@ -56,6 +64,15 @@ class PhaseAttempt extends Phase {
 
     getThingsToFollowUpOn() {
         return [];
+    }
+
+    getSummary() {
+        return {
+            phaseName: this.name,
+            status: this.status,
+            data: this.summarizeData(this.data),
+            error: this.error
+        }
     }
     
     static create(phaseNum, functionToAttempt) {

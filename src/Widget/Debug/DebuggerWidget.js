@@ -121,7 +121,7 @@ class DebuggerWidget extends AbstractWidget {
         // https://github.com/rochal/jQuery-slimScroll/issues/16
         if (this.$content.parent('.slimScrollDiv').size() > 0) {
             this.$content.parent().replaceWith(this.$content);
-            this.$content.height('100%');
+            this.$content.height('auto');
         }        
 
         let availableVert = this.$el.innerHeight() - this.$header.outerHeight() - this.$nav.outerHeight();

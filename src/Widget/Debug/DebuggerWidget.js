@@ -115,11 +115,19 @@ class DebuggerWidget extends AbstractWidget {
     }
 
     _renderPhaseAttempt(phase) {
-        this.$content.html(`
-            <div class="twcheese-debug-attempt">
-                Standby for <i>${phase.name}</i>.
-            </div>
-        `);
+        if (phase.instructions) {
+            this.$content.html(`
+                <div class="twcheese-debug-attempt">
+                    ${phase.instructions}
+                </div>
+            `);
+        } else {
+            this.$content.html(`
+                <div class="twcheese-debug-attempt">
+                    Standby for <i>${phase.name}</i>.
+                </div>
+            `);
+        }
     }
 
     _renderPhaseReport(phase) {

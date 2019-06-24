@@ -4,7 +4,6 @@ import { Option } from '/twcheese/src/Models/Debug/Option.js';
 
 
 const OPTION_INCORRECT = 1;
-const OPTION_NOT_SURE = 2;
 
 class QuestionValue extends Question {
 
@@ -16,7 +15,6 @@ class QuestionValue extends Question {
             Option.create('Incorrect', Correctness.INCORRECT, 'incorrect'),
             Option.create('Not sure', Correctness.NOT_SURE, 'not-sure')
         ];
-        this.setSelectedOption(OPTION_NOT_SURE);
     }
 
     addFollowUp(phase) {

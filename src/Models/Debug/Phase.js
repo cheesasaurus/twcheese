@@ -1,7 +1,7 @@
 
 class Phase {
     constructor(phaseName) {
-        this.phaseName = phaseName;
+        this.name = phaseName;
         this.followsUpOn = null;
         this.autoComplete = false;
     }
@@ -12,6 +12,10 @@ class Phase {
 
     setAutoComplete(auto) {
         this.autoComplete = auto;
+    }
+
+    start() {
+        throw 'not implemented';
     }
 
     checkCompletionReady() {

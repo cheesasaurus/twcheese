@@ -22,6 +22,10 @@ class PhaseQuestion extends Phase {
         return this;
     }
 
+    start() {
+        // do nothing;
+    }
+
     checkCompletionReady() {
         for (let question of this.questions) {
             if (!question.isAnswered()) {

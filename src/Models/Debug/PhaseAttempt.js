@@ -12,21 +12,23 @@ class PhaseAttempt extends Phase {
     constructor(phaseName, asyncFunctionToAttempt) {
         super(phaseName);
         this.attempt = asyncFunctionToAttempt;
-        this.success = () => {};
-        this.fail = () => {};
+        this.success = async () => {};
+        this.fail = async () => {};
         this.status = Status.NOT_ATTEMPTED;
+        this.autoComplete = true;
         this.error;
     }
 
     async doAttempt() {
         try {
             let data = await this.attempt();
-            this.success(data);
+            await this.success(data);
             this.status = Status.SUCCESS;
         } catch (err) {
-            this.fail(err);
             this.status = Status.FAIL;
+            await this.fail(err);
         }
+        console.log(this.status);
         this.checkCompletionReady();
     }
 
@@ -40,9 +42,15 @@ class PhaseAttempt extends Phase {
         return this;
     }
 
+    start() {
+        this.doAttempt();
+    }
+
     checkCompletionReady() {
         if (this.status !== Status.NOT_ATTEMPTED) {
             $(this).trigger(DebugEvents.PHASE_COMPLETION_READY);
+        } else {
+            $(this).trigger(DebugEvents.PHASE_COMPLETION_NOT_READY);
         }
     }
 

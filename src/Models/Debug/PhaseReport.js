@@ -7,13 +7,20 @@ class PhaseReport extends Phase {
         this.process = process;
     }
 
+    start() {
+        // todo
+        throw 'not implemented';
+    }
+
     checkCompletionReady() {
         // todo
+        console.log('in phase report, checkCompletionReady');
         throw 'not implemented';
     }
 
     getThingsToFollowUpOn() {
         // todo
+        console.log('in phase report, getThingsToFollowUpOn');
         throw 'not implemented';
     }
 

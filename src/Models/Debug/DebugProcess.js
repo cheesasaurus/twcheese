@@ -28,6 +28,12 @@ class DebugProcess {
         ];
 
         $(phase).on(events.join(' '), (e) => $(this).trigger(e.type, e));
+
+        $(phase).on(DebugEvents.PHASE_COMPLETION_READY, () => {
+            if (phase.autoComplete) {
+                this.goToNextPhase();
+            }
+        });
     }
 
     start() {
@@ -37,13 +43,20 @@ class DebugProcess {
 
     goToNextPhase() {
         this.removeFuturePhasesFollowingUpOnIrrelevantThings();
+        if (this.currentPhaseIndex >= 0) {
+            for (let thing of this.getCurrentPhase().getThingsToFollowUpOn()) {
+                for (let phase of thing.followUpPhases) {
+                    this.insertPhase(phase);
+                }            
+            }
+        }        
         if (!this.hasNextPhase()) {
             throw `there's no next phase`;
         }
         this.currentPhaseIndex++;
-        // todo
         $(this).trigger(DebugEvents.PHASE_CHANGED);
         this.getCurrentPhase().checkCompletionReady();
+        this.getCurrentPhase().start();
     }
 
     hasNextPhase() {

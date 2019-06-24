@@ -3,7 +3,7 @@ class Option {
     constructor(humanText, value, className) {
         this.text = humanText;
         this.value = value;
-        this.className = className;
+        this.className = className || '';
         this.followUpPhases = [];
     }
 

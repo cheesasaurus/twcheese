@@ -4,6 +4,7 @@ import { initCss } from '/twcheese/src/Util/UI.js';
 import { DebugEvents } from '/twcheese/src/Models/Debug/DebugEvents.js';
 import { PhaseQuestion } from '/twcheese/src/Models/Debug/PhaseQuestion.js';
 import { QuestionWidget } from '/twcheese/src/Widget/Debug/QuestionWidget.js';
+import { PhaseAttempt } from '/twcheese/src/Models/Debug/PhaseAttempt.js';
 
 
 class DebuggerWidget extends AbstractWidget {
@@ -74,6 +75,7 @@ class DebuggerWidget extends AbstractWidget {
             this.$next.hide();
         });
         $(process).on(DebugEvents.PHASE_CHANGED, () => {
+            console.log('phase changed');
             this.renderCurrentPhase();
         });
 
@@ -92,6 +94,8 @@ class DebuggerWidget extends AbstractWidget {
         let phase = this.process.getCurrentPhase();
         if (phase instanceof PhaseQuestion) {
             this._renderPhaseQuestion(phase);
+        } else if (phase instanceof PhaseAttempt) {
+            this._renderPhaseAttempt(phase);
         }
         // todo
 
@@ -103,6 +107,14 @@ class DebuggerWidget extends AbstractWidget {
         for (let question of phase.questions) {
             (new QuestionWidget(question)).appendTo(this.$content);
         }
+    }
+
+    _renderPhaseAttempt(phase) {
+        this.$content.html(`
+            <div class="twcheese-debug-attempt">
+                Standby for <i>${phase.name}</i>.
+            </div>
+        `);
     }
 
     updateScrolling() {

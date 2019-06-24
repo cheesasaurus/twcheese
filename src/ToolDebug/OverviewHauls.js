@@ -20,7 +20,7 @@ async function trySelectCommandFromTable() {
 
     // todo: remove debug
     return new Promise(function(resolve) {
-        let url = 'https://en108.tribalwars.net/game.php?village=20373&screen=info_command&id=1576301282&type=own';
+        let url = 'https://en108.tribalwars.net/game.php?village=20373&screen=info_command&id=1675877730&type=own';
         setTimeout(() => resolve(url), 750);
     });
 
@@ -50,7 +50,8 @@ debugProcess.enqueuePhase(
                                     .lookAt(d.document)
                                     .addQuestion(QuestionValue.create('Arrival', d.command.arrival))
                                     .addQuestion(QuestionValue.create('Haul', d.command.haul))
-                                    .addQuestion(QuestionValue.create('Haul capacity', d.command.haulCapacity)))
+                                    .addQuestion(QuestionValue.create('Haul capacity', d.command.haulCapacity))
+                                )
                             })
                         )    
                     })

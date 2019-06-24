@@ -5,6 +5,8 @@ import { DebugEvents } from '/twcheese/src/Models/Debug/DebugEvents.js';
 import { PhaseQuestion } from '/twcheese/src/Models/Debug/PhaseQuestion.js';
 import { QuestionWidget } from '/twcheese/src/Widget/Debug/QuestionWidget.js';
 import { PhaseAttempt } from '/twcheese/src/Models/Debug/PhaseAttempt.js';
+import { PhaseReport } from '/twcheese/src/Models/Debug/PhaseReport.js';
+import { DataCollector } from '/twcheese/src/Models/Debug/DataCollector.js';
 
 
 class DebuggerWidget extends AbstractWidget {
@@ -69,7 +71,9 @@ class DebuggerWidget extends AbstractWidget {
         this.$processName.text(process.name);
         
         $(process).on(DebugEvents.PHASE_COMPLETION_READY, () => {
-            this.$next.show();
+            if (this.process.hasNextPhase()) {
+                this.$next.show();
+            }
         });
         $(process).on(DebugEvents.PHASE_COMPLETION_NOT_READY, () => {
             this.$next.hide();
@@ -85,7 +89,7 @@ class DebuggerWidget extends AbstractWidget {
     renderCurrentPhase() {
         this.$content.html('');
         if (!this.process.hasNextPhase()) {
-            this.$prev.hide();
+            this.$next.hide();
         }
         if (!this.process.hasPrevPhase()) {
             this.$prev.hide();
@@ -96,8 +100,9 @@ class DebuggerWidget extends AbstractWidget {
             this._renderPhaseQuestion(phase);
         } else if (phase instanceof PhaseAttempt) {
             this._renderPhaseAttempt(phase);
+        } else if (phase instanceof PhaseReport) {
+            this._renderPhaseReport(phase);
         }
-        // todo
 
         setTimeout(() => this.updateScrolling(), 200);
         $(this).trigger('change');
@@ -115,6 +120,16 @@ class DebuggerWidget extends AbstractWidget {
                 Standby for <i>${phase.name}</i>.
             </div>
         `);
+    }
+
+    _renderPhaseReport(phase) {
+        // todo: widget, model for submitting report
+
+        let data = (new DataCollector(this.process)).getCollectibleData();
+
+        let displayed = JSON.stringify(data, null, 2)
+
+        $('<pre class="twcheese-debug-report"></pre>').text(displayed).appendTo(this.$content);
     }
 
     updateScrolling() {

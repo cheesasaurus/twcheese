@@ -97,6 +97,12 @@ class DebugProcess {
             .reduce((acc, phase) => acc.concat(phase.getThingsToFollowUpOn()), []);
     }
 
+    getSummarySoFar() {
+        // everything before the current phase
+        return this.phases.slice(0, this.currentPhaseIndex)
+            .map(phase => phase.getSummary());
+    }
+
     static create(processName) {
         return new DebugProcess(processName);
     }

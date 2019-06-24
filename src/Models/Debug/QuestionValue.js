@@ -22,6 +22,12 @@ class QuestionValue extends Question {
         return this;
     }
 
+    getSummary() {
+        return Object.assign(super.getSummary(), {
+            valueChecked: this.value
+        });
+    }
+
     static create(questionText, valueQuestioned) {
         return new QuestionValue(questionText, valueQuestioned);
     }

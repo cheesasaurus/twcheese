@@ -36,6 +36,17 @@ async function tryScrapeCommandScreen(commandUrl) {
     };
 }
 
+function summarizeTryScrapeCommandScreen(d) {
+    let document = d.document;
+    if (document instanceof window.HTMLDocument) {
+        document = document.documentElement.outerHTML;
+    }
+    return {
+        document: document,
+        command: d.command
+    }
+}
+
 
 let debugProcess = DebugProcess.create('Tool: OverviewHauls');
 debugProcess.enqueuePhase(
@@ -45,6 +56,7 @@ debugProcess.enqueuePhase(
                 .addFollowUp(PhaseAttempt.create('determine command url', trySelectCommandFromTable)
                     .onSuccess(function(commandUrl) {
                         debugProcess.insertPhase(PhaseAttempt.create('read selected command', async () => tryScrapeCommandScreen(commandUrl))
+                            .setDataSummarizer(summarizeTryScrapeCommandScreen)
                             .onSuccess(function(d) {
                                 debugProcess.insertPhase(PhaseQuestion.create('Command scraper')
                                     .lookAt(d.document)

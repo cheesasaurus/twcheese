@@ -1,4 +1,5 @@
 import { Phase } from '/twcheese/src/Models/Debug/Phase.js';
+import { DebugEvents } from '/twcheese/src/Models/Debug/DebugEvents.js';
 
 
 class PhaseReport extends Phase {
@@ -8,20 +9,21 @@ class PhaseReport extends Phase {
     }
 
     start() {
-        // todo
-        throw 'not implemented';
+        // do nothing
     }
 
     checkCompletionReady() {
-        // todo
-        console.log('in phase report, checkCompletionReady');
-        throw 'not implemented';
+        $(this).trigger(DebugEvents.PHASE_COMPLETION_READY);
     }
 
     getThingsToFollowUpOn() {
-        // todo
-        console.log('in phase report, getThingsToFollowUpOn');
-        throw 'not implemented';
+        return [];
+    }
+
+    getSummary() {
+        return {
+            phaseName: this.name
+        };
     }
 
     static create(process) {

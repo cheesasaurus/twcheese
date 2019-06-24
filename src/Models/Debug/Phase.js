@@ -25,6 +25,10 @@ class Phase {
     getThingsToFollowUpOn() {
         throw 'not implemented';
     }
+
+    getSummary() {
+        throw 'not implemented';
+    }
     
 }
 

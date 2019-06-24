@@ -5,6 +5,7 @@ import { PhaseReport } from '/twcheese/src/Models/Debug/PhaseReport.js';
 import { Question } from '/twcheese/src/Models/Debug/Question.js';
 import { QuestionValue } from '/twcheese/src/Models/Debug/QuestionValue.js';
 import { Option } from '/twcheese/src/Models/Debug/Option.js';
+import { fadeGameContentExcept, unfadeGameContent } from '/twcheese/src/Util/UI.js';
 
 
 import { requestDocument } from '/twcheese/src/Util/Network.js';
@@ -12,6 +13,9 @@ import { scrapeCommand } from '/twcheese/src/Scrape/command.js';
 
 
 async function trySelectCommandFromTable() {
+    fadeGameContentExcept($('#commands_table'));
+
+
     // "Select a problematic row"
     // todo
     // player selects a row
@@ -20,8 +24,11 @@ async function trySelectCommandFromTable() {
 
     // todo: remove debug
     return new Promise(function(resolve) {
-        let url = 'https://en108.tribalwars.net/game.php?village=20373&screen=info_command&id=1675877730&type=own';
-        setTimeout(() => resolve(url), 750);
+        let url = 'https://en108.tribalwars.net/game.php?village=20373&screen=info_command&id=1576301282&type=own';
+        setTimeout(() => {
+            unfadeGameContent();
+            resolve(url);
+        }, 3000);
     });
 
     //return commandUrl;

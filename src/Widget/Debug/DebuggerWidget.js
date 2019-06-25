@@ -6,7 +6,7 @@ import { PhaseQuestion } from '/twcheese/src/Models/Debug/PhaseQuestion.js';
 import { QuestionWidget } from '/twcheese/src/Widget/Debug/QuestionWidget.js';
 import { PhaseAttempt } from '/twcheese/src/Models/Debug/PhaseAttempt.js';
 import { PhaseReport } from '/twcheese/src/Models/Debug/PhaseReport.js';
-import { DataCollector } from '/twcheese/src/Models/Debug/DataCollector.js';
+import { ReportWidget } from '/twcheese/src/Widget/Debug/ReportWidget.js';
 
 
 class DebuggerWidget extends AbstractWidget {
@@ -88,7 +88,6 @@ class DebuggerWidget extends AbstractWidget {
             this.$next.hide();
         });
         $(process).on(DebugEvents.PHASE_CHANGED, () => {
-            console.log('phase changed');
             this.renderCurrentPhase();
         });
 
@@ -144,13 +143,7 @@ class DebuggerWidget extends AbstractWidget {
     }
 
     _renderPhaseReport(phase) {
-        // todo: widget, model for submitting report
-
-        let data = (new DataCollector(this.process)).getCollectibleData();
-
-        let displayed = JSON.stringify(data, null, 2)
-
-        $('<pre class="twcheese-debug-report"></pre>').text(displayed).appendTo(this.$content);
+        (new ReportWidget(phase)).appendTo(this.$content);
     }
 
     updateScrolling() {

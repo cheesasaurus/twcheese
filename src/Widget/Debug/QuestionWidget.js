@@ -1,7 +1,8 @@
 import { AbstractWidget } from '/twcheese/src/Widget/AbstractWidget.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
-import { initCss } from '/twcheese/src/Util/UI.js';
+import { initCss, escapeHtml } from '/twcheese/src/Util/UI.js';
 import { QuestionValue } from '/twcheese/src/Models/Debug/QuestionValue.js';
+import { QuestionFreeForm } from '/twcheese/src/Models/Debug/QuestionFreeForm.js';
 
 
 class QuestionWidget extends AbstractWidget {
@@ -29,7 +30,9 @@ class QuestionWidget extends AbstractWidget {
             `);
         }
 
-        if (this.question instanceof QuestionValue) {
+        if (this.question instanceof QuestionFreeForm) {
+            return this._createHtmlQuestionFreeForm();
+        } else if (this.question instanceof QuestionValue) {
             return this._createHtmlQuestionAboutValue(options);
         }
         return this._createHtmlQuestionGeneric(options);        
@@ -41,6 +44,22 @@ class QuestionWidget extends AbstractWidget {
                 <div class="twcheese-debug-question-text">${this.question.text}</div>
                 <hr/>
                 ${options.join('')}
+            </div>
+        `;
+    }
+
+    _createHtmlQuestionFreeForm() {
+        let option = this.question.options[0];
+
+        return `
+            <div class="twcheese-debug-question">
+                <div class="twcheese-debug-question-text">${this.question.text}</div>
+                <hr/>
+                <textarea
+                    placeholder="${escapeHtml(option.text)}"
+                    class="twcheese-debug-question-answer ${option.className}"
+                    data-index="0"
+                >${escapeHtml(option.value)}</textarea>
             </div>
         `;
     }
@@ -87,6 +106,14 @@ class QuestionWidget extends AbstractWidget {
     }
 
     watchSelf() {
+        if (this.question instanceof QuestionFreeForm) {
+            this.$answers.on('input', (e) => {
+                let $answer = $(e.target);
+                this.question.options[0].value = $answer.val();
+            });
+            return;
+        }
+
         this.$answers.on('click', (e) => {
             this.$answers.removeClass('active');
             let $answer = $(e.target).addClass('active');
@@ -170,6 +197,20 @@ initCss(`
     }
     .twcheese-debug-question-answer.incorrect.active {
         border-color: rgb(250, 0, 0);
+    }
+
+    .twcheese-debug-question-answer.free-form {
+        border: 1px solid rgb(75, 75, 75);
+        border-radius: 3px;
+        white-space: pre-wrap;
+        color: inherit;
+        padding: 2px 5px;
+        text-align: left;
+        line-height: normal;
+        height: 120px;
+        width: calc(100% - 6px);
+        resize: vertical;
+        cursor: text;
     }
 
     .twcheese-debug-value-iter {

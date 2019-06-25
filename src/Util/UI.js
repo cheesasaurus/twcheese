@@ -1,5 +1,18 @@
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 
+
+// https://stackoverflow.com/a/4835406
+function escapeHtml(text) {
+    var map = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    };  
+    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+}
+
 ////// css //////
 
 let cssInitd = [];
@@ -263,6 +276,7 @@ class Mousetrap {
 
 
 export {
+    escapeHtml,
     initCss,
     fadeGameContent,
     fadeGameContentExcept,

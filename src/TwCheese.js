@@ -4,14 +4,16 @@ if (typeof window.TwCheese === 'undefined') {
         actions: {},
         tools: {},
         lastToolUsedId: null,
-        loadTool: function(toolId, onready) {
-            let module = document.createElement('script');
-            module.type = 'module';
-            module.onload = () => {
-                onready();
-            }    
-            module.src = `${this.ROOT}/src/ToolSetup/${toolId}.js`;
-            document.head.appendChild(module);
+        loadTool: async function(toolId) {
+            return new Promise((resolve) => {
+                let module = document.createElement('script');
+                module.type = 'module';
+                module.onload = () => {
+                    resolve();
+                }    
+                module.src = `${this.ROOT}/src/ToolSetup/${toolId}.js`;
+                document.head.appendChild(module);
+            });            
         },
         hasTool: function(toolId) {
             return typeof this.tools[toolId] !== 'undefined';

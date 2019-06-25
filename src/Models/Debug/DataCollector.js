@@ -2,7 +2,7 @@
 class DataCollector {
     constructor(debugProcess) {
         this.process = debugProcess;
-        this.censoredProps = ['csrf'];
+        this.censoredProps = ['csrf', 'birthdate'];
     }
 
     getCollectibleData() {

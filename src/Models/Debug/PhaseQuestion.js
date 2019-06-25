@@ -6,11 +6,11 @@ class PhaseQuestion extends Phase {
     constructor(phaseName) {
         super(phaseName);
         this.questions = [];
-        this.examined_html;
+        this.examinedHtml;
     }
 
     lookAt(html) {
-        this.examined_html = html;
+        this.examinedHtml = html;
         return this;
     }
 

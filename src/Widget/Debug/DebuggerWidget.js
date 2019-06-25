@@ -26,19 +26,28 @@ class DebuggerWidget extends AbstractWidget {
         this.$prev = this.$el.find('.twcheese-debugger-prev');
         this.$next = this.$el.find('.twcheese-debugger-next');        
         this.$processName = this.$el.find('.twcheese-debugger-process-name');
+        this.$inspector = this.$el.find('.twcheese-debugger-inspector');
+        this.$iframe = this.$inspector.find('iframe');
+        this.$iframeOverlay = this.$inspector.find('.iframe-overlay');
     }
 
     createHtml() {
         return `
             <div class="twcheese-debugger">
-                <div class="twcheese-debugger-header">
-                    <div>REPORT A BUG</div>
-                    <div class="twcheese-debugger-process-name"></div>
+                <div>
+                    <div class="twcheese-debugger-header">
+                        <div>REPORT A BUG</div>
+                        <div class="twcheese-debugger-process-name"></div>
+                    </div>
+                    <div class="twcheese-debugger-content">blah bla blucci</div>
+                    <div class="twcheese-debugger-nav">
+                        <div class="twcheese-debugger-prev"></div>
+                        <div class="twcheese-debugger-next"></div>
+                    </div>
                 </div>
-                <div class="twcheese-debugger-content">blah bla blucci</div>
-                <div class="twcheese-debugger-nav">
-                    <div class="twcheese-debugger-prev"></div>
-                    <div class="twcheese-debugger-next"></div>
+                <div class="twcheese-debugger-inspector">
+                    <iframe scrolling="no"></iframe>
+                    <div class="iframe-overlay"></div>
                 </div>
             </div>
         `;
@@ -87,6 +96,7 @@ class DebuggerWidget extends AbstractWidget {
     }
 
     renderCurrentPhase() {
+        this.$inspector.hide();
         this.$content.html('');
         if (!this.process.hasNextPhase()) {
             this.$next.hide();
@@ -111,6 +121,9 @@ class DebuggerWidget extends AbstractWidget {
     _renderPhaseQuestion(phase) {
         for (let question of phase.questions) {
             (new QuestionWidget(question)).appendTo(this.$content);
+        }
+        if (typeof phase.examinedHtml === 'string') {
+            this.openInspector(phase.examinedHtml);
         }
     }
 
@@ -158,13 +171,38 @@ class DebuggerWidget extends AbstractWidget {
         });
     }
 
+    openInspector(html) {
+        let win = this.$iframe[0].contentWindow;
+        let doc = win.document;
+        doc.open();
+        doc.write(html);
+        doc.close();
+
+        setTimeout(() => {
+            if (typeof win.Timing !== 'undefined') {
+                win.Timing.pause();
+            }
+            this.$inspector.show(); // must be visible for size to be computed
+            let width = Math.min(win.document.body.scrollWidth, this.calcMaxIframeWidth());
+            this.$iframe.css({width});
+            this.$iframeOverlay.css({width});
+            $(this).trigger('change');
+        }, 200);
+    }
+
+    calcMaxIframeWidth() {
+        let menuWidth = 50;
+        let margin = 20;
+        return document.documentElement.clientWidth - this.$header.outerWidth() - menuWidth - 2*margin;
+    }
+
 }
 
 
 initCss(`
     .twcheese-debugger {
         height: 100%;
-        min-width: 300px;
+        display: flex;
     }
 
     .twcheese-debugger-header {
@@ -174,6 +212,7 @@ initCss(`
         font-size: 14px;
         color: rgb(200, 200, 200);
         cursor: default;
+        min-width: 300px;
     }
 
     .twcheese-debugger-process-name {
@@ -218,6 +257,33 @@ initCss(`
         webkit-filter: brightness(1);
         filter: brightness(1);
     }
+
+    /* inspector */
+
+    .twcheese-debugger-inspector {
+        position: relative;
+        width: 100%;
+        background-color: rgb(30, 30, 30);
+        line-height: unset;
+    }
+
+    .twcheese-debugger-inspector iframe,
+    .twcheese-debugger-inspector .iframe-overlay {
+        width: 500px;
+        height: calc(100% - 40px);
+        margin: 20px;
+        border: none;
+        overflow: hidden;
+    }
+
+    .twcheese-debugger-inspector .iframe-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: cyan;
+        opacity: 0.1;
+    }
+
 
 `);
 

@@ -14,7 +14,12 @@ class BugReporter {
     }
 
     async submitReport(report) {
-        let message = '```' + JSON.stringify(report.dataCollected, null, 2) +  '```';
+        let message = [
+            '|game version|world|player|',
+            '|---|---|---|',
+            `|${game_data.majorVersion}|${game_data.world}|${game_data.player.name}|`,
+            '```' + JSON.stringify(report.dataCollected, null, 2) +  '```'
+        ].join("\n");
         return await GithubService.createIssue(report.title, message);
     }
 

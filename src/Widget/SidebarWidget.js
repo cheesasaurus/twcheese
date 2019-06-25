@@ -153,6 +153,7 @@ initCss(`
         overflow-x: hidden;
         overflow-y: hidden;
         width: 50px;
+        max-width: 100%;
     }
 
     /* menu **************************************************/

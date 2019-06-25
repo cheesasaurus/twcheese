@@ -75,18 +75,18 @@ debugProcess.enqueuePhase(
                             .setDataSummarizer(summarizeTryScrapeCommandScreen)
                             .onSuccess(function(d) {
                                 debugProcess.insertPhase(PhaseQuestion.create('Command scraper')
-                                    .lookAt(d.document)
+                                    .lookAt(d.document.documentElement.outerHTML)
                                     .addQuestion(QuestionValue.create('Arrival', d.command.arrival))
                                     .addQuestion(QuestionValue.create('Haul', d.command.haul))
                                     .addQuestion(QuestionValue.create('Haul capacity', d.command.haulCapacity))
                                 )
                             })
-                        )    
+                        )
                     })
                 )
-            )    
+            )
             .addOption(Option.create('Something else', 'other', 'twcheese-debug-option-TODO'))
-        )    
+        )
     )
     .enqueuePhase(PhaseReport.create(debugProcess));
 

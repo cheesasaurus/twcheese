@@ -3,12 +3,14 @@ import { PhaseQuestion } from '/twcheese/src/Models/Debug/PhaseQuestion.js';
 import { PhaseAttempt } from '/twcheese/src/Models/Debug/PhaseAttempt.js';
 import { PhaseReport } from '/twcheese/src/Models/Debug/PhaseReport.js';
 import { Question } from '/twcheese/src/Models/Debug/Question.js';
+import { QuestionFreeForm } from '/twcheese/src/Models/Debug/QuestionFreeForm.js';
 import { QuestionValue } from '/twcheese/src/Models/Debug/QuestionValue.js';
 import { Option } from '/twcheese/src/Models/Debug/Option.js';
 
 import { fadeGameContentExcept, unfadeGameContent, Mousetrap } from '/twcheese/src/Util/UI.js';
 import { requestDocument } from '/twcheese/src/Util/Network.js';
 import { scrapeCommand, scrapeCommandUrlFromRow } from '/twcheese/src/Scrape/command.js';
+import { BugReporter } from '/twcheese/src//Models/Debug/BugReporter.js';
 
 
 async function trySelectCommandFromTable() {
@@ -64,6 +66,8 @@ function summarizeTryScrapeCommandScreen(d) {
 
 
 let debugProcess = DebugProcess.create('Tool: OverviewHauls');
+let bugReporter = new BugReporter(debugProcess);
+
 debugProcess.enqueuePhase(
     PhaseQuestion.create('Entry')
         .addQuestion(Question.create(`What's broken?`)
@@ -88,6 +92,9 @@ debugProcess.enqueuePhase(
             .addOption(Option.create('Something else', 'other', 'twcheese-debug-option-TODO'))
         )
     )
-    .enqueuePhase(PhaseReport.create(debugProcess));
+    .enqueuePhase(PhaseQuestion.create('extra info')
+        .addQuestion(QuestionFreeForm.create('Additional information', 'e.g. "iron isn\'t shown"'))
+    )
+    .enqueuePhase(PhaseReport.create(bugReporter));
 
 export { debugProcess };

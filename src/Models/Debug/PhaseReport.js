@@ -2,18 +2,45 @@ import { Phase } from '/twcheese/src/Models/Debug/Phase.js';
 import { DebugEvents } from '/twcheese/src/Models/Debug/DebugEvents.js';
 
 
+const Status = {
+    SUCCESS: 'success',
+    FAIL: 'fail',
+    NOT_ATTEMPTED: 'not_attempted'
+};
+
+
 class PhaseReport extends Phase {
-    constructor(process) {
-        super('about to send bug report');
-        this.process = process;
+    constructor(bugReporter) {
+        super('send bug report');
+        this.bugReporter = bugReporter;
+        this.status = Status.NOT_ATTEMPTED;
+        this.error;
     }
 
     start() {
-        // do nothing
+        let report = this.bugReporter.buildReport();
+        this.bugReporter.submitReport(report)
+            .then(d => {
+                this.status = Status.SUCCESS;
+                $(this).trigger({
+                    type: DebugEvents.BUG_REPORT_SUCCEEDED,
+                    url: d.html_url
+                })
+            })
+            .catch(error => {
+                this.error = error;
+                this.status = Status.FAIL;
+                $(this).trigger(DebugEvents.BUG_REPORT_FAILED)
+            })
+            .finally(() => this.checkCompletionReady());
     }
 
     checkCompletionReady() {
-        $(this).trigger(DebugEvents.PHASE_COMPLETION_READY);
+        if (this.status !== Status.NOT_ATTEMPTED) {
+            $(this).trigger(DebugEvents.PHASE_COMPLETION_READY);
+        } else {
+            $(this).trigger(DebugEvents.PHASE_COMPLETION_NOT_READY);
+        }
     }
 
     getThingsToFollowUpOn() {
@@ -26,9 +53,10 @@ class PhaseReport extends Phase {
         };
     }
 
-    static create(process) {
-        return new PhaseReport(process);
+    static create(bugReporter) {
+        return new PhaseReport(bugReporter);
     }
 }
+
 
 export { PhaseReport };

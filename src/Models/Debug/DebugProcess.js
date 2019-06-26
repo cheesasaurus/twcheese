@@ -68,7 +68,6 @@ class DebugProcess {
             throw `there's no prev phase`;
         }
         this.currentPhaseIndex--;
-        // todo
         $(this).trigger(DebugEvents.PHASE_CHANGED);
     }
 

@@ -84,7 +84,7 @@ class QuestionWidget extends AbstractWidget {
             return '<span class="non-existent">non-existent</span>';
         }
         if (typeof value.toDebugString === 'function') {
-            return value.toDebugString();
+            return escapeHtml(value.toDebugString());
         }
         if (typeof value === 'object') {
             return Object.entries(value).map((input) => {
@@ -95,7 +95,7 @@ class QuestionWidget extends AbstractWidget {
                 </div>`;
             }).join('');
         }
-        return value.toString();
+        return escapeHtml(value.toString());
     }
 
     createLabelForValue(value, defaultLabel) {

@@ -33,7 +33,6 @@ class PhaseAttempt extends Phase {
             this.error = err;
             await this.fail(err);
         }
-        console.log(this.status);
         this.checkCompletionReady();
     }
 

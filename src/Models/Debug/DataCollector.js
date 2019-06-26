@@ -46,6 +46,7 @@ class DataCollector {
 
     censorCsrfInString(s) {
         return s.replace(/((&|&amp;)h=)(\w+)/g, '$1CENSORED')
+            .replace(/(\?h=)(\w+)(&|&amp;)/g, '$1CENSORED$3')
             .replace(/(csrf_token = ')(\w+)/g, '$1CENSORED')
             .replace(/("csrf":")(\w+)/g, '$1CENSORED');
     }

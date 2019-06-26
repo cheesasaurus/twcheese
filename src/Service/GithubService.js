@@ -1,7 +1,7 @@
 
 let root = 'https://api.github.com';
 let owner = 'cheesasaurus';
-let repo = 'twcheese';
+let repo = 'twcheese-bug-report';
 
 // Intentionally public token, for the twcheese-bug-report account to create issues.
 // Enables bug reporting without forcing non-technical people to sign up for github.
@@ -10,17 +10,6 @@ let repo = 'twcheese';
 let token = 'MzVkYTdjMjgwM2QyMzc5MDhhYWYzMzQxNTNkOTRhNjdjN2EzZWExZA==';
 
 let GithubService = {
-
-    async getIssue(id) {
-        let url = `${root}/repos/${owner}/${repo}/issues/${id}`;
-        let response = await fetch(url, {
-            method: 'GET'
-        });
-        if (!response.ok) {
-            throw new Error(`Failed to get issue. [${response.status}: ${response.statusText}]`);
-        }
-        return await response.json();
-    },
 
     async createIssue(title, message) {
         let url = `${root}/repos/${owner}/${repo}/issues`;

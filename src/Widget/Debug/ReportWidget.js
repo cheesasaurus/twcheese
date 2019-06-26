@@ -21,10 +21,7 @@ class ReportWidget extends AbstractWidget {
 
     watchPhase() {
         $(this.phase).on(DebugEvents.BUG_REPORT_SUCCEEDED, e => {
-            this.$el.html(`
-                <p>Bug reported!</p>
-                <a href="${e.url}" target="_blank">${e.url}</a>
-            `);
+            this.$el.html(`<p>Bug reported!</p>`);
         });
     }
 
@@ -35,16 +32,6 @@ initCss(`
     .twcheese-debug-report {
         min-width: 375px;
         min-height: 200px;
-    }
-
-    .twcheese-debug-report a {
-        font-weight: normal;
-        font-size: 12px;
-        color: rgb(63, 156, 214);
-        text-decoration: underline;
-    }
-    .twcheese-debug-report a:hover {
-        color: rgb(96, 174, 221);
     }    
 `);
 

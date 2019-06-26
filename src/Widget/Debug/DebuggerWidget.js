@@ -198,6 +198,16 @@ initCss(`
         display: flex;
     }
 
+    .twcheese-debugger a {
+        font-weight: normal;
+        font-size: 12px;
+        color: rgb(63, 156, 214);
+        text-decoration: underline;
+    }
+    .twcheese-debugger a:hover {
+        color: rgb(96, 174, 221);
+    }
+
     .twcheese-debugger-header {
         background-color: rgb(56, 56, 56);
         padding: 9px 20px;
@@ -276,7 +286,6 @@ initCss(`
         background-color: cyan;
         opacity: 0.1;
     }
-
 
 `);
 

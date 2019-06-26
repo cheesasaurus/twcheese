@@ -6,11 +6,11 @@ import { Question } from '/twcheese/src/Models/Debug/Question.js';
 import { QuestionFreeForm } from '/twcheese/src/Models/Debug/QuestionFreeForm.js';
 import { QuestionValue } from '/twcheese/src/Models/Debug/QuestionValue.js';
 import { Option } from '/twcheese/src/Models/Debug/Option.js';
+import { BugReporter } from '/twcheese/src/Models/Debug/BugReporter.js';
 
 import { fadeGameContentExcept, unfadeGameContent, Mousetrap } from '/twcheese/src/Util/UI.js';
 import { requestDocument } from '/twcheese/src/Util/Network.js';
 import { scrapeCommand, scrapeCommandUrlFromRow } from '/twcheese/src/Scrape/command.js';
-import { BugReporter } from '/twcheese/src//Models/Debug/BugReporter.js';
 
 
 async function trySelectCommandFromTable() {
@@ -89,7 +89,7 @@ debugProcess.enqueuePhase(
                     })
                 )
             )
-            .addOption(Option.create('Something else', 'other', 'twcheese-debug-option-TODO'))
+            .addOption(Option.create('Something else', 'other'))
         )
     )
     .enqueuePhase(PhaseQuestion.create('extra info')

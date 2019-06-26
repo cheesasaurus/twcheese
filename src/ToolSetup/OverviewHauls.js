@@ -4,7 +4,8 @@ import { promptLoadHauls } from '/twcheese/src/Prompt/promptLoadHauls.js';
 import { suggestRedirect } from '/twcheese/src/Prompt/suggestRedirect.js';
 import { alertPremiumRequired } from '/twcheese/src/Prompt/alertPremiumRequired.js';
 import { appendHaulColsToCommandsTable } from '/twcheese/src/Transform/appendHaulColsToCommandsTable.js';
-import { debugProcess } from '/twcheese/src/ToolDebug/OverviewHauls.js';
+import { debugProcess as debugProcessAtCommandsOverview } from '/twcheese/src/ToolDebug/OverviewHauls/AtCommandsOverview.js';
+import { debugProcess as debugProcessDefault } from '/twcheese/src/ToolDebug/OverviewHauls/Default.js';
 
 
 let haulsIncluded = false;
@@ -17,6 +18,12 @@ async function enhanceScreenWithHaulInfo(progressMonitor) {
 
     haulsIncluded = true;
 };
+
+
+function atCommandsOverview() {
+    let here = document.location.href;
+    return here.includes('screen=overview_villages') && here.includes('mode=commands');
+}
 
 
 function suggestRedirectToCommandsOverview() {
@@ -41,10 +48,8 @@ function useTool() {
     if (!window.premium) {
         alertPremiumRequired();
         return;
-    }
-
-    let here = document.location.href;
-    if (!(here.includes('screen=overview_villages') && here.includes('mode=commands'))) {
+    }    
+    if (!atCommandsOverview()) {
         suggestRedirectToCommandsOverview();
         return;
     }
@@ -56,5 +61,5 @@ function useTool() {
 window.TwCheese.registerTool({
     id: 'OverviewHauls',
     use: useTool,
-    getDebugProcess: () => debugProcess
+    getDebugProcess: () => atCommandsOverview() ? debugProcessAtCommandsOverview : debugProcessDefault
 });

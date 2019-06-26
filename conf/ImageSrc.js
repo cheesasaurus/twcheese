@@ -13,7 +13,8 @@ let ImageSrc = {
     loadingSpinner: game + 'throbber.gif',
     calendar: self + 'calendar.png',
     sidebarMain: self + 'sidebar/gear.png',
-    sidebarBug: self + 'sidebar/bug.png'
+    sidebarBug: self + 'sidebar/bug.png',
+    sidebarGithub: self + 'sidebar/github.png'
 };
 
 export { ImageSrc };

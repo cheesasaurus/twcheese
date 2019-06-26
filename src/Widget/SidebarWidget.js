@@ -23,6 +23,7 @@ class SidebarWidget extends AbstractWidget {
         this.$menuMain = this.$el.find('.menu-item.main');
         this.$mainIcon = this.$menuMain.find('.icon');
         this.$menuBug = this.$el.find('.menu-item.bug');
+        this.$menuGithub = this.$el.find('.menu-item.github');
         this.$content = this.$el.find('.twcheese-sidebar-content');
     }
 
@@ -32,6 +33,10 @@ class SidebarWidget extends AbstractWidget {
                 <div class="twcheese-sidebar-menu">
                     <div class="menu-item main"><div class="icon"></div></div>
                     <div class="menu-item bug"><div class="icon"></div></div>
+                    <a class="menu-item github"
+                      href="https://github.com/cheesasaurus/twcheese/releases"
+                      target="_blank"
+                    ><div class="icon"></div></a>
                 </div>
                 <div class="twcheese-sidebar-content"></div>
             </div>
@@ -100,7 +105,10 @@ class SidebarWidget extends AbstractWidget {
         return new Promise((resolve, reject) => {
             let options = {
                 duration: durationMs,
-                complete: resolve
+                complete: () => {
+                    this.$menuGithub.show();
+                    resolve();
+                }
             };
             this.$el.animate({
                 height: '100%',
@@ -110,6 +118,7 @@ class SidebarWidget extends AbstractWidget {
     }
 
     shrinkVert(durationMs) {
+        this.$menuGithub.hide();
         this.isExpandedVert = false;
         this.$el.animate({
             height: '50px'
@@ -159,6 +168,7 @@ initCss(`
     /* menu **************************************************/
 
     .twcheese-sidebar-menu {
+        position: relative;
         display: block;
         width: 50px;
         height: 100%;
@@ -171,6 +181,7 @@ initCss(`
 
     .twcheese-sidebar-menu .menu-item {
         position: relative;
+        display: block;
         box-sizing: border-box;
         width: 50px;
         height: 50px;
@@ -204,6 +215,19 @@ initCss(`
 
     .twcheese-sidebar-menu .menu-item.bug .icon {
         background-image: url('${ImageSrc.sidebarBug}');
+        -webkit-filter: brightness(0.7);
+        filter: brightness(0.7);
+    }
+
+    .twcheese-sidebar-menu .menu-item.github {
+        position: absolute;
+        display: none;
+        bottom: 0;
+        margin-top: 50px;
+    }
+
+    .twcheese-sidebar-menu .menu-item.github .icon {
+        background-image: url('${ImageSrc.sidebarGithub}');
         -webkit-filter: brightness(0.7);
         filter: brightness(0.7);
     }

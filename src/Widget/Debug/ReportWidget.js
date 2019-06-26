@@ -21,7 +21,6 @@ class ReportWidget extends AbstractWidget {
 
     watchPhase() {
         $(this.phase).on(DebugEvents.BUG_REPORT_SUCCEEDED, e => {
-            console.log(e);
             this.$el.html(`
                 <p>Bug reported!</p>
                 <a href="${e.url}" target="_blank">${e.url}</a>

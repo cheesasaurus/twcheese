@@ -11,6 +11,7 @@
 |[conf/](conf/)|Configuration||
 |[src/ToolSetup/](src/ToolSetup/)|Modules that set up tools, to be used by launchers and compiled scripts||
 |[src/ToolDoc/](src/ToolDoc/)|Plaintext documentation about what the tools do||
+|[src/ToolDebug/](src/ToolDebug/)|Debug processes for each tool; used by the bug reporter||
 |[src/Models/](src/Models/)|Modules containing only domain logic. If it touches the DOM, it doesn't belong here.||
 |[src/Scrape/](src/Scrape/)|Modules to search the DOM for various data needed. These often return Models.||
 |[src/Prompt/](src/Prompt/)|Modules that pop open some kind of fancy prompt, when [window.prompt](https://developer.mozilla.org/en-US/docs/Web/API/Window/prompt) isn't good enough. Any non-presentation logic should be handled via callbacks or similar (meaning: the logic doesn't go in these modules!)||

@@ -10,10 +10,21 @@ class DataCollector {
     }
 
     buildData() {
+        let nav = window.navigator;
+
         return {
             process: this.process.getSummarySoFar(),
-            gameData: window.game_data,
-            contentHtml: document.getElementById('content_value').outerHTML
+            contentHtml: document.getElementById('content_value').outerHTML,
+            navigator: {
+                appCodeName: nav.app,
+                appName: nav.appName,
+                appVersion: nav.appVersion,
+                platfrom: nav.platfrom,
+                userAgent: nav.userAgent,
+                languages: $.extend(true, [], nav.languages),
+                oscpu: nav.oscpu
+            },
+            gameData: $.extend(true, {}, window.game_data)
         }
     }
 

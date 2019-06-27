@@ -1,5 +1,5 @@
-import { GithubService } from '/twcheese/src/Service/GithubService.js';
 import { DataCollector } from '/twcheese/src/Models/Debug/DataCollector.js';
+import { API } from '/twcheese/conf/API.js';
 
 class BugReporter {
     constructor(process) {
@@ -20,7 +20,21 @@ class BugReporter {
             `|${game_data.majorVersion}|${game_data.world}|${game_data.player.name}|`,
             '```' + JSON.stringify(report.dataCollected, null, 2) +  '```'
         ].join("\n");
-        return await GithubService.createIssue(report.title, message);
+        return await this.createIssue(report.title, message);
+    }
+
+    async createIssue(title, message) {
+        let response = await fetch(API.bugReport.url, {
+            method: 'POST',
+            body: JSON.stringify({
+                title: title,
+                message: message
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create issue. [${response.status}: ${response.statusText}]`);
+        }
+        return await response.json();
     }
 
 }

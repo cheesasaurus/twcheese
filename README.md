@@ -22,6 +22,7 @@
 |[test/unit/](test/unit/)|Unit tests for modules in src/||
 |[docs/player/](docs/player/)|Documentation about the tools, for players||
 |[docs/developer/](docs/developer/)|Technical documentation||
+|[vendor/](vendor/)|External libraries, which tools depend on||
 
 > :warning: *Everything in these dirs is automatically built. Any changes you make will be lost.*\
 > :no_entry: *You shouldn't need to change anything in these dirs.*

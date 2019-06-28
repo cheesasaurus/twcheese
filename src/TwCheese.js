@@ -4,6 +4,12 @@ window.TwCheese = {
     actions: {},
     tools: {},
     lastToolUsedId: null,
+
+    loadVendorLibs: async function() {
+        return new Promise((resolve) => {
+            $.ajax(`${this.ROOT}/dist/vendor.js`, { complete: resolve });
+        });
+    },
     loadTool: async function(toolId) {
         return new Promise((resolve) => {
             let module = document.createElement('script');

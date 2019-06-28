@@ -68,7 +68,7 @@ function applyDistTemplate() {
                 min: '.min.js'
             }
         }))
-        .pipe(dest(`${ROOT}/dist/`));
+        .pipe(dest(`${ROOT}/dist/tool/`));
 }
 
 gulp.task('buildDist', series(compileToolSetup, applyDistTemplate));

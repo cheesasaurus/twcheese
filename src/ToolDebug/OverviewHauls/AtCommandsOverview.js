@@ -55,7 +55,7 @@ async function trySelectCommandFromTable(ctrl) {
 
 
 async function tryScrapeCommandScreen(commandUrl) {
-    let commandDoc = await requestDocument(commandUrl + 'badbad');
+    let commandDoc = await requestDocument(commandUrl);
     return {
         document: commandDoc,
         command: scrapeCommand(commandDoc)

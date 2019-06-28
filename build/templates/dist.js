@@ -3,7 +3,11 @@
 (function() {
     let toolId = '___TOOL_ID___';
 
-    ___TWCHEESE___
+    if (typeof window.TwCheese === 'undefined') {
+        ___TWCHEESE___
+
+        ___VENDOR_LIBS___
+    }
 
     if (!TwCheese.hasTool(toolId)) {
         let sidebarInitd = TwCheese.hasTool('Sidebar');

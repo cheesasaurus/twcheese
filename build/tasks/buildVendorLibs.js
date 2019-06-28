@@ -30,4 +30,4 @@ function applyTemplate() {
 }
 
 
-gulp.task('buildVendor', series(concatLibs, applyTemplate));
+gulp.task('buildVendorLibs', series(concatLibs, applyTemplate));

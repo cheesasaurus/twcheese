@@ -50,8 +50,17 @@ let compiledToolSetup = function(file) {
     return fs.readFileSync(stagingDir + file.relative, 'utf8');
 }
 
-
 let templateDist= fs.readFileSync(`${ROOT}/build/templates/dist.js`, 'utf8');
+
+let _vendorLibsIndented;
+let vendorLibsIndented = function() {
+    if (typeof _vendorLibsIndented === 'undefined') {
+        let vendorLibs = fs.readFileSync(`${ROOT}/dist/vendor.js`, 'utf8');
+        _vendorLibsIndented = prependToEachLine(' '.repeat(8), vendorLibs);
+    }
+    return _vendorLibsIndented;
+}
+
 
 function applyDistTemplate() {
     return src([`${ROOT}/src/ToolSetup/*.js`, `!${ROOT}/src/ToolSetup/Sidebar.js`])
@@ -60,7 +69,8 @@ function applyDistTemplate() {
         .pipe(interpolate(config.interpolate))
         .pipe(beautify())
         .pipe(interpolate([
-            ['___COMPILED_TOOL_SETUP___', (file) => prependToEachLine(' '.repeat(8), compiledToolSetup(file))]
+            ['___COMPILED_TOOL_SETUP___', (file) => prependToEachLine(' '.repeat(8), compiledToolSetup(file))],
+            ['___VENDOR_LIBS___', vendorLibsIndented]
         ]))
         .pipe(minify({
             preserveComments: 'some',

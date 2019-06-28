@@ -1,7 +1,9 @@
 (async function() {
     let toolId = '___TOOL_ID___';
 
-    ___TWCHEESE___
+    if (typeof window.TwCheese === 'undefined') {
+        ___TWCHEESE___
+    }
 
     if (!TwCheese.hasTool('Sidebar')) {
         await TwCheese.loadTool('Sidebar');

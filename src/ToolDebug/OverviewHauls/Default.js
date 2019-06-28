@@ -9,7 +9,7 @@ let bugReporter = new BugReporter(debugProcess);
 
 debugProcess
     .enqueuePhase(PhaseQuestion.create('Entry')
-        .addQuestion(QuestionFreeForm.create(`What's broken?`, 'e.g. "it freezes when loading hauls"'))
+        .addQuestion(QuestionFreeForm.create(`What's broken?`, 'e.g. "it freezes when loading hauls"', 10))
     )
     .enqueuePhase(PhaseReport.create(bugReporter));
 

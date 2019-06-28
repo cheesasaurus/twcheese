@@ -19,6 +19,9 @@ class PhaseQuestion extends Phase {
         $(question).on(DebugEvents.QUESTION_ANSWERED, () => {
             this.checkCompletionReady();
         });
+        $(question).on(DebugEvents.QUESTION_NOT_ANSWERED, () => {
+            this.checkCompletionReady();
+        });
         return this;
     }
 

@@ -1,3 +1,5 @@
+import { DebugEvents } from '/twcheese/src/Models/Debug/DebugEvents.js';
+
 
 class Option {
     constructor(humanText, value, className) {
@@ -11,6 +13,11 @@ class Option {
         this.followUpPhases.push(phase);
         phase.followUpOn = this;
         return this;
+    }
+
+    setValue(value) {
+        this.value = value;
+        $(this).trigger(DebugEvents.OPTION_VALUE_CHANGED);
     }
 
     static create(humanText, value, className) {

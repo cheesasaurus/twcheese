@@ -109,7 +109,7 @@ class QuestionWidget extends AbstractWidget {
         if (this.question instanceof QuestionFreeForm) {
             this.$answers.on('input', (e) => {
                 let $answer = $(e.target);
-                this.question.options[0].value = $answer.val();
+                this.question.options[0].setValue($answer.val());
             });
             return;
         }

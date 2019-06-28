@@ -20,11 +20,12 @@ class PhaseAttempt extends Phase {
         this.error;
         this.data;
         this.summarizeData = d => d;
+        this.ctrl = {};
     }
 
     async doAttempt() {
         try {
-            let data = await this.attempt();
+            let data = await this.abortableAttempt();
             this.data = data;
             await this.success(data);
             this.status = Status.SUCCESS;
@@ -34,6 +35,23 @@ class PhaseAttempt extends Phase {
             await this.fail(err);
         }
         this.checkCompletionReady();
+    }
+
+    async abortableAttempt() {
+        return new Promise(async (resolve, reject) => {
+            $(this.ctrl).on(DebugEvents.USER_REJECTED, () => reject('user rejected'));
+            try {
+                let data = await this.attempt(this.ctrl);
+                resolve(data);
+            }
+            catch(err) {
+                reject(err);
+            }            
+        });
+    }
+
+    userAbort() {
+        $(this.ctrl).trigger(DebugEvents.USER_REJECTED);
     }
 
     setInstructions(instructions) {

@@ -6,7 +6,8 @@ const DebugEvents = {
     QUESTION_NOT_ANSWERED: 'question_not_answered',
     OPTION_VALUE_CHANGED: 'answer_value_changed',
     BUG_REPORT_SUCCEEDED: 'bug_report_succeeded',
-    BUG_REPORT_FAILED: 'bug_report_failed'
+    BUG_REPORT_FAILED: 'bug_report_failed',
+    USER_REJECTED: 'user_rejected'
 };
 
 export { DebugEvents };

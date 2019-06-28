@@ -1,3 +1,4 @@
+import { DebugEvents } from '/twcheese/src/Models/Debug/DebugEvents.js';
 import { DebugProcess } from '/twcheese/src/Models/Debug/DebugProcess.js';
 import { PhaseQuestion } from '/twcheese/src/Models/Debug/PhaseQuestion.js';
 import { PhaseAttempt } from '/twcheese/src/Models/Debug/PhaseAttempt.js';
@@ -13,7 +14,7 @@ import { requestDocument } from '/twcheese/src/Util/Network.js';
 import { scrapeCommand, scrapeCommandUrlFromRow } from '/twcheese/src/Scrape/command.js';
 
 
-async function trySelectCommandFromTable() {
+async function trySelectCommandFromTable(ctrl) {
     let $commandsTable = $('#commands_table');
     let $commandRows = $commandsTable.children().children();
 
@@ -29,11 +30,19 @@ async function trySelectCommandFromTable() {
             $(this).css({outline: 'none'})
         });
 
+    let cleanup = function() {
+        unfadeGameContent();
+        mousetrap.destruct();
+        $commandRows.css({outline: 'none'});
+    };
+
+    $(ctrl).on(DebugEvents.USER_REJECTED, function() {
+        cleanup();
+    });
+
     return new Promise(function(resolve, reject) {
         let handleRowSelected = function() {
-            unfadeGameContent();
-            mousetrap.destruct();
-            $commandRows.css({outline: 'none'});
+            cleanup();
             try {
                 resolve(scrapeCommandUrlFromRow(this));
             } catch (err) {
@@ -46,7 +55,7 @@ async function trySelectCommandFromTable() {
 
 
 async function tryScrapeCommandScreen(commandUrl) {
-    let commandDoc = await requestDocument(commandUrl);
+    let commandDoc = await requestDocument(commandUrl + 'badbad');
     return {
         document: commandDoc,
         command: scrapeCommand(commandDoc)
@@ -75,7 +84,7 @@ debugProcess.enqueuePhase(
                 .addFollowUp(PhaseAttempt.create('determine command url', trySelectCommandFromTable)
                     .setInstructions('Select a problematic row.')
                     .onSuccess(function(commandUrl) {
-                        debugProcess.insertPhase(PhaseAttempt.create('read selected command', async () => tryScrapeCommandScreen(commandUrl))
+                        debugProcess.insertPhase(PhaseAttempt.create('read selected command', async () => await tryScrapeCommandScreen(commandUrl))
                             .setDataSummarizer(summarizeTryScrapeCommandScreen)
                             .onSuccess(function(d) {
                                 debugProcess.insertPhase(PhaseQuestion.create('Command scraper')

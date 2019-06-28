@@ -5,6 +5,7 @@ import { DebugEvents } from '/twcheese/src/Models/Debug/DebugEvents.js';
 import { PhaseQuestion } from '/twcheese/src/Models/Debug/PhaseQuestion.js';
 import { QuestionWidget } from '/twcheese/src/Widget/Debug/QuestionWidget.js';
 import { PhaseAttempt } from '/twcheese/src/Models/Debug/PhaseAttempt.js';
+import { AttemptWidget } from '/twcheese/src/Widget/Debug/AttemptWidget.js';
 import { PhaseReport } from '/twcheese/src/Models/Debug/PhaseReport.js';
 import { ReportWidget } from '/twcheese/src/Widget/Debug/ReportWidget.js';
 
@@ -127,19 +128,8 @@ class DebuggerWidget extends AbstractWidget {
     }
 
     _renderPhaseAttempt(phase) {
-        if (phase.instructions) {
-            this.$content.html(`
-                <div class="twcheese-debug-attempt">
-                    ${phase.instructions}
-                </div>
-            `);
-        } else {
-            this.$content.html(`
-                <div class="twcheese-debug-attempt">
-                    Standby for <i>${phase.name}</i>.
-                </div>
-            `);
-        }
+        let widget = (new AttemptWidget(phase)).appendTo(this.$content);
+        $(widget).on('change', () => this.updateScrolling());
     }
 
     _renderPhaseReport(phase) {

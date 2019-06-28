@@ -9,13 +9,13 @@ const PLUGIN_NAME = 'interpolate';
  * @param {Vinyl} file
  * @return {string}
  */
-let interpolate = function(string, replacements, file) {
+let interpolate = async function(string, replacements, file) {
     for ([pattern, replacement] of replacements) {
         if (!(pattern instanceof RegExp)) {
             pattern = new RegExp(pattern, 'g');
         }
         if (typeof replacement === 'function') {
-            replacement = replacement(file);
+            replacement = await replacement(file);
         }
         string = string.replace(pattern, replacement);
     }
@@ -40,7 +40,7 @@ let interpolate = function(string, replacements, file) {
 module.exports = function(replacements) {
     return new Transform({
         objectMode: true,
-        transform: function(file, encoding, callback) {
+        transform: async function(file, encoding, callback) {
             if (file.isNull()) {
                 return callback(null, file);
             }
@@ -54,7 +54,7 @@ module.exports = function(replacements) {
             }
             else if (file.isBuffer()) {
                 let oldContent = file.contents.toString();                
-                file.contents = Buffer.from(interpolate(oldContent, replacements, file));
+                file.contents = Buffer.from(await interpolate(oldContent, replacements, file));
             }
             callback(null, file);
         }

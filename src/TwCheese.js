@@ -1,6 +1,7 @@
 if (typeof window.TwCheese === 'undefined') {
     window.TwCheese = {
         ROOT: '___HOSTING_ROOT___',
+        version: '___VERSION___',
         actions: {},
         tools: {},
         lastToolUsedId: null,

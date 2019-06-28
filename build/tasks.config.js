@@ -3,6 +3,7 @@ const ROOT = path.resolve(__dirname, '../');
 
 const fs = require('fs');
 const { prependToEachLine } = require(`${ROOT}/build/lib/string.js`);
+const exec = require(`${ROOT}/build/lib/exec.js`);
 
 let hostingRoot = fs.readFileSync(`${ROOT}/conf/host`, 'utf8').trim();
 
@@ -12,6 +13,14 @@ headerTemplate = headerTemplate.replace('___LICENSE___', prependToEachLine(' * '
 
 let toolDoc = function(file) {
     return fs.readFileSync(`${ROOT}/src/ToolDoc/${file.stem}`, 'utf8');
+}
+
+let _version;
+let version = async function () {
+    if (typeof _version === 'undefined') {
+        _version = (await exec('git', ['describe', '--tags'])).trim();
+    }
+    return _version;
 }
 
 module.exports = {
@@ -25,6 +34,7 @@ module.exports = {
         ['___TOOL_ID___', (file) => file.stem ],
         ['___TOOL_DOC___', (file) => prependToEachLine(' * ', toolDoc(file)) ],
         ['___TWCHEESE___', fs.readFileSync(`${ROOT}/src/TwCheese.js`, 'utf8') ],
-        ['___HOSTING_ROOT___', hostingRoot]
+        ['___HOSTING_ROOT___', hostingRoot],
+        ['___VERSION___', version]
     ])
 };

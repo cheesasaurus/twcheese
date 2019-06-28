@@ -15,9 +15,9 @@ class BugReporter {
 
     async submitReport(report) {
         let message = [
-            '|game version|world|player|',
-            '|---|---|---|',
-            `|${game_data.majorVersion}|${game_data.world}|${game_data.player.name}|`,
+            '|game version|world|player|twcheese|',
+            '|---|---|---|---|',
+            `|${game_data.majorVersion}|${game_data.world}|${game_data.player.name}|${window.TwCheese.version}|`,
             '```' + JSON.stringify(report.dataCollected, null, 2) +  '```'
         ].join("\n");
         return await this.createIssue(report.title, message);

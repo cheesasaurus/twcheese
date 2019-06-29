@@ -12,9 +12,9 @@ function scrapeCommand(gameDoc) {
     
     var content = $(gameDoc).find('#content_value').get()[0];
     let tables = content.getElementsByTagName('table');
+    let rowMap = mapFirstTable(tables);
 
-    let arrivalCell = tables[0].rows[6].cells[1];
-    command.arrival = parseArrival($(arrivalCell).text());
+    command.arrival = parseArrival($(rowMap.arrival.cells[1]).text());
 
     if (tables.length < 3) {
         return command;
@@ -32,6 +32,31 @@ function scrapeCommand(gameDoc) {
 
     return command;
 };
+
+
+function mapFirstTable(tables) {
+    let table = tables[0];
+    let headerRows = 1;
+    let originRows = table.rows[headerRows].cells[0].rowSpan;
+    let destRows = table.rows[headerRows + originRows].cells[0].rowSpan;
+
+    let rowMap = {};
+    rowMap.originPlayer = table.rows[headerRows];
+    rowMap.originVillage = table.rows[headerRows + 1];
+    rowMap.destPlayer = table.rows[headerRows + originRows];
+    rowMap.destVillage = table.rows[headerRows + originRows + 1];
+
+    if (destRows > 2) {
+        rowMap.catapultTarget = table.rows[headerRows + originRows + 2];
+    }
+
+    rowMap.duration = table.rows[headerRows + originRows + destRows];
+    rowMap.arrival = table.rows[headerRows + originRows + destRows + 1];
+    rowMap.arrivalIn = table.rows[headerRows + originRows + destRows + 2];
+    rowMap.estimatedReturn = table.rows[headerRows + originRows + destRows + 3];
+
+    return rowMap;
+}
 
 
 function scrapeCommandUrlFromRow(row) {

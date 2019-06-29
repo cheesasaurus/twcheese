@@ -14,7 +14,7 @@ class DataCollector {
 
         return {
             process: this.process.getSummarySoFar(),
-            contentHtml: document.getElementById('content_value').outerHTML,
+            contentHtml: document.getElementById('contentContainer').outerHTML,
             navigator: {
                 appCodeName: nav.app,
                 appName: nav.appName,

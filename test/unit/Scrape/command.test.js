@@ -30,7 +30,16 @@ describe('scrapeCommand', function() {
             haul: new Resources(0, 0, 0),
             haulCapacity: 0
         });
-    });    
+    });
+
+    it('should handle attack with catapults', function() {
+        let actual = scrapeCommand(domSample('command/attack-with-catapults'));
+        assertCommand(actual, {
+            arrival: TwCheeseDate.newServerDate(2019, 5, 29, 12, 10, 59, 682),
+            haul: new Resources(0, 0, 0),
+            haulCapacity: 0
+        });
+    });
 
     it('should handle attack return with haul', function() {
         let actual = scrapeCommand(domSample('command/attack-return-with-haul'));

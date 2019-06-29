@@ -83,7 +83,7 @@ class HaulStatsWidget extends AbstractWidget {
                 </h4>
                 <div id="twcheese_pillaging_stats_content" style="display: ${contentDisplay};">
                     <!-- summation -->
-                    <div>
+                    <div class="twcheese-pillaging-stats-summation">
                         <div style="text-align: center; width: 100%; margin-top: 5px; margin-bottom: 5px;">
                             From <select id="twcheese_pillaging_stats_from">${summationFromOptions.join('')}</select>
                             to <select id="twcheese_pillaging_stats_to">${summationToOptions.join('')}</select>
@@ -174,6 +174,10 @@ class HaulStatsWidget extends AbstractWidget {
 
 
 initCss(`
+    .twcheese-pillaging-stats-summation {
+        background-color: #f4e4bc
+    }
+
     .twcheese-pillaging-stats-hourly-breakdown tr:nth-child(even) td {
         background: #FFE0A2;
     }

@@ -9,7 +9,7 @@ class Question {
     }
 
     getType() {
-        throw 'not implemented';
+        throw Error('not implemented');
     }
 
     addOption(option) {

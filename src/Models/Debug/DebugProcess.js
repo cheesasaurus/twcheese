@@ -51,7 +51,7 @@ class DebugProcess {
             }
         }        
         if (!this.hasNextPhase()) {
-            throw `there's no next phase`;
+            throw Error(`there's no next phase`);
         }
         this.currentPhaseIndex++;
         $(this).trigger(DebugEvents.PHASE_CHANGED);
@@ -65,7 +65,7 @@ class DebugProcess {
 
     goToPrevPhase() {
         if (!this.hasPrevPhase()) {
-            throw `there's no prev phase`;
+            throw Error(`there's no prev phase`);
         }
         this.currentPhaseIndex--;
         $(this).trigger(DebugEvents.PHASE_CHANGED);

@@ -4,7 +4,7 @@ function suggestRedirect(options) {
     message = message || '{{Some genius forgot to write a message here}}';
     uriParams = uriParams || {};
     if (!screen) {
-        throw 'screen must be specified!';
+        throw Error('screen must be specified!');
     }
 
     let buttonConfirm = {

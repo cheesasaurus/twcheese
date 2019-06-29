@@ -15,23 +15,23 @@ class Phase {
     }
 
     getType() {
-        throw 'notimplemented';
+        throw Error('notimplemented');
     }
 
     start() {
-        throw 'not implemented';
+        throw Error('not implemented');
     }
 
     checkCompletionReady() {
-        throw 'not implemented';
+        throw Error('not implemented');
     }
 
     getThingsToFollowUpOn() {
-        throw 'not implemented';
+        throw Error('not implemented');
     }
 
     getSummary() {
-        throw 'not implemented';
+        throw Error('not implemented');
     }
     
 }

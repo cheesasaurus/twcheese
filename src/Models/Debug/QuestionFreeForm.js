@@ -1,6 +1,7 @@
 import { Question } from '/twcheese/src/Models/Debug/Question.js';
 import { Option } from '/twcheese/src/Models/Debug/Option.js';
 import { DebugEvents } from '/twcheese/src/Models/Debug/DebugEvents.js';
+import { QuestionTypes } from '/twcheese/src/Models/Debug/QuestionTypes.js';
 
 
 class QuestionFreeForm extends Question {
@@ -13,6 +14,10 @@ class QuestionFreeForm extends Question {
         ];
         this.setSelectedOption(0);
         this.watchSelectedOption();        
+    }
+
+    getType() {
+        return QuestionTypes.FREE_FORM;
     }
 
     watchSelectedOption() {

@@ -1,8 +1,6 @@
 import { AbstractWidget } from '/twcheese/src/Widget/AbstractWidget.js';
-import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { initCss, escapeHtml } from '/twcheese/src/Util/UI.js';
-import { QuestionValue } from '/twcheese/src/Models/Debug/QuestionValue.js';
-import { QuestionFreeForm } from '/twcheese/src/Models/Debug/QuestionFreeForm.js';
+import { QuestionTypes } from '/twcheese/src/Models/Debug/QuestionTypes.js';
 
 
 class QuestionWidget extends AbstractWidget {
@@ -30,12 +28,16 @@ class QuestionWidget extends AbstractWidget {
             `);
         }
 
-        if (this.question instanceof QuestionFreeForm) {
-            return this._createHtmlQuestionFreeForm();
-        } else if (this.question instanceof QuestionValue) {
-            return this._createHtmlQuestionAboutValue(options);
-        }
-        return this._createHtmlQuestionGeneric(options);        
+        switch (this.question.getType()) {
+            case QuestionTypes.FREE_FORM:
+                return this._createHtmlQuestionFreeForm();
+            case QuestionTypes.VALUE:
+                return this._createHtmlQuestionAboutValue(options);
+            case QuestionTypes.GENERIC:
+                return this._createHtmlQuestionGeneric(options);
+            default:
+                throw Error('unrecognized question type');    
+        }                
     }
 
     _createHtmlQuestionGeneric(options) {
@@ -106,7 +108,7 @@ class QuestionWidget extends AbstractWidget {
     }
 
     watchSelf() {
-        if (this.question instanceof QuestionFreeForm) {
+        if (this.question.getType() === QuestionTypes.FREE_FORM) {
             this.$answers.on('input', (e) => {
                 let $answer = $(e.target);
                 this.question.options[0].setValue($answer.val());

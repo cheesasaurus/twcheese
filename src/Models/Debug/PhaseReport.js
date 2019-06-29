@@ -1,5 +1,6 @@
 import { Phase } from '/twcheese/src/Models/Debug/Phase.js';
 import { DebugEvents } from '/twcheese/src/Models/Debug/DebugEvents.js';
+import { PhaseTypes } from '/twcheese/src/Models/Debug/PhaseTypes.js';
 
 
 const Status = {
@@ -15,6 +16,10 @@ class PhaseReport extends Phase {
         this.bugReporter = bugReporter;
         this.status = Status.NOT_ATTEMPTED;
         this.error;
+    }
+
+    getType() {
+        return PhaseTypes.REPORT;
     }
 
     start() {

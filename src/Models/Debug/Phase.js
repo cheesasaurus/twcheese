@@ -14,6 +14,10 @@ class Phase {
         this.autoComplete = auto;
     }
 
+    getType() {
+        throw 'notimplemented';
+    }
+
     start() {
         throw 'not implemented';
     }

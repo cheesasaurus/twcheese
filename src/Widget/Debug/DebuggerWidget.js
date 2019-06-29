@@ -1,12 +1,9 @@
 import { AbstractWidget } from '/twcheese/src/Widget/AbstractWidget.js';
-import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { initCss } from '/twcheese/src/Util/UI.js';
 import { DebugEvents } from '/twcheese/src/Models/Debug/DebugEvents.js';
-import { PhaseQuestion } from '/twcheese/src/Models/Debug/PhaseQuestion.js';
+import { PhaseTypes } from '/twcheese/src/Models/Debug/PhaseTypes.js';
 import { QuestionWidget } from '/twcheese/src/Widget/Debug/QuestionWidget.js';
-import { PhaseAttempt } from '/twcheese/src/Models/Debug/PhaseAttempt.js';
 import { AttemptWidget } from '/twcheese/src/Widget/Debug/AttemptWidget.js';
-import { PhaseReport } from '/twcheese/src/Models/Debug/PhaseReport.js';
 import { ReportWidget } from '/twcheese/src/Widget/Debug/ReportWidget.js';
 
 
@@ -106,12 +103,12 @@ class DebuggerWidget extends AbstractWidget {
         }
 
         let phase = this.process.getCurrentPhase();
-        if (phase instanceof PhaseQuestion) {
-            this._renderPhaseQuestion(phase);
-        } else if (phase instanceof PhaseAttempt) {
-            this._renderPhaseAttempt(phase);
-        } else if (phase instanceof PhaseReport) {
-            this._renderPhaseReport(phase);
+
+        switch (phase.getType()) {
+            case PhaseTypes.QUESTION:   this._renderPhaseQuestion(phase);   break;
+            case PhaseTypes.ATTEMPT:    this._renderPhaseAttempt(phase);    break;
+            case PhaseTypes.REPORT:     this._renderPhaseReport(phase);     break;
+            default: throw Error('unrecognized phase');
         }
 
         setTimeout(() => this.updateScrolling(), 200);

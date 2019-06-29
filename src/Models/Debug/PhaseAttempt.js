@@ -1,5 +1,6 @@
 import { Phase } from '/twcheese/src/Models/Debug/Phase.js';
 import { DebugEvents } from '/twcheese/src/Models/Debug/DebugEvents.js';
+import { PhaseTypes } from '/twcheese/src/Models/Debug/PhaseTypes.js';
 
 const Status = {
     SUCCESS: 'success',
@@ -21,6 +22,10 @@ class PhaseAttempt extends Phase {
         this.data;
         this.summarizeData = d => d;
         this.ctrl = {};
+    }
+
+    getType() {
+        return PhaseTypes.ATTEMPT;
     }
 
     async doAttempt() {

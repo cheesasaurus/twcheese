@@ -1,6 +1,7 @@
 import { Correctness } from '/twcheese/src/Models/Debug/Correctness.js';
 import { Question } from '/twcheese/src/Models/Debug/Question.js';
 import { Option } from '/twcheese/src/Models/Debug/Option.js';
+import { QuestionTypes } from '/twcheese/src/Models/Debug/QuestionTypes.js';
 
 
 const OPTION_INCORRECT = 1;
@@ -15,6 +16,10 @@ class QuestionValue extends Question {
             Option.create('Incorrect', Correctness.INCORRECT, 'incorrect'),
             Option.create('Not sure', Correctness.NOT_SURE, 'not-sure')
         ];
+    }
+
+    getType() {
+        return QuestionTypes.VALUE;
     }
 
     addFollowUp(phase) {

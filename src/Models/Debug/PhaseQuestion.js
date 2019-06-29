@@ -1,5 +1,6 @@
 import { Phase } from '/twcheese/src/Models/Debug/Phase.js';
 import { DebugEvents } from '/twcheese/src/Models/Debug/DebugEvents.js';
+import { PhaseTypes } from '/twcheese/src/Models/Debug/PhaseTypes.js';
 
 
 class PhaseQuestion extends Phase {
@@ -7,6 +8,10 @@ class PhaseQuestion extends Phase {
         super(phaseName);
         this.questions = [];
         this.examinedHtml;
+    }
+
+    getType() {
+        return PhaseTypes.QUESTION;
     }
 
     lookAt(html) {

@@ -53,6 +53,10 @@ function useTool() {
         suggestRedirectToCommandsOverview();
         return;
     }
+    if (!document.getElementById('commands_table')) {
+        window.UI.ErrorMessage(`It looks like you don't have any commands.`, 3000);
+        return;
+    }
 
     promptLoadHauls(enhanceScreenWithHaulInfo);
 }

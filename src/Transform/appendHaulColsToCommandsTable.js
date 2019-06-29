@@ -8,6 +8,9 @@ import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
  */
 async function appendHaulColsToCommandsTable(progressMonitor) {
     let commandsTable = document.getElementById('commands_table');
+    if (!commandsTable) {
+        return [];
+    }
 
     $(commandsTable.rows[0]).append(`
         <th><img src="${ImageSrc.timber}" title="Wood" alt="Timber"></th>

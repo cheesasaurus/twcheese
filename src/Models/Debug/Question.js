@@ -1,5 +1,4 @@
 import { DebugEvents } from '/twcheese/src/Models/Debug/DebugEvents.js';
-import { QuestionTypes } from '/twcheese/src/Models/Debug/QuestionTypes.js';
 
 
 class Question {
@@ -10,8 +9,7 @@ class Question {
     }
 
     getType() {
-        // todo: this violates classification (all children should have the attributes of the parent)
-        return QuestionTypes.GENERIC;
+        throw 'not implemented';
     }
 
     addOption(option) {

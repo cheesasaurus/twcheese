@@ -3,7 +3,7 @@ import { DebugProcess } from '/twcheese/src/Models/Debug/DebugProcess.js';
 import { PhaseQuestion } from '/twcheese/src/Models/Debug/PhaseQuestion.js';
 import { PhaseAttempt } from '/twcheese/src/Models/Debug/PhaseAttempt.js';
 import { PhaseReport } from '/twcheese/src/Models/Debug/PhaseReport.js';
-import { Question } from '/twcheese/src/Models/Debug/Question.js';
+import { QuestionSelect } from '/twcheese/src/Models/Debug/QuestionSelect.js';
 import { QuestionFreeForm } from '/twcheese/src/Models/Debug/QuestionFreeForm.js';
 import { QuestionValue } from '/twcheese/src/Models/Debug/QuestionValue.js';
 import { Option } from '/twcheese/src/Models/Debug/Option.js';
@@ -79,7 +79,7 @@ let bugReporter = new BugReporter(debugProcess);
 
 debugProcess.enqueuePhase(
     PhaseQuestion.create('Entry')
-        .addQuestion(Question.create(`What's broken?`)
+        .addQuestion(QuestionSelect.create(`What's broken?`)
             .addOption(Option.create('Wrong values shown in commands list', 'wrong_values')
                 .addFollowUp(PhaseAttempt.create('determine command url', trySelectCommandFromTable)
                     .setInstructions('Select a problematic row.')

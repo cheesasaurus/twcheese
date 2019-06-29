@@ -33,14 +33,14 @@ class QuestionWidget extends AbstractWidget {
                 return this._createHtmlQuestionFreeForm();
             case QuestionTypes.VALUE:
                 return this._createHtmlQuestionAboutValue(options);
-            case QuestionTypes.GENERIC:
-                return this._createHtmlQuestionGeneric(options);
+            case QuestionTypes.SELECT:
+                return this._createHtmlQuestionSelect(options);
             default:
                 throw Error('unrecognized question type');    
         }                
     }
 
-    _createHtmlQuestionGeneric(options) {
+    _createHtmlQuestionSelect(options) {
         return `
             <div class="twcheese-debug-question">
                 <div class="twcheese-debug-question-text">${this.question.text}</div>

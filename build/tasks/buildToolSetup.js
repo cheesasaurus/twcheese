@@ -3,9 +3,13 @@ const ROOT = path.resolve(__dirname, '../../');
 
 const gulp = require('gulp');
 const { src, dest, series } = gulp;
-const minify = require('gulp-minify');
+const uglify = require('gulp-uglify-es').default;
+const rename = require('gulp-rename');
+const sourcemaps = require('gulp-sourcemaps');
 const fs = require('fs');
 const webpack = require('webpack');
+
+const config = require('../tasks.config.js');
 
 
 function compileToolSetup(done) {
@@ -36,12 +40,17 @@ function compileToolSetup(done) {
 
 function minifyToolSetup() {
     return src([`${ROOT}/dist/tool/setup-only/*.js`])
-        .pipe(minify({
-            preserveComments: 'some',
-            noSource: true, // Because the non-minified file is already there. It's whats being minified!
-            ext: {
-                min: '.min.js'
+        .pipe(sourcemaps.init())
+        .pipe(uglify({
+            output: {
+                comments: 'some'
             }
+        }))
+        .pipe(rename(function(path) {
+            path.extname = '.min.js';
+        }))
+        .pipe(sourcemaps.write('sourcemaps', {
+            sourceMappingURLPrefix: `${config.hostingRoot}/dist/tool/setup-only`
         }))
         .pipe(dest(`${ROOT}/dist/tool/setup-only/`));
 }

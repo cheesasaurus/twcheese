@@ -5,7 +5,8 @@ const gulp = require('gulp');
 const { src, dest, series } = gulp;
 const beautify = require('gulp-jsbeautifier');
 const header = require('gulp-header');
-const minify = require('gulp-minify');
+const uglify = require('gulp-uglify-es').default;
+const rename = require('gulp-rename');
 const fs = require('fs');
 const webpack = require('webpack');
 const interpolate = require(`${ROOT}/build/lib/gulp-interpolate.js`);
@@ -72,13 +73,22 @@ function applyDistTemplate() {
             ['___COMPILED_TOOL_SETUP___', (file) => prependToEachLine(' '.repeat(8), compiledToolSetup(file))],
             ['___VENDOR_LIBS___', vendorLibsIndented]
         ]))
-        .pipe(minify({
-            preserveComments: 'some',
-            ext: {
-                min: '.min.js'
+        .pipe(dest(`${ROOT}/dist/tool/`));
+}
+
+
+function minify() {
+    return src(`${ROOT}/dist/tool/*.js`)
+        .pipe(uglify({
+            output: {
+                comments: 'some'
             }
+        }))
+        .pipe(rename(function(path) {
+            path.extname = '.min.js';
         }))
         .pipe(dest(`${ROOT}/dist/tool/`));
 }
 
-gulp.task('buildDist', series(compileToolSetup, applyDistTemplate));
+
+gulp.task('buildDist', series(compileToolSetup, applyDistTemplate, minify));

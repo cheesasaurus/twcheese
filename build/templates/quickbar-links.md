@@ -1,4 +1,4 @@
-### use distributable (recommended for playing)
+### use optimal build (recommended for playing)
 
 ```javascript
 javascript:

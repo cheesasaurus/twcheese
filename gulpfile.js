@@ -7,10 +7,14 @@ gulp.registry(hub);
 
 gulp.task('buildAll', series(
     'purge',
-    'buildVendorLibs',
+    parallel(
+        'buildVendorLibs',
+        'buildToolSetup'
+    ),
     parallel(
         'buildEsModuleLaunchers',
-        series('buildDist', 'buildDistLaunchers')
+        'buildOptimalLaunchers',
+        'buildDist'
     ),
     'buildQuickbarLinks'
 ));

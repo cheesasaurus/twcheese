@@ -10,7 +10,7 @@ const PLUGIN_NAME = 'interpolate';
  * @return {string}
  */
 let interpolate = async function(string, replacements, file) {
-    for ([pattern, replacement] of replacements) {
+    for (let [pattern, replacement] of replacements) {
         if (!(pattern instanceof RegExp)) {
             pattern = new RegExp(pattern, 'g');
         }

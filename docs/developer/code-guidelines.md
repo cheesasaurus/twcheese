@@ -3,8 +3,8 @@
 1. Don't use `instanceof` or other reference-based checks for non-global prototypes.
 2. Don't use `.constructor.name`.
 
-If you find yourself wanting class checks, consider refactoring.
-[https://en.wikipedia.org/wiki/Liskov_substitution_principle](LSP)
+If you find yourself wanting class checks, consider refactoring.\
+[https://en.wikipedia.org/wiki/Liskov_substitution_principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle)
 
 
 Forbidden:

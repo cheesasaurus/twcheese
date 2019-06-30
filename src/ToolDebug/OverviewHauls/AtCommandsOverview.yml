@@ -1,0 +1,39 @@
+- type: PhaseQuestion
+  internalName: Entry
+  questions:
+    - type: QuestionSelect
+      ask: What's broken?
+      options:
+        - answer: Wrong values shown in commands list
+          value: wrong_values
+          followUp:
+            - type: PhaseAttempt
+              internalName: Determine command url
+              action: trySelectCommandFromTable
+              instructions: Select a problematic row.
+              success:
+                - type: PhaseAttempt
+                  internalName: Read selected command
+                  action: tryScrapeCommandScreen
+                  summarizeAction: summarizeTryScrapeCommandScreen
+                  success:
+                    - type: PhaseQuestion
+                      internalName: Command scraper
+                      lookAt: input.document.documentElement.outerHTML
+                      questions:
+                        - type: QuestionValue
+                          ask: Arrival
+                          examine: input.command.arrival
+                        - type: QuestionValue
+                          ask: Haul
+                          examine: input.command.haul
+                        - type: QuestionValue
+                          ask: Haul capacity
+                          examine: input.command.haulCapacity
+        - answer: Something else
+          value: other
+          
+# todo: probably every process should end in PhaseReport.
+# maybe this should be added automatically instead of configured
+- type: PhaseReport
+  bugReporter: myBugReporter

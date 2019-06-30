@@ -97,10 +97,3 @@ describe('ProcessFactory.create', function() {
         // todo
     });
 });
-
-
-describe('ProcessFactory.createFromYAML', function() {
-    xit('should work', function() {
-        // todo
-    });
-});

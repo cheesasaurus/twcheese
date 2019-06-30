@@ -7,7 +7,7 @@ class PhaseQuestion extends Phase {
     constructor(phaseName) {
         super(phaseName);
         this.questions = [];
-        this.examinedHtml;
+        this._examinedHtml;
     }
 
     getType() {
@@ -15,8 +15,15 @@ class PhaseQuestion extends Phase {
     }
 
     lookAt(html) {
-        this.examinedHtml = html;
+        this._examinedHtml = html;
         return this;
+    }
+
+    get examinedHtml() {
+        if (typeof this._examinedHtml === 'function') {
+            return this._examinedHtml();
+        }
+        return this._examinedHtml;
     }
 
     addQuestion(question) {

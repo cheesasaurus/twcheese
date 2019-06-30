@@ -10,12 +10,19 @@ class QuestionValue extends Question {
 
     constructor(questionText, valueQuestioned) {
         super(questionText);
-        this.value = valueQuestioned;
+        this._valueQuestioned = valueQuestioned;
         this.options = [
             Option.create('Correct', Correctness.CORRECT, 'correct'),
             Option.create('Incorrect', Correctness.INCORRECT, 'incorrect'),
             Option.create('Not sure', Correctness.NOT_SURE, 'not-sure')
         ];
+    }
+
+    get value() {
+        if (typeof this._valueQuestioned === 'function') {
+            return this._valueQuestioned();
+        }
+        return this._valueQuestioned;
     }
 
     getType() {

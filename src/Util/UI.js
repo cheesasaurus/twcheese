@@ -18,14 +18,14 @@ function escapeHtml(text) {
 
 ////// css //////
 
-let cssInitd = [];
+let cssInitd = new Set();
 
 function initCss(css) {
-    if (cssInitd.includes(css)) {
+    if (cssInitd.has(css)) {
         return;
     }
     $(`<style>${css}</style>`).appendTo('head');
-    cssInitd.push(css);
+    cssInitd.add(css);
 }
 
 initCss(`
@@ -182,8 +182,8 @@ function fadeGameContentExcept(el) {
 // mousetrap ///////////////////////////////
 
 let mouseEvents = ['click', 'mousemove', 'mousenter', 'mouseleave', 'mouseover', 'mouseout', 'mousedown', 'mouseup'];
-let mouseBubbleEvents = ['click', 'mousemove', 'mouseover', 'mouseout', 'mousedown', 'mouseup'];
-let mouseEventsNeedSpecial = ['mousenter', 'mouseleave', 'mouseover', 'mouseout'];
+let mouseBubbleEvents = new Set(['click', 'mousemove', 'mouseover', 'mouseout', 'mousedown', 'mouseup']);
+let mouseEventsNeedSpecial = new Set(['mousenter', 'mouseleave', 'mouseover', 'mouseout']);
 
 class Mousetrap {
     constructor() {
@@ -218,7 +218,7 @@ class Mousetrap {
     }
 
     setupHandling() {
-        let trapEvents = mouseEvents.filter(name => !mouseEventsNeedSpecial.includes(name));
+        let trapEvents = mouseEvents.filter(name => !mouseEventsNeedSpecial.has(name));
 
         this.$trap.on(trapEvents.join(' '), (e) => {
             this.$trap.hide();
@@ -264,7 +264,7 @@ class Mousetrap {
 
     doesElMatch(el, eventName, intendedTarget) {
         return el === intendedTarget
-        || (mouseBubbleEvents.includes(eventName) && $.contains(el, intendedTarget));
+        || (mouseBubbleEvents.has(eventName) && $.contains(el, intendedTarget));
     }
 
     on(eventName, $elements, handler) {

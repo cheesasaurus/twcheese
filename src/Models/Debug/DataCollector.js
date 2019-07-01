@@ -2,7 +2,7 @@
 class DataCollector {
     constructor(debugProcess) {
         this.process = debugProcess;
-        this.censoredProps = ['csrf', 'birthdate'];
+        this.censoredProps = new Set(['csrf', 'birthdate']);
     }
 
     getCollectibleData() {
@@ -31,7 +31,7 @@ class DataCollector {
     scrub(d) {
         if (typeof d === 'object' && d !== null) {
             for (let key of Object.keys(d)) {
-                if (this.censoredProps.includes(key)) {
+                if (this.censoredProps.has(key)) {
                     d[key] = 'CENSORED';
                 } else {
                     d[key] = this.scrub(d[key]);

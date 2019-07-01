@@ -3221,7 +3221,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
     var reportsSelectorBarLabel = document.createElement('div');
     reportsSelectorBar.appendChild(reportsSelectorBarLabel);
     reportsSelectorBarLabel.style.backgroundColor = 'rgb(193, 162, 100) !important';
-    reportsSelectorBarLabel.style.backgroundImage = 'url("https://uk9.tribalwars.co.uk/graphic/screen/tableheader_bg3.png")';
+    reportsSelectorBarLabel.style.backgroundImage = 'linear-gradient(rgb(229,194,126), rgb(193,162,100))';
     reportsSelectorBarLabel.style.backgroundRepeat = 'repeat-x';
     reportsSelectorBarLabel.style.fontSize = '9pt';
     reportsSelectorBarLabel.style.fontWeight = '700';

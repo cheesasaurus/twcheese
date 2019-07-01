@@ -16,80 +16,80 @@ $.post(ScriptAPI.url, script);
     var imagePaths = new Array();
 
     /*==== specific ====*/
-    imagePaths['spear'] = 'http://' + document.domain + '/graphic/unit/unit_spear.png?1';
-    imagePaths['sword'] = 'http://' + document.domain + '/graphic/unit/unit_sword.png?1';
-    imagePaths['axe'] = 'http://' + document.domain + '/graphic/unit/unit_axe.png?1';
-    imagePaths['archer'] = 'http://' + document.domain + '/graphic/unit/unit_archer.png?1';
+    imagePaths['spear'] = 'https://' + document.domain + '/graphic/unit/unit_spear.png?1';
+    imagePaths['sword'] = 'https://' + document.domain + '/graphic/unit/unit_sword.png?1';
+    imagePaths['axe'] = 'https://' + document.domain + '/graphic/unit/unit_axe.png?1';
+    imagePaths['archer'] = 'https://' + document.domain + '/graphic/unit/unit_archer.png?1';
     imagePaths['scout'] = '/graphic/unit/unit_spy.png?1';
-    imagePaths['lcav'] = 'http://' + document.domain + '/graphic/unit/unit_light.png?1';
-    imagePaths['acav'] = 'http://' + document.domain + '/graphic/unit/unit_marcher.png?1';
-    imagePaths['hcav'] = 'http://' + document.domain + '/graphic/unit/unit_heavy.png?1';
-    imagePaths['ram'] = 'http://' + document.domain + '/graphic/unit/unit_ram.png?1';
-    imagePaths['catapult'] = 'http://' + document.domain + '/graphic/unit/unit_catapult.png?1';
+    imagePaths['lcav'] = 'https://' + document.domain + '/graphic/unit/unit_light.png?1';
+    imagePaths['acav'] = 'https://' + document.domain + '/graphic/unit/unit_marcher.png?1';
+    imagePaths['hcav'] = 'https://' + document.domain + '/graphic/unit/unit_heavy.png?1';
+    imagePaths['ram'] = 'https://' + document.domain + '/graphic/unit/unit_ram.png?1';
+    imagePaths['catapult'] = 'https://' + document.domain + '/graphic/unit/unit_catapult.png?1';
 
-    imagePaths['hq'] = 'http://' + document.domain + '/graphic/buildings/main.png?1';
-    imagePaths['barracks'] = 'http://' + document.domain + '/graphic/buildings/barracks.png?1';
-    imagePaths['stable'] = 'http://' + document.domain + '/graphic/buildings/stable.png?1';
-    imagePaths['workshop'] = 'http://' + document.domain + '/graphic/buildings/garage.png?1';
-    imagePaths['church'] = 'http://' + document.domain + '/graphic/buildings/church.png?1';
-    imagePaths['church_f'] = 'http://' + document.domain + '/graphic/buildings/church.png?1';
-    imagePaths['academy'] = 'http://' + document.domain + '/graphic/buildings/snob.png?1';
-    imagePaths['smithy'] = 'http://' + document.domain + '/graphic/buildings/smith.png?1';
-    imagePaths['rally'] = 'http://' + document.domain + '/graphic/buildings/place.png?1';
-    imagePaths['statue'] = 'http://' + document.domain + '/graphic/buildings/statue.png?1';
-    imagePaths['market'] = 'http://' + document.domain + '/graphic/buildings/market.png?1';
-    imagePaths['timber'] = 'http://' + document.domain + '/graphic/buildings/wood.png?1';
-    imagePaths['clay'] = 'http://' + document.domain + '/graphic/buildings/stone.png?1';
-    imagePaths['iron'] = 'http://' + document.domain + '/graphic/buildings/iron.png?1';
-    imagePaths['warehouse'] = 'http://' + document.domain + '/graphic/buildings/storage.png?1';
-    imagePaths['farm'] = 'http://' + document.domain + '/graphic/buildings/farm.png?1';
-    imagePaths['hiding'] = 'http://' + document.domain + '/graphic/buildings/hide.png?1';
-    imagePaths['wall'] = 'http://' + document.domain + '/graphic/buildings/wall.png?1';
+    imagePaths['hq'] = 'https://' + document.domain + '/graphic/buildings/main.png?1';
+    imagePaths['barracks'] = 'https://' + document.domain + '/graphic/buildings/barracks.png?1';
+    imagePaths['stable'] = 'https://' + document.domain + '/graphic/buildings/stable.png?1';
+    imagePaths['workshop'] = 'https://' + document.domain + '/graphic/buildings/garage.png?1';
+    imagePaths['church'] = 'https://' + document.domain + '/graphic/buildings/church.png?1';
+    imagePaths['church_f'] = 'https://' + document.domain + '/graphic/buildings/church.png?1';
+    imagePaths['academy'] = 'https://' + document.domain + '/graphic/buildings/snob.png?1';
+    imagePaths['smithy'] = 'https://' + document.domain + '/graphic/buildings/smith.png?1';
+    imagePaths['rally'] = 'https://' + document.domain + '/graphic/buildings/place.png?1';
+    imagePaths['statue'] = 'https://' + document.domain + '/graphic/buildings/statue.png?1';
+    imagePaths['market'] = 'https://' + document.domain + '/graphic/buildings/market.png?1';
+    imagePaths['timber'] = 'https://' + document.domain + '/graphic/buildings/wood.png?1';
+    imagePaths['clay'] = 'https://' + document.domain + '/graphic/buildings/stone.png?1';
+    imagePaths['iron'] = 'https://' + document.domain + '/graphic/buildings/iron.png?1';
+    imagePaths['warehouse'] = 'https://' + document.domain + '/graphic/buildings/storage.png?1';
+    imagePaths['farm'] = 'https://' + document.domain + '/graphic/buildings/farm.png?1';
+    imagePaths['hiding'] = 'https://' + document.domain + '/graphic/buildings/hide.png?1';
+    imagePaths['wall'] = 'https://' + document.domain + '/graphic/buildings/wall.png?1';
 
-    imagePaths['repeatFromCurrent'] = 'http://' + document.domain + '/graphic/command/attack.png?1';
-    imagePaths['repeatFromOriginal'] = 'http://' + document.domain + '/graphic/command/attack.png?1';
+    imagePaths['repeatFromCurrent'] = 'https://' + document.domain + '/graphic/command/attack.png?1';
+    imagePaths['repeatFromOriginal'] = 'https://' + document.domain + '/graphic/command/attack.png?1';
 
     /*==== for looping ====*/
     imagePaths['units'] = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    imagePaths['units'][0] = 'http://' + document.domain + '/graphic/unit/unit_spear.png?1';
-    imagePaths['units'][1] = 'http://' + document.domain + '/graphic/unit/unit_sword.png?1';
-    imagePaths['units'][2] = 'http://' + document.domain + '/graphic/unit/unit_axe.png?1';
-    imagePaths['units'][3] = 'http://' + document.domain + '/graphic/unit/unit_archer.png?1';
-    imagePaths['units'][4] = 'http://' + document.domain + '/graphic/unit/unit_spy.png?1';
-    imagePaths['units'][5] = 'http://' + document.domain + '/graphic/unit/unit_light.png?1';
-    imagePaths['units'][6] = 'http://' + document.domain + '/graphic/unit/unit_marcher.png?1';
-    imagePaths['units'][7] = 'http://' + document.domain + '/graphic/unit/unit_heavy.png?1';
-    imagePaths['units'][8] = 'http://' + document.domain + '/graphic/unit/unit_ram.png?1';
-    imagePaths['units'][9] = 'http://' + document.domain + '/graphic/unit/unit_catapult.png?1';
-    imagePaths['units'][10] = 'http://' + document.domain + '/graphic/unit/unit_knight.png?1';
-    imagePaths['units'][11] = 'http://' + document.domain + '/graphic/unit/unit_snob.png?1';
+    imagePaths['units'][0] = 'https://' + document.domain + '/graphic/unit/unit_spear.png?1';
+    imagePaths['units'][1] = 'https://' + document.domain + '/graphic/unit/unit_sword.png?1';
+    imagePaths['units'][2] = 'https://' + document.domain + '/graphic/unit/unit_axe.png?1';
+    imagePaths['units'][3] = 'https://' + document.domain + '/graphic/unit/unit_archer.png?1';
+    imagePaths['units'][4] = 'https://' + document.domain + '/graphic/unit/unit_spy.png?1';
+    imagePaths['units'][5] = 'https://' + document.domain + '/graphic/unit/unit_light.png?1';
+    imagePaths['units'][6] = 'https://' + document.domain + '/graphic/unit/unit_marcher.png?1';
+    imagePaths['units'][7] = 'https://' + document.domain + '/graphic/unit/unit_heavy.png?1';
+    imagePaths['units'][8] = 'https://' + document.domain + '/graphic/unit/unit_ram.png?1';
+    imagePaths['units'][9] = 'https://' + document.domain + '/graphic/unit/unit_catapult.png?1';
+    imagePaths['units'][10] = 'https://' + document.domain + '/graphic/unit/unit_knight.png?1';
+    imagePaths['units'][11] = 'https://' + document.domain + '/graphic/unit/unit_snob.png?1';
 
     imagePaths['buildings'] = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    imagePaths['buildings'][0] = 'http://' + document.domain + '/graphic/buildings/main.png?1';
-    imagePaths['buildings'][1] = 'http://' + document.domain + '/graphic/buildings/barracks.png?1';
-    imagePaths['buildings'][2] = 'http://' + document.domain + '/graphic/buildings/stable.png?1';
-    imagePaths['buildings'][3] = 'http://' + document.domain + '/graphic/buildings/garage.png?1';
-    imagePaths['buildings'][4] = 'http://' + document.domain + '/graphic/buildings/church.png?1';
-    imagePaths['buildings'][5] = 'http://' + document.domain + '/graphic/buildings/church.png?1';
-    imagePaths['buildings'][6] = 'http://' + document.domain + '/graphic/buildings/snob.png?1';
-    imagePaths['buildings'][7] = 'http://' + document.domain + '/graphic/buildings/smith.png?1';
-    imagePaths['buildings'][8] = 'http://' + document.domain + '/graphic/buildings/place.png?1';
-    imagePaths['buildings'][9] = 'http://' + document.domain + '/graphic/buildings/statue.png?1';
-    imagePaths['buildings'][10] = 'http://' + document.domain + '/graphic/buildings/market.png?1';
-    imagePaths['buildings'][11] = 'http://' + document.domain + '/graphic/buildings/wood.png?1';
-    imagePaths['buildings'][12] = 'http://' + document.domain + '/graphic/buildings/stone.png?1';
-    imagePaths['buildings'][13] = 'http://' + document.domain + '/graphic/buildings/iron.png?1';
-    imagePaths['buildings'][14] = 'http://' + document.domain + '/graphic/buildings/farm.png?1';
-    imagePaths['buildings'][15] = 'http://' + document.domain + '/graphic/buildings/storage.png?1';
-    imagePaths['buildings'][16] = 'http://' + document.domain + '/graphic/buildings/hide.png?1';
-    imagePaths['buildings'][17] = 'http://' + document.domain + '/graphic/buildings/wall.png?1';
+    imagePaths['buildings'][0] = 'https://' + document.domain + '/graphic/buildings/main.png?1';
+    imagePaths['buildings'][1] = 'https://' + document.domain + '/graphic/buildings/barracks.png?1';
+    imagePaths['buildings'][2] = 'https://' + document.domain + '/graphic/buildings/stable.png?1';
+    imagePaths['buildings'][3] = 'https://' + document.domain + '/graphic/buildings/garage.png?1';
+    imagePaths['buildings'][4] = 'https://' + document.domain + '/graphic/buildings/church.png?1';
+    imagePaths['buildings'][5] = 'https://' + document.domain + '/graphic/buildings/church.png?1';
+    imagePaths['buildings'][6] = 'https://' + document.domain + '/graphic/buildings/snob.png?1';
+    imagePaths['buildings'][7] = 'https://' + document.domain + '/graphic/buildings/smith.png?1';
+    imagePaths['buildings'][8] = 'https://' + document.domain + '/graphic/buildings/place.png?1';
+    imagePaths['buildings'][9] = 'https://' + document.domain + '/graphic/buildings/statue.png?1';
+    imagePaths['buildings'][10] = 'https://' + document.domain + '/graphic/buildings/market.png?1';
+    imagePaths['buildings'][11] = 'https://' + document.domain + '/graphic/buildings/wood.png?1';
+    imagePaths['buildings'][12] = 'https://' + document.domain + '/graphic/buildings/stone.png?1';
+    imagePaths['buildings'][13] = 'https://' + document.domain + '/graphic/buildings/iron.png?1';
+    imagePaths['buildings'][14] = 'https://' + document.domain + '/graphic/buildings/farm.png?1';
+    imagePaths['buildings'][15] = 'https://' + document.domain + '/graphic/buildings/storage.png?1';
+    imagePaths['buildings'][16] = 'https://' + document.domain + '/graphic/buildings/hide.png?1';
+    imagePaths['buildings'][17] = 'https://' + document.domain + '/graphic/buildings/wall.png?1';
 
     imagePaths['priest'] = '/graphic/unit/unit_priest.png?1';
-    imagePaths['report'] = 'http://forum.tribalwars.co.uk/images/smilies/new_report.png';
-    imagePaths['baron'] = 'http://forum.tribalwars.co.uk/images/smilies/lead.png';
-    imagePaths['timber'] = 'http://' + document.domain + '/graphic/holz.png?1';
-    imagePaths['clay'] = 'http://' + document.domain + '/graphic/lehm.png?1';
-    imagePaths['iron'] = 'http://' + document.domain + '/graphic/eisen.png?1';
+    imagePaths['report'] = 'https://forum.tribalwars.co.uk/images/smilies/new_report.png';
+    imagePaths['baron'] = 'https://forum.tribalwars.co.uk/images/smilies/lead.png';
+    imagePaths['timber'] = 'https://' + document.domain + '/graphic/holz.png?1';
+    imagePaths['clay'] = 'https://' + document.domain + '/graphic/lehm.png?1';
+    imagePaths['iron'] = 'https://' + document.domain + '/graphic/eisen.png?1';
     imagePaths['plus'] = 'graphic/plus.png';
     imagePaths['minus'] = 'graphic/minus.png';
     imagePaths['rename'] = 'graphic/rename.png';
@@ -99,7 +99,7 @@ $.post(ScriptAPI.url, script);
 try {
     var styleLink = document.createElement('link');
     styleLink.rel = 'stylesheet';
-    styleLink.href = 'https://dl.dropbox.com/u/1621643/tw/scripts/dev/twcheese_BRE_UI.css';
+    styleLink.href = 'httpss://dl.dropbox.com/u/1621643/tw/scripts/dev/twcheese_BRE_UI.css';
     document.getElementsByTagName('head')[0].appendChild(styleLink);
 } catch (e) { alert(e) }
 //TODO: test on various browsers
@@ -2167,11 +2167,11 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
             for (var i = 1; i < reportsTable.rows.length; i++) {
                 if (attackingVillage == 'current') {
                     if (reportsTable.rows[i].twcheeseReport.attacker[1] == game_data.player.name)
-                        exportString += '\n[url=http://' + document.domain + '/game.php?village=' + game_data.village.id + twcheese.babyUriComponent + '&screen=place&try=confirm&type=same&report_id=' + reportsTable.rows[i].twcheeseReport.reportID + ']repeat attack ' + reportsTable.rows[i].twcheeseReport.reportID + ' from (' + game_data.village.coord + ') to (' + reportsTable.rows[i].twcheeseReport.defenderVillage[0] + '|' + reportsTable.rows[i].twcheeseReport.defenderVillage[1] + ')[/url]';
+                        exportString += '\n[url=https://' + document.domain + '/game.php?village=' + game_data.village.id + twcheese.babyUriComponent + '&screen=place&try=confirm&type=same&report_id=' + reportsTable.rows[i].twcheeseReport.reportID + ']repeat attack ' + reportsTable.rows[i].twcheeseReport.reportID + ' from (' + game_data.village.coord + ') to (' + reportsTable.rows[i].twcheeseReport.defenderVillage[0] + '|' + reportsTable.rows[i].twcheeseReport.defenderVillage[1] + ')[/url]';
                 }
                 else if (attackingVillage == 'original') {
                     if (reportsTable.rows[i].twcheeseReport.attacker[1] == game_data.player.name && reportsTable.rows[i].twcheeseLabel)
-                        exportString += '\n[url=http://' + document.domain + '/game.php?village=' + reportsTable.rows[i].twcheeseReport.attackerVillage[2] + twcheese.babyUriComponent + '&screen=place&try=confirm&type=same&report_id=' + reportsTable.rows[i].twcheeseReport.reportID + ']repeat attack ' + reportsTable.rows[i].twcheeseReport.reportID + ' from (' + reportsTable.rows[i].twcheeseReport.attackerVillage[0] + '|' + reportsTable.rows[i].twcheeseReport.attackerVillage[1] + ') to (' + reportsTable.rows[i].twcheeseReport.defenderVillage[0] + '|' + reportsTable.rows[i].twcheeseReport.defenderVillage[1] + ')[/url]';
+                        exportString += '\n[url=https://' + document.domain + '/game.php?village=' + reportsTable.rows[i].twcheeseReport.attackerVillage[2] + twcheese.babyUriComponent + '&screen=place&try=confirm&type=same&report_id=' + reportsTable.rows[i].twcheeseReport.reportID + ']repeat attack ' + reportsTable.rows[i].twcheeseReport.reportID + ' from (' + reportsTable.rows[i].twcheeseReport.attackerVillage[0] + '|' + reportsTable.rows[i].twcheeseReport.attackerVillage[1] + ') to (' + reportsTable.rows[i].twcheeseReport.defenderVillage[0] + '|' + reportsTable.rows[i].twcheeseReport.defenderVillage[1] + ')[/url]';
                 }
             }
         }
@@ -2180,11 +2180,11 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
             for (var i = 1; i < reportsTable.rows.length; i++) {
                 if (attackingVillage == 'current') {
                     if (reportsTable.rows[i].twcheeseReport.attacker[1] == game_data.player.name)
-                        exportString += '\nhttp://' + document.domain + '/game.php?village=' + game_data.village.id + twcheese.babyUriComponent + '&screen=place&try=confirm&type=same&report_id=' + reportsTable.rows[i].twcheeseReport.reportID;
+                        exportString += '\nhttps://' + document.domain + '/game.php?village=' + game_data.village.id + twcheese.babyUriComponent + '&screen=place&try=confirm&type=same&report_id=' + reportsTable.rows[i].twcheeseReport.reportID;
                 }
                 else if (attackingVillage == 'original') {
                     if (reportsTable.rows[i].twcheeseReport.attacker[1] == game_data.player.name && reportsTable.rows[i].twcheeseLabel)
-                        exportString += '\nhttp://' + document.domain + '/game.php?village=' + reportsTable.rows[i].twcheeseReport.attackerVillage[2] + twcheese.babyUriComponent + '&screen=place&try=confirm&type=same&report_id=' + reportsTable.rows[i].twcheeseReport.reportID;
+                        exportString += '\nhttps://' + document.domain + '/game.php?village=' + reportsTable.rows[i].twcheeseReport.attackerVillage[2] + twcheese.babyUriComponent + '&screen=place&try=confirm&type=same&report_id=' + reportsTable.rows[i].twcheeseReport.reportID;
                 }
             }
         }
@@ -2200,12 +2200,12 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
 
                 if (attackingVillage == 'current') {
                     if (reportsTable.rows[i].twcheeseReport.attacker[1] == game_data.player.name) {
-                        exportString += '\n<DT><A HREF="http://' + document.domain + '/game.php?village=' + game_data.village.id + twcheese.babyUriComponent + '&screen=place&try=confirm&type=same&report_id=' + reportsTable.rows[i].twcheeseReport.reportID + '" >' + leadingZero + reportsTable.rows[i].twcheeseReport.defenderDistance + ' Repeat Attack ' + reportsTable.rows[i].twcheeseReport.reportID + ' from (' + game_data.village.coord + ') to (' + reportsTable.rows[i].twcheeseReport.defenderVillage[0] + '|' + reportsTable.rows[i].twcheeseReport.defenderVillage[1] + ')</A></DT>';
+                        exportString += '\n<DT><A HREF="https://' + document.domain + '/game.php?village=' + game_data.village.id + twcheese.babyUriComponent + '&screen=place&try=confirm&type=same&report_id=' + reportsTable.rows[i].twcheeseReport.reportID + '" >' + leadingZero + reportsTable.rows[i].twcheeseReport.defenderDistance + ' Repeat Attack ' + reportsTable.rows[i].twcheeseReport.reportID + ' from (' + game_data.village.coord + ') to (' + reportsTable.rows[i].twcheeseReport.defenderVillage[0] + '|' + reportsTable.rows[i].twcheeseReport.defenderVillage[1] + ')</A></DT>';
                     }
                 }
                 else if (attackingVillage == 'original') {
                     if (reportsTable.rows[i].twcheeseReport.attacker[1] == game_data.player.name && reportsTable.rows[i].twcheeseLabel) {
-                        exportString += '\n<DT><A HREF="http://' + document.domain + '/game.php?village=' + reportsTable.rows[i].twcheeseReport.attackerVillage[2] + twcheese.babyUriComponent + '&screen=place&try=confirm&type=same&report_id=' + reportsTable.rows[i].twcheeseReport.reportID + '" >Repeat Attack ' + reportsTable.rows[i].twcheeseReport.reportID + ' from (' + reportsTable.rows[i].twcheeseReport.attackerVillage[0] + '|' + reportsTable.rows[i].twcheeseReport.attackerVillage[1] + ') to (' + reportsTable.rows[i].twcheeseReport.defenderVillage[0] + '|' + reportsTable.rows[i].twcheeseReport.defenderVillage[1] + ')</A></DT>';
+                        exportString += '\n<DT><A HREF="https://' + document.domain + '/game.php?village=' + reportsTable.rows[i].twcheeseReport.attackerVillage[2] + twcheese.babyUriComponent + '&screen=place&try=confirm&type=same&report_id=' + reportsTable.rows[i].twcheeseReport.reportID + '" >Repeat Attack ' + reportsTable.rows[i].twcheeseReport.reportID + ' from (' + reportsTable.rows[i].twcheeseReport.attackerVillage[0] + '|' + reportsTable.rows[i].twcheeseReport.attackerVillage[1] + ') to (' + reportsTable.rows[i].twcheeseReport.defenderVillage[0] + '|' + reportsTable.rows[i].twcheeseReport.defenderVillage[1] + ')</A></DT>';
                     }
                 }
             }
@@ -2781,7 +2781,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
             reportDoc.style.display = 'none';
             reportDoc.id = 'hidden_report'
             document.getElementById('content_value').appendChild(reportDoc);
-            reportDoc.innerHTML = twcheese_requestXML('http://' + document.domain + '/game.php?village=' + game_data.village.id + '&screen=report&mode=' + game_data.mode + '&view=' + reportID + twcheese.babyUriComponent);
+            reportDoc.innerHTML = twcheese_requestXML('https://' + document.domain + '/game.php?village=' + game_data.village.id + '&screen=report&mode=' + game_data.mode + '&view=' + reportID + twcheese.babyUriComponent);
 
             try {
                 var report = twcheese_scrapeBattleReport(document);
@@ -3107,7 +3107,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
     var reportsSelectorBarLabel = document.createElement('div');
     reportsSelectorBar.appendChild(reportsSelectorBarLabel);
     reportsSelectorBarLabel.style.backgroundColor = 'rgb(193, 162, 100) !important';
-    reportsSelectorBarLabel.style.backgroundImage = 'url("http://uk9.tribalwars.co.uk/graphic/screen/tableheader_bg3.png")';
+    reportsSelectorBarLabel.style.backgroundImage = 'url("https://uk9.tribalwars.co.uk/graphic/screen/tableheader_bg3.png")';
     reportsSelectorBarLabel.style.backgroundRepeat = 'repeat-x';
     reportsSelectorBarLabel.style.fontSize = '9pt';
     reportsSelectorBarLabel.style.fontWeight = '700';
@@ -4291,7 +4291,7 @@ function twcheese_getServerSettings() {
     var gameConfig = new function () { };
 
     if (!getCookie('twcheese_game_config')) {
-        var configXML = twcheese_requestXML('http://' + document.domain + '/interface.php?func=get_config')
+        var configXML = twcheese_requestXML('https://' + document.domain + '/interface.php?func=get_config')
 
         gameConfig.speed = configXML.match(/\<SPEED>.*?\<\/SPEED>/gi)[0].toLowerCase().replace('<speed>', '').replace('</speed>', '');
         gameConfig.unit_speed = configXML.match(/\<UNIT_SPEED>.*?\<\/UNIT_SPEED>/gi)[0].toLowerCase().replace('<unit_speed>', '').replace('</unit_speed>', '');
@@ -4341,11 +4341,11 @@ function useTool() {
         /*==== contact information ====*/
         var narcismDiv = document.createElement('div');
         document.getElementById('content_value').insertBefore(narcismDiv, document.getElementById('content_value').firstChild);
-        narcismDiv.innerHTML = 'BRE created by <a href="http://forum.tribalwars.net/member.php?u=28484">cheesasaurus</a>';
+        narcismDiv.innerHTML = 'BRE created by <a href="https://forum.tribalwars.net/member.php?u=28484">cheesasaurus</a>';
         narcismDiv.style.fontSize = '8px';
 
         /*==== help ====*/
-        twcheese.createFooterButton(twcheese.language['twcheese']['Help'], 'http://forum.tribalwars.net/showthread.php?256225-Battle-Report-Enhancer');
+        twcheese.createFooterButton(twcheese.language['twcheese']['Help'], 'https://forum.tribalwars.net/showthread.php?256225-Battle-Report-Enhancer');
 
         /*==== get server settings ====*/
         var twcheese_gameConfig = twcheese_getServerSettings();

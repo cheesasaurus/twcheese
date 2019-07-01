@@ -59,7 +59,11 @@ class PhaseAttempt extends Phase {
         return new Promise(async (resolve, reject) => {
             $(this.ctrl).on(DebugEvents.USER_REJECTED, () => reject('user rejected'));
             try {
-                let result = await this.attempt(this.ctrl);
+                let parentResult;
+                if (this.followsUpOn) {
+                    parentResult = this.followsUpOn.result;
+                }
+                let result = await this.attempt(parentResult, this.ctrl);
                 resolve(result);
             }
             catch(err) {

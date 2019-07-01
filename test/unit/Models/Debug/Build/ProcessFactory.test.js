@@ -2,8 +2,6 @@ import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.
 import { DebugEvents } from '/twcheese/src/Models/Debug/DebugEvents.js';
 const assert = require('assert');
 
-let pf = new ProcessFactory();
-
 // actions ///////////////////////////////////////////
 
 let actions = {
@@ -93,7 +91,10 @@ let cfg = {
 
 describe('ProcessFactory.create', function() {
     xit('should work', function() {
-        let actual = pf.create(cfg, actions);
+        let pf = new ProcessFactory(actions);
+        let actual = pf.create(cfg);
+
+        console.log(actual);
         // todo
     });
 });

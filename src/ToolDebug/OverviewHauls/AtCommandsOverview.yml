@@ -19,17 +19,17 @@
                   success:
                     - type: PhaseQuestion
                       internalName: Command scraper
-                      lookAt: input.document.documentElement.outerHTML
+                      lookAt: parentResult.document.documentElement.outerHTML
                       questions:
                         - type: QuestionValue
                           ask: Arrival
-                          examine: input.command.arrival
+                          examine: parentResult.command.arrival
                         - type: QuestionValue
                           ask: Haul
-                          examine: input.command.haul
+                          examine: parentResult.command.haul
                         - type: QuestionValue
                           ask: Haul capacity
-                          examine: input.command.haulCapacity
+                          examine: parentResult.command.haulCapacity
         - answer: Something else
           value: other
           

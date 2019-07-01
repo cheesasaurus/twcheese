@@ -86,12 +86,12 @@ debugProcess.enqueuePhase(
                     .onSuccess(function(commandUrl) {
                         debugProcess.insertPhase(PhaseAttempt.create('read selected command', async () => await tryScrapeCommandScreen(commandUrl))
                             .setDataSummarizer(summarizeTryScrapeCommandScreen)
-                            .onSuccess(function(d) {
+                            .onSuccess(function(parentResult) {
                                 debugProcess.insertPhase(PhaseQuestion.create('Command scraper')
-                                    .lookAt(() => d.document.documentElement.outerHTML)
-                                    .addQuestion(QuestionValue.create('Arrival', () => d.command.arrival))
-                                    .addQuestion(QuestionValue.create('Haul', () => d.command.haul))
-                                    .addQuestion(QuestionValue.create('Haul capacity', () => d.command.haulCapacity))
+                                    .lookAt(() => eval('parentResult.document.documentElement.outerHTML'))
+                                    .addQuestion(QuestionValue.create('Arrival', () => eval('parentResult.command.arrival') ))
+                                    .addQuestion(QuestionValue.create('Haul', () => eval('parentResult.command.haul') ))
+                                    .addQuestion(QuestionValue.create('Haul capacity', () => eval('parentResult.command.haulCapacity') ))
                                 )
                             })
                         )

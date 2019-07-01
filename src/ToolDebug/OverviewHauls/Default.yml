@@ -5,8 +5,3 @@
       ask: What's broken?
       placeholderText: e.g. "it freezes when loading hauls"
       minResponseLength: 10
-      
-# todo: probably every process should end in PhaseReport.
-# maybe this should be added automatically instead of configured
-- type: PhaseReport
-  bugReporter: myBugReporter

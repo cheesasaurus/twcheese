@@ -28,7 +28,7 @@ class ProcessFactory {
         }
 
         if (finishWithReport) {
-            let bugReporter = new BugReporter(debugProcess);
+            let bugReporter = new BugReporter(process);
             process.enqueuePhase(PhaseReport.create(bugReporter));
         }
 

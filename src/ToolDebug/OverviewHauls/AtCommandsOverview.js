@@ -92,23 +92,19 @@ debugProcess.enqueuePhase(
                 .addFollowUp(PhaseAttempt.create('determine command url', trySelectCommandFromTable)
                     .setInstructions('Select a problematic row.')
                     .onSuccess(function() {
-                        let parentPhase = this;
-                        let parentResult = parentPhase.result; 
+                        let parentResult = this.result; 
 
-                        debugProcess.insertPhase(PhaseAttempt.create('read selected command', async () => await tryScrapeCommandScreen(parentResult))
-                            .setFollowsUpOn(parentPhase)
+                        this.addFollowUp(PhaseAttempt.create('read selected command', async () => await tryScrapeCommandScreen(parentResult))
                             .setDataSummarizer(summarizeTryScrapeCommandScreen)
                             .onSuccess(function() {
-                                let parentResult;
                                 let parentPhase = this;
 
-                                debugProcess.insertPhase(PhaseQuestion.create('Command scraper')
-                                    .setFollowsUpOn(parentPhase)
+                                this.addFollowUp(PhaseQuestion.create('Command scraper')
                                     .lookAt(lazyEvalCfg('parentResult.document.documentElement.outerHTML', parentPhase) )
                                     .addQuestion(QuestionValue.create('Arrival', lazyEvalCfg('parentResult.command.arrival', parentPhase) ))
                                     .addQuestion(QuestionValue.create('Haul', lazyEvalCfg('parentResult.command.haul', parentPhase) ))
                                     .addQuestion(QuestionValue.create('Haul capacity', lazyEvalCfg('parentResult.command.haulCapacity', parentPhase) ))
-                                )
+                                );
                             })
                         )
                     })

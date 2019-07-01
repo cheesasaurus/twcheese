@@ -91,8 +91,6 @@ if (!twcheese)
     imagePaths['buildings'][17] = 'https://' + document.domain + '/graphic/buildings/wall.png?1';
 
     imagePaths['priest'] = '/graphic/unit/unit_priest.png?1';
-    imagePaths['report'] = 'https://forum.tribalwars.co.uk/images/smilies/new_report.png';
-    imagePaths['baron'] = 'https://forum.tribalwars.co.uk/images/smilies/lead.png';
     imagePaths['timber'] = 'https://' + document.domain + '/graphic/holz.png?1';
     imagePaths['clay'] = 'https://' + document.domain + '/graphic/lehm.png?1';
     imagePaths['iron'] = 'https://' + document.domain + '/graphic/eisen.png?1';

@@ -7,6 +7,7 @@ gulp.registry(hub);
 
 gulp.task('buildAll', series(
     'purge',
+    'buildDebugProcessCfg',
     parallel(
         'buildVendorLibs',
         'buildToolSetup'

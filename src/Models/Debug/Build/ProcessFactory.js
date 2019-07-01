@@ -26,14 +26,37 @@ class ProcessFactory {
 
     createPhase(cfg) {
         let phase = this.phaseFactory.create(cfg);
+        this.addFollowUpPhasesForSuccess(phase, cfg);
+        this.addFollowUpPhasesForAnswers(phase, cfg);
+        return phase;
+    }
 
+    addFollowUpPhasesForSuccess(phase, cfg) {
         if (cfg.type === 'PhaseAttempt' && cfg.success) {
             for (let phaseCfg of cfg.success) {
                 phase.addSuccessFollowUp(this.createPhase(phaseCfg));
             }
         }
+    }
 
-        return phase;
+    addFollowUpPhasesForAnswers(phase, cfg) {
+        if (cfg.type !== 'PhaseQuestion') {
+            return;
+        }
+        
+        for (let [q, questionCfg] of Object.entries(cfg.questions)) {
+            if (questionCfg.type !== 'QuestionSelect') {
+                continue;
+            }
+            for (let [o, optionCfg] of Object.entries(questionCfg.options)) {
+                if (optionCfg.followUp) {
+                    for (let phaseCfg of optionCfg.followUp) {
+                        let option = phase.questions[q].options[o];
+                        option.addFollowUp(this.createPhase(phaseCfg));
+                    }
+                }
+            }
+        }
     }
 
 };

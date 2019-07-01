@@ -1,11 +1,13 @@
 import { PhaseAttempt } from '/twcheese/src/Models/Debug/PhaseAttempt.js';
 import { PhaseQuestion } from '/twcheese/src/Models/Debug/PhaseQuestion.js';
+import { QuestionFactory } from '/twcheese/src/Models/Debug/Build/QuestionFactory.js';
 
 
 class PhaseFactory {
 
     constructor(actions) {
         this.actions = actions;
+        this.questionFactory = new QuestionFactory();
     }
 
     create(cfg) {
@@ -39,7 +41,18 @@ class PhaseFactory {
     }
 
     createPhaseQuestion(cfg) {
-        // todo: implement
+        let phase = PhaseQuestion.create(cfg.internalName);
+
+        if (cfg.lookAt) {
+            // todo
+        }
+
+        for (let questionCfg of cfg.questions) {
+            let question = this.questionFactory.create(questionCfg);
+            phase.addQuestion(question);
+        }
+        
+        return phase;
     }
 
 }

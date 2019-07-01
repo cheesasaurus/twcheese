@@ -2032,14 +2032,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
 
         /*==== subject html ====*/
         var subjectNode = reportsTable.rows[i].cells[1];
-        if (has_strength_icon) {
-            subjectNode.removeChild(subjectNode.getElementsByTagName('img')[1]);
-        } else {
-            subjectNode.removeChild(subjectNode.getElementsByTagName('img')[0]);
-        }
-        if (report.lootIcon) {
-            subjectNode.removeChild(subjectNode.getElementsByTagName('div')[0]);
-        }
         report.subjectHTML = subjectNode.innerHTML;
 
         /*==== timeReceived ====*/

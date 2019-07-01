@@ -3414,7 +3414,7 @@ twcheese.createFooterButton = function (text, address) {
     twcheese_menu_text.style.color = '#422301';
     twcheese_menu.appendChild(twcheese_menu_text);
 
-    twcheese_menu.style.background = 'url("https://dl.dropbox.com/u/1621643/tw/icons/help_background.png")';
+    twcheese_menu.style.background = `url("${ImageSrc.legacy.helpBackground}")`;
     twcheese_menu.style.height = '22px';
     twcheese_menu.style.width = '49px';
     twcheese_menu.style.display = 'block';
@@ -3425,8 +3425,8 @@ twcheese.createFooterButton = function (text, address) {
     twcheese_menu.style.marginLeft = '-52px';
     twcheese_menu.style.zIndex = '99999999999';
 
-    twcheese_menu.onmouseover = function () { this.style.background = 'url("https://dl.dropbox.com/u/1621643/tw/icons/help_background_highlight.png")' };
-    twcheese_menu.onmouseout = function () { this.style.background = 'url("https://dl.dropbox.com/u/1621643/tw/icons/help_background.png")' };
+    twcheese_menu.onmouseover = function () { this.style.background = `url("${ImageSrc.legacy.helpBackgroundBright}")` };
+    twcheese_menu.onmouseout = function () { this.style.background = `url("${ImageSrc.legacy.helpBackground}")` };
 
     if (address) {
         twcheese_menu.style.cursor = 'pointer';
@@ -4438,7 +4438,7 @@ function useTool() {
         narcismDiv.style.fontSize = '10px';
 
         /*==== help ====*/
-        twcheese.createFooterButton(twcheese.language['twcheese']['Help'], 'https://forum.tribalwars.net/showthread.php?256225-Battle-Report-Enhancer');
+        twcheese.createFooterButton(twcheese.language['twcheese']['Help'], 'https://forum.tribalwars.net/index.php?threads/256225/');
 
         /*==== get server settings ====*/
         twcheese_gameConfig = twcheese_getServerSettings();

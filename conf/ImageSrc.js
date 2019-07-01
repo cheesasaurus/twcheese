@@ -21,6 +21,10 @@ let ImageSrc = {
         darkGrey: self + 'jquery/ui-icons_454545_256x240.png',
         grey: self + 'jquery/ui-icons_888888_256x240.png',
         red: self + 'jquery/ui-icons_cd0a0a_256x240.png'
+    },
+    legacy: {
+        helpBackground: self + 'legacy/help_background.png',
+        helpBackgroundBright: self + 'legacy/help_background_highlight.png'
     }
 };
 

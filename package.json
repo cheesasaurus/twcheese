@@ -22,7 +22,9 @@
     "webpack": "^4.34.0",
     "yaml": "^1.6.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^6.0.1"
+  },
   "scripts": {
     "prebuild": "node ./build/checkConfigurationAttempted.js",
     "build": "./node_modules/.bin/gulp",

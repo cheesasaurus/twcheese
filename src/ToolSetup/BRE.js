@@ -4228,25 +4228,6 @@ function twcheese_requestXML(targetUrl) {
 }
 
 /**
- *	requests the body from an html document and returns it as an HTML element
- *	@param	targetUrl	the url of the page to get the document body from
- *	@return	requestedDocumentBody:HTMLBodyElement
- */
-function twcheese_requestDocumentBody(targetUrl) {
-    var requestedDocumentBody;
-    var xmlhttp;
-    if (window.XMLHttpRequest)
-        xmlhttp = new XMLHttpRequest();
-    else
-        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-    xmlhttp.open("GET", targetUrl, false);
-    xmlhttp.send("");
-    requestedDocumentBody = document.createElement("body");
-    requestedDocumentBody.innerHTML = xmlhttp.responseText;
-    return requestedDocumentBody;
-}
-
-/**
  *	@return serverTime:Date();
  */
 function twcheese_getServerTime() {

@@ -4321,8 +4321,8 @@ function useTool() {
         /*==== contact information ====*/
         var narcismDiv = document.createElement('div');
         document.getElementById('content_value').insertBefore(narcismDiv, document.getElementById('content_value').firstChild);
-        narcismDiv.innerHTML = 'BRE created by <a href="https://forum.tribalwars.net/member.php?u=28484">cheesasaurus</a>';
-        narcismDiv.style.fontSize = '8px';
+        narcismDiv.innerHTML = 'BRE created by <a href="https://forum.tribalwars.net/index.php?members/28484">cheesasaurus</a>';
+        narcismDiv.style.fontSize = '10px';
 
         /*==== help ====*/
         twcheese.createFooterButton(twcheese.language['twcheese']['Help'], 'https://forum.tribalwars.net/showthread.php?256225-Battle-Report-Enhancer');

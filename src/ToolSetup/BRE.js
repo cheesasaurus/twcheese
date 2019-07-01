@@ -2119,13 +2119,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
         }
 
         /*==== forwarded ====*/
-        report.isForwarded = false;
-        if ((!window.premium && reportIcons.length > 1) || (window.premium && reportIcons.length > 2)) {
-            for (var j = 1; j < reportIcons.length; j++) {
-                if (reportIcons[j].src.search('forwarded') != -1)
-                    report.isForwarded = true;
-            }
-        }
+        report.isForwarded = !!reportIcons.find(img => img.src.includes('graphic/forwarded.png'));
 
         /*==== subject html ====*/
         var subjectNode = reportsTable.rows[i].cells[1];

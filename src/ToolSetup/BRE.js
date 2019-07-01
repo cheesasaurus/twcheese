@@ -4336,7 +4336,7 @@ function twcheese_setBRESettings(breSettings) {
 
 function useTool() {
     if (!twcheese_BREinitialized) {
-        var gameDoc = (window.frames.length > 0) ? window.main.document : document;
+        var gameDoc = document;
 
         /*==== contact information ====*/
         var narcismDiv = document.createElement('div');

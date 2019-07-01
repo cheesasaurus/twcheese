@@ -4587,7 +4587,8 @@ function twcheese_setBRESettings(breSettings) {
 }
 
 /*==== main ====*/
-{
+
+function useTool() {
     if (!twcheese_BREinitialized) {
         var gameDoc = (window.frames.length > 0) ? window.main.document : document;
 
@@ -4695,3 +4696,12 @@ function twcheese_setBRESettings(breSettings) {
         alert('try using this on:\n1) a battle report\n2) a reports folder, with the "Attacks" filter on\n3) a reports folder, with the "Defenses" filter on'); //\n4) a topic in your tribal forum');
     }
 }
+
+
+window.TwCheese.registerTool({
+    id: 'BRE',
+    use: useTool,
+    getDebugProcess: function() {
+        return null;
+    }
+});

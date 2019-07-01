@@ -4216,14 +4216,9 @@ twcheese.formatDateTo_timeString = function (date) {
  *	@return	requestedXML:String
  */
 function twcheese_requestXML(targetUrl) {
-    var xmlhttp;
-    if (window.XMLHttpRequest)
-        xmlhttp = new XMLHttpRequest();
-    else
-        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("GET", targetUrl, false);
     xmlhttp.send("");
-
     return xmlhttp.responseText;
 }
 
@@ -4267,7 +4262,7 @@ function twcheese_saveReportsFolderDisplaySettings(settings) {
 
 function twcheese_loadReportsFolderDisplaySettings() {
     if (!localStorage.getItem('twcheese_reportsFolderDisplaySettings')) {
-        return new twcheese_reportsFolderDisplaySettings();
+        return new twcheese_ReportsFolderDisplaySettings();
     }
     else {
         var settings;

@@ -83,6 +83,7 @@ let cfg = {
                                 {
                                     type: 'PhaseQuestion',
                                     internalName: 'very important questions',
+                                    lookAt: 'parentResult',
                                     questions: [
                                         {
                                             type: 'QuestionValue',

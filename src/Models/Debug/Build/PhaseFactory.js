@@ -10,12 +10,12 @@ class PhaseFactory {
         this.questionFactory = new QuestionFactory();
     }
 
-    create(cfg) {
+    create(cfg, lazyEval) {
         switch (cfg.type) {
             case 'PhaseAttempt':
                 return this.createPhaseAttempt(cfg);
             case 'PhaseQuestion':
-                return this.createPhaseQuestion(cfg);            
+                return this.createPhaseQuestion(cfg, lazyEval);
             case 'PhaseReport':
                 return this.createPhaseReport(cfg);
             default:
@@ -40,15 +40,15 @@ class PhaseFactory {
         return phase;
     }
 
-    createPhaseQuestion(cfg) {
+    createPhaseQuestion(cfg, lazyEval) {
         let phase = PhaseQuestion.create(cfg.internalName);
 
         if (cfg.lookAt) {
-            // todo
+            phase.lookAt(lazyEval(cfg.lookAt));
         }
 
         for (let questionCfg of cfg.questions) {
-            let question = this.questionFactory.create(questionCfg);
+            let question = this.questionFactory.create(questionCfg, lazyEval);
             phase.addQuestion(question);
         }
         

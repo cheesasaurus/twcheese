@@ -6,16 +6,16 @@ import { Option } from '/twcheese/src/Models/Debug/Option.js';
 
 class QuestionFactory {
     
-    create(cfg) {
+    create(cfg, lazyEval) {
         switch (cfg.type) {
             case 'QuestionFreeForm':
                 return this.createQuestionFreeForm(cfg);
             case 'QuestionSelect':
                 return this.createQuestionSelect(cfg);
             case 'QuestionValue':
-                return this.createQuestionValue(cfg);
+                return this.createQuestionValue(cfg, lazyEval);
             default:
-                throw `unrecognized question type: ${cfg.type}`;    
+                throw `unrecognized question type: ${cfg.type}`;
         }
     }
 
@@ -34,8 +34,8 @@ class QuestionFactory {
         return question;
     }
 
-    createQuestionValue(cfg) {
-        let valueExamined = () => cfg.examine; // todo
+    createQuestionValue(cfg, lazyEval) {
+        let valueExamined = lazyEval(cfg.examine);
         return QuestionValue.create(cfg.ask, valueExamined);
     }
 

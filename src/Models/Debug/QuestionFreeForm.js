@@ -6,9 +6,9 @@ import { QuestionTypes } from '/twcheese/src/Models/Debug/QuestionTypes.js';
 
 class QuestionFreeForm extends Question {
 
-    constructor(questionText, placeholderText, minResponseLength) {
+    constructor(questionText, placeholderText, minResponseLength = 0) {
         super(questionText);
-        this.minResponseLength = minResponseLength || 0;
+        this.minResponseLength = minResponseLength;
         this.options = [
             Option.create(placeholderText, '', 'free-form')
         ];

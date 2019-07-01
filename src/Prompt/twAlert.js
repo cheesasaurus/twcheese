@@ -1,9 +1,6 @@
 
-async function twAlert(message, buttonText) {
-    return new Promise(function(resolve) {
-        message = message || '';
-        buttonText = buttonText || 'Ok';
-    
+async function twAlert(message = '', buttonText = 'Ok') {
+    return new Promise(function(resolve) {    
         let buttonAcknowledge = {
             text: buttonText,
             callback: resolve

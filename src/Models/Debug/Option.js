@@ -2,10 +2,10 @@ import { DebugEvents } from '/twcheese/src/Models/Debug/DebugEvents.js';
 
 
 class Option {
-    constructor(humanText, value, className) {
+    constructor(humanText, value, className = '') {
         this.text = humanText;
         this.value = value;
-        this.className = className || '';
+        this.className = className;
         this.followUpPhases = [];
     }
 

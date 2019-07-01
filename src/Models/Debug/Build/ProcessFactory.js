@@ -3,6 +3,17 @@ import { PhaseFactory } from '/twcheese/src/Models/Debug/Build/PhaseFactory.js';
 import { BugReporter } from '/twcheese/src/Models/Debug/BugReporter.js';
 import { PhaseReport } from '/twcheese/src/Models/Debug/PhaseReport.js';
 
+
+function lazyEvalUsingParent(parentPhase) {
+    return (str) => {
+        return () => {
+            let parentResult = parentPhase.result;
+            return eval(str);
+        };
+    }
+}
+
+
 class ProcessFactory {
 
     constructor(actions) {
@@ -24,8 +35,8 @@ class ProcessFactory {
         return process;
     }
 
-    createPhase(cfg) {
-        let phase = this.phaseFactory.create(cfg);
+    createPhase(cfg, lazyEval) {
+        let phase = this.phaseFactory.create(cfg, lazyEval);
         this.addFollowUpPhasesForSuccess(phase, cfg);
         this.addFollowUpPhasesForAnswers(phase, cfg);
         return phase;
@@ -34,7 +45,8 @@ class ProcessFactory {
     addFollowUpPhasesForSuccess(phase, cfg) {
         if (cfg.type === 'PhaseAttempt' && cfg.success) {
             for (let phaseCfg of cfg.success) {
-                phase.addSuccessFollowUp(this.createPhase(phaseCfg));
+                let subPhase = this.createPhase(phaseCfg, lazyEvalUsingParent(phase));
+                phase.addSuccessFollowUp(subPhase);
             }
         }
     }
@@ -52,7 +64,8 @@ class ProcessFactory {
                 if (optionCfg.followUp) {
                     for (let phaseCfg of optionCfg.followUp) {
                         let option = phase.questions[q].options[o];
-                        option.addFollowUp(this.createPhase(phaseCfg));
+                        let subPhase = this.createPhase(phaseCfg, lazyEvalUsingParent(phase))
+                        option.addFollowUp(subPhase);
                     }
                 }
             }

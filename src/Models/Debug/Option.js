@@ -11,7 +11,7 @@ class Option {
 
     addFollowUp(phase) {
         this.followUpPhases.push(phase);
-        phase.followUpOn = this;
+        phase.setFollowsUpOn(this);
         return this;
     }
 

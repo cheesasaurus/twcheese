@@ -92,15 +92,18 @@ debugProcess.enqueuePhase(
                 .addFollowUp(PhaseAttempt.create('determine command url', trySelectCommandFromTable)
                     .setInstructions('Select a problematic row.')
                     .onSuccess(function() {
-                        let parentResult = this.result; 
+                        let parentPhase = this;
+                        let parentResult = parentPhase.result; 
 
                         debugProcess.insertPhase(PhaseAttempt.create('read selected command', async () => await tryScrapeCommandScreen(parentResult))
+                            .setFollowsUpOn(parentPhase)
                             .setDataSummarizer(summarizeTryScrapeCommandScreen)
                             .onSuccess(function() {
                                 let parentResult;
                                 let parentPhase = this;
 
                                 debugProcess.insertPhase(PhaseQuestion.create('Command scraper')
+                                    .setFollowsUpOn(parentPhase)
                                     .lookAt(lazyEvalCfg('parentResult.document.documentElement.outerHTML', parentPhase) )
                                     .addQuestion(QuestionValue.create('Arrival', lazyEvalCfg('parentResult.command.arrival', parentPhase) ))
                                     .addQuestion(QuestionValue.create('Haul', lazyEvalCfg('parentResult.command.haul', parentPhase) ))

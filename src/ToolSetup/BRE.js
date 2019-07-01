@@ -2105,20 +2105,17 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
         /*==== partial hauls ====*/
         report.isFullHaul = false;
         report.isPartialHaul = false;
-        if (window.premium) {
-            if (reportIcons.length > 1) {
-                if (reportIcons[1].src.search('max_loot') != -1) {
-                    report.lootIcon = reportIcons[1].src;
-                    if (report.lootIcon.search('max_loot/0.png') != -1) /* haul is partial */ {
-                        partialHauls.push(report.reportID);
-                        report.isPartialHaul = true;
-                    }
-                    if (report.lootIcon.search('max_loot/1.png') != -1) /* haul is full */ {
-                        report.isFullHaul = true;
-                    }
-                    report.lootIcon = reportsTable.rows[i].cells[0].getElementsByTagName('img')[1].src;
-                }
+
+        // note: non-premium users don't get an icon showing partial/full haul
+        let lootImg = reportIcons.find(img => img.src.includes('graphic/max_loot/'));
+        if (lootImg) {
+            if (lootImg.src.includes('max_loot/0.png')) {
+                partialHauls.push(report.reportID);
+                report.isPartialHaul = true;
+            } else {
+                report.isFullHaul = true;
             }
+            report.lootIcon = lootImg.src;
         }
 
         /*==== forwarded ====*/

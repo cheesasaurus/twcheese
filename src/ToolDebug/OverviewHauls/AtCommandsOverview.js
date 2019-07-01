@@ -73,6 +73,14 @@ function summarizeTryScrapeCommandScreen(d) {
     }
 }
 
+// only relevant for something following up on a PhaseAttempt
+function lazyEvalCfg(str, parentPhase) {
+    return () => {
+        let parentResult = parentPhase.result;
+        return eval(str);
+    };
+}
+
 
 let debugProcess = DebugProcess.create('Tool: OverviewHauls');
 let bugReporter = new BugReporter(debugProcess);
@@ -83,15 +91,20 @@ debugProcess.enqueuePhase(
             .addOption(Option.create('Wrong values shown in commands list', 'wrong_values')
                 .addFollowUp(PhaseAttempt.create('determine command url', trySelectCommandFromTable)
                     .setInstructions('Select a problematic row.')
-                    .onSuccess(function(commandUrl) {
-                        debugProcess.insertPhase(PhaseAttempt.create('read selected command', async () => await tryScrapeCommandScreen(commandUrl))
+                    .onSuccess(function() {
+                        let parentResult = this.result; 
+
+                        debugProcess.insertPhase(PhaseAttempt.create('read selected command', async () => await tryScrapeCommandScreen(parentResult))
                             .setDataSummarizer(summarizeTryScrapeCommandScreen)
-                            .onSuccess(function(parentResult) {
+                            .onSuccess(function() {
+                                let parentResult;
+                                let parentPhase = this;
+
                                 debugProcess.insertPhase(PhaseQuestion.create('Command scraper')
-                                    .lookAt(() => eval('parentResult.document.documentElement.outerHTML'))
-                                    .addQuestion(QuestionValue.create('Arrival', () => eval('parentResult.command.arrival') ))
-                                    .addQuestion(QuestionValue.create('Haul', () => eval('parentResult.command.haul') ))
-                                    .addQuestion(QuestionValue.create('Haul capacity', () => eval('parentResult.command.haulCapacity') ))
+                                    .lookAt(lazyEvalCfg('parentResult.document.documentElement.outerHTML', parentPhase) )
+                                    .addQuestion(QuestionValue.create('Arrival', lazyEvalCfg('parentResult.command.arrival', parentPhase) ))
+                                    .addQuestion(QuestionValue.create('Haul', lazyEvalCfg('parentResult.command.haul', parentPhase) ))
+                                    .addQuestion(QuestionValue.create('Haul capacity', lazyEvalCfg('parentResult.command.haulCapacity', parentPhase) ))
                                 )
                             })
                         )

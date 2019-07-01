@@ -18,8 +18,8 @@ class PhaseAttempt extends Phase {
         this.fail = async () => {};
         this.status = Status.NOT_ATTEMPTED;
         this.autoComplete = true;
-        this.error;
-        this.data;
+        this._error;
+        this._result;
         this.summarizeData = d => d;
         this.ctrl = {};
     }
@@ -28,15 +28,25 @@ class PhaseAttempt extends Phase {
         return PhaseTypes.ATTEMPT;
     }
 
+    get result() {
+        if (this.status === Status.NOT_ATTEMPTED) {
+            throw new Error('tried to get result before the attempt settled');
+        }
+        if (this.status === Status.FAIL) {
+            throw new Error(`tried to get result of an attempt that failed`);
+        }
+        return this._result;
+    }
+
     async doAttempt() {
         try {
-            let data = await this.abortableAttempt();
-            this.data = data;
-            await this.success(data);
+            let result = await this.abortableAttempt();
             this.status = Status.SUCCESS;
+            this._result = result;            
+            await this.success(result);
         } catch (err) {
             this.status = Status.FAIL;
-            this.error = err;
+            this._error = err;
             await this.fail(err);
         }
         this.checkCompletionReady();
@@ -46,8 +56,8 @@ class PhaseAttempt extends Phase {
         return new Promise(async (resolve, reject) => {
             $(this.ctrl).on(DebugEvents.USER_REJECTED, () => reject('user rejected'));
             try {
-                let data = await this.attempt(this.ctrl);
-                resolve(data);
+                let result = await this.attempt(this.ctrl);
+                resolve(result);
             }
             catch(err) {
                 reject(err);
@@ -99,13 +109,13 @@ class PhaseAttempt extends Phase {
         return {
             phaseName: this.name,
             status: this.status,
-            data: typeof this.data === 'undefined' ? this.data : this.summarizeData(this.data),
+            data: typeof this._result === 'undefined' ? this._result : this.summarizeData(this._result),
             error: this.summarizeError()
         }
     }
 
     summarizeError() {
-        let err = this.error;
+        let err = this._error;
         if (!(err instanceof Error)) {
             return err;
         }

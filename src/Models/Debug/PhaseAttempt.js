@@ -22,6 +22,8 @@ class PhaseAttempt extends Phase {
         this._result;
         this.summarizeData = d => d;
         this.ctrl = {};
+
+        this.followUpPhases = [];
     }
 
     getType() {
@@ -84,6 +86,12 @@ class PhaseAttempt extends Phase {
         return this;
     }
 
+    addFollowUp(phase) {
+        this.followUpPhases.push(phase);
+        phase.setFollowsUpOn(this);
+        return this;
+    }
+
     onFail(cb) {
         this.fail = cb;
         return this;
@@ -102,7 +110,7 @@ class PhaseAttempt extends Phase {
     }
 
     getThingsToFollowUpOn() {
-        return [];
+        return [this];
     }
 
     getSummary() {

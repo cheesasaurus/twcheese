@@ -6,12 +6,14 @@ class Phase {
         this.autoComplete = false;
     }
 
-    setFollowsUpOn(option) {
-        this.followsUpOn = option;
+    setFollowsUpOn(thingToFollowUpOn) {
+        this.followsUpOn = thingToFollowUpOn;
+        return this;
     }
 
     setAutoComplete(auto) {
         this.autoComplete = auto;
+        return this;
     }
 
     getType() {

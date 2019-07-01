@@ -14,7 +14,7 @@ import { requestDocument } from '/twcheese/src/Util/Network.js';
 import { scrapeCommand, scrapeCommandUrlFromRow } from '/twcheese/src/Scrape/command.js';
 
 
-async function trySelectCommandFromTable(ctrl) {
+async function trySelectCommandFromTable(parentResult, ctrl) {
     let $commandsTable = $('#commands_table');
     let $commandRows = $commandsTable.children().children();
 
@@ -92,9 +92,7 @@ debugProcess.enqueuePhase(
                 .addFollowUp(PhaseAttempt.create('determine command url', trySelectCommandFromTable)
                     .setInstructions('Select a problematic row.')
                     .onSuccess(function() {
-                        let parentResult = this.result; 
-
-                        this.addSuccessFollowUp(PhaseAttempt.create('read selected command', async () => await tryScrapeCommandScreen(parentResult))
+                        this.addSuccessFollowUp(PhaseAttempt.create('read selected command', tryScrapeCommandScreen)
                             .setDataSummarizer(summarizeTryScrapeCommandScreen)
                             .onSuccess(function() {
                                 let parentPhase = this;

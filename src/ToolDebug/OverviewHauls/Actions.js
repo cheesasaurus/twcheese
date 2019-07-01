@@ -4,7 +4,7 @@ import { requestDocument } from '/twcheese/src/Util/Network.js';
 import { scrapeCommand, scrapeCommandUrlFromRow } from '/twcheese/src/Scrape/command.js';
 
 
-let actions = {
+let debugActions = {
 
     trySelectCommandFromTable: {
         async execute(na, ctrl) {
@@ -13,9 +13,8 @@ let actions = {
 
             fadeGameContentExcept($commandsTable);
             $(document).scrollTop($commandsTable.offset().top);
-
-            let mousetrap = (new Mousetrap()).spawn();
-            mousetrap
+            
+            let mousetrap = (new Mousetrap()).spawn()
                 .on('mouseover', $commandRows, function() {
                     $(this).css({outline: '3px solid magenta'});
                 })
@@ -69,11 +68,4 @@ let actions = {
 
 }
 
-
-import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.js';
-import { processCfg } from '/twcheese/dist/tool/cfg/debug/OverviewHauls/AtCommandsOverview.js';
-
-let pf = new ProcessFactory(actions);
-let debugProcess = pf.create(processCfg, true);
-
-export { debugProcess };
+export { debugActions };

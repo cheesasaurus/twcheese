@@ -20,8 +20,8 @@ class ProcessFactory {
         this.phaseFactory = new PhaseFactory(actions);
     }
 
-    create(cfg, finishWithReport) {
-        let process = new DebugProcess();
+    create(name, cfg, finishWithReport) {
+        let process = new DebugProcess(name);
 
         for (let phaseCfg of cfg.phases) {
             process.enqueuePhase(this.createPhase(phaseCfg));

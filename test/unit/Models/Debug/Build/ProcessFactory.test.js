@@ -147,7 +147,7 @@ describe('ProcessFactory.create', function() {
     xit('should work', function() {
         console.log('== example process =============');
         let pf = new ProcessFactory(actions);
-        let actual = pf.create(cfg);
+        let actual = pf.create('test', cfg);
 
         // stringify, and eyeball it
         let cache = new Set();

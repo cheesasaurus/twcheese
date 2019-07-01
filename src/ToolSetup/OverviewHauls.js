@@ -68,10 +68,11 @@ function useTool() {
 let processFactory = new ProcessFactory(debugActions);
 
 function newDebugProcess() {
+    let name = 'Tool: OverviewHauls';
     if (atCommandsOverview()) {
-        return processFactory.create(debugCfgAtCommandsOverview, true);
+        return processFactory.create(name, debugCfgAtCommandsOverview, true);
     }
-    return processFactory.create(debugCfgDefault, true);
+    return processFactory.create(name, debugCfgDefault, true);
 }
 
 

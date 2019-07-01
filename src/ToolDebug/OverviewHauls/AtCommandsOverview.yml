@@ -37,4 +37,4 @@
   questions:
     - type: QuestionFreeForm
       ask: Additional information
-      placeholderText: e.g. "iron isn\'t shown"
+      placeholderText: e.g. "iron isn't shown"

@@ -101,7 +101,7 @@ try {
     styleLink.rel = 'stylesheet';
     styleLink.href = 'httpss://dl.dropbox.com/u/1621643/tw/scripts/dev/twcheese_BRE_UI.css';
     document.getElementsByTagName('head')[0].appendChild(styleLink);
-} catch (e) { alert(e) }
+} catch (e) { console.error(e) }
 //TODO: test on various browsers
 
 
@@ -401,7 +401,7 @@ try {
             twcheese.language['twcheese']['noReportsSelected'] = 'Du har ikke valgt hvilke rapporter som skal endres navn på.';
             break;
     }
-} catch (e) { alert(e) }
+} catch (e) { console.error(e) }
 
 /*==== templates ====*/
 
@@ -535,7 +535,7 @@ function twcheese_getPlayerInfo(playerCell) {
     else if (playerCell.innerHTML == '---')
         return new Array(0, '---');
     else {
-        playerLink = playerCell.firstChild;
+        var playerLink = playerCell.firstChild;
         player[0] = Number(playerLink.href.match(/&id=[0-9]{1,}/)[0].substring(4));
         player[1] = playerLink.innerHTML;
         return player;
@@ -714,7 +714,7 @@ function twcheese_BattleReportScraper(gameDocument) {
                     }
                     return building_levels;
                 }
-                catch (e) { alert(e); }
+                catch (e) { console.error(e); }
             }
             else
                 return Boolean(false);
@@ -991,11 +991,11 @@ function twcheese_BattleReportScraper(gameDocument) {
                 }
                 else
                     return false;
-            } catch (e) { alert(e); }
+            } catch (e) { console.error(e); }
         };
     }
     catch (err) {
-        alert('Report Scraper initialization error: \n' + err);
+        console.err('Report Scraper initialization error:', err);
     }
 }
 
@@ -1045,7 +1045,7 @@ function twcheese_scrapeBattleReport(gameDoc) {
         }
 
         return report;
-    } catch (e) { alert(e) };
+    } catch (e) { console.error(e) };
 }
 
 
@@ -1515,7 +1515,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig) {
      *	@param newName:String
      */
     this.renameReport = function (newName) {
-        alert(twcheese_currentReport);
+        console.info('renaming report:', twcheese_currentReport);
         var url = TribalWars.buildURL('POST', 'report', { ajaxaction: 'edit_subject', report_id: twcheese_currentReport.reportID });
         TribalWars.post(url,
             {},
@@ -1969,7 +1969,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
                 report.defenderDistance = Math.round(twcheese_calculateDistance(home, report.defenderVillage) * 100) / 100;
             }
             catch (err) {
-                alert(err);
+                console.error(err);
                 report.defenderDistance = '?';
             }
 
@@ -2338,7 +2338,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
                 twcheese_reportsFolderDisplaySettings.displayWidth = reportsFolderDisplay.style.width;
                 twcheese_reportsFolderDisplaySettings.displayHeight = reportsFolderDisplay.style.height;
                 twcheese_saveReportsFolderDisplaySettings(twcheese_reportsFolderDisplaySettings);
-            } catch (e) { alert(e) }
+            } catch (e) { console.error(e) }
         }
     );
 
@@ -2851,7 +2851,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
                 document.getElementById('twcheese_progress_percent').innerHTML = Number(Math.round((total - reports.length) / total * 100));
             }
             catch (e) {
-                alert('error renaming report: \n' + e);
+                console.error('error renaming report:', e);
             }
 
             if (reports.length > 0)
@@ -3409,7 +3409,7 @@ twcheese.parseForumEspionage = function () {
         //==== replace former content ====
         try {
             postsWithContent[i].html(newPost);
-        } catch (e) { alert(e) }
+        } catch (e) { console.error(e) }
     }
 };
 

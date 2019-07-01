@@ -1,4 +1,5 @@
 /* global $, game_data */
+import { initCss, escapeHtml } from '/twcheese/src/Util/UI.js';
 
 var twcheese_gameConfig,
     twcheese_BRESettings,
@@ -1516,7 +1517,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig) {
         var jsonRow = reportTable.insertRow(5);
         jsonRow.insertCell(-1);
         jsonRow.cells[0].colSpan = 2;
-        jsonRow.cells[0].innerHTML = '<b>JSON</b><br/><textarea cols=50 readonly=true>' + JSON.stringify(report) + '</textarea>';
+        jsonRow.cells[0].innerHTML = '<b>JSON</b><br/><textarea cols=50 readonly=true>' + escapeHtml(JSON.stringify(report, null, 2)) + '</textarea>';
 
     };
 

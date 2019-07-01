@@ -77,8 +77,8 @@ class HaulStatsWidget extends AbstractWidget {
                 <h4>
                     Pillaging Statistics
                     <img id="twcheese_pillaging_stats_toggle" src="${toggleIconSrc}" style="float:right; cursor: pointer;">
-                    <span style="font-size: 8px; font-style: normal; font-weight: normal; margin-right: 25px; float: right;">
-                        created by <a href="http://forum.tribalwars.net/member.php?u=28484">cheesasaurus</a>
+                    <span style="font-size: 10px; font-style: normal; font-weight: normal; margin-right: 25px; float: right;">
+                        created by <a target="_blank" href="https://forum.tribalwars.net/index.php?members/28484/">cheesasaurus</a>
                     </span>
                 </h4>
                 <div id="twcheese_pillaging_stats_content" style="display: ${contentDisplay};">

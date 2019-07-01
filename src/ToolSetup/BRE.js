@@ -1946,7 +1946,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
     /*==== find reports table ====*/
     /* note: premium players have a table with links to folders. regular players don't. But the layout seems to have changed again */
     var reportsTable;
-    if (game_data.player.premium)
+    if (window.premium)
         reportsTable = gameDoc.getElementById('content_value').getElementsByTagName('table')[3];
     else
         reportsTable = gameDoc.getElementById('content_value').getElementsByTagName('table')[3];
@@ -2005,7 +2005,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
         /*==== partial hauls ====*/
         report.isFullHaul = false;
         report.isPartialHaul = false;
-        if (game_data.player.premium) {
+        if (window.premium) {
             if (reportIcons.length > 1) {
                 if (reportIcons[1].src.search('max_loot') != -1) {
                     report.lootIcon = reportIcons[1].src;
@@ -2023,7 +2023,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
 
         /*==== forwarded ====*/
         report.isForwarded = false;
-        if ((!game_data.player.premium && reportIcons.length > 1) || (game_data.player.premium && reportIcons.length > 2)) {
+        if ((!window.premium && reportIcons.length > 1) || (window.premium && reportIcons.length > 2)) {
             for (var j = 1; j < reportIcons.length; j++) {
                 if (reportIcons[j].src.search('forwarded') != -1)
                     report.isForwarded = true;
@@ -3250,7 +3250,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
     massRenameTable.className = 'vis';
 
 
-    if (!game_data.player.premium) //note: non-premium accounts cannot rename reports. no point in confusing the users
+    if (!window.premium) //note: non-premium accounts cannot rename reports. no point in confusing the users
         massRenameTable.style.display = 'none';
 
     /*==== create cells ===*/

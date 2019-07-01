@@ -30,7 +30,6 @@ class ReportWidget extends AbstractWidget {
 
 initCss(`
     .twcheese-debug-report {
-        min-width: 375px;
         min-height: 200px;
     }    
 `);

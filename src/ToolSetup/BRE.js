@@ -3137,18 +3137,20 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
         }
 
         var totalWidth = 0;
-        //66; //the extra 66pixels compensate for the cols below it that it spans across - they have padding of 3 left and 3 right. this cell has the same padding so 12*6-6= 66
         for (let i = 0; i < 12; i++) {
-            var width = maxDigits[i] * 8;
-            if (width < 20)
-                width = 20;
+            let $headerCell = $(reportsTableHeader.rows[1].cells[i + 12]);
+            let $bodyCell = $(reportsTableBody.rows[0].cells[i + 12]);
+            let width = Math.max($headerCell.innerWidth(), $bodyCell.innerWidth());
 
-            reportsTableHeader.rows[1].cells[i + 12].style.width = width + 'px';
-            reportsTableBody.rows[0].cells[i + 12].style.width = width + 'px';
-            totalWidth += reportsTableBody.rows[0].cells[i + 12].clientWidth;
+            $headerCell.css({'min-width': width});
+            $bodyCell.css({'min-width': width});
+
+            totalWidth += $bodyCell.outerWidth();
         }
-        reportsTableHeader.style.width = Number(Number(reportsTableHeader.style.width.split('px')[0]) - Number(reportsTableHeader.rows[0].cells[12].style.width.split('px')[0]) + totalWidth - 6) + 'px';
-        reportsTableHeader.rows[0].cells[12].style.width = Number(totalWidth - 6) + 'px';
+        totalWidth += 11 * 2; // border spacing between the 12 cells
+        let padding = 3;
+        reportsTableHeader.style.width = Number(Number(reportsTableHeader.style.width.split('px')[0]) - Number(reportsTableHeader.rows[0].cells[12].style.width.split('px')[0]) + totalWidth - 2*padding) + 'px';
+        reportsTableHeader.rows[0].cells[12].style.width = Number(totalWidth - 2*padding) + 'px';
         reportsTableBody.style.width = reportsTableHeader.clientWidth + 'px';
         xTableEmulator.style.width = reportsTableBody.clientWidth + 'px';
     };

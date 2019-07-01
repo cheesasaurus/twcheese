@@ -101,13 +101,126 @@ if (!twcheese)
 }
 
 /*==== styles ====*/
-try {
-    var styleLink = document.createElement('link');
-    styleLink.rel = 'stylesheet';
-    styleLink.href = 'httpss://dl.dropbox.com/u/1621643/tw/scripts/dev/twcheese_BRE_UI.css';
-    document.getElementsByTagName('head')[0].appendChild(styleLink);
-} catch (e) { console.error(e) }
-//TODO: test on various browsers
+
+initCss(`
+    .ui-icon-gripsmall-diagonal-se { background-position: -64px -224px; }
+
+    /* Icons
+    ----------------------------------*/
+
+    .ui-icon {
+        display: block;
+        text-indent: -99999px;
+        overflow: hidden;
+        background-repeat: no-repeat;
+    }
+
+    .ui-icon {
+        width: 16px;
+        height: 16px;
+    }
+    .ui-icon,
+    .ui-widget-content .ui-icon {
+        background-image: url("https://dl.dropbox.com/u/1621643/tw/icons/jquery/ui-icons_454545_256x240.png");
+    }
+    .ui-widget-header .ui-icon {
+        background-image: url(https://dl.dropbox.com/u/1621643/tw/icons/jquery/ui-icons_222222_256x240.png);
+    }
+    .ui-state-default .ui-icon {
+        background-image: url(https://dl.dropbox.com/u/1621643/tw/icons/jquery/ui-icons_888888_256x240.png);
+    }
+    .ui-state-hover .ui-icon,
+    .ui-state-focus .ui-icon {
+        background-image: url(https://dl.dropbox.com/u/1621643/tw/icons/jquery/ui-icons_454545_256x240.png);
+    }
+    .ui-state-active .ui-icon {
+        background-image: url(https://dl.dropbox.com/u/1621643/tw/icons/jquery/ui-icons_454545_256x240.png);
+    }
+    .ui-state-highlight .ui-icon {
+        background-image: url(https://dl.dropbox.com/u/1621643/tw/icons/jquery/ui-icons_2e83ff_256x240.png);
+    }
+    .ui-state-error .ui-icon,
+    .ui-state-error-text .ui-icon {
+        background-image: url(https://dl.dropbox.com/u/1621643/tw/icons/jquery/ui-icons_cd0a0a_256x240.png);
+    }
+
+    /* Overlays */
+    .ui-widget-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+    .ui-resizable {
+        position: relative;
+    }
+    .ui-resizable-handle {
+        position: absolute;
+        font-size: 0.1px;
+        display: block;
+    }
+    .ui-resizable-disabled .ui-resizable-handle,
+    .ui-resizable-autohide .ui-resizable-handle {
+        display: none;
+    }
+    .ui-resizable-n {
+        cursor: n-resize;
+        height: 7px;
+        width: 100%;
+        top: -5px;
+        left: 0;
+    }
+    .ui-resizable-s {
+        cursor: s-resize;
+        height: 7px;
+        width: 100%;
+        bottom: -5px;
+        left: 0;
+    }
+    .ui-resizable-e {
+        cursor: e-resize;
+        width: 7px;
+        right: -5px;
+        top: 0;
+        height: 100%;
+    }
+    .ui-resizable-w {
+        cursor: w-resize;
+        width: 7px;
+        left: -5px;
+        top: 0;
+        height: 100%;
+    }
+    .ui-resizable-se {
+        cursor: se-resize;
+        width: 12px;
+        height: 12px;
+        right: 1px;
+        bottom: 1px;
+    }
+    .ui-resizable-sw {
+        cursor: sw-resize;
+        width: 9px;
+        height: 9px;
+        left: -5px;
+        bottom: -5px;
+    }
+    .ui-resizable-nw {
+        cursor: nw-resize;
+        width: 9px;
+        height: 9px;
+        left: -5px;
+        top: -5px;
+    }
+    .ui-resizable-ne {
+        cursor: ne-resize;
+        width: 9px;
+        height: 9px;
+        right: -5px;
+        top: -5px;
+    }
+`);
 
 
 /*==== language ====*/

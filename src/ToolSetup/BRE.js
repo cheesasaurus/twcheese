@@ -1,23 +1,16 @@
+/* global $ */
+
 var twcheese_gameConfig,
     twcheese_BRESettings,
     twcheese_BREinitialized,
     twcheese_reportEnhanced,
     twcheese_reportsFolderDisplaySettings,
     twcheese_reportsFolderEnhanced
-;   
+;
 
 if (!twcheese)
     var twcheese = {};
 
-/*==== register ====*/
-var script = {
-    scriptname: 'Battle Report Enhancer',
-    version: 8.25,
-    author: 'Nick Toby',
-    email: 'cheesasaurus@gmail.com',
-    broken: false
-};
-$.post(ScriptAPI.url, script);
 
 /*==== imagePaths ====*/
 {

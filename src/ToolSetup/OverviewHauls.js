@@ -4,8 +4,11 @@ import { promptLoadHauls } from '/twcheese/src/Prompt/promptLoadHauls.js';
 import { suggestRedirect } from '/twcheese/src/Prompt/suggestRedirect.js';
 import { alertPremiumRequired } from '/twcheese/src/Prompt/alertPremiumRequired.js';
 import { appendHaulColsToCommandsTable } from '/twcheese/src/Transform/appendHaulColsToCommandsTable.js';
-import { debugProcess as debugProcessAtCommandsOverview } from '/twcheese/src/ToolDebug/OverviewHauls/AtCommandsOverview.js';
-import { debugProcess as debugProcessDefault } from '/twcheese/src/ToolDebug/OverviewHauls/Default.js';
+import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.js';
+
+import { debugActions } from '/twcheese/src/ToolDebug/OverviewHauls/Actions.js';
+import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/OverviewHauls/Default.js';
+import { processCfg as debugCfgAtCommandsOverview } from '/twcheese/dist/tool/cfg/debug/OverviewHauls/AtCommandsOverview.js';
 
 
 let haulsIncluded = false;
@@ -62,8 +65,18 @@ function useTool() {
 }
 
 
+let processFactory = new ProcessFactory(debugActions);
+
+function newDebugProcess() {
+    if (atCommandsOverview()) {
+        return processFactory.create(debugCfgAtCommandsOverview, true);
+    }
+    return processFactory.create(debugCfgDefault, true);
+}
+
+
 window.TwCheese.registerTool({
     id: 'OverviewHauls',
     use: useTool,
-    getDebugProcess: () => atCommandsOverview() ? debugProcessAtCommandsOverview : debugProcessDefault
+    getDebugProcess: newDebugProcess
 });

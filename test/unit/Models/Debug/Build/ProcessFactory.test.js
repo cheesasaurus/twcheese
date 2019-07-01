@@ -45,6 +45,12 @@ let actions = {
                 sum: valuePassedToResolve
             }
         }
+    },
+
+    explode: {
+        async execute() {
+            blowUpInYourFace();
+        }
     }
 
 };
@@ -72,7 +78,20 @@ let cfg = {
                         {
                             type: 'PhaseAttempt',
                             internalName: `Add 1 to 70 (output of the parent phase's action)`,
-                            action: 'addOne'
+                            action: 'addOne',
+                            success: [
+                                {
+                                    type: 'PhaseQuestion',
+                                    internalName: 'very important questions',
+                                    questions: [
+                                        {
+                                            type: 'QuestionValue',
+                                            ask: '70 + 1',
+                                            examine: 'parentResult'
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ]
                 }
@@ -82,19 +101,66 @@ let cfg = {
             type: 'PhaseAttempt',
             internalName: 'add 1 to nothing (there are no parent phases)',
             action: 'addOne'
+        },
+        {
+            type: 'PhaseQuestion',
+            internalName: 'very important questions',
+            questions: [
+                {
+                    type: 'QuestionSelect',
+                    ask: `Who's the best?`,
+                    options: [
+                        {
+                            answer: 'cheesasaurus',
+                            value: 'goddamn right'
+                        },
+                        {
+                            answer: 'somebody else',
+                            value: 'WRONG',
+                            followUp: [
+                                {
+                                    type: 'PhaseAttempt',
+                                    internalName: 'Kablooie',
+                                    action: 'explode'
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    type: 'QuestionFreeForm',
+                    ask: 'What do you get when you cross an owl with a bungie cord?',
+                    placeholderText: 'my ass. nyah haha haha haha',
+                    minResponseLength: 10
+                }
+            ]
         }
     ]
 };
+
 
 // test /////////////////////////////////////////////////////////
 
 
 describe('ProcessFactory.create', function() {
     xit('should work', function() {
+        console.log('== example process =============');
         let pf = new ProcessFactory(actions);
         let actual = pf.create(cfg);
 
-        console.log(actual);
-        // todo
+        // stringify, and eyeball it
+        let cache = new Set();
+        let replacer = function(key, value) {
+            if (typeof value === 'object' && value !== null) {
+                if (cache.has(value)) {
+                    return `[circular reference] ${value.name || value.value}`;
+                }
+                cache.add(value);
+            }
+            return value;
+        };
+        console.log(JSON.stringify(actual, replacer, 2));
+
+        // todo: write assertions... if something breaks and its not obvious what/where
     });
 });

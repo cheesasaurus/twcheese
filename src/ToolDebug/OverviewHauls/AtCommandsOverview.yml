@@ -15,7 +15,6 @@
                 - type: PhaseAttempt
                   internalName: Read selected command
                   action: tryScrapeCommandScreen
-                  summarizeAction: summarizeTryScrapeCommandScreen
                   success:
                     - type: PhaseQuestion
                       internalName: Command scraper
@@ -32,6 +31,13 @@
                           examine: parentResult.command.haulCapacity
         - answer: Something else
           value: other
+
+- type: PhaseQuestion
+  internalName: extra info
+  questions:
+    - type: QuestionFreeForm
+      ask: Additional information
+      placeholderText: e.g. "iron isn\'t shown"
           
 # todo: probably every process should end in PhaseReport.
 # maybe this should be added automatically instead of configured

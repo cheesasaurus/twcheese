@@ -1,3 +1,11 @@
+var twcheese_gameConfig,
+    twcheese_BRESettings,
+    twcheese_BREinitialized,
+    twcheese_reportEnhanced,
+    twcheese_reportsFolderDisplaySettings,
+    twcheese_reportsFolderEnhanced
+;   
+
 if (!twcheese)
     var twcheese = {};
 
@@ -446,7 +454,7 @@ function twcheese_BattleReport() {
 /**
  *	settings for the display of various report attributes in the reports folder
  */
-function twcheese_reportsFolderDisplaySettings() {
+function twcheese_ReportsFolderDisplaySettings() {
     this.repeatLinks = 1;
     this.fullSubject = 1;
     this.note = 1;
@@ -1816,7 +1824,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
 
     /**
      *	marks checkboxes and hides certain displays in accordance with the user's Folder Display settings
-     *	@param settings:twcheese_reportsFolderDisplaySettings()
+     *	@param settings:twcheese_ReportsFolderDisplaySettings()
      */
     this.applySettings = function (settings) {
         var checkboxes = document.getElementById('twcheese_reportsFolderSettings').getElementsByTagName('input');
@@ -4332,7 +4340,7 @@ function twcheese_setBRESettings(breSettings) {
     setCookie('twcheese_breSettings', escape(JSON.stringify(breSettings)), 30);
 }
 
-/*==== main ====*/
+/*==== main ====*/ 
 
 function useTool() {
     if (!twcheese_BREinitialized) {
@@ -4348,10 +4356,10 @@ function useTool() {
         twcheese.createFooterButton(twcheese.language['twcheese']['Help'], 'https://forum.tribalwars.net/showthread.php?256225-Battle-Report-Enhancer');
 
         /*==== get server settings ====*/
-        var twcheese_gameConfig = twcheese_getServerSettings();
+        twcheese_gameConfig = twcheese_getServerSettings();
 
         /*==== get user settings ====*/
-        var twcheese_BRESettings = twcheese_getBRESettings();
+        twcheese_BRESettings = twcheese_getBRESettings();
         twcheese.loadConfig();
 
         /*==== check for sitter mode ====*/
@@ -4370,7 +4378,7 @@ function useTool() {
             twcheese.babyUriComponent = '&t=' + twcheese.baby;
         }
 
-        var twcheese_BREinitialized = true;
+        twcheese_BREinitialized = true;
     }
 
     /*==== do the dew ====*/
@@ -4423,16 +4431,16 @@ function useTool() {
             if (twcheese.userConfig.report.show_report_tools)
                 $('#twcheese_show_report_tools').find('img:first').click(); //show report tools widget
 
-            var twcheese_reportEnhanced = true;
+            twcheese_reportEnhanced = true;
         }
     }
     else if (game_data.screen == 'report' && (game_data.mode == 'attack' || game_data.mode == 'defense')) /* viewing reports folder with 'Attacks' or "Defenses" filter on	*/ {
         if (!twcheese_reportsFolderEnhanced) {
-            var twcheese_reportsFolderDisplaySettings = twcheese_loadReportsFolderDisplaySettings();
+            twcheese_reportsFolderDisplaySettings = twcheese_loadReportsFolderDisplaySettings();
             twcheese_saveReportsFolderDisplaySettings(twcheese_reportsFolderDisplaySettings);
             pageMod = new twcheese_BattleReportsFolderEnhancer(gameDoc);
             pageMod.applySettings(twcheese_reportsFolderDisplaySettings);
-            var twcheese_reportsFolderEnhanced = true;
+            twcheese_reportsFolderEnhanced = true;
         }
     }
     else if (game_data.screen == 'forum') {

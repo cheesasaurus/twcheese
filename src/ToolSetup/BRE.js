@@ -1,5 +1,6 @@
 /* global $, game_data */
 import { initCss, escapeHtml } from '/twcheese/src/Util/UI.js';
+import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 
 var twcheese_gameConfig,
     twcheese_BRESettings,
@@ -121,27 +122,27 @@ initCss(`
     }
     .ui-icon,
     .ui-widget-content .ui-icon {
-        background-image: url("https://dl.dropbox.com/u/1621643/tw/icons/jquery/ui-icons_454545_256x240.png");
+        background-image: url(${ImageSrc.jq.darkGrey});
     }
     .ui-widget-header .ui-icon {
-        background-image: url(https://dl.dropbox.com/u/1621643/tw/icons/jquery/ui-icons_222222_256x240.png);
+        background-image: url(${ImageSrc.jq.black});
     }
     .ui-state-default .ui-icon {
-        background-image: url(https://dl.dropbox.com/u/1621643/tw/icons/jquery/ui-icons_888888_256x240.png);
+        background-image: url(${ImageSrc.jq.grey});
     }
     .ui-state-hover .ui-icon,
     .ui-state-focus .ui-icon {
-        background-image: url(https://dl.dropbox.com/u/1621643/tw/icons/jquery/ui-icons_454545_256x240.png);
+        background-image: url(${ImageSrc.jq.darkGrey});
     }
     .ui-state-active .ui-icon {
-        background-image: url(https://dl.dropbox.com/u/1621643/tw/icons/jquery/ui-icons_454545_256x240.png);
+        background-image: url(${ImageSrc.jq.darkGrey});
     }
     .ui-state-highlight .ui-icon {
-        background-image: url(https://dl.dropbox.com/u/1621643/tw/icons/jquery/ui-icons_2e83ff_256x240.png);
+        background-image: url(${ImageSrc.jq.blue});
     }
     .ui-state-error .ui-icon,
     .ui-state-error-text .ui-icon {
-        background-image: url(https://dl.dropbox.com/u/1621643/tw/icons/jquery/ui-icons_cd0a0a_256x240.png);
+        background-image: url(${ImageSrc.jq.red});
     }
 
     /* Overlays */

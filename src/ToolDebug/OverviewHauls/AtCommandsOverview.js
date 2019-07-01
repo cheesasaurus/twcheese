@@ -94,12 +94,12 @@ debugProcess.enqueuePhase(
                     .onSuccess(function() {
                         let parentResult = this.result; 
 
-                        this.addFollowUp(PhaseAttempt.create('read selected command', async () => await tryScrapeCommandScreen(parentResult))
+                        this.addSuccessFollowUp(PhaseAttempt.create('read selected command', async () => await tryScrapeCommandScreen(parentResult))
                             .setDataSummarizer(summarizeTryScrapeCommandScreen)
                             .onSuccess(function() {
                                 let parentPhase = this;
 
-                                this.addFollowUp(PhaseQuestion.create('Command scraper')
+                                this.addSuccessFollowUp(PhaseQuestion.create('Command scraper')
                                     .lookAt(lazyEvalCfg('parentResult.document.documentElement.outerHTML', parentPhase) )
                                     .addQuestion(QuestionValue.create('Arrival', lazyEvalCfg('parentResult.command.arrival', parentPhase) ))
                                     .addQuestion(QuestionValue.create('Haul', lazyEvalCfg('parentResult.command.haul', parentPhase) ))

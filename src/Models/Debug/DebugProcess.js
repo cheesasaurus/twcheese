@@ -42,7 +42,6 @@ class DebugProcess {
     }
 
     goToNextPhase() {
-        this.removeFuturePhasesFollowingUpOnIrrelevantThings();
         if (this.currentPhaseIndex >= 0) {
             for (let thing of this.getCurrentPhase().getThingsToFollowUpOn()) {
                 for (let phase of thing.followUpPhases) {
@@ -63,37 +62,8 @@ class DebugProcess {
         return this.currentPhaseIndex < this.phases.length - 1;
     }
 
-    goToPrevPhase() {
-        if (!this.hasPrevPhase()) {
-            throw Error(`there's no prev phase`);
-        }
-        this.currentPhaseIndex--;
-        $(this).trigger(DebugEvents.PHASE_CHANGED);
-    }
-
-    hasPrevPhase() {
-        return this.currentPhaseIndex > 0;
-    }
-
     getCurrentPhase() {
         return this.phases[this.currentPhaseIndex];
-    }
-
-    removeFuturePhasesFollowingUpOnIrrelevantThings() {
-        let relevantThings = this.getRelevantThingsToFollowUpOn();
-
-        for (let i = this.currentPhaseIndex + 1; i < this.phases.length; i++) {
-            let phase = this.phases[i];
-            if (phase.followsUpOn && !relevantThings.includes(phase.followsUpOn)) {
-                this.phases.splice(i, 1);
-                i--;
-            }
-        }
-    }
-
-    getRelevantThingsToFollowUpOn() {
-        return this.phases.slice(0, this.currentPhaseIndex + 1)
-            .reduce((acc, phase) => acc.concat(phase.getThingsToFollowUpOn()), []);
     }
 
     getSummarySoFar() {

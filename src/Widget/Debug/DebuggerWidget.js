@@ -21,7 +21,6 @@ class DebuggerWidget extends AbstractWidget {
         this.$header = this.$el.find('.twcheese-debugger-header');
         this.$content = this.$el.find('.twcheese-debugger-content');
         this.$nav = this.$el.find('.twcheese-debugger-nav');
-        this.$prev = this.$el.find('.twcheese-debugger-prev');
         this.$next = this.$el.find('.twcheese-debugger-next');        
         this.$processName = this.$el.find('.twcheese-debugger-process-name');
         this.$inspector = this.$el.find('.twcheese-debugger-inspector');
@@ -39,7 +38,6 @@ class DebuggerWidget extends AbstractWidget {
                     </div>
                     <div class="twcheese-debugger-content">blah bla blucci</div>
                     <div class="twcheese-debugger-nav">
-                        <div class="twcheese-debugger-prev"></div>
                         <div class="twcheese-debugger-next"></div>
                     </div>
                 </div>
@@ -54,9 +52,6 @@ class DebuggerWidget extends AbstractWidget {
     watchSelf() {
         this.$next.on('click', () => {
             this.process.goToNextPhase();
-        });
-        this.$prev.on('click', () => {
-            this.process.goToPrevPhase();
         });
     }
 
@@ -73,7 +68,6 @@ class DebuggerWidget extends AbstractWidget {
 
     startProcess(process) {
         this.$next.hide();
-        this.$prev.hide();
         this.process = process;
         this.$processName.text(process.name);
         
@@ -97,9 +91,6 @@ class DebuggerWidget extends AbstractWidget {
         this.$content.html('');
         if (!this.process.hasNextPhase()) {
             this.$next.hide();
-        }
-        if (!this.process.hasPrevPhase()) {
-            this.$prev.hide();
         }
 
         let phase = this.process.getCurrentPhase();
@@ -222,7 +213,6 @@ initCss(`
         height: 20px;
     }
 
-    .twcheese-debugger-prev,
     .twcheese-debugger-next {
         width: 0;
         height: 0;
@@ -232,17 +222,11 @@ initCss(`
         filter: brightness(0.7);
     }
 
-    .twcheese-debugger-prev {        
-        border-right: 20px solid white;
-        float: left;
-    }
-
     .twcheese-debugger-next {
         border-left: 20px solid white;
         float: right;
     }
 
-    .twcheese-debugger-prev:hover,
     .twcheese-debugger-next:hover {
         webkit-filter: brightness(1);
         filter: brightness(1);

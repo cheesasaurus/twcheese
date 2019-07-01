@@ -2075,16 +2075,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
         var report = twcheese_interpretReportName(reportsTable.rows[i].cells[1].getElementsByTagName('a')[0].getElementsByTagName('span')[0].innerHTML);
         report.timeReceived = reportsTable.rows[i].cells[1].innerHTML;
         report.reportID = this.scrapeReportId(reportsTable.rows[i].cells[1].getElementsByTagName('a')[0]);
-        var reportIcons = reportsTable.rows[i].cells[1].getElementsByTagName('img');
-
-        // check if it has a strength icon
-        var has_strength_icon = false;
-        var divs = reportsTable.rows[i].cells[1].getElementsByTagName('div');
-        if (divs.length) {
-            if (divs[0].getElementsByTagName('img').length) {
-                has_strength_icon = true;
-            }
-        }
+        var reportIcons = [...reportsTable.rows[i].cells[1].getElementsByTagName('img')];
 
         /*==== defender distance from current village ====*/
         if (report.defenderVillage)
@@ -2100,11 +2091,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
             report.defenderDistance = '?';
 
         /*==== dot color ====*/
-        if (has_strength_icon) {
-            report.dotIcon = reportIcons[1].src;
-        } else {
-            report.dotIcon = reportIcons[0].src;
-        }
+        report.dotIcon = reportIcons.find(img => img.src.includes('graphic/dots/')).src;
 
         /*==== has it already been read? ====*/
         var cellText = $(reportsTable.rows[i].cells[0]).contents().filter(function () {

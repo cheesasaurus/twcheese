@@ -1,119 +1,79 @@
 import { DebugEvents } from '/twcheese/src/Models/Debug/DebugEvents.js';
-import { DebugProcess } from '/twcheese/src/Models/Debug/DebugProcess.js';
-import { PhaseQuestion } from '/twcheese/src/Models/Debug/PhaseQuestion.js';
-import { PhaseAttempt } from '/twcheese/src/Models/Debug/PhaseAttempt.js';
-import { PhaseReport } from '/twcheese/src/Models/Debug/PhaseReport.js';
-import { QuestionSelect } from '/twcheese/src/Models/Debug/QuestionSelect.js';
-import { QuestionFreeForm } from '/twcheese/src/Models/Debug/QuestionFreeForm.js';
-import { QuestionValue } from '/twcheese/src/Models/Debug/QuestionValue.js';
-import { Option } from '/twcheese/src/Models/Debug/Option.js';
-import { BugReporter } from '/twcheese/src/Models/Debug/BugReporter.js';
-
 import { fadeGameContentExcept, unfadeGameContent, Mousetrap } from '/twcheese/src/Util/UI.js';
 import { requestDocument } from '/twcheese/src/Util/Network.js';
 import { scrapeCommand, scrapeCommandUrlFromRow } from '/twcheese/src/Scrape/command.js';
 
 
-async function trySelectCommandFromTable(parentResult, ctrl) {
-    let $commandsTable = $('#commands_table');
-    let $commandRows = $commandsTable.children().children();
+let actions = {
 
-    fadeGameContentExcept($commandsTable);
-    $(document).scrollTop($commandsTable.offset().top);
+    trySelectCommandFromTable: {
+        async execute(na, ctrl) {
+            let $commandsTable = $('#commands_table');
+            let $commandRows = $commandsTable.children().children();
 
-    let mousetrap = (new Mousetrap()).spawn();
-    mousetrap
-        .on('mouseover', $commandRows, function() {
-            $(this).css({outline: '3px solid magenta'});
-        })
-        .on('mouseout', $commandRows, function() {
-            $(this).css({outline: 'none'})
-        });
+            fadeGameContentExcept($commandsTable);
+            $(document).scrollTop($commandsTable.offset().top);
 
-    let cleanup = function() {
-        unfadeGameContent();
-        mousetrap.destruct();
-        $commandRows.css({outline: 'none'});
-    };
+            let mousetrap = (new Mousetrap()).spawn();
+            mousetrap
+                .on('mouseover', $commandRows, function() {
+                    $(this).css({outline: '3px solid magenta'});
+                })
+                .on('mouseout', $commandRows, function() {
+                    $(this).css({outline: 'none'})
+                });
 
-    $(ctrl).on(DebugEvents.USER_REJECTED, function() {
-        cleanup();
-    });
+            let cleanup = function() {
+                unfadeGameContent();
+                mousetrap.destruct();
+                $commandRows.css({outline: 'none'});
+            };
 
-    return new Promise(function(resolve, reject) {
-        let handleRowSelected = function() {
-            cleanup();
-            try {
-                resolve(scrapeCommandUrlFromRow(this));
-            } catch (err) {
-                reject(err);
+            $(ctrl).on(DebugEvents.USER_REJECTED, function() {
+                cleanup();
+            });
+
+            return new Promise(function(resolve, reject) {
+                let handleRowSelected = function() {
+                    cleanup();
+                    try {
+                        resolve(scrapeCommandUrlFromRow(this));
+                    } catch (err) {
+                        reject(err);
+                    }
+                }
+                mousetrap.on('click', $commandRows, handleRowSelected);
+            });
+        }
+    },
+
+    tryScrapeCommandScreen: {
+        async execute(commandUrl) {
+            let commandDoc = await requestDocument(commandUrl);
+            return {
+                document: commandDoc,
+                command: scrapeCommand(commandDoc)
+            };
+        },
+        async summarizeResult(r) {
+            let document = r.document;
+            if (document instanceof window.HTMLDocument) {
+                document = document.documentElement.outerHTML;
+            }
+            return {
+                document: document,
+                command: r.command
             }
         }
-        mousetrap.on('click', $commandRows, handleRowSelected);
-    });
-}
-
-
-async function tryScrapeCommandScreen(commandUrl) {
-    let commandDoc = await requestDocument(commandUrl);
-    return {
-        document: commandDoc,
-        command: scrapeCommand(commandDoc)
-    };
-}
-
-function summarizeTryScrapeCommandScreen(d) {
-    let document = d.document;
-    if (document instanceof window.HTMLDocument) {
-        document = document.documentElement.outerHTML;
     }
-    return {
-        document: document,
-        command: d.command
-    }
-}
 
-// only relevant for something following up on a PhaseAttempt
-function lazyEvalCfg(str, parentPhase) {
-    return () => {
-        let parentResult = parentPhase.result;
-        return eval(str);
-    };
 }
 
 
-let debugProcess = DebugProcess.create('Tool: OverviewHauls');
-let bugReporter = new BugReporter(debugProcess);
+import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.js';
+import { processCfg } from '/twcheese/dist/tool/cfg/debug/OverviewHauls/AtCommandsOverview.js';
 
-debugProcess.enqueuePhase(
-    PhaseQuestion.create('Entry')
-        .addQuestion(QuestionSelect.create(`What's broken?`)
-            .addOption(Option.create('Wrong values shown in commands list', 'wrong_values')
-                .addFollowUp(PhaseAttempt.create('determine command url', trySelectCommandFromTable)
-                    .setInstructions('Select a problematic row.')
-                    .onSuccess(function() {
-                        this.addSuccessFollowUp(PhaseAttempt.create('read selected command', tryScrapeCommandScreen)
-                            .setDataSummarizer(summarizeTryScrapeCommandScreen)
-                            .onSuccess(function() {
-                                let parentPhase = this;
-
-                                this.addSuccessFollowUp(PhaseQuestion.create('Command scraper')
-                                    .lookAt(lazyEvalCfg('parentResult.document.documentElement.outerHTML', parentPhase) )
-                                    .addQuestion(QuestionValue.create('Arrival', lazyEvalCfg('parentResult.command.arrival', parentPhase) ))
-                                    .addQuestion(QuestionValue.create('Haul', lazyEvalCfg('parentResult.command.haul', parentPhase) ))
-                                    .addQuestion(QuestionValue.create('Haul capacity', lazyEvalCfg('parentResult.command.haulCapacity', parentPhase) ))
-                                );
-                            })
-                        )
-                    })
-                )
-            )
-            .addOption(Option.create('Something else', 'other'))
-        )
-    )
-    .enqueuePhase(PhaseQuestion.create('extra info')
-        .addQuestion(QuestionFreeForm.create('Additional information', 'e.g. "iron isn\'t shown"'))
-    )
-    .enqueuePhase(PhaseReport.create(bugReporter));
+let pf = new ProcessFactory(actions);
+let debugProcess = pf.create(processCfg, true);
 
 export { debugProcess };

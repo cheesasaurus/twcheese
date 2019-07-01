@@ -38,8 +38,3 @@
     - type: QuestionFreeForm
       ask: Additional information
       placeholderText: e.g. "iron isn\'t shown"
-          
-# todo: probably every process should end in PhaseReport.
-# maybe this should be added automatically instead of configured
-- type: PhaseReport
-  bugReporter: myBugReporter

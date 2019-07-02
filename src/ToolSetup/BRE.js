@@ -4346,28 +4346,27 @@ function twcheese_getServerSettings() {
 
 
 function twcheese_getBRESettings() {
-    // TODO: rewrite to use localStorage
-    if (!getCookie('twcheese_breSettings')) {
-        var breSettings = new function () { };
-        breSettings.rename1 = 'nothing';
-        breSettings.rename2 = 'nothing';
-        breSettings.rename3 = 'nothing';
-        breSettings.rename4 = 'nothing';
-        breSettings.rename5 = 'nothing';
-        breSettings.rename6 = 'nothing';
-        breSettings.autoRename = false;
-        breSettings.period = 8;
-        breSettings.haulBonus = 0;
-        breSettings.raid = 'scouted';
-        return breSettings;
+    let cachedSettings = localStorage.getItem('twcheese_bresettings');
+    if (cachedSettings) {
+        return JSON.parse(cachedSettings);
     }
-    else
-        return JSON.parse(unescape(getCookie('twcheese_breSettings')));
+
+    return {
+        rename1: 'nothing',
+        rename2: 'nothing',
+        rename3: 'nothing',
+        rename4: 'nothing',
+        rename5: 'nothing',
+        rename6: 'nothing',
+        autoRename: false,
+        period: 8,
+        haulBonus: 0,
+        raid: 'scouted'
+    };
 }
 
 function twcheese_setBRESettings(breSettings) {
-    //TODO: rewrite to use localStorage
-    setCookie('twcheese_breSettings', escape(JSON.stringify(breSettings)), 30);
+    localStorage.setItem('twcheese_bresettings', JSON.stringify(breSettings));
 }
 
 /*==== main ====*/ 

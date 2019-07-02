@@ -4326,23 +4326,22 @@ function twcheese_loadReportsFolderDisplaySettings() {
 }
 
 function twcheese_getServerSettings() {
-    //TODO: use localStorage
-    var gameConfig = new function () { };
+    let cacheKey = 'twcheese_game_config_bre';
 
-    if (!getCookie('twcheese_game_config')) {
-        var configXML = twcheese_requestXML('https://' + document.domain + '/interface.php?func=get_config')
-
-        gameConfig.speed = configXML.match(/\<SPEED>.*?\<\/SPEED>/gi)[0].toLowerCase().replace('<speed>', '').replace('</speed>', '');
-        gameConfig.unit_speed = configXML.match(/\<UNIT_SPEED>.*?\<\/UNIT_SPEED>/gi)[0].toLowerCase().replace('<unit_speed>', '').replace('</unit_speed>', '');
-        gameConfig.archer = configXML.match(/\<ARCHER>.*?\<\/ARCHER>/gi)[0].toLowerCase().replace('<archer>', '').replace('</archer>', '');
-        gameConfig.paladin = configXML.match(/\<KNIGHT>.*?\<\/KNIGHT>/gi)[0].toLowerCase().replace('<knight>', '').replace('</knight>', '');
-
-        setCookie('twcheese_game_config', escape(JSON.stringify(gameConfig)), 30);
+    let cachedSettings = localStorage.getItem(cacheKey);
+    if (cachedSettings) {
+        return JSON.parse(cachedSettings);
     }
-    else
-        gameConfig = JSON.parse(unescape(getCookie('game_config')));
 
-    return gameConfig;
+    let configXML = twcheese_requestXML('https://' + document.domain + '/interface.php?func=get_config')
+    let settings = {
+        speed: configXML.match(/\<SPEED>.*?\<\/SPEED>/gi)[0].toLowerCase().replace('<speed>', '').replace('</speed>', ''),
+        unit_speed: configXML.match(/\<UNIT_SPEED>.*?\<\/UNIT_SPEED>/gi)[0].toLowerCase().replace('<unit_speed>', '').replace('</unit_speed>', ''),
+        archer: configXML.match(/\<ARCHER>.*?\<\/ARCHER>/gi)[0].toLowerCase().replace('<archer>', '').replace('</archer>', ''),
+        paladin: configXML.match(/\<KNIGHT>.*?\<\/KNIGHT>/gi)[0].toLowerCase().replace('<knight>', '').replace('</knight>', '')
+    };
+    localStorage.setItem(cacheKey, JSON.stringify(settings));
+    return settings;
 }
 
 

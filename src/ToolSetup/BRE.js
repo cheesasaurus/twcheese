@@ -3203,91 +3203,89 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
     selectorClickyTable.className = 'vis';
     selectorClickyTable.insertRow(-1);
 
-    /*==== create cells ===*/
-    for (let i = 0; i < 15; i++) {
-        selectorClickyTable.rows[0].insertCell(-1);
+    let imgHtml = src => `<img style="display:block; margin-left:auto; margin-right:auto" src="${src}"/>`;
+
+    let clickyOptions = new Map([
+        ['all', {
+            click: () => reportsFolderDisplay.selectAll(),
+            html: 'all'
+        }],
+        ['none', {
+            click: () => reportsFolderDisplay.selectNone(),
+            html: 'none'
+        }],
+        ['new', {
+            click: () => reportsFolderDisplay.selectNew(),
+            html: 'new'
+        }],
+        ['old', {
+            click: () => reportsFolderDisplay.selectOld(),
+            html: 'old'
+        }],
+        ['dotGreen', {
+            click: () => reportsFolderDisplay.selectDotColor('green'),
+            html: imgHtml('graphic/dots/green.png')
+        }],
+        ['dotYellow', {
+            click: () => reportsFolderDisplay.selectDotColor('yellow'),
+            html: imgHtml('graphic/dots/yellow.png')
+        }],
+        ['dotRed', {
+            click: () => reportsFolderDisplay.selectDotColor('red'),
+            html: imgHtml('graphic/dots/red.png')
+        }],
+        ['dotBlue', {
+            click: () => reportsFolderDisplay.selectDotColor('blue'),
+            html: imgHtml('graphic/dots/blue.png')
+        }],
+        ['forwarded', {
+            click: () => reportsFolderDisplay.selectForwarded(),
+            html: imgHtml('graphic/forwarded.png')
+        }],
+        ['haulPartial', {
+            click: () => reportsFolderDisplay.selectLoot(0),
+            html: imgHtml('graphic/max_loot/0.png')
+        }],
+        ['haulFull', {
+            click: () => reportsFolderDisplay.selectLoot(1),
+            html: imgHtml('graphic/max_loot/1.png')
+        }],
+        ['feint', {
+            click: () => reportsFolderDisplay.selectFeint(),
+            html: imgHtml('graphic/dots/grey.png'),
+            tooltip: 'feint'
+        }],
+        ['deadNoble', {
+            click: () => reportsFolderDisplay.selectDeadNoble(),
+            html: imgHtml(imagePaths['priest']),
+            tooltip: 'dead noble'
+        }],
+        ['loyalty', {
+            click: () => reportsFolderDisplay.selectLoyalty(),
+            html: '<span style="display:block; margin-left:auto; margin-right:auto" class="icon ally lead"/>',
+            tooltip: 'loyalty change'
+        }],
+        ['cleared', {
+            click: () => reportsFolderDisplay.selectCleared(),
+            html: 'defenseless'
+        }]
+    ]);
+
+    for (let [descriptor, option] of clickyOptions) {
+        let optionEl = $(`<a href="#">${option.html}</a>`)[0];
+        if (option.tooltip) {
+            optionEl.title = option.tooltip;
+        }
+        optionEl.addEventListener('click', function(e) {
+            e.preventDefault();
+            option.click();
+        });
+
+        let cell = selectorClickyTable.rows[0].insertCell(-1);
+        cell.style.width = '25px';
+        cell.style.textAlign = 'center';        
+        cell.appendChild(optionEl);
     }
-    var cellIndex = 0;
-
-    /*==== option all ====*/
-    selectorClickyTable.rows[0].cells[cellIndex].innerHTML = '<a href="javascript:document.getElementById(\'twcheese_reportsFolderDisplay\').selectAll()"> all </a>';
-    selectorClickyTable.rows[0].cells[cellIndex].style.width = '25px';
-    selectorClickyTable.rows[0].cells[cellIndex].style.textAlign = 'center';
-    cellIndex++;
-
-    /*==== option none ====*/
-    selectorClickyTable.rows[0].cells[cellIndex].innerHTML = '<a href="javascript:document.getElementById(\'twcheese_reportsFolderDisplay\').selectNone()"> none </a>';
-    cellIndex++;
-
-    /*==== option new ====*/
-    selectorClickyTable.rows[0].cells[cellIndex].innerHTML = '<a href="javascript:document.getElementById(\'twcheese_reportsFolderDisplay\').selectNew()"> new </a>';
-    selectorClickyTable.rows[0].cells[cellIndex].style.width = '25px';
-    selectorClickyTable.rows[0].cells[cellIndex].style.textAlign = 'center';
-    cellIndex++;
-
-    /*==== option old ====*/
-    selectorClickyTable.rows[0].cells[cellIndex].innerHTML = '<a href="javascript:document.getElementById(\'twcheese_reportsFolderDisplay\').selectOld()"> old </a>';
-    selectorClickyTable.rows[0].cells[cellIndex].style.width = '25px';
-    selectorClickyTable.rows[0].cells[cellIndex].style.textAlign = 'center';
-    cellIndex++;
-
-    /*==== option green ====*/
-    selectorClickyTable.rows[0].cells[cellIndex].innerHTML = '<a href="javascript:document.getElementById(\'twcheese_reportsFolderDisplay\').selectDotColor(\'green\');"><img style="display:block; margin-left:auto; margin-right:auto" src="graphic/dots/green.png?1"/></a>';
-    selectorClickyTable.rows[0].cells[cellIndex].style.width = '25px';
-    cellIndex++;
-
-    /*==== option yellow ====*/
-    selectorClickyTable.rows[0].cells[cellIndex].innerHTML = '<a href="javascript:document.getElementById(\'twcheese_reportsFolderDisplay\').selectDotColor(\'yellow\');"><img style="display:block; margin-left:auto; margin-right:auto" src="graphic/dots/yellow.png?1"/></a>';
-    selectorClickyTable.rows[0].cells[cellIndex].style.width = '25px';
-    cellIndex++;
-
-    /*==== option red ====*/
-    selectorClickyTable.rows[0].cells[cellIndex].innerHTML = '<a href="javascript:document.getElementById(\'twcheese_reportsFolderDisplay\').selectDotColor(\'red\');"><img style="display:block; margin-left:auto; margin-right:auto" src="graphic/dots/red.png?1"/></a>';
-    selectorClickyTable.rows[0].cells[cellIndex].style.width = '25px';
-    cellIndex++;
-
-    /*==== option blue ====*/
-    selectorClickyTable.rows[0].cells[cellIndex].innerHTML = '<a href="javascript:document.getElementById(\'twcheese_reportsFolderDisplay\').selectDotColor(\'blue\');"><img style="display:block; margin-left:auto; margin-right:auto" src="graphic/dots/blue.png?1"/></a>';
-    selectorClickyTable.rows[0].cells[cellIndex].style.width = '25px';
-    cellIndex++;
-
-    /*==== option forwarded ====*/
-    selectorClickyTable.rows[0].cells[cellIndex].innerHTML = '<a href="javascript:document.getElementById(\'twcheese_reportsFolderDisplay\').selectForwarded();"><img style="display:block; margin-left:auto; margin-right:auto" src="/graphic/forwarded.png?1"/></a>';
-    selectorClickyTable.rows[0].cells[cellIndex].style.width = '25px';
-    cellIndex++;
-
-    /*==== option loot 0 ====*/
-    selectorClickyTable.rows[0].cells[cellIndex].innerHTML = '<a href="javascript:document.getElementById(\'twcheese_reportsFolderDisplay\').selectLoot(0);"><img style="display:block; margin-left:auto; margin-right:auto" src="/graphic/max_loot/0.png?1"/></a>';
-    selectorClickyTable.rows[0].cells[cellIndex].style.width = '25px';
-    cellIndex++;
-
-    /*==== option loot 1 ====*/
-    selectorClickyTable.rows[0].cells[cellIndex].innerHTML = '<a href="javascript:document.getElementById(\'twcheese_reportsFolderDisplay\').selectLoot(1);"><img style="display:block; margin-left:auto; margin-right:auto" src="/graphic/max_loot/1.png?1"/></a>';
-    selectorClickyTable.rows[0].cells[cellIndex].style.width = '25px';
-    cellIndex++;
-
-    /*==== option feint ====*/
-    selectorClickyTable.rows[0].cells[cellIndex].innerHTML = '<a href="javascript:document.getElementById(\'twcheese_reportsFolderDisplay\').selectFeint();" title="feint"><img style="display:block; margin-left:auto; margin-right:auto" src="graphic/dots/grey.png?1"></a>';
-    selectorClickyTable.rows[0].cells[cellIndex].style.width = '25px';
-    cellIndex++;
-
-    /*==== option deadNoble ====*/
-    selectorClickyTable.rows[0].cells[cellIndex].innerHTML = '<a title="dead noble" href="javascript:document.getElementById(\'twcheese_reportsFolderDisplay\').selectDeadNoble();"><img style="display:block; margin-left:auto; margin-right:auto" src="' + imagePaths['priest'] + '"/></a>';
-    selectorClickyTable.rows[0].cells[cellIndex].style.width = '25px';
-    cellIndex++;
-
-    /*==== option loyalty ====*/
-    selectorClickyTable.rows[0].cells[cellIndex].innerHTML = '<a href="javascript:document.getElementById(\'twcheese_reportsFolderDisplay\').selectLoyalty();"><span style="display:block; margin-left:auto; margin-right:auto" class="icon ally lead" title="loyalty change"/></a>';
-    selectorClickyTable.rows[0].cells[cellIndex].style.width = '25px';
-    cellIndex++;
-
-    /*==== option cleared ====*/
-    selectorClickyTable.rows[0].cells[cellIndex].innerHTML = '<a href="javascript:document.getElementById(\'twcheese_reportsFolderDisplay\').selectCleared();"> defenseless </a>';
-    selectorClickyTable.rows[0].cells[cellIndex].style.width = '25px';
-    cellIndex++;
-
-
-
 
     /*==== input table ====*/
     var selectorInputTable = document.createElement('table');

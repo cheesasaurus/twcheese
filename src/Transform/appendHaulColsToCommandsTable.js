@@ -41,19 +41,24 @@ async function appendHaulColsToCommandsTable(progressMonitor) {
             continue;
         }
 
-        let command = scrapeCommand(doc);
-        let commandType = $(firstCell).find('.own_command').data('command-type');
-        if (commandType === 'return') {            
-            returningCommands.push(command);
+        try {
+            let command = scrapeCommand(doc);
+            let commandType = $(firstCell).find('.own_command').data('command-type');
+            if (commandType === 'return') {            
+                returningCommands.push(command);
+            }
+    
+            $(row).append(`
+                <td>${command.haul.timber}</td>
+                <td>${command.haul.clay}</td>
+                <td>${command.haul.iron}</td>
+                <td>${command.haul.sum()}/${command.haulCapacity} (${command.calcHaulPercent()}%)</td>
+            `);
         }
-
-        $(row).append(`
-            <td>${command.haul.timber}</td>
-            <td>${command.haul.clay}</td>
-            <td>${command.haul.iron}</td>
-            <td>${command.haul.sum()}/${command.haulCapacity} (${command.calcHaulPercent()}%)</td>
-        `);
-
+        catch(err) {
+            console.error(err);
+            $(row).append(`<td>?</td><td>?</td><td>?</td><td>?</td>`);
+        }
         progressMonitor.progressMade(1);
     }
 

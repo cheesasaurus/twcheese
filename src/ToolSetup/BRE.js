@@ -102,6 +102,7 @@ if (!twcheese)
 
 /*==== styles ====*/
 
+// jquery-ui
 initCss(`
     .ui-icon-gripsmall-diagonal-se { background-position: -64px -224px; }
 
@@ -219,6 +220,15 @@ initCss(`
         height: 9px;
         right: -5px;
         top: -5px;
+    }
+
+    /* twcheese */
+`);
+
+// twcheese
+initCss(`
+    #twcheese_reportsFolder {
+        margin-bottom: 30px;
     }
 `);
 

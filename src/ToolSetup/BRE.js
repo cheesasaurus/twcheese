@@ -2,6 +2,9 @@
 import { initCss, escapeHtml } from '/twcheese/src/Util/UI.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { scrapeResources } from '/twcheese/src/Scrape/res.js';
+import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.js';
+
+import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/BRE/Default.js';
 
 var twcheese_gameConfig,
     twcheese_BRESettings,
@@ -4482,10 +4485,16 @@ function useTool() {
 }
 
 
+let processFactory = new ProcessFactory({});
+
+function newDebugProcess() {
+    let name = 'Tool: Battle Report Enhancer';
+    return processFactory.create(name, debugCfgDefault, true);
+}
+
+
 window.TwCheese.registerTool({
     id: 'BRE',
     use: useTool,
-    getDebugProcess: function() {
-        return null;
-    }
+    getDebugProcess: newDebugProcess
 });

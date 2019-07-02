@@ -95,9 +95,6 @@ if (!twcheese)
     imagePaths['buildings'][17] = 'https://' + document.domain + '/graphic/buildings/wall.png?1';
 
     imagePaths['priest'] = '/graphic/unit/unit_priest.png?1';
-    imagePaths['timber'] = 'https://' + document.domain + '/graphic/holz.png?1';
-    imagePaths['clay'] = 'https://' + document.domain + '/graphic/lehm.png?1';
-    imagePaths['iron'] = 'https://' + document.domain + '/graphic/eisen.png?1';
     imagePaths['plus'] = 'graphic/plus.png';
     imagePaths['minus'] = 'graphic/minus.png';
     imagePaths['rename'] = 'graphic/rename.png';
@@ -2534,21 +2531,21 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
 
     /*==== timber header ====*/
     reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = '<img style="display:block; margin-left:auto; margin-right:auto" src="' + imagePaths['timber'] + '" />';
+    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = '<img style="display:block; margin-left:auto; margin-right:auto" src="' + ImageSrc.timber + '" />';
     reportsTableHeader.rows[1].cells[cellIndex].style.width = '16px';
     reportsTableHeader.rows[0].cells[cellIndex - 11].style.width = '16px';
     cellIndex++;
 
     /*==== clay header ====*/
     reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = '<img style="display:block; margin-left:auto; margin-right:auto" src="' + imagePaths['clay'] + '" />';
+    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = '<img style="display:block; margin-left:auto; margin-right:auto" src="' + ImageSrc.clay + '" />';
     reportsTableHeader.rows[1].cells[cellIndex].style.width = '16px';
     reportsTableHeader.rows[0].cells[cellIndex - 11].style.width = '16px';
     cellIndex++;
 
     /*==== timber header ====*/
     reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = '<img style="display:block; margin-left:auto; margin-right:auto" src="' + imagePaths['iron'] + '" />';
+    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = '<img style="display:block; margin-left:auto; margin-right:auto" src="' + ImageSrc.iron + '" />';
     reportsTableHeader.rows[1].cells[cellIndex].style.width = '16px';
     reportsTableHeader.rows[0].cells[cellIndex - 11].style.width = '16px';
     cellIndex++;

@@ -4328,12 +4328,6 @@ function twcheese_getBRESettings() {
     }
 
     return {
-        rename1: 'nothing',
-        rename2: 'nothing',
-        rename3: 'nothing',
-        rename4: 'nothing',
-        rename5: 'nothing',
-        rename6: 'nothing',
         autoRename: false,
         period: 8,
         haulBonus: 0,

@@ -1,6 +1,7 @@
 /* global $, game_data */
 import { initCss, escapeHtml } from '/twcheese/src/Util/UI.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
+import { scrapeResources } from '/twcheese/src/Scrape/res.js';
 
 var twcheese_gameConfig,
     twcheese_BRESettings,
@@ -588,59 +589,6 @@ function twcheese_ReportsFolderDisplaySettings() {
 /*==== report scraper functions ====*/
 
 /**
-	 * reads a HTMLElement with the timber count, clay count, and iron count, and converts it to an array of Numbers
-	 * @param	resElement:HTMLElement	the html of the resources
-	 * @return	resources:Array(timber:Number,clay:Number,iron:Number)
-	 */
-twcheese.resElementToNumbers = function (resElement) {
-    var resIconNames = new Array('icon header wood', 'icon header stone', 'icon header iron');
-    var resources = new Array(0, 0, 0);
-
-    /*==== remove the grey periods ====*/
-    $(resElement).children().children('.grey').remove();
-
-    /*==== remove haul performance ====*/
-    if (resElement.innerHTML.search('\\|') != -1)
-        resElement.innerHTML = resElement.innerHTML.substring(0, resElement.innerHTML.indexOf('|') - 1);
-
-    /*==== set resources ====*/
-    var icons = resElement.getElementsByTagName('span');
-
-    if (navigator.appName == 'Microsoft Internet Explorer') /* internet explorer */ {
-        for (let i = 0; i < icons.length; i++) {
-            /*==== if timber icon is found, set timber ====*/
-            if (icons[i].className == resIconNames[0])
-                resources[0] = Number(icons[i].nextSibling.data);
-
-            /*==== if clay icon is found, set clay ====*/
-            if (icons[i].className == resIconNames[1])
-                resources[1] = Number(icons[i].nextSibling.data);
-
-            /*==== if iron icon is found, set iron ====*/
-            if (icons[i].className == resIconNames[2])
-                resources[2] = Number(icons[i].nextSibling.data);
-        }
-    }
-    else /* if(navigator.appName == 'Opera' || navigator.appName == 'Netscape') //opera, netscape */ {
-        for (let i = 0; i < icons.length; i++) {
-            /*==== if timber icon is found, set timber ====*/
-            if (icons[i].className == resIconNames[0]) {
-                resources[0] = Number(icons[i].nextSibling.wholeText);
-            }
-
-            /*==== if clay icon is found, set clay ====*/
-            if (icons[i].className == resIconNames[1])
-                resources[1] = Number(icons[i].nextSibling.wholeText);
-
-            /*==== if iron icon is found, set iron ====*/
-            if (icons[i].className == resIconNames[2])
-                resources[2] = Number(icons[i].nextSibling.wholeText);
-        }
-    }
-    return resources;
-};
-
-/**
  * @param	playerCell:HTMLTableCellElement - a cell containing a link to a player profile
  * @return	player:Array(id,name)
  */
@@ -939,7 +887,7 @@ function twcheese_BattleReportScraper(gameDocument) {
                 var thElements = this.resultsTable.getElementsByTagName('th');
                 for (var i = 0; i < thElements.length; i++) {
                     if (thElements[i].innerHTML == twcheese.language['report']['haul']) {
-                        return twcheese.resElementToNumbers(thElements[i].parentNode.cells[1]);
+                        return scrapeResources(thElements[i].parentNode.cells[1]).toIntArray();
                     }
                 }
             }
@@ -1021,7 +969,7 @@ function twcheese_BattleReportScraper(gameDocument) {
         this.getResources = function () {
             if ($('#attack_spy_resources').length > 0)
 
-                return twcheese.resElementToNumbers($('#attack_spy_resources').find('td')[0]);
+                return scrapeResources($('#attack_spy_resources').find('td')[0]).toIntArray();
             else
                 return false;
         };

@@ -28,6 +28,10 @@ class Resources {
             && this.iron.valueOf() === other.iron.valueOf();
     }
 
+    toIntArray() {
+        return [this.timber.amount, this.clay.amount, this.iron.amount];
+    }
+
 }
 
 export { Resources };

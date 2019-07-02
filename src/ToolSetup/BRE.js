@@ -1254,18 +1254,35 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig) {
             raiderTable.rows[1].cells[0].innerHTML = '';
 
             /*==== raid-category selection ====*/
-            if (report.espionageLevel >= 2)
-                raiderTable.rows[1].cells[0].innerHTML += '<select id="twcheese_raider_selection" onchange="twcheese_changeRaidMode(gameDoc.getElementById(\'twcheese_raider_selection\').value)"><option value="scouted">raid scouted resources</option><option value="predicted">raid predicted resources</option><option value="periodic">periodically raid resources</option></select>';
-            else if (report.espionageLevel >= 1)
-                raiderTable.rows[1].cells[0].innerHTML += '<select id="twcheese_raider_selection" onchange="twcheese_changeRaidMode(gameDoc.getElementById(\'twcheese_raider_selection\').value)"><option value="scouted">raid scouted resources</option></select>';
-            else
-                raiderTable.rows[1].cells[0].innerHTML += '<select id="twcheese_raider_selection" onchange="twcheese_changeRaidMode(gameDoc.getElementById(\'twcheese_raider_selection\').value)"></select>';
+
+            let raidModeOptions = [];
+            if (report.espionageLevel >= 1) { // resources were scouted
+                raidModeOptions.push(`<option value="scouted">raid scouted resources</option>`);
+            }
+            if (report.espionageLevel >= 2) { // buildings were scouted
+                raidModeOptions.push(`<option value="predicted">raid predicted resources</option>`);
+                raidModeOptions.push(`<option value="periodic">periodically raid resources</option>`);
+            }
+            let raidModeSelect = document.createElement('select');
+            raidModeSelect.id = 'twcheese_raider_selection';
+            raidModeSelect.innerHTML = raidModeOptions.join('');
+            raidModeSelect.addEventListener('change', function() {
+                twcheese_changeRaidMode(this.value);
+            });
+            raiderTable.rows[1].cells[0].appendChild(raidModeSelect);
 
             /*==== rally point link ====*/
-            raiderTable.rows[1].cells[0].innerHTML += ' <a href="game.php?village=' + game_data.village.id + twcheese.babyUriComponent + '&screen=place&target=' + report.defenderVillage[2] + '">&raquo; Send troops</a>';
+            let rallyPointLink = document.createElement('a');
+            rallyPointLink.href = 'game.php?village=' + game_data.village.id + twcheese.babyUriComponent + '&screen=place&target=' + report.defenderVillage[2];
+            rallyPointLink.innerHTML = '&raquo; Send troops';
+            raiderTable.rows[1].cells[0].appendChild(rallyPointLink);
 
             /*==== haul Bonus ====*/
-            raiderTable.rows[1].cells[0].innerHTML += '<br/>Haul Bonus: <input id="twcheese_raider_haulBonus" type="text" size=5 value=0 onchange="twcheese_changeRaidMode(document.getElementById(\'twcheese_raider_selection\').value)"></input>%<br/>';
+            let $haulBonus = $(`<div>Haul Bonus: <input id="twcheese_raider_haulBonus" type="text" size=5 value=0></input>%</div>`.trim());
+            $haulBonus.find('#twcheese_raider_haulBonus').on('input', function() {
+                twcheese_changeRaidMode(document.getElementById('twcheese_raider_selection').value);
+            });
+            raiderTable.rows[1].cells[0].appendChild($haulBonus[0]);
 
             /*==== Periodic Raider section ====*/
             var periodicDiv = document.createElement('div');
@@ -1277,10 +1294,10 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig) {
             periodInput.size = 4;
             periodInput.maxLength = 4;
             periodInput.value = 8;
-            periodInput.onchange = function () {
+            periodInput.addEventListener('input', function() {
                 twcheese_currentReport.raidPeriodic = twcheese_calculateRaidPeriodic(twcheese_currentReport.buildingLevels, Number(this.value), twcheese_gameConfig.speed, Number(document.getElementById('twcheese_raider_haulBonus')));
                 twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), twcheese_currentReport.raidPeriodic, twcheese_currentReport);
-            };
+            });
             periodicDiv.appendChild(periodInput);
 
             raiderTable.rows[1].cells[0].appendChild(periodicDiv);

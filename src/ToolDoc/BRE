@@ -1,27 +1,6 @@
-twcheese_BRE.js
 Battle Report Enhancer
-version 2.2_21
-last updated:	May 10, 2015
-game compatability: version 8.29
 market: en, uk, us, cz, se, gr, hr
 author Nick Toby (cheesasaurus@gmail.com)
- 
- ==== changelog ====
-added walking times to raider tool (2.2.06)
-fixed scout filler problem with raider tool - it was reseting selection to 'scouted' (2.2.07)
-added swedish language (2.2_08)
-added 'new' and 'old' report selectors to folder view
-added greek language 2.2_10
-added bosnian language 2.2_11
-updated folder view to work with 8.19 format 2.2_12
-made siege unit pictures fill in weapons to demolish building. 2.2_13
-updated to work with new language for report "sent" times (changed to "Battle time") - should now pick up the time without searching for text. 2.2_15
-updated to work with milliseconds on report sent time 2.2_16
-added display for the attacker's survivors 2.2_17
-added norwegian language 2.2_18
-updated for tw version 8.25
-bugfix for scraping 
-bugfix for scraping resources 2.2_21
  
 ==== when viewing a report ====
 use script on: game.php?screen=report&view=x (a report)

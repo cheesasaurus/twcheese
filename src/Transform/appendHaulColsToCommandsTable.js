@@ -1,6 +1,7 @@
 import { requestDocument } from '/twcheese/src/Util/Network.js';
 import { scrapeCommand, scrapeCommandUrlFromRow } from '/twcheese/src/Scrape/command.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
+import { scrapeErrorMessage } from '/twcheese/src/Scrape/error.js';
 
 /**
  * @param {ProgressMonitor} progressMonitor
@@ -32,7 +33,15 @@ async function appendHaulColsToCommandsTable(progressMonitor) {
         }
 
         let commandUrl = scrapeCommandUrlFromRow(row);
-        let command = scrapeCommand(await requestDocument(commandUrl));
+        let doc = await requestDocument(commandUrl);
+        let errorMessage = scrapeErrorMessage(doc);
+        if (errorMessage) {
+            $(row).append(`<td colspan="4" style="background-color:#FFCCAA; font-size:13px; font-weight:bold; color:#B40000;">${errorMessage}</td>`);
+            progressMonitor.progressMade(1);
+            continue;
+        }
+
+        let command = scrapeCommand(doc);
         let commandType = $(firstCell).find('.own_command').data('command-type');
         if (commandType === 'return') {            
             returningCommands.push(command);

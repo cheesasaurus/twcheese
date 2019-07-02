@@ -3396,94 +3396,6 @@ twcheese.createFooterButton = function (text, address) {
     return document.body.appendChild(twcheese_menu);
 };
 
-/**
- *	converts twcheese_espionage nodes within the tribal forum to tables
- */
-twcheese.parseForumEspionage = function () {
-    // find posts with content to be parsed
-
-    this.parseReportText = function (reportText) {
-        var report = {};
-        var data = reportText.split(';');
-        report.coordinates = data[0].split('|');
-        report.player = data[1];
-        report.troops = data[2].split(',');
-        report.buildings = data[3].split(',');
-        report.time = data[4].split(',');
-        return report;
-    };
-
-    this.createTableHTML = function (reportList) {
-        var newContent = new String();
-        newContent = '<table style="max-width:2000px;"><tbody>';
-
-        //==== header ====
-        newContent += '<tr><th>village</th><th>player</th>';
-
-        for (var i = 0; i < 12; i++) //units
-            newContent += '<th><image src="' + imagePaths['units'][i] + '"/></th>';
-
-        /*for(var i=0; i<18; i++) //buildings
-            newContent+= '<th><image src="'+imagePaths['buildings'][i]+'"/></th>';*/
-
-        newContent += '<th><image title="regular church" src="' + imagePaths['buildings'][4] + '"/></th>'; //church
-        newContent += '<th><image title="first church" src="' + imagePaths['buildings'][5] + '"/></th>'; //first church
-        newContent += '<th><image src="' + imagePaths['buildings'][14] + '"/></th>'; //farm
-        newContent += '<th><image src="' + imagePaths['buildings'][17] + '"/></th>'; //wall
-
-        newContent += '<th width="150px">time</th></tr>';
-
-        //==== content ====
-        for (let i = 0; i < reportList.length; i++) {
-            newContent += '<tr>';
-            newContent += '<td style="white-space:nowrap;"><a href=/game.php?village=' + game_data.village.id + '&screen=map#' + reportList[i].coordinates[0] + ';' + reportList[i].coordinates[1] + '">';
-            newContent += reportList[i].coordinates[0] + '|' + reportList[i].coordinates[1] + '</a></td>';
-            newContent += '<td>' + reportList[i].player + '</td>';
-            for (var j = 0; j < 12; j++) //units
-                newContent += '<td>' + reportList[i].troops[j] + '</td>';
-            newContent += '<td>' + reportList[i].buildings[4] + '</td>';
-            newContent += '<td>' + reportList[i].buildings[5] + '</td>';
-            newContent += '<td>' + reportList[i].buildings[14] + '</td>';
-            newContent += '<td>' + reportList[i].buildings[17] + '</td>';
-            newContent += '<td style="white-space:nowrap;">' + twcheese_dateToString(new Date(reportList[i].time)) + '</td>';
-            newContent += '</tr>';
-        }
-
-        newContent += '</tbody></table>';
-        return (newContent);
-    };
-
-    var postsWithContent = new Array();
-    $('#forum_box .text:contains("<twcheese_espionage>")').each(
-        function (index) {
-            postsWithContent[index] = $(this);
-        }
-    );
-    //alert(postsWithContent.size()); //todo - give user message when no content is found
-
-    for (var i = 0; i < postsWithContent.length; i++) {
-        var newPost = postsWithContent[i].html();
-
-        var pattern = /&lt;twcheese_espionage&gt;(.*?)&lt;\/twcheese_espionage&gt;/gi;
-        var contentItems = postsWithContent[i].html().match(pattern);
-        for (var j = 0; j < contentItems.length; j++) {
-            var content = contentItems[j].toLowerCase().replace('&lt;twcheese_espionage&gt;', '').replace('&lt;/twcheese_espionage&gt;', '');
-            var reportList = new Array();
-            var reports = content.split('.');
-            for (var k = 0; k < reports.length; k++) {
-                reportList[k] = this.parseReportText(reports[k]);
-            }
-            var newContent = this.createTableHTML(reportList);
-            newPost = newPost.replace(pattern, newContent);
-            //alert(newPost);			
-        }
-
-        //==== replace former content ====
-        try {
-            postsWithContent[i].html(newPost);
-        } catch (e) { console.error(e) }
-    }
-};
 
 /*==== calculator functions ====*/
 
@@ -4454,11 +4366,8 @@ function useTool() {
             twcheese_reportsFolderEnhanced = true;
         }
     }
-    else if (game_data.screen == 'forum') {
-        //twcheese.parseForumEspionage(); //under development
-    }
     else {
-        alert('try using this on:\n1) a battle report\n2) a reports folder, with the "Attacks" filter on\n3) a reports folder, with the "Defenses" filter on'); //\n4) a topic in your tribal forum');
+        alert('try using this on:\n1) a battle report\n2) a reports folder, with the "Attacks" filter on\n3) a reports folder, with the "Defenses" filter on');
     }
 }
 

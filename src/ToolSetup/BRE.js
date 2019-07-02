@@ -1412,18 +1412,20 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig) {
         }
 
         /*==== renamer div ====*/
-        var renamerDiv = document.createElement('div');
-        renamerDiv.id = 'twcheese_renamer';
-        renamerDiv.align = 'center';
+        // TODO: extract event handling
+        let $renamer = $(`
+            <div id="twcheese_renamer" align="center">
+                <span align="center"><h2>Renamer</h2></span>
+                note <input id="twcheese_note" onkeyup="document.getElementById('twcheese_renamer').previewName();" type="text"/>
+                <button onclick="pageMod.renameReport(twcheese_nameReport(twcheese_currentReport,document.getElementById('twcheese_note').value))">rename</button>
+                <input id="twcheese_auto_rename" type="checkbox" onclick="twcheese_BRESettings.autoRename = gameDoc.getElementById('twcheese_auto_rename').checked; twcheese_setBRESettings(twcheese_BRESettings)" />auto rename
+                <img id="twcheese_autoRenameInfo" src="/graphic/questionmark.png?1" width="13" height="13" title="automatically rename reports when the BRE is used" />
+                <br/> characters available: <span id="twcheese_availableCharacters">${Number(255 - twcheese_nameReport(report, '').length)}</span>
+                <br/><b>Preview: </b><span id="twcheese_rename_preview">'${twcheese_nameReport(report, '')}'</span>
+            </div>
+        `.trim());
 
-        renamerDiv.innerHTML = '<span align="center"><h2>Renamer</h2></span>';
-        renamerDiv.innerHTML += 'note <input id="twcheese_note" onkeyup="document.getElementById(\'twcheese_renamer\').previewName();" type="text"/> ';
-        renamerDiv.innerHTML += '<button onclick="pageMod.renameReport(twcheese_nameReport(twcheese_currentReport,document.getElementById(\'twcheese_note\').value))">rename</button>';
-        renamerDiv.innerHTML += '<input id="twcheese_auto_rename" type="checkbox" onclick="twcheese_BRESettings.autoRename = gameDoc.getElementById(\'twcheese_auto_rename\').checked; twcheese_setBRESettings(twcheese_BRESettings)" />auto rename';
-        renamerDiv.innerHTML += ' <img id="twcheese_autoRenameInfo" src="/graphic/questionmark.png?1" width="13" height="13" title="automatically rename reports when the BRE is used" />';
-        renamerDiv.innerHTML += '<br/> characters available: <span id="twcheese_availableCharacters">' + Number(255 - twcheese_nameReport(report, '').length) + '</span>';
-        renamerDiv.innerHTML += '<br/><b>Preview: </b><span id="twcheese_rename_preview">' + twcheese_nameReport(report, '') + '</span>';
-        toolTable.rows[1].cells[0].appendChild(renamerDiv);
+        toolTable.rows[1].cells[0].appendChild($renamer[0]);
 
         document.getElementById('twcheese_renamer').previewName = function () {
             var newName = twcheese_nameReport(twcheese_currentReport, document.getElementById('twcheese_note').value);

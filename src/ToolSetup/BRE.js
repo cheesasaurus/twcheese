@@ -2090,8 +2090,9 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
         report.isForwarded = !!reportIcons.find(img => img.src.includes('graphic/forwarded.png'));
 
         /*==== subject html ====*/
-        var subjectNode = reportsTable.rows[i].cells[1];
-        report.subjectHTML = subjectNode.innerHTML;
+        var $subjectNode = $(reportsTable.rows[i].cells[1]).clone();
+        $subjectNode.find(`img[src*='graphic/max_loot/'], img[src*='graphic/dots/']`).remove();
+        report.subjectHTML = $subjectNode.html();
 
         /*==== timeReceived ====*/
         report.timeReceived = reportsTable.rows[i].cells[2].innerHTML;

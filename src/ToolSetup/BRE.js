@@ -2,6 +2,7 @@
 import { initCss, escapeHtml } from '/twcheese/src/Util/UI.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { scrapeResources } from '/twcheese/src/Scrape/res.js';
+import { userConfig } from '/twcheese/src/Util/UserConfig.js';
 import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.js';
 
 import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/BRE/Default.js';
@@ -1122,30 +1123,6 @@ function twcheese_scrapeBattleReport(gameDoc) {
 
 /*==== page modifier functions ====*/
 
-/**
- *	@param widgetId:String
- *	@param icon:HTMLImageElement
- */
-twcheese.toggleWidget = function (widgetId, icon) {
-    var content = $('#' + widgetId).children('div:first');
-
-    var toggleState;
-    if (icon.src.search('plus') != -1) {
-        icon.src = imagePaths['minus'];
-        content.show(200);
-        toggleState = 1;
-    }
-    else {
-        icon.src = imagePaths['plus'];
-        content.hide(200);
-        toggleState = 0;
-    }
-
-    /*==== save settings ====*/
-    eval('if(!twcheese.userConfig.' + game_data.screen + ')twcheese.userConfig.' + game_data.screen + '={}');
-    eval('twcheese.userConfig.' + game_data.screen + '.' + widgetId.substring(9) + '=' + toggleState);
-    localStorage.setItem('twcheese.userConfig', JSON.stringify(twcheese.userConfig));
-};
 
 /**
  *	modifies report page
@@ -1155,7 +1132,32 @@ twcheese.toggleWidget = function (widgetId, icon) {
 function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig) {
     var contentValueElement = gameDoc.getElementById('content_value');
 
+
     this.includeReportTools = function () {
+
+        /**
+         *	@param widgetId:String
+         *	@param icon:HTMLImageElement
+         */
+        function toggleWidget(widgetId, icon) {
+            var content = $('#' + widgetId).children('div:first');
+
+            var toggleState;
+            if (icon.src.search('plus') != -1) {
+                icon.src = imagePaths['minus'];
+                content.show(200);
+                toggleState = 1;
+            }
+            else {
+                icon.src = imagePaths['plus'];
+                content.hide(200);
+                toggleState = 0;
+            }
+
+            userConfig.set('ReportToolsWidget.collapse', !toggleState);
+        };
+        this.toggleWidget = toggleWidget;
+
         /*==== tools widget containers ====*/
         var toolContainer = document.createElement('div');
         toolContainer.className = 'vis widget';
@@ -1168,7 +1170,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig) {
         toggleButton.style.cssFloat = 'right';
         toggleButton.style.cursor = 'pointer';
         toggleButton.onclick = function () {
-            twcheese.toggleWidget('twcheese_show_report_tools', this)
+            toggleWidget('twcheese_show_report_tools', this)
         };
         titleBar.appendChild(toggleButton);
         toolContainer.appendChild(titleBar);
@@ -4233,18 +4235,6 @@ function twcheese_getServerTime() {
 
 /*==== storage functions ====*/
 
-/**
- *  loads the user's configuration for twcheese scripts into twcheese.userConfig
- *	@return	config:Object - the contents of twcheese.userConfig
- */
-twcheese.loadConfig = function () {
-    if (localStorage.getItem('twcheese.userConfig'))
-        twcheese.userConfig = JSON.parse(localStorage.getItem('twcheese.userConfig'));
-    else
-        twcheese.userConfig = {};
-    return twcheese.userConfig;
-}
-
 function twcheese_saveReportsFolderDisplaySettings(settings) {
 
     //localStorage.setItem('twcheese_reportsFolderDisplaySettings',escape(JSON.stringify(settings))); //old
@@ -4352,7 +4342,6 @@ function initBRE() {
 
     /*==== get user settings ====*/
     twcheese_BRESettings = twcheese_getBRESettings();
-    twcheese.loadConfig();
 
     /*==== check for sitter mode ====*/
     twcheese.baby = false;
@@ -4417,10 +4406,10 @@ function enhanceReport() {
 
     gameDoc.getElementById('twcheese_auto_rename').checked = twcheese_BRESettings.autoRename;
 
-    /* TODO: fix userConfig conflict
-    if (twcheese.userConfig.report.show_report_tools)
+    if (!userConfig.get('ReportToolsWidget.collapse', false)) {
         $('#twcheese_show_report_tools').find('img:first').click(); //show report tools widget
-    */    
+    }
+        
 }
 
 

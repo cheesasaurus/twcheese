@@ -1135,28 +1135,17 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig) {
 
     this.includeReportTools = function () {
 
-        /**
-         *	@param widgetId:String
-         *	@param icon:HTMLImageElement
-         */
-        function toggleWidget(widgetId, icon) {
-            var content = $('#' + widgetId).children('div:first');
-
-            var toggleState;
-            if (icon.src.search('plus') != -1) {
-                icon.src = imagePaths['minus'];
-                content.show(200);
-                toggleState = 1;
-            }
-            else {
-                icon.src = imagePaths['plus'];
-                content.hide(200);
-                toggleState = 0;
-            }
-
-            userConfig.set('ReportToolsWidget.collapse', !toggleState);
+        function toggleCollapse() {
+            $widgetContent.toggle({
+                duration: 200,
+                start: function() {
+                    let willCollapse = $toggleIcon.attr('src').includes(ImageSrc.minus);
+                    $toggleIcon.attr('src', willCollapse ? ImageSrc.plus : ImageSrc.minus);
+                    userConfig.set('ReportToolsWidget.collapse', willCollapse);
+                }
+            });
         };
-        this.toggleWidget = toggleWidget;
+        this.toggleReportTools = toggleCollapse;
 
         /*==== tools widget containers ====*/
         var toolContainer = document.createElement('div');
@@ -1166,18 +1155,18 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig) {
         var titleBar = document.createElement('h4');
         titleBar.innerHTML = 'Report Tools';
         var toggleButton = document.createElement('img');
-        toggleButton.src = 'graphic/plus.png';
+        toggleButton.src = ImageSrc.plus;
         toggleButton.style.cssFloat = 'right';
         toggleButton.style.cursor = 'pointer';
-        toggleButton.onclick = function () {
-            toggleWidget('twcheese_show_report_tools', this)
-        };
+        toggleButton.onclick = toggleCollapse;
+        var $toggleIcon = $(toggleButton);
         titleBar.appendChild(toggleButton);
         toolContainer.appendChild(titleBar);
 
         var widgetContent = document.createElement('div');
         widgetContent.className = 'widget_content';
         widgetContent.style.display = 'none';
+        var $widgetContent = $(widgetContent);
 
         var toolTable = document.createElement('table');
         toolTable.id = 'twcheese_BRE_tools';
@@ -4407,7 +4396,7 @@ function enhanceReport() {
     gameDoc.getElementById('twcheese_auto_rename').checked = twcheese_BRESettings.autoRename;
 
     if (!userConfig.get('ReportToolsWidget.collapse', false)) {
-        $('#twcheese_show_report_tools').find('img:first').click(); //show report tools widget
+        pageMod.toggleReportTools();
     }
         
 }

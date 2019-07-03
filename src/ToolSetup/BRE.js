@@ -8,10 +8,7 @@ import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/BRE
 
 var twcheese_gameConfig,
     twcheese_BRESettings,
-    twcheese_BREinitialized,
-    twcheese_reportEnhanced,
     twcheese_reportsFolderDisplaySettings,
-    twcheese_reportsFolderEnhanced,
     twcheese_currentReport,
     gameDoc,
     pageMod
@@ -4304,107 +4301,30 @@ function twcheese_setBRESettings(breSettings) {
     localStorage.setItem('twcheese_bresettings', JSON.stringify(breSettings));
 }
 
-/*==== main ====*/ 
+/*==== main ====*/
+
+let initialized = false;
+let reportEnhanced = false;
+let reportsFolderEnhanced = false;
 
 function useTool() {
-    if (!twcheese_BREinitialized) {
-        gameDoc = document;
-
-        /*==== contact information ====*/
-        var narcismDiv = document.createElement('div');
-        document.getElementById('content_value').insertBefore(narcismDiv, document.getElementById('content_value').firstChild);
-        narcismDiv.innerHTML = 'BRE created by <a href="https://forum.tribalwars.net/index.php?members/28484">cheesasaurus</a>';
-        narcismDiv.style.fontSize = '10px';
-
-        /*==== help ====*/
-        twcheese.createFooterButton(twcheese.language['twcheese']['Help'], 'https://forum.tribalwars.net/index.php?threads/256225/');
-
-        /*==== get server settings ====*/
-        twcheese_gameConfig = twcheese_getServerSettings();
-
-        /*==== get user settings ====*/
-        twcheese_BRESettings = twcheese_getBRESettings();
-        twcheese.loadConfig();
-
-        /*==== check for sitter mode ====*/
-        twcheese.baby = false;
-        twcheese.babyUriComponent = '';
-
-        if (document.URL.search('&t=') != -1) {
-            twcheese.baby = document.URL.substring(document.URL.indexOf('&t=') + 3);
-        }
-        else if (document.URL.search('\\?t=') != -1) {
-            twcheese.baby = document.URL.substring(document.URL.indexOf('?t=') + 3);
-        }
-        if (twcheese.baby) {
-            if (twcheese.baby.search('&') != -1)
-                twcheese.baby = twcheese.baby.substring(0, twcheese.baby.indexOf('&'));
-            twcheese.babyUriComponent = '&t=' + twcheese.baby;
-        }
-
-        twcheese_BREinitialized = true;
+    if (!initialized) {
+        initBRE();
+        initialized = true;
     }
 
-    /*==== do the dew ====*/
-    if (game_data.screen == 'report' && gameDoc.URL.search('&view=') != -1) /* viewing single report	*/ {
-        if (!twcheese_reportEnhanced) {
-            /*==== calculate additional information ===*/
-            twcheese_currentReport = new twcheese_scrapeBattleReport(gameDoc);
-            if (twcheese_currentReport.defenderQuantity)
-                twcheese_currentReport.attacker_survivors = twcheese_calculateSurvivors(twcheese_currentReport.attackerQuantity, twcheese_currentReport.attackerLosses);
-            if (twcheese_currentReport.defenderQuantity)
-                twcheese_currentReport.survivors = twcheese_calculateSurvivors(twcheese_currentReport.defenderQuantity, twcheese_currentReport.defenderLosses);
-            if (twcheese_currentReport.buildingLevels)
-                twcheese_currentReport.populationSummary = twcheese_calculatePopulation(twcheese_currentReport.buildingLevels, twcheese_currentReport.defenderQuantity, twcheese_currentReport.unitsOutside);
-            twcheese_currentReport.opponentsDefeatedSummary = twcheese_calculateOd(twcheese_currentReport.attackerLosses, twcheese_currentReport.defenderLosses);
-            if (twcheese_currentReport.loyalty)
-                twcheese_currentReport.loyaltyExtra = twcheese_calculateLoyalty(twcheese_gameConfig.speed, twcheese_gameConfig.unit_speed, twcheese_currentReport.loyalty[1], twcheese_currentReport.sent, twcheese_getServerTime(), game_data.village.coord.split('|'), twcheese_currentReport.defenderVillage);
-            twcheese_currentReport.timingInfo = twcheese_calculateTimingInfo(twcheese_gameConfig.speed, twcheese_gameConfig.unit_speed, twcheese_currentReport.sent, twcheese_currentReport.attackerQuantity, twcheese_currentReport.attackerVillage, twcheese_currentReport.defenderVillage);
-            if (twcheese_currentReport.buildingLevels)
-                twcheese_currentReport.demolition = twcheese_calculateDemolition(twcheese_currentReport.buildingLevels);
-            if (twcheese_currentReport.espionageLevel >= 1)
-                twcheese_currentReport.raidScouted = twcheese_calculateRaidScouted(twcheese_currentReport.resources);
-            if (twcheese_currentReport.espionageLevel >= 2) {
-                twcheese_currentReport.raidPredicted = twcheese_calculateRaidPredicted(twcheese_currentReport.resources, twcheese_currentReport.buildingLevels, game_data.village.coord.split('|'), twcheese_currentReport.defenderVillage, twcheese_currentReport.sent, twcheese_getServerTime(), twcheese_gameConfig.speed, twcheese_gameConfig.unit_speed);
-                twcheese_currentReport.raidPeriodic = twcheese_calculateRaidPeriodic(twcheese_currentReport.buildingLevels, 8, twcheese_gameConfig.speed);
-            }
-
-            /*==== add stuff to the page ====*/
-            pageMod = new twcheese_BattleReportEnhancer(gameDoc, twcheese_currentReport, twcheese_gameConfig);
-            pageMod.includeExtraInformation();
-            pageMod.includeReportTools();
-            /*==== auto rename ====*/
-            if (twcheese_BRESettings.autoRename)
-                pageMod.renameReport(twcheese_nameReport(twcheese_currentReport, ''));
-
-            /*==== set to user defaults ====*/
-            if (twcheese_currentReport.espionageLevel >= 1) {
-                gameDoc.getElementById('twcheese_period').value = twcheese_BRESettings.period;
-                document.getElementById('twcheese_raider_haulBonus').value = twcheese_BRESettings.haulBonus;
-
-                if (game_data.market != 'uk') {
-                    if (localStorage.getItem('twcheese_report_raiderScouts'))
-                        document.getElementById('twcheese_raider_scouts').value = localStorage.getItem('twcheese_report_raiderScouts');
-                }
-
-                twcheese_changeRaidMode(twcheese_BRESettings.raid);
-            }
-
-            gameDoc.getElementById('twcheese_auto_rename').checked = twcheese_BRESettings.autoRename;
-
-            if (twcheese.userConfig.report.show_report_tools)
-                $('#twcheese_show_report_tools').find('img:first').click(); //show report tools widget
-
-            twcheese_reportEnhanced = true;
+    if (game_data.screen == 'report' && gameDoc.URL.includes('&view=')) {
+        // user is viewing single report
+        if (!reportEnhanced) {
+            enhanceReport();
+            reportEnhanced = true;
         }
     }
-    else if (game_data.screen == 'report' && (game_data.mode == 'attack' || game_data.mode == 'defense')) /* viewing reports folder with 'Attacks' or "Defenses" filter on	*/ {
-        if (!twcheese_reportsFolderEnhanced) {
-            twcheese_reportsFolderDisplaySettings = twcheese_loadReportsFolderDisplaySettings();
-            twcheese_saveReportsFolderDisplaySettings(twcheese_reportsFolderDisplaySettings);
-            pageMod = new twcheese_BattleReportsFolderEnhancer(gameDoc);
-            pageMod.applySettings(twcheese_reportsFolderDisplaySettings);
-            twcheese_reportsFolderEnhanced = true;
+    else if (game_data.screen == 'report' && (game_data.mode == 'attack' || game_data.mode == 'defense')) {
+        // user is viewing reports folder with 'Attacks' or "Defenses" filter on
+        if (!reportsFolderEnhanced) {
+            enhanceReportsFolder();
+            reportsFolderEnhanced = true;
         }
     }
     else {
@@ -4412,6 +4332,103 @@ function useTool() {
     }
 }
 
+
+function initBRE() {
+    gameDoc = document;
+
+    /*==== contact information ====*/
+    var narcismDiv = document.createElement('div');
+    document.getElementById('content_value').insertBefore(narcismDiv, document.getElementById('content_value').firstChild);
+    narcismDiv.innerHTML = 'BRE created by <a href="https://forum.tribalwars.net/index.php?members/28484">cheesasaurus</a>';
+    narcismDiv.style.fontSize = '10px';
+
+    /*==== help ====*/
+    twcheese.createFooterButton(twcheese.language['twcheese']['Help'], 'https://forum.tribalwars.net/index.php?threads/256225/');
+
+    /*==== get server settings ====*/
+    twcheese_gameConfig = twcheese_getServerSettings();
+
+    /*==== get user settings ====*/
+    twcheese_BRESettings = twcheese_getBRESettings();
+    twcheese.loadConfig();
+
+    /*==== check for sitter mode ====*/
+    twcheese.baby = false;
+    twcheese.babyUriComponent = '';
+
+    if (document.URL.search('&t=') != -1) {
+        twcheese.baby = document.URL.substring(document.URL.indexOf('&t=') + 3);
+    }
+    else if (document.URL.search('\\?t=') != -1) {
+        twcheese.baby = document.URL.substring(document.URL.indexOf('?t=') + 3);
+    }
+    if (twcheese.baby) {
+        if (twcheese.baby.search('&') != -1)
+            twcheese.baby = twcheese.baby.substring(0, twcheese.baby.indexOf('&'));
+        twcheese.babyUriComponent = '&t=' + twcheese.baby;
+    }
+}
+
+
+function enhanceReport() {
+    /*==== calculate additional information ===*/
+    twcheese_currentReport = new twcheese_scrapeBattleReport(gameDoc);
+    if (twcheese_currentReport.defenderQuantity)
+        twcheese_currentReport.attacker_survivors = twcheese_calculateSurvivors(twcheese_currentReport.attackerQuantity, twcheese_currentReport.attackerLosses);
+    if (twcheese_currentReport.defenderQuantity)
+        twcheese_currentReport.survivors = twcheese_calculateSurvivors(twcheese_currentReport.defenderQuantity, twcheese_currentReport.defenderLosses);
+    if (twcheese_currentReport.buildingLevels)
+        twcheese_currentReport.populationSummary = twcheese_calculatePopulation(twcheese_currentReport.buildingLevels, twcheese_currentReport.defenderQuantity, twcheese_currentReport.unitsOutside);
+    twcheese_currentReport.opponentsDefeatedSummary = twcheese_calculateOd(twcheese_currentReport.attackerLosses, twcheese_currentReport.defenderLosses);
+    if (twcheese_currentReport.loyalty)
+        twcheese_currentReport.loyaltyExtra = twcheese_calculateLoyalty(twcheese_gameConfig.speed, twcheese_gameConfig.unit_speed, twcheese_currentReport.loyalty[1], twcheese_currentReport.sent, twcheese_getServerTime(), game_data.village.coord.split('|'), twcheese_currentReport.defenderVillage);
+    twcheese_currentReport.timingInfo = twcheese_calculateTimingInfo(twcheese_gameConfig.speed, twcheese_gameConfig.unit_speed, twcheese_currentReport.sent, twcheese_currentReport.attackerQuantity, twcheese_currentReport.attackerVillage, twcheese_currentReport.defenderVillage);
+    if (twcheese_currentReport.buildingLevels)
+        twcheese_currentReport.demolition = twcheese_calculateDemolition(twcheese_currentReport.buildingLevels);
+    if (twcheese_currentReport.espionageLevel >= 1)
+        twcheese_currentReport.raidScouted = twcheese_calculateRaidScouted(twcheese_currentReport.resources);
+    if (twcheese_currentReport.espionageLevel >= 2) {
+        twcheese_currentReport.raidPredicted = twcheese_calculateRaidPredicted(twcheese_currentReport.resources, twcheese_currentReport.buildingLevels, game_data.village.coord.split('|'), twcheese_currentReport.defenderVillage, twcheese_currentReport.sent, twcheese_getServerTime(), twcheese_gameConfig.speed, twcheese_gameConfig.unit_speed);
+        twcheese_currentReport.raidPeriodic = twcheese_calculateRaidPeriodic(twcheese_currentReport.buildingLevels, 8, twcheese_gameConfig.speed);
+    }
+
+    /*==== add stuff to the page ====*/
+    pageMod = new twcheese_BattleReportEnhancer(gameDoc, twcheese_currentReport, twcheese_gameConfig);
+    pageMod.includeExtraInformation();
+    pageMod.includeReportTools();
+    /*==== auto rename ====*/
+    if (twcheese_BRESettings.autoRename)
+        pageMod.renameReport(twcheese_nameReport(twcheese_currentReport, ''));
+
+    /*==== set to user defaults ====*/
+    if (twcheese_currentReport.espionageLevel >= 1) {
+        gameDoc.getElementById('twcheese_period').value = twcheese_BRESettings.period;
+        document.getElementById('twcheese_raider_haulBonus').value = twcheese_BRESettings.haulBonus;
+
+        if (game_data.market != 'uk') {
+            if (localStorage.getItem('twcheese_report_raiderScouts'))
+                document.getElementById('twcheese_raider_scouts').value = localStorage.getItem('twcheese_report_raiderScouts');
+        }
+
+        twcheese_changeRaidMode(twcheese_BRESettings.raid);
+    }
+
+    gameDoc.getElementById('twcheese_auto_rename').checked = twcheese_BRESettings.autoRename;
+
+    if (twcheese.userConfig.report.show_report_tools)
+        $('#twcheese_show_report_tools').find('img:first').click(); //show report tools widget
+}
+
+
+function enhanceReportsFolder() {
+    twcheese_reportsFolderDisplaySettings = twcheese_loadReportsFolderDisplaySettings();
+    twcheese_saveReportsFolderDisplaySettings(twcheese_reportsFolderDisplaySettings);
+    pageMod = new twcheese_BattleReportsFolderEnhancer(gameDoc);
+    pageMod.applySettings(twcheese_reportsFolderDisplaySettings);
+}
+
+
+// register tool ///////////////////////////////////////////////////////
 
 let processFactory = new ProcessFactory({});
 

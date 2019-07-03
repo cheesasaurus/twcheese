@@ -3293,31 +3293,79 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
     selectorInputTable.className = 'vis';
     selectorInputTable.insertRow(-1);
 
-    /*==== create cells ===*/
-    for (let i = 0; i < 5; i++) {
-        selectorInputTable.rows[0].insertCell(-1);
+    let inputOptions = [
+        {
+            hintInput: 'contains text',
+            hintButton: 'select text',
+            use: reportsFolderDisplay.selectText,
+            sprite: [-140, 0]
+        },
+        {
+            hintInput: 'attacker',
+            hintButton: 'select attacking player',
+            use: reportsFolderDisplay.selectAttacker,
+            sprite: [-80, 0]
+        },
+        {
+            hintInput: 'defender',
+            hintButton: 'select defending player',
+            use: reportsFolderDisplay.selectDefender,
+            sprite: [-80, 0]
+        },
+        {
+            hintInput: 'origin',
+            hintButton: 'select attacking village',
+            placeholder: 'x|y',
+            use: reportsFolderDisplay.selectAttackerVillage,
+            sprite: [-120, 0]
+        },
+        {
+            hintInput: 'target',
+            hintButton: 'select defending village',
+            placeholder: 'x|y',
+            use: reportsFolderDisplay.selectDefenderVillage,
+            sprite: [-120, 0]
+        }
+    ];
+
+    for (let option of inputOptions) {
+        let input = document.createElement('input');
+        input.type = 'text';
+        input.size = 10;
+        input.value = option.hintInput;
+        input.placeholder = option.placeholder || '';
+        let alreadyCleared = false;
+        input.addEventListener('mousedown', function() {
+            if (alreadyCleared) {
+                return;
+            }
+            this.value = '';
+            alreadyCleared = true;
+        });
+
+        let $button = $(`<a href="#" title="${option.hintButton}"></a>`)
+            .on('click', function(e) {
+                e.preventDefault();
+                option.use(input.value);
+            });
+
+        let $buttonIcon = $('<span>&nbsp;</span>')
+            .css({
+                display: 'inline-block',
+                background: `url(graphic/bbcodes/bbcodes.png) no-repeat ${option.sprite[0]}px ${option.sprite[1]}px`,
+                paddingLeft: 0,
+                paddingBottom: 0,
+                margin: 3,
+                width: 20,
+                height: 20
+            });
+
+        $button.append($buttonIcon);
+
+        let cell = selectorInputTable.rows[0].insertCell(-1);
+        cell.appendChild(input);
+        cell.appendChild($button[0]);
     }
-    var cellIndex = 0;
-
-    /*==== option text ====*/
-    selectorInputTable.rows[0].cells[cellIndex].innerHTML = '<input id="twcheese_select_text" type="text" size="10" value="contains text" onmousedown="if(this.value == \'contains text\')this.value=\'\'";> <a title="select text" href="javascript:document.getElementById(\'twcheese_reportsFolderDisplay\').selectText(document.getElementById(\'twcheese_select_text\').value);"><span style="display:inline-block; zoom:1; *display:inline; background:url(graphic/bbcodes/bbcodes.png?1) no-repeat -140px 0px; padding-left: 0px; padding-bottom:0px; margin-right: 2px; margin-bottom:3px; width: 20px; height: 20px">&nbsp;</span></a>';
-    cellIndex++;
-
-    /*==== option attacker ====*/
-    selectorInputTable.rows[0].cells[cellIndex].innerHTML = '<input id="twcheese_select_attacker" type="text" size="10" value="attacker" onmousedown="if(this.value == \'attacker\')this.value=\'\';"> <a title="select attacker" href="javascript:document.getElementById(\'twcheese_reportsFolderDisplay\').selectAttacker(document.getElementById(\'twcheese_select_attacker\').value);"><span style="display:inline-block; zoom:1; *display:inline; background:url(graphic/bbcodes/bbcodes.png?1) no-repeat -80px 0px; padding-left: 0px; padding-bottom:0px; margin-right: 2px; margin-bottom:3px; width: 20px; height: 20px">&nbsp;</span></a>';
-    cellIndex++;
-
-    /*==== option defender ====*/
-    selectorInputTable.rows[0].cells[cellIndex].innerHTML = '<input id="twcheese_select_defender" type="text" size="10" value="defender" onmousedown="if(this.value == \'defender\')this.value=\'\';"> <a title="select defender" href="javascript:document.getElementById(\'twcheese_reportsFolderDisplay\').selectDefender(document.getElementById(\'twcheese_select_defender\').value);"><span style="display:inline-block; zoom:1; *display:inline; background:url(graphic/bbcodes/bbcodes.png?1) no-repeat -80px 0px; padding-left: 0px; padding-bottom:0px; margin-right: 2px; margin-bottom:3px; width: 20px; height: 20px">&nbsp;</span></a>';
-    cellIndex++;
-
-    /*==== option attackerVillage ====*/
-    selectorInputTable.rows[0].cells[cellIndex].innerHTML = '<input id="twcheese_select_attackerVillage" type="text" size="7" value="origin" onmousedown="if(this.value == \'origin\')this.value=\'x|y\';"> <a title="select attacker\'s village" href="javascript:document.getElementById(\'twcheese_reportsFolderDisplay\').selectAttackerVillage(document.getElementById(\'twcheese_select_attackerVillage\').value);"><span style="display:inline-block; zoom:1; *display:inline; background:url(graphic/bbcodes/bbcodes.png?1) no-repeat -120px 0px; padding-left: 0px; padding-bottom:0px; margin-right: 2px; margin-bottom:3px; width: 20px; height: 20px">&nbsp;</span></a>';
-    cellIndex++;
-
-    /*==== option defenderVillage ====*/
-    selectorInputTable.rows[0].cells[cellIndex].innerHTML = '<input id="twcheese_select_defenderVillage" type="text" size="7" value="target" onmousedown="if(this.value == \'target\')this.value=\'x|y\';"> <a title="select defender\'s village" href="javascript:document.getElementById(\'twcheese_reportsFolderDisplay\').selectDefenderVillage(document.getElementById(\'twcheese_select_defenderVillage\').value);"><span style="display:inline-block; zoom:1; *display:inline; background:url(graphic/bbcodes/bbcodes.png?1) no-repeat -120px 0px; padding-left: 0px; padding-bottom:0px; margin-right: 2px; margin-bottom:3px; width: 20px; height: 20px">&nbsp;</span></a>';
-    cellIndex++;
 
     /*==== mass rename table ===*/
     var massRenameTable = document.createElement('table');

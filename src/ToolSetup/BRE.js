@@ -9,7 +9,6 @@ import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/BRE
 var twcheese_gameConfig,
     twcheese_BRESettings,
     twcheese_reportsFolderDisplaySettings,
-    twcheese_currentReport,
     gameDoc,
     pageMod
 ;
@@ -1250,8 +1249,8 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig) {
             periodInput.maxLength = 4;
             periodInput.value = 8;
             periodInput.addEventListener('input', function() {
-                twcheese_currentReport.raidPeriodic = twcheese_calculateRaidPeriodic(twcheese_currentReport.buildingLevels, Number(this.value), twcheese_gameConfig.speed, Number(document.getElementById('twcheese_raider_haulBonus')));
-                twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), twcheese_currentReport.raidPeriodic, twcheese_currentReport);
+                report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, Number(this.value), twcheese_gameConfig.speed, Number(document.getElementById('twcheese_raider_haulBonus')));
+                twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), report.raidPeriodic, report);
             });
             periodicDiv.appendChild(periodInput);
 
@@ -1435,13 +1434,13 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig) {
 
         $('#twcheese_note').on('input', function() {
             // preview name
-            var newName = twcheese_nameReport(twcheese_currentReport, document.getElementById('twcheese_note').value);
+            var newName = twcheese_nameReport(report, document.getElementById('twcheese_note').value);
             document.getElementById('twcheese_rename_preview').innerHTML = newName;
             document.getElementById('twcheese_availableCharacters').innerHTML = Number(255 - newName.length);
         });
 
         $renamer.find('button').on('click', function() {
-            pageMod.renameReport(twcheese_nameReport(twcheese_currentReport, document.getElementById('twcheese_note').value));
+            pageMod.renameReport(twcheese_nameReport(report, document.getElementById('twcheese_note').value));
         });
 
         $('#twcheese_auto_rename').on('click', function() {
@@ -1622,13 +1621,13 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig) {
      *	@param newName:String
      */
     this.renameReport = function (newName) {
-        console.info('renaming report:', twcheese_currentReport);
-        var url = window.TribalWars.buildURL('POST', 'report', { ajaxaction: 'edit_subject', report_id: twcheese_currentReport.reportID });
+        console.info('renaming report:', report);
+        var url = window.TribalWars.buildURL('POST', 'report', { ajaxaction: 'edit_subject', report_id: report.reportID });
         window.TribalWars.post(url,
             {},
             { text: newName },
             function (data) {
-                var $container = $('.quickedit[data-id="' + twcheese_currentReport.reportID + '"]');
+                var $container = $('.quickedit[data-id="' + report.reportID + '"]');
                 $container.find('.quickedit-label').html(newName);
             },
             {}
@@ -1643,56 +1642,59 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig) {
         //var submitLink = 'game.php?ajaxaction=edit_subject&h='+hash+'&report_id='+report.reportID+'&screen=report';
         //editSubmit('label', 'labelText', 'edit', 'editInput', submitLink);
     };
+
+    /**
+     *	@param	mode:String	represents which mode to use
+     */
+    function twcheese_changeRaidMode(mode) {
+        var haulBonus = Number(document.getElementById('twcheese_raider_haulBonus').value);
+
+        if (mode == 'scouted') {
+            gameDoc.getElementById('twcheese_raider_selection').value = 'scouted';
+            report.raidScouted = twcheese_calculateRaidScouted(report.resources, haulBonus);
+            twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), report.raidScouted, report);
+            gameDoc.getElementById('twcheese_periodic_options').style.display = 'none';
+        }
+        else if (mode == 'predicted') {
+            gameDoc.getElementById('twcheese_raider_selection').value = 'predicted';
+            report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village.coord.split('|'), report.defenderVillage, report.sent, twcheese_getServerTime(), twcheese_gameConfig.speed, twcheese_gameConfig.unit_speed, haulBonus);
+            twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), report.raidPredicted, report);
+            gameDoc.getElementById('twcheese_periodic_options').style.display = 'none';
+        }
+        else if (mode == 'periodic') {
+            gameDoc.getElementById('twcheese_raider_selection').value = 'periodic';
+            report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, Number(gameDoc.getElementById('twcheese_period').value), twcheese_gameConfig.speed, haulBonus);
+            twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), report.raidPeriodic, report);
+            gameDoc.getElementById('twcheese_periodic_options').style.display = '';
+        }
+    }
+    this.changeRaidMode = twcheese_changeRaidMode;
+
+    /**
+     *	sets raiders displayed in the raider calculator
+     *	@param	raiderTable:HTMLTableElement
+     *	@param	units:Array	the units to display
+     *	@param 	report:twcheese.BattleReport	the report being viewed
+     */
+    function twcheese_setRaiders(raiderTable, units, report) {
+        for (var i = 0; i < 7; i++) {
+            raiderTable.rows[1].cells[i].innerHTML = units[i];
+        }
+
+        if (game_data.market != 'uk') {
+            var scouts = document.getElementById('twcheese_raider_scouts').value;
+            raiderTable.rows[0].cells[0].innerHTML = '<a href="game.php?village=' + game_data.village.id + '&screen=place&from=simulator&att_spy=' + scouts + '&att_spear=' + Math.round(units[0]) + '&target_village_id=' + report.defenderVillage[2] + twcheese.babyUriComponent + '"><img src="' + imagePaths['spear'] + '"/></a>';
+            raiderTable.rows[0].cells[1].innerHTML = '<a href="game.php?village=' + game_data.village.id + '&screen=place&from=simulator&att_spy=' + scouts + '&att_sword=' + Math.round(units[1]) + '&target_village_id=' + report.defenderVillage[2] + twcheese.babyUriComponent + '"><img src="' + imagePaths['sword'] + '"/></a>';
+            raiderTable.rows[0].cells[2].innerHTML = '<a href="game.php?village=' + game_data.village.id + '&screen=place&from=simulator&att_spy=' + scouts + '&att_axe=' + Math.round(units[2]) + '&target_village_id=' + report.defenderVillage[2] + twcheese.babyUriComponent + '"><img src="' + imagePaths['axe'] + '"/></a>';
+            raiderTable.rows[0].cells[3].innerHTML = '<a href="game.php?village=' + game_data.village.id + '&screen=place&from=simulator&att_spy=' + scouts + '&att_archer=' + Math.round(units[3]) + '&target_village_id=' + report.defenderVillage[2] + twcheese.babyUriComponent + '"><img src="' + imagePaths['archer'] + '"/></a>';
+            raiderTable.rows[0].cells[4].innerHTML = '<a href="game.php?village=' + game_data.village.id + '&screen=place&from=simulator&att_spy=' + scouts + '&att_light=' + Math.round(units[4]) + '&target_village_id=' + report.defenderVillage[2] + twcheese.babyUriComponent + '"><img src="' + imagePaths['lcav'] + '"/></a>';
+            raiderTable.rows[0].cells[5].innerHTML = '<a href="game.php?village=' + game_data.village.id + '&screen=place&from=simulator&att_spy=' + scouts + '&att_marcher=' + Math.round(units[5]) + '&target_village_id=' + report.defenderVillage[2] + twcheese.babyUriComponent + '"><img src="' + imagePaths['acav'] + '"/></a>';
+            raiderTable.rows[0].cells[6].innerHTML = '<a href="game.php?village=' + game_data.village.id + '&screen=place&from=simulator&att_spy=' + scouts + '&att_heavy=' + Math.round(units[6]) + '&target_village_id=' + report.defenderVillage[2] + twcheese.babyUriComponent + '"><img src="' + imagePaths['hcav'] + '"/></a>';
+        }
+    }
+
 }
 
-/**
- *	sets raiders displayed in the raider calculator
- *	@param	raiderTable:HTMLTableElement
- *	@param	units:Array	the units to display
- *	@param 	report:twcheese.BattleReport	the report being viewed
- */
-function twcheese_setRaiders(raiderTable, units, report) {
-    for (var i = 0; i < 7; i++) {
-        raiderTable.rows[1].cells[i].innerHTML = units[i];
-    }
-
-    if (game_data.market != 'uk') {
-        var scouts = document.getElementById('twcheese_raider_scouts').value;
-        raiderTable.rows[0].cells[0].innerHTML = '<a href="game.php?village=' + game_data.village.id + '&screen=place&from=simulator&att_spy=' + scouts + '&att_spear=' + Math.round(units[0]) + '&target_village_id=' + report.defenderVillage[2] + twcheese.babyUriComponent + '"><img src="' + imagePaths['spear'] + '"/></a>';
-        raiderTable.rows[0].cells[1].innerHTML = '<a href="game.php?village=' + game_data.village.id + '&screen=place&from=simulator&att_spy=' + scouts + '&att_sword=' + Math.round(units[1]) + '&target_village_id=' + report.defenderVillage[2] + twcheese.babyUriComponent + '"><img src="' + imagePaths['sword'] + '"/></a>';
-        raiderTable.rows[0].cells[2].innerHTML = '<a href="game.php?village=' + game_data.village.id + '&screen=place&from=simulator&att_spy=' + scouts + '&att_axe=' + Math.round(units[2]) + '&target_village_id=' + report.defenderVillage[2] + twcheese.babyUriComponent + '"><img src="' + imagePaths['axe'] + '"/></a>';
-        raiderTable.rows[0].cells[3].innerHTML = '<a href="game.php?village=' + game_data.village.id + '&screen=place&from=simulator&att_spy=' + scouts + '&att_archer=' + Math.round(units[3]) + '&target_village_id=' + report.defenderVillage[2] + twcheese.babyUriComponent + '"><img src="' + imagePaths['archer'] + '"/></a>';
-        raiderTable.rows[0].cells[4].innerHTML = '<a href="game.php?village=' + game_data.village.id + '&screen=place&from=simulator&att_spy=' + scouts + '&att_light=' + Math.round(units[4]) + '&target_village_id=' + report.defenderVillage[2] + twcheese.babyUriComponent + '"><img src="' + imagePaths['lcav'] + '"/></a>';
-        raiderTable.rows[0].cells[5].innerHTML = '<a href="game.php?village=' + game_data.village.id + '&screen=place&from=simulator&att_spy=' + scouts + '&att_marcher=' + Math.round(units[5]) + '&target_village_id=' + report.defenderVillage[2] + twcheese.babyUriComponent + '"><img src="' + imagePaths['acav'] + '"/></a>';
-        raiderTable.rows[0].cells[6].innerHTML = '<a href="game.php?village=' + game_data.village.id + '&screen=place&from=simulator&att_spy=' + scouts + '&att_heavy=' + Math.round(units[6]) + '&target_village_id=' + report.defenderVillage[2] + twcheese.babyUriComponent + '"><img src="' + imagePaths['hcav'] + '"/></a>';
-    }
-}
-
-/**
- *	@param	mode:String	represents which mode to use
- */
-function twcheese_changeRaidMode(mode) {
-    var haulBonus = Number(document.getElementById('twcheese_raider_haulBonus').value);
-
-    if (mode == 'scouted') {
-        gameDoc.getElementById('twcheese_raider_selection').value = 'scouted';
-        twcheese_currentReport.raidScouted = twcheese_calculateRaidScouted(twcheese_currentReport.resources, haulBonus);
-        twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), twcheese_currentReport.raidScouted, twcheese_currentReport);
-        gameDoc.getElementById('twcheese_periodic_options').style.display = 'none';
-    }
-    else if (mode == 'predicted') {
-        gameDoc.getElementById('twcheese_raider_selection').value = 'predicted';
-        twcheese_currentReport.raidPredicted = twcheese_calculateRaidPredicted(twcheese_currentReport.resources, twcheese_currentReport.buildingLevels, game_data.village.coord.split('|'), twcheese_currentReport.defenderVillage, twcheese_currentReport.sent, twcheese_getServerTime(), twcheese_gameConfig.speed, twcheese_gameConfig.unit_speed, haulBonus);
-        twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), twcheese_currentReport.raidPredicted, twcheese_currentReport);
-        gameDoc.getElementById('twcheese_periodic_options').style.display = 'none';
-    }
-    else if (mode == 'periodic') {
-        gameDoc.getElementById('twcheese_raider_selection').value = 'periodic';
-        twcheese_currentReport.raidPeriodic = twcheese_calculateRaidPeriodic(twcheese_currentReport.buildingLevels, Number(gameDoc.getElementById('twcheese_period').value), twcheese_gameConfig.speed, haulBonus);
-        twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), twcheese_currentReport.raidPeriodic, twcheese_currentReport);
-        gameDoc.getElementById('twcheese_periodic_options').style.display = '';
-    }
-}
 
 /**
  *	modifies page on the reports folder view
@@ -4372,36 +4374,36 @@ function initBRE() {
 
 function enhanceReport() {
     /*==== calculate additional information ===*/
-    twcheese_currentReport = new twcheese_scrapeBattleReport(gameDoc);
-    if (twcheese_currentReport.defenderQuantity)
-        twcheese_currentReport.attacker_survivors = twcheese_calculateSurvivors(twcheese_currentReport.attackerQuantity, twcheese_currentReport.attackerLosses);
-    if (twcheese_currentReport.defenderQuantity)
-        twcheese_currentReport.survivors = twcheese_calculateSurvivors(twcheese_currentReport.defenderQuantity, twcheese_currentReport.defenderLosses);
-    if (twcheese_currentReport.buildingLevels)
-        twcheese_currentReport.populationSummary = twcheese_calculatePopulation(twcheese_currentReport.buildingLevels, twcheese_currentReport.defenderQuantity, twcheese_currentReport.unitsOutside);
-    twcheese_currentReport.opponentsDefeatedSummary = twcheese_calculateOd(twcheese_currentReport.attackerLosses, twcheese_currentReport.defenderLosses);
-    if (twcheese_currentReport.loyalty)
-        twcheese_currentReport.loyaltyExtra = twcheese_calculateLoyalty(twcheese_gameConfig.speed, twcheese_gameConfig.unit_speed, twcheese_currentReport.loyalty[1], twcheese_currentReport.sent, twcheese_getServerTime(), game_data.village.coord.split('|'), twcheese_currentReport.defenderVillage);
-    twcheese_currentReport.timingInfo = twcheese_calculateTimingInfo(twcheese_gameConfig.speed, twcheese_gameConfig.unit_speed, twcheese_currentReport.sent, twcheese_currentReport.attackerQuantity, twcheese_currentReport.attackerVillage, twcheese_currentReport.defenderVillage);
-    if (twcheese_currentReport.buildingLevels)
-        twcheese_currentReport.demolition = twcheese_calculateDemolition(twcheese_currentReport.buildingLevels);
-    if (twcheese_currentReport.espionageLevel >= 1)
-        twcheese_currentReport.raidScouted = twcheese_calculateRaidScouted(twcheese_currentReport.resources);
-    if (twcheese_currentReport.espionageLevel >= 2) {
-        twcheese_currentReport.raidPredicted = twcheese_calculateRaidPredicted(twcheese_currentReport.resources, twcheese_currentReport.buildingLevels, game_data.village.coord.split('|'), twcheese_currentReport.defenderVillage, twcheese_currentReport.sent, twcheese_getServerTime(), twcheese_gameConfig.speed, twcheese_gameConfig.unit_speed);
-        twcheese_currentReport.raidPeriodic = twcheese_calculateRaidPeriodic(twcheese_currentReport.buildingLevels, 8, twcheese_gameConfig.speed);
+    let report = new twcheese_scrapeBattleReport(gameDoc);
+    if (report.defenderQuantity)
+        report.attacker_survivors = twcheese_calculateSurvivors(report.attackerQuantity, report.attackerLosses);
+    if (report.defenderQuantity)
+        report.survivors = twcheese_calculateSurvivors(report.defenderQuantity, report.defenderLosses);
+    if (report.buildingLevels)
+        report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
+    report.opponentsDefeatedSummary = twcheese_calculateOd(report.attackerLosses, report.defenderLosses);
+    if (report.loyalty)
+        report.loyaltyExtra = twcheese_calculateLoyalty(twcheese_gameConfig.speed, twcheese_gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village.coord.split('|'), report.defenderVillage);
+    report.timingInfo = twcheese_calculateTimingInfo(twcheese_gameConfig.speed, twcheese_gameConfig.unit_speed, report.sent, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
+    if (report.buildingLevels)
+        report.demolition = twcheese_calculateDemolition(report.buildingLevels);
+    if (report.espionageLevel >= 1)
+        report.raidScouted = twcheese_calculateRaidScouted(report.resources);
+    if (report.espionageLevel >= 2) {
+        report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village.coord.split('|'), report.defenderVillage, report.sent, twcheese_getServerTime(), twcheese_gameConfig.speed, twcheese_gameConfig.unit_speed);
+        report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, 8, twcheese_gameConfig.speed);
     }
 
     /*==== add stuff to the page ====*/
-    pageMod = new twcheese_BattleReportEnhancer(gameDoc, twcheese_currentReport, twcheese_gameConfig);
+    pageMod = new twcheese_BattleReportEnhancer(gameDoc, report, twcheese_gameConfig);
     pageMod.includeExtraInformation();
     pageMod.includeReportTools();
     /*==== auto rename ====*/
     if (twcheese_BRESettings.autoRename)
-        pageMod.renameReport(twcheese_nameReport(twcheese_currentReport, ''));
+        pageMod.renameReport(twcheese_nameReport(report, ''));
 
     /*==== set to user defaults ====*/
-    if (twcheese_currentReport.espionageLevel >= 1) {
+    if (report.espionageLevel >= 1) {
         gameDoc.getElementById('twcheese_period').value = twcheese_BRESettings.period;
         document.getElementById('twcheese_raider_haulBonus').value = twcheese_BRESettings.haulBonus;
 
@@ -4410,13 +4412,15 @@ function enhanceReport() {
                 document.getElementById('twcheese_raider_scouts').value = localStorage.getItem('twcheese_report_raiderScouts');
         }
 
-        twcheese_changeRaidMode(twcheese_BRESettings.raid);
+        pageMod.changeRaidMode(twcheese_BRESettings.raid);
     }
 
     gameDoc.getElementById('twcheese_auto_rename').checked = twcheese_BRESettings.autoRename;
 
+    /* TODO: fix userConfig conflict
     if (twcheese.userConfig.report.show_report_tools)
         $('#twcheese_show_report_tools').find('img:first').click(); //show report tools widget
+    */    
 }
 
 

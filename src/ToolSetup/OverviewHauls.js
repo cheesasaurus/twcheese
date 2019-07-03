@@ -32,13 +32,14 @@ function atCommandsOverview() {
 function suggestRedirectToCommandsOverview() {
     suggestRedirect({
         message: `
-            To use this, you must be at the commands overview.
-            <p style="font-size: 10px;">Consider using the 'return' filter, since outgoing troops don't carry resources :)</p>`,
+            <p style="font-size:14px;">To use this, you must be at the commands overview.</p>
+            <p style="font-size:12px;">Consider using the 'return' filter, since outgoing troops don't carry resources :)</p>`,
         screen: 'overview_villages',
         uriParams: {
             mode: 'commands',
             type: 'return'
-        }
+        },
+        skippableId: 'Tool:OverviewHauls'
     });
 }
 

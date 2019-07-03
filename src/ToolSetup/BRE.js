@@ -3368,47 +3368,32 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc) {
     }
 
     /*==== mass rename table ===*/
-    var massRenameTable = document.createElement('table');
 
-    //var parentTable = document.getElementById('content_value').getElementsByTagName('table')[0].rows[0].cells[1];
-    //var previousSibling = parentTable.getElementsByTagName('form')[1].nextSibling;
-    //parentTable.insertBefore(massRenameTable,previousSibling);
-    reportsFolder.appendChild(massRenameTable);
-    massRenameTable.className = 'vis';
-
-
-    if (!window.premium) //note: non-premium accounts cannot rename reports. no point in confusing the users
-        massRenameTable.style.display = 'none';
-
-    /*==== create cells ===*/
-    massRenameTable.insertRow(-1);
-    for (let i = 0; i < 5; i++) {
-        massRenameTable.rows[0].insertCell(-1);
+    // note: non-premium accounts cannot rename reports
+    if (window.premium) {
+        let $massRename = $(`
+            <table class="vis">
+                <tbody>
+                    <tr>
+                        <td>
+                            <a href="#">&raquo; Rename</a>
+                            <img src="/graphic/questionmark.png?1" width="13" height="13" title="rename selected reports to twCheese format">
+                        </td>
+                        <td style="textAlign: right;">Progress:</td>
+                        <td style="width: 40px;"><span id="twcheese_progress_percent">0</span>%</td>
+                        <td style="width: 136px;">(<span id="twcheese_progress_count">0</span>/<span id="twcheese_progress_count_max">0</span> reports)</td>
+                        <td>time remaining: <span id="twcheese_time_remaining">00:00</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        `.trim());
+        $massRename.find('a').on('click', (e) => {
+            e.preventDefault();
+            reportsFolderDisplay.massRename();
+        });
+        $massRename.appendTo(reportsFolder);
     }
-    var cellIndex = 0;
 
-    /*==== button cell ====*/
-    massRenameTable.rows[0].cells[cellIndex].innerHTML = '<a href="javascript:document.getElementById(\'twcheese_reportsFolderDisplay\').massRename();">&raquo; Rename</a> <img src="/graphic/questionmark.png?1" width="13" height="13" title="rename selected reports to twCheese format"> ';
-    cellIndex++;
-
-    /*==== progressLabel cell ====*/
-    massRenameTable.rows[0].cells[cellIndex].innerHTML = ' Progress: ';
-    massRenameTable.rows[0].cells[cellIndex].style.textAlign = 'right';
-    cellIndex++;
-
-    /*==== progressPercent cell ====*/
-    massRenameTable.rows[0].cells[cellIndex].innerHTML = ' <span id="twcheese_progress_percent">0</span>%  ';
-    massRenameTable.rows[0].cells[cellIndex].style.width = '40px';
-    cellIndex++;
-
-    /*==== progressCount cell ====*/
-    massRenameTable.rows[0].cells[cellIndex].innerHTML = ' (<span id="twcheese_progress_count">0</span>/<span id="twcheese_progress_count_max">0</span> reports) ';
-    massRenameTable.rows[0].cells[cellIndex].style.width = '136px';
-    cellIndex++;
-
-    /*==== timeRemaining cell ====*/
-    massRenameTable.rows[0].cells[cellIndex].innerHTML = 'time remaining: <span id="twcheese_time_remaining">00:00</span>';
-    cellIndex++;
 }
 
 /**

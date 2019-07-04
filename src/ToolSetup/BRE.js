@@ -585,23 +585,29 @@ function twcheese_ReportsFolderDisplaySettings() {
 
 /*==== report scraper functions ====*/
 
+class Player {
+    constructor(id, name) {
+        this.id = id;
+        this.name = name;
+    }
+}
+
 /**
  * @param	playerCell:HTMLTableCellElement - a cell containing a link to a player profile
- * @return	player:Array(id,name)
+ * @return {Player}
  */
-function twcheese_getPlayerInfo(playerCell) {
-    var player = new Array(0, 0);
-
-    if (playerCell.innerHTML.search(language['report']['deletedPlayer']) != -1)
-        return new Array(-1, playerCell.innerHTML);
-    else if (playerCell.innerHTML == '---')
-        return new Array(0, '---');
-    else {
-        var playerLink = playerCell.firstChild;
-        player[0] = Number(playerLink.href.match(/&id=[0-9]{1,}/)[0].substring(4));
-        player[1] = playerLink.innerHTML;
-        return player;
+function scrapePlayer(playerCell) {
+    if (playerCell.innerHTML.search(language['report']['deletedPlayer']) != -1) {
+        return new Player(-1, playerCell.innerHTML);
     }
+    else if (playerCell.innerHTML == '---') {
+        return new Player(0, '---');
+    }
+    var playerLink = playerCell.firstChild;
+    var player = new Player();
+    player.id = Number(playerLink.href.match(/&id=[0-9]{1,}/)[0].substring(4));
+    player.name = playerLink.innerHTML;
+    return player;
 }
 
 /**
@@ -706,7 +712,7 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
         this.getAttacker = function () {
             if (this.attackerTable) {
                 var playerCell = this.attackerTable.rows[0].cells[1];
-                return twcheese_getPlayerInfo(playerCell);
+                return scrapePlayer(playerCell);
             }
         };
 
@@ -816,7 +822,7 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
         this.getDefender = function () {
             if (this.defenderTable) {
                 var playerCell = this.defenderTable.rows[0].cells[1];
-                return twcheese_getPlayerInfo(playerCell);
+                return scrapePlayer(playerCell);
             }
         };
 
@@ -1582,10 +1588,10 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
 
         /*==== rally point Manage Troops link ====*/
         var displayManageTroopsLink = false;
-        if (report.defender[1] == game_data.player.name)
+        if (report.defender.name == game_data.player.name)
             displayManageTroopsLink = true;
         if (report.loyalty) {
-            if (report.attacker[1] == game_data.player.name && report.loyalty[1] <= 0)
+            if (report.attacker.name == game_data.player.name && report.loyalty[1] <= 0)
                 displayManageTroopsLink = false;
         }
         if (displayManageTroopsLink) {
@@ -1734,7 +1740,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 reportsTableBody.rows[i + 1].cells[0].innerHTML += '<img src="graphic/forwarded.png?1" />';
             reportsTableBody.rows[i + 1].cells[0].innerHTML += '<a href="' + game_data.link_base_pure + 'report&mode=' + game_data.mode + '&view=' + report.reportID + '"> view</a>';
             if (report.defender) {
-                if (report.defender[1] == game_data.player.name) {
+                if (report.defender.name == game_data.player.name) {
                     reportsTableBody.rows[i + 1].cells[0].innerHTML += ' <img title="manage troops" style="float:right; cursor:pointer;" src="' + imagePaths['rally'] + '" onclick="window.location=\'game.php?village=' + report.defenderVillage[2] + '&screen=place&mode=units\'"></img>';
                 }
                 if (report.loyalty) {
@@ -1748,7 +1754,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
             /*==== repeat attack cell ====*/
             reportsTableBody.rows[i + 1].insertCell(-1);
             if (report.attacker) {
-                if (report.attacker[1] == game_data.player.name) {
+                if (report.attacker.name == game_data.player.name) {
                     let url = gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportID});
                     reportsTableBody.rows[i + 1].cells[1].innerHTML = '<a title="repeat attack, from current village" href="' + url + '"><img src="' + imagePaths['repeatFromCurrent'] + '" /></a>';
                     if (reportsTableBody.rows[i + 1].twcheeseLabel) {
@@ -1782,13 +1788,13 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 /*==== attacker cell ====*/
                 reportsTableBody.rows[i + 1].insertCell(-1);
                 if (report.attacker)
-                    reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = report.attacker[1];
+                    reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = report.attacker.name;
                 cellIndex++;
 
                 /*==== defender cell ====*/
                 reportsTableBody.rows[i + 1].insertCell(-1);
                 if (report.defender)
-                    reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = report.defender[1];
+                    reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = report.defender.name;
                 cellIndex++;
 
                 /*==== origin cell ====*/
@@ -1812,7 +1818,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 /*==== deadNoble cell ====*/
                 reportsTableBody.rows[i + 1].insertCell(-1);
                 if (report.deadNoble) {
-                    if (report.attacker[1] == game_data.player.name)
+                    if (report.attacker.name == game_data.player.name)
                         reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = '<a href="/game.php?village=' + report.attackerVillage[2] + '&screen=snob"><img src="' + imagePaths['priest'] + '" style="display:block; margin-left:auto; margin-right:auto" title="An attacking nobleman died."/></a>';
                     else
                         reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = '<img src="' + imagePaths['priest'] + '" style="display:block; margin-left:auto; margin-right:auto" title="An attacking nobleman died."/>';
@@ -2295,7 +2301,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
 
         for (let i = 1; i < reportsTable.rows.length; i++) {
             let twcheeseReport = reportsTable.rows[i].twcheeseReport;
-            if (twcheeseReport.attacker[1] !== game_data.player.name) {
+            if (twcheeseReport.attacker.name !== game_data.player.name) {
                 continue; // can't repeat somebody else's attack
             }
             if (attackingVillage == 'current') {
@@ -3086,10 +3092,10 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         }
     };
 
-    reportsTable.selectAttacker = function (attacker) {
+    reportsTable.selectAttacker = function (attackerName) {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
-            if (reportsTable.rows[i].twcheeseReport.attacker[1] == attacker)
+            if (reportsTable.rows[i].twcheeseReport.attacker.name == attackerName)
                 document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportID)[0].checked = true;
         }
     };
@@ -3097,7 +3103,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
     reportsTable.selectDefender = function (defender) {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
-            if (reportsTable.rows[i].twcheeseReport.defender[1] == defender)
+            if (reportsTable.rows[i].twcheeseReport.defender.name == defender)
                 document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportID)[0].checked = true;
         }
     };
@@ -3973,9 +3979,9 @@ function twcheese_calculateRaidUnits(resources, haulBonus) {
  */
 function twcheese_nameReport(report, note) {
     var newName = 'twCheese: ';
-    newName += report.attacker[1].replace(language['report']['deletedPlayer'], '') + ' ';
+    newName += report.attacker.name.replace(language['report']['deletedPlayer'], '') + ' ';
     newName += '(' + report.attackerVillage[0] + '|' + report.attackerVillage[1] + ',' + report.attackerVillage[2] + ')';
-    newName += report.defender[1].replace(language['report']['deletedPlayer'], '');
+    newName += report.defender.name.replace(language['report']['deletedPlayer'], '');
     newName += '(' + report.defenderVillage[0] + '|' + report.defenderVillage[1] + ',' + report.defenderVillage[2] + ')';
 
     newName += '_t:' + Math.floor(new Date(report.timingInfo[0]).getTime() / 1000) + '. ';
@@ -4025,10 +4031,10 @@ function twcheese_interpretReportName(reportName) {
 
         /*==== set attacker ====*/
         try {
-            report.attacker = new Array(0, 0);
+            report.attacker = new Player(0, 0);
             var attackerString = reportName.split('(')[0];
             attackerString = attackerString.substring(0, attackerString.lastIndexOf(' '));
-            report.attacker[1] = attackerString;
+            report.attacker.name = attackerString;
         }
         catch (err) {
             report.attacker = null;
@@ -4137,7 +4143,7 @@ function twcheese_interpretReportName(reportName) {
                 report.defender = false;
                 let text = reportName.substring(reportName.indexOf(')') + 1);
                 text = text.substring(0, text.indexOf('('));
-                report.defender = [0, text];
+                report.defender = new Player(0, text);
             }
             catch (err) {
                 console.warn('swallowed', err);

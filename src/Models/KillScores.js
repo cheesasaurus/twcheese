@@ -10,8 +10,8 @@ let scoreDefenderDied = {
     ram: 4,
     catapult: 12,
     knight: 40,
-    snob: 200
-    // todo: militia
+    snob: 200,
+    militia: 4
 };
 
 let scoreAttackerDied = {
@@ -27,7 +27,7 @@ let scoreAttackerDied = {
     catapult: 10,
     knight: 20,
     snob: 200,
-    militia: 0
+    militia: 1
 };
 
 

@@ -610,54 +610,55 @@ function scrapePlayer(playerCell) {
     return player;
 }
 
-/**
- * @param	troopRow:HTMLTableRowElement	- a row of cells containing troop counts
- * @param	gameConfig:object		the Tribal Wars server configuration
- * @return	troops:Array(spear,sword,archer,axe,scout,lcav,acav,hcav,ram,cat,paladin,noble)
- */
-function twcheese_getTroopCount(troopRow, gameConfig) {
-    var troops = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    troops[0] = Number(troopRow.cells[0].innerHTML);
-    troops[1] = Number(troopRow.cells[1].innerHTML);
 
-    if (gameConfig.archer == 0) //classic
-    {
-        troops[3] = Number(troopRow.cells[2].innerHTML);
-        troops[4] = Number(troopRow.cells[3].innerHTML);
-        troops[5] = Number(troopRow.cells[4].innerHTML);
-        troops[7] = Number(troopRow.cells[5].innerHTML);
-        troops[8] = Number(troopRow.cells[6].innerHTML);
-        troops[9] = Number(troopRow.cells[7].innerHTML);
-
-        if (gameConfig.paladin == 0) //classic without paladin
-        {
-            troops[11] = Number(troopRow.cells[8].innerHTML);
-        }
-        else // classic with paladin
-        {
-            troops[10] = Number(troopRow.cells[8].innerHTML);
-            troops[11] = Number(troopRow.cells[9].innerHTML);
-        }
+class TroopCounts {
+    constructor() {
+        this.spear = 0;
+        this.sword = 0;
+        this.axe = 0;
+        this.archer = 0;
+        this.spy = 0;
+        this.light = 0;
+        this.marcher = 0;
+        this.heavy = 0;
+        this.ram = 0;
+        this.catapult = 0;
+        this.knight = 0;
+        this.snob = 0;
+        this.militia = 0;
     }
-    else //new units
-    {
-        troops[2] = Number(troopRow.cells[2].innerHTML);
-        troops[3] = Number(troopRow.cells[3].innerHTML);
-        troops[4] = Number(troopRow.cells[4].innerHTML);
-        troops[5] = Number(troopRow.cells[5].innerHTML);
-        troops[6] = Number(troopRow.cells[6].innerHTML);
-        troops[7] = Number(troopRow.cells[7].innerHTML);
-        troops[8] = Number(troopRow.cells[8].innerHTML);
-        troops[9] = Number(troopRow.cells[9].innerHTML);
 
-        if (gameConfig.paladin == 0) //new units without paladin
-        {
-            troops[11] = Number(troopRow.cells[10].innerHTML);
-        }
-        else {
-            troops[10] = Number(troopRow.cells[10].innerHTML);
-            troops[11] = Number(troopRow.cells[11].innerHTML);
-        }
+    toArray() {
+        return [
+            this.spear,
+            this.sword,
+            this.archer,
+            this.axe,            
+            this.spy,
+            this.light,
+            this.marcher,
+            this.heavy,
+            this.ram,
+            this.catapult,
+            this.knight,
+            this.snob,
+            this.militia
+        ];
+    }
+}
+
+
+/**
+ * @param {HTMLTableRowElement} troopRow a row of cells containing troop counts
+ * @return {TroopCounts}
+ */
+function scrapeTroopCounts(troopRow) {
+    var troops = new TroopCounts();
+    let unitTypes =  window.game_data.units;
+    for (let i = 0; i < unitTypes.length; i++) {
+        if (typeof troopRow.cells[i] !== 'undefined') { // attacker can't have militia
+            troops[unitTypes[i]] = parseInt(troopRow.cells[i].innerHTML);
+        }        
     }
     return troops;
 }
@@ -705,7 +706,7 @@ function twcheese_removeTroopsLabel(troopRow) {
  *	scrapes a battle report for information
  *	@param	gameDocument:HTMLDocument
  */
-function twcheese_BattleReportScraper(gameDocument, gameConfig) {
+function twcheese_BattleReportScraper(gameDocument) {
     try {
         this.gameDocument = gameDocument;
         this.$gameDoc = $(gameDocument);
@@ -733,7 +734,7 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
          */
         this.getAttackerLosses = function () {
             if (this.attackerUnitsTable)
-                return twcheese_getTroopCount(twcheese_removeTroopsLabel(this.attackerUnitsTable.rows[2]), gameConfig);
+                return scrapeTroopCounts(twcheese_removeTroopsLabel(this.attackerUnitsTable.rows[2])).toArray();
         };
 
         /**
@@ -741,7 +742,7 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
          */
         this.getAttackerQuantity = function () {
             if (this.attackerUnitsTable)
-                return twcheese_getTroopCount(twcheese_removeTroopsLabel(this.attackerUnitsTable.rows[1]), gameConfig);
+                return scrapeTroopCounts(twcheese_removeTroopsLabel(this.attackerUnitsTable.rows[1])).toArray();
         };
 
         /**
@@ -844,7 +845,7 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
          */
         this.getDefenderLosses = function () {
             if (this.defenderUnitsTable)
-                return twcheese_getTroopCount(twcheese_removeTroopsLabel(this.defenderUnitsTable.rows[2]), gameConfig);
+                return scrapeTroopCounts(twcheese_removeTroopsLabel(this.defenderUnitsTable.rows[2])).toArray();
             else
                 return false;
         };
@@ -855,7 +856,7 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
          */
         this.getDefenderQuantity = function () {
             if (this.defenderUnitsTable)
-                return twcheese_getTroopCount(twcheese_removeTroopsLabel(this.defenderUnitsTable.rows[1]), gameConfig);
+                return scrapeTroopCounts(twcheese_removeTroopsLabel(this.defenderUnitsTable.rows[1])).toArray();
             else
                 return false;
         };
@@ -1038,7 +1039,7 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
                 var reinforcements = new Array();
                 for (var i = 1; i < this.supportKilledTable.rows.length; i++) {
                     var currentReinforcement = new twcheese_Reinforcements();
-                    currentReinforcement.troops = twcheese_getTroopCount(twcheese_removeTroopsLabel(this.supportKilledTable.rows[i]), gameConfig);
+                    currentReinforcement.troops = scrapeTroopCounts(twcheese_removeTroopsLabel(this.supportKilledTable.rows[i])).toArray();
                     currentReinforcement.village = scrapeVillage(this.supportKilledTable.rows[i].cells[0].firstChild);
                     reinforcements.push(currentReinforcement);
                 }
@@ -1056,7 +1057,7 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
             var h4elements = gameDocument.getElementsByTagName('h4');
             for (var i = 0; i < h4elements.length; i++) {
                 if (h4elements[i].innerHTML.search(language['report']['unitsInTransit']) != -1)
-                    return twcheese_getTroopCount(h4elements[i].nextSibling.nextSibling.rows[1], gameConfig);
+                    return scrapeTroopCounts(h4elements[i].nextSibling.nextSibling.rows[1]).toArray();
             }
             return false;
         };
@@ -1068,7 +1069,7 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
         this.getUnitsOutside = function () {
             try {
                 if (this.getEspionageLevel() == 3) {
-                    return twcheese_getTroopCount(this.$gameDoc.find('#attack_spy_away').find('table')[0].rows[1], gameConfig);
+                    return scrapeTroopCounts(this.$gameDoc.find('#attack_spy_away').find('table')[0].rows[1]).toArray();
                 }
                 else
                     return false;
@@ -1085,10 +1086,10 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
  *	@param	gameDocument:HTMLDocument
  *	@return report:twcheese_BattleReport
  */
-function twcheese_scrapeBattleReport(gameDoc, gameConfig) {
+function twcheese_scrapeBattleReport(gameDoc) {
     try {
 
-        var reportScraper = new twcheese_BattleReportScraper(gameDoc, gameConfig);
+        var reportScraper = new twcheese_BattleReportScraper(gameDoc);
 
         var report = new twcheese_BattleReport;
         report.attacker = reportScraper.getAttacker();
@@ -2890,7 +2891,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
             let reportDoc = await requestDocument(gameUrl('report', {mode: game_data.mode, view: reportID}));
 
             try {
-                var report = twcheese_scrapeBattleReport(reportDoc, gameConfig);
+                var report = twcheese_scrapeBattleReport(reportDoc);
 
                 if (report.defenderQuantity)
                     report.survivors = twcheese_calculateSurvivors(report.defenderQuantity, report.defenderLosses);
@@ -3863,12 +3864,9 @@ function twcheese_calculateRaidScouted(resourcesScouted, haulBonus) {
  *	@return	troops:Array(spear,sword,axe,archer,lcav,acav,hcav)	an array of how many of each type of troop should be sent to take all resources, provided only one type of troop is sent
  */
 function twcheese_calculateRaidPredicted(resourcesScouted, buildings, home, target, timeSent, timeNow, gameSpeed, unitSpeed, haulBonus) {
-    // todo
-    console.log('home:', home);
-    console.log('target', target);
-
-    if (!haulBonus)
+    if (!haulBonus) {
         haulBonus = 0;
+    }
 
     var capacity = 1000 * Math.pow(1.2294934, (buildings[15] - 1));
     var hidden = new Array(0, 150, 200, 267, 356, 474, 632, 843, 1125, 1500, 2000);
@@ -4368,7 +4366,7 @@ function enhanceReport(gameConfig) {
     let twcheese_BRESettings = twcheese_getBRESettings();
 
     /*==== calculate additional information ===*/
-    let report = new twcheese_scrapeBattleReport(document, gameConfig);
+    let report = new twcheese_scrapeBattleReport(document);
     if (report.defenderQuantity)
         report.attacker_survivors = twcheese_calculateSurvivors(report.attackerQuantity, report.attackerLosses);
     if (report.defenderQuantity)

@@ -7,8 +7,7 @@ import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.
 
 import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/BRE/Default.js';
 
-var twcheese_gameConfig,
-    twcheese_BRESettings
+var twcheese_gameConfig
 ;
 
 if (!twcheese)
@@ -1126,7 +1125,7 @@ function twcheese_scrapeBattleReport(gameDoc) {
  *	@param	gameDoc:HTMLDocument	the document from game.php?screen=report&mode=attack
  *	@param	report:twcheese_BattleReport	the report data to use
  */
-function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig) {
+function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRESettings) {
     var contentValueElement = gameDoc.getElementById('content_value');
     var pageMod = this;
 
@@ -4327,9 +4326,6 @@ function initBRE() {
     /*==== get server settings ====*/
     twcheese_gameConfig = twcheese_getServerSettings();
 
-    /*==== get user settings ====*/
-    twcheese_BRESettings = twcheese_getBRESettings();
-
     /*==== check for sitter mode ====*/
     twcheese.baby = false;
     twcheese.babyUriComponent = '';
@@ -4349,6 +4345,8 @@ function initBRE() {
 
 
 function enhanceReport() {
+    let twcheese_BRESettings = twcheese_getBRESettings();
+
     /*==== calculate additional information ===*/
     let report = new twcheese_scrapeBattleReport(document);
     if (report.defenderQuantity)
@@ -4371,7 +4369,7 @@ function enhanceReport() {
     }
 
     /*==== add stuff to the page ====*/
-    let pageMod = new twcheese_BattleReportEnhancer(document, report, twcheese_gameConfig);
+    let pageMod = new twcheese_BattleReportEnhancer(document, report, twcheese_gameConfig, twcheese_BRESettings);
     pageMod.includeExtraInformation();
     pageMod.includeReportTools();
     /*==== auto rename ====*/

@@ -10,8 +10,7 @@ import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/BRE
 var twcheese_gameConfig,
     twcheese_BRESettings,
     twcheese_reportsFolderDisplaySettings,
-    gameDoc,
-    pageMod
+    gameDoc
 ;
 
 if (!twcheese)
@@ -1131,6 +1130,7 @@ function twcheese_scrapeBattleReport(gameDoc) {
  */
 function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig) {
     var contentValueElement = gameDoc.getElementById('content_value');
+    var pageMod = this;
 
 
     this.includeReportTools = function () {
@@ -1692,6 +1692,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig) {
  *	@param gameDoc:HTMLDocument	the document from game.php?screen=report&mode=attack
  */
 function twcheese_BattleReportsFolderEnhancer(gameDoc) {
+    var pageMod = this;
     this.reports = new Array();
 
     /**
@@ -4373,7 +4374,7 @@ function enhanceReport() {
     }
 
     /*==== add stuff to the page ====*/
-    pageMod = new twcheese_BattleReportEnhancer(gameDoc, report, twcheese_gameConfig);
+    let pageMod = new twcheese_BattleReportEnhancer(gameDoc, report, twcheese_gameConfig);
     pageMod.includeExtraInformation();
     pageMod.includeReportTools();
     /*==== auto rename ====*/
@@ -4405,7 +4406,7 @@ function enhanceReport() {
 function enhanceReportsFolder() {
     twcheese_reportsFolderDisplaySettings = twcheese_loadReportsFolderDisplaySettings();
     twcheese_saveReportsFolderDisplaySettings(twcheese_reportsFolderDisplaySettings);
-    pageMod = new twcheese_BattleReportsFolderEnhancer(gameDoc);
+    let pageMod = new twcheese_BattleReportsFolderEnhancer(gameDoc);
     pageMod.applySettings(twcheese_reportsFolderDisplaySettings);
 }
 

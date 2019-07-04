@@ -21,4 +21,10 @@ async function requestDocument(url) {
     return (new DOMParser()).parseFromString(responseText, 'text/html');
 };
 
-export { requestDocument };
+
+function gameUrl(screen, uriParams, method = 'GET') {
+    return window.TribalWars.buildURL(method, screen, uriParams);
+}
+
+
+export { requestDocument, gameUrl };

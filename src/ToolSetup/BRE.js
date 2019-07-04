@@ -9,8 +9,7 @@ import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/BRE
 
 var twcheese_gameConfig,
     twcheese_BRESettings,
-    twcheese_reportsFolderDisplaySettings,
-    gameDoc
+    twcheese_reportsFolderDisplaySettings
 ;
 
 if (!twcheese)
@@ -4295,7 +4294,7 @@ function useTool() {
         initialized = true;
     }
 
-    if (game_data.screen == 'report' && gameDoc.URL.includes('&view=')) {
+    if (game_data.screen == 'report' && document.URL.includes('&view=')) {
         // user is viewing single report
         if (!reportEnhanced) {
             enhanceReport();
@@ -4316,7 +4315,6 @@ function useTool() {
 
 
 function initBRE() {
-    gameDoc = document;
 
     /*==== contact information ====*/
     var narcismDiv = document.createElement('div');
@@ -4353,7 +4351,7 @@ function initBRE() {
 
 function enhanceReport() {
     /*==== calculate additional information ===*/
-    let report = new twcheese_scrapeBattleReport(gameDoc);
+    let report = new twcheese_scrapeBattleReport(document);
     if (report.defenderQuantity)
         report.attacker_survivors = twcheese_calculateSurvivors(report.attackerQuantity, report.attackerLosses);
     if (report.defenderQuantity)
@@ -4374,7 +4372,7 @@ function enhanceReport() {
     }
 
     /*==== add stuff to the page ====*/
-    let pageMod = new twcheese_BattleReportEnhancer(gameDoc, report, twcheese_gameConfig);
+    let pageMod = new twcheese_BattleReportEnhancer(document, report, twcheese_gameConfig);
     pageMod.includeExtraInformation();
     pageMod.includeReportTools();
     /*==== auto rename ====*/
@@ -4383,7 +4381,7 @@ function enhanceReport() {
 
     /*==== set to user defaults ====*/
     if (report.espionageLevel >= 1) {
-        gameDoc.getElementById('twcheese_period').value = twcheese_BRESettings.period;
+        document.getElementById('twcheese_period').value = twcheese_BRESettings.period;
         document.getElementById('twcheese_raider_haulBonus').value = twcheese_BRESettings.haulBonus;
 
         if (game_data.market != 'uk') {
@@ -4394,7 +4392,7 @@ function enhanceReport() {
         pageMod.changeRaidMode(twcheese_BRESettings.raid);
     }
 
-    gameDoc.getElementById('twcheese_auto_rename').checked = twcheese_BRESettings.autoRename;
+    document.getElementById('twcheese_auto_rename').checked = twcheese_BRESettings.autoRename;
 
     if (!userConfig.get('ReportToolsWidget.collapse', false)) {
         pageMod.toggleReportTools();
@@ -4406,7 +4404,7 @@ function enhanceReport() {
 function enhanceReportsFolder() {
     twcheese_reportsFolderDisplaySettings = twcheese_loadReportsFolderDisplaySettings();
     twcheese_saveReportsFolderDisplaySettings(twcheese_reportsFolderDisplaySettings);
-    let pageMod = new twcheese_BattleReportsFolderEnhancer(gameDoc);
+    let pageMod = new twcheese_BattleReportsFolderEnhancer(document);
     pageMod.applySettings(twcheese_reportsFolderDisplaySettings);
 }
 

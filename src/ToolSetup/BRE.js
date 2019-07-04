@@ -2897,7 +2897,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 if (report.defenderQuantity)
                     report.survivors = twcheese_calculateSurvivors(report.defenderQuantity.toArray(), report.defenderLosses.toArray());
                 if (report.buildingLevels)
-                    report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity.toArray(), report.unitsOutside.toArray());
+                    report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
                 report.killScores = calcKillScores(report.attackerLosses, report.defenderLosses);
                 if (report.loyalty)
                     report.loyaltyExtra = twcheese_calculateLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village.coord.split('|'), report.defenderVillage.coordsToArray());
@@ -3478,7 +3478,6 @@ function twcheese_calculateSurvivors(quantity, losses) {
     return survivors;
 }
 
-var population = new Array(1, 1, 1, 1, 2, 4, 5, 6, 5, 8, 10, 100);
 
 let troopPop = {
     spear: 1,
@@ -3525,28 +3524,23 @@ function twcheese_isFeint(troops) {
 /**
  *	calculates some population information based on a scout report
  *	@param	buildings:Array	an array of the building levels in the village
- *	@param 	troopsDefending:Array	an array of troops, in specific, the ones defending the village
- *	@param	troopsOutside:Array	an array of troops, in specific, the ones outside the village
+ *	@param {TroopCounts} troopsDefending
+ *	@param {TroopCounts} troopsOutside
  *	@return	population:Array(buildingPop:Number,militaryPop:Number,idlePop:Number)
  */
 function twcheese_calculatePopulation(buildings, troopsDefending, troopsOutside) {
     var buildingPopBases = new Array(1.17, 1.17, 1.17, 1.17, 1.55, 1.55, 1.17, 1.17, 1.17, 1.17, 1.17, 1.155, 1.14, 1.17, 1, 1.15, 1.17, 1.17);
     var buildingPopFactors = new Array(5, 7, 8, 8, 5000, 5, 80, 20, 0, 10, 20, 5, 10, 10, 0, 0, 2, 5);
-    var troopPopulation = new Array(1, 1, 1, 1, 2, 4, 5, 6, 5, 8, 10, 100);
 
     var buildingPopulation = 0;
-    var militaryPopulation = 0;
     var maxPopulation = Math.round(240 * Math.pow(1.172103, buildings[14] - 1));
     for (var i = 0; i < 18; i++) {
         if (buildings[i] > 0) {
             buildingPopulation += Math.round(buildingPopFactors[i] * Math.pow(buildingPopBases[i], (buildings[i] - 1)));
         }
     }
-    for (let i = 0; i < 12; i++) {
-        militaryPopulation += troopPopulation[i] * Number(troopsDefending[i]);
-        if (troopsOutside)
-            militaryPopulation += troopPopulation[i] * Number(troopsOutside[i]);
-    }
+
+    let militaryPopulation = calcTroopPopulation(troopsDefending) + calcTroopPopulation(troopsOutside);
     return new Array(buildingPopulation, militaryPopulation, (maxPopulation - buildingPopulation - militaryPopulation));
 }
 
@@ -4376,7 +4370,7 @@ function enhanceReport(gameConfig) {
     if (report.defenderQuantity)
         report.survivors = twcheese_calculateSurvivors(report.defenderQuantity.toArray(), report.defenderLosses.toArray());
     if (report.buildingLevels)
-        report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity.toArray(), report.unitsOutside.toArray());
+        report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
     report.killScores = calcKillScores(report.attackerLosses, report.defenderLosses);
     if (report.loyalty)
         report.loyaltyExtra = twcheese_calculateLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village.coord.split('|'), report.defenderVillage.coordsToArray());

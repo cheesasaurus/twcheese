@@ -9,10 +9,6 @@ import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.
 import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/BRE/Default.js';
 
 
-if (!twcheese)
-    var twcheese = {};
-
-
 /*==== imagePaths ====*/
 {
     var imagePaths = new Array();
@@ -224,301 +220,300 @@ initCss(`
     }
 `);
 
-
-/*==== language ====*/
+// language /////////////////////////////////////////////////////////////////////
 
 try {
-    twcheese.language = { "buildings": [], "months": [], "report": [], "twcheese": [] };
+    var language = { "buildings": [], "months": [], "report": [], "twcheese": [] };
     switch (game_data.market) {
         default:
             /*==== tribalwars.net, tribalwars.us, tribalwars.co.uk, beta.tribalwars.net ====*/
-            twcheese.language['buildings'][0] = 'Headquarters';
-            twcheese.language['buildings'][1] = 'Barracks';
-            twcheese.language['buildings'][2] = 'Stable';
-            twcheese.language['buildings'][3] = 'Workshop';
-            twcheese.language['buildings'][4] = 'Church';
-            twcheese.language['buildings'][5] = 'First church';
-            twcheese.language['buildings'][6] = 'Academy';
-            twcheese.language['buildings'][7] = 'Smithy';
-            twcheese.language['buildings'][8] = 'Rally point';
-            twcheese.language['buildings'][9] = 'Statue';
-            twcheese.language['buildings'][10] = 'Market';
-            twcheese.language['buildings'][11] = 'Timber camp';
-            twcheese.language['buildings'][12] = 'Clay pit';
-            twcheese.language['buildings'][13] = 'Iron mine';
-            twcheese.language['buildings'][14] = 'Farm';
-            twcheese.language['buildings'][15] = 'Warehouse';
-            twcheese.language['buildings'][16] = 'Hiding place';
-            twcheese.language['buildings'][17] = 'Wall';
+            language['buildings'][0] = 'Headquarters';
+            language['buildings'][1] = 'Barracks';
+            language['buildings'][2] = 'Stable';
+            language['buildings'][3] = 'Workshop';
+            language['buildings'][4] = 'Church';
+            language['buildings'][5] = 'First church';
+            language['buildings'][6] = 'Academy';
+            language['buildings'][7] = 'Smithy';
+            language['buildings'][8] = 'Rally point';
+            language['buildings'][9] = 'Statue';
+            language['buildings'][10] = 'Market';
+            language['buildings'][11] = 'Timber camp';
+            language['buildings'][12] = 'Clay pit';
+            language['buildings'][13] = 'Iron mine';
+            language['buildings'][14] = 'Farm';
+            language['buildings'][15] = 'Warehouse';
+            language['buildings'][16] = 'Hiding place';
+            language['buildings'][17] = 'Wall';
 
-            twcheese.language['months'][0] = 'Jan';
-            twcheese.language['months'][1] = 'Feb';
-            twcheese.language['months'][2] = 'Mar';
-            twcheese.language['months'][3] = 'Apr';
-            twcheese.language['months'][4] = 'May';
-            twcheese.language['months'][5] = 'Jun';
-            twcheese.language['months'][6] = 'Jul';
-            twcheese.language['months'][7] = 'Aug';
-            twcheese.language['months'][8] = 'Sep';
-            twcheese.language['months'][9] = 'Oct';
-            twcheese.language['months'][10] = 'Nov';
-            twcheese.language['months'][11] = 'Dec';
+            language['months'][0] = 'Jan';
+            language['months'][1] = 'Feb';
+            language['months'][2] = 'Mar';
+            language['months'][3] = 'Apr';
+            language['months'][4] = 'May';
+            language['months'][5] = 'Jun';
+            language['months'][6] = 'Jul';
+            language['months'][7] = 'Aug';
+            language['months'][8] = 'Sep';
+            language['months'][9] = 'Oct';
+            language['months'][10] = 'Nov';
+            language['months'][11] = 'Dec';
 
-            twcheese.language['report']['catDamage'] = 'Damage by catapults:';
-            twcheese.language['report']['ramDamage'] = 'Damage by rams:';
-            twcheese.language['report']['farmAssistant'] = 'Possible resources:';
-            twcheese.language['report']['haul'] = 'Haul:';
-            twcheese.language['report']['loyalty'] = 'Loyalty:';
-            twcheese.language['report']['timeSent'] = 'Battle time';
-            twcheese.language['report']['unitsInTransit'] = 'Defender\'s troops, that were in transit';
-            twcheese.language['report']['deletedPlayer'] = '(deleted)';
-            twcheese.language['report']['unread'] = '(new)';
+            language['report']['catDamage'] = 'Damage by catapults:';
+            language['report']['ramDamage'] = 'Damage by rams:';
+            language['report']['farmAssistant'] = 'Possible resources:';
+            language['report']['haul'] = 'Haul:';
+            language['report']['loyalty'] = 'Loyalty:';
+            language['report']['timeSent'] = 'Battle time';
+            language['report']['unitsInTransit'] = 'Defender\'s troops, that were in transit';
+            language['report']['deletedPlayer'] = '(deleted)';
+            language['report']['unread'] = '(new)';
 
-            twcheese.language['twcheese']['Building'] = 'Building';
-            twcheese.language['twcheese']['Help'] = 'Help';
-            twcheese.language['twcheese']['noReportsSelected'] = 'You haven\'t selected any reports to be renamed.';
+            language['twcheese']['Building'] = 'Building';
+            language['twcheese']['Help'] = 'Help';
+            language['twcheese']['noReportsSelected'] = 'You haven\'t selected any reports to be renamed.';
             break;
 
         case 'cz':
             /*==== divokekmeny.cz/ ====*/
-            twcheese.language['buildings'][0] = 'Hlavní budova';
-            twcheese.language['buildings'][1] = 'Kasárna';
-            twcheese.language['buildings'][2] = 'Stáj';
-            twcheese.language['buildings'][3] = 'Dílna';
-            twcheese.language['buildings'][4] = 'Kostel';
-            twcheese.language['buildings'][5] = 'První kostel';
-            twcheese.language['buildings'][6] = 'Panský dvůr';
-            twcheese.language['buildings'][7] = 'Kovárna';
-            twcheese.language['buildings'][8] = 'Nádvoří';
-            twcheese.language['buildings'][9] = 'Socha';
-            twcheese.language['buildings'][10] = 'Tržiště';
-            twcheese.language['buildings'][11] = 'Dřevorubec';
-            twcheese.language['buildings'][12] = 'Lom na těžbu hlíny';
-            twcheese.language['buildings'][13] = 'Železný důl';
-            twcheese.language['buildings'][14] = 'Selský dvůr';
-            twcheese.language['buildings'][15] = 'Skladiště';
-            twcheese.language['buildings'][16] = 'Skrýš';
-            twcheese.language['buildings'][17] = 'Hradby';
+            language['buildings'][0] = 'Hlavní budova';
+            language['buildings'][1] = 'Kasárna';
+            language['buildings'][2] = 'Stáj';
+            language['buildings'][3] = 'Dílna';
+            language['buildings'][4] = 'Kostel';
+            language['buildings'][5] = 'První kostel';
+            language['buildings'][6] = 'Panský dvůr';
+            language['buildings'][7] = 'Kovárna';
+            language['buildings'][8] = 'Nádvoří';
+            language['buildings'][9] = 'Socha';
+            language['buildings'][10] = 'Tržiště';
+            language['buildings'][11] = 'Dřevorubec';
+            language['buildings'][12] = 'Lom na těžbu hlíny';
+            language['buildings'][13] = 'Železný důl';
+            language['buildings'][14] = 'Selský dvůr';
+            language['buildings'][15] = 'Skladiště';
+            language['buildings'][16] = 'Skrýš';
+            language['buildings'][17] = 'Hradby';
 
-            twcheese.language['months'][0] = 'Jan';
-            twcheese.language['months'][1] = 'Feb';
-            twcheese.language['months'][2] = 'Mar';
-            twcheese.language['months'][3] = 'Apr';
-            twcheese.language['months'][4] = 'May';
-            twcheese.language['months'][5] = 'Jun';
-            twcheese.language['months'][6] = 'Jul';
-            twcheese.language['months'][7] = 'Aug';
-            twcheese.language['months'][8] = 'Sep';
-            twcheese.language['months'][9] = 'Oct';
-            twcheese.language['months'][10] = 'Nov';
-            twcheese.language['months'][11] = 'Dec';
+            language['months'][0] = 'Jan';
+            language['months'][1] = 'Feb';
+            language['months'][2] = 'Mar';
+            language['months'][3] = 'Apr';
+            language['months'][4] = 'May';
+            language['months'][5] = 'Jun';
+            language['months'][6] = 'Jul';
+            language['months'][7] = 'Aug';
+            language['months'][8] = 'Sep';
+            language['months'][9] = 'Oct';
+            language['months'][10] = 'Nov';
+            language['months'][11] = 'Dec';
 
-            twcheese.language['report']['catDamage'] = 'Škoda vzniklá střelbou z katapultu:';
-            twcheese.language['report']['ramDamage'] = 'Škoda vzniklá beranidlem:';
-            twcheese.language['report']['farmAssistant'] = 'Vyšpehované suroviny:';
-            twcheese.language['report']['haul'] = 'Kořist:';
-            twcheese.language['report']['loyalty'] = 'Oddanost:';
-            twcheese.language['report']['timeSent'] = 'Odesláno';
-            twcheese.language['report']['unitsInTransit'] = 'Vojsko obránce, které bylo na cestě';
-            twcheese.language['report']['deletedPlayer'] = '(deleted)'; //todo: translate
-            twcheese.language['report']['unread'] = '(new)'; //todo: translate
+            language['report']['catDamage'] = 'Škoda vzniklá střelbou z katapultu:';
+            language['report']['ramDamage'] = 'Škoda vzniklá beranidlem:';
+            language['report']['farmAssistant'] = 'Vyšpehované suroviny:';
+            language['report']['haul'] = 'Kořist:';
+            language['report']['loyalty'] = 'Oddanost:';
+            language['report']['timeSent'] = 'Odesláno';
+            language['report']['unitsInTransit'] = 'Vojsko obránce, které bylo na cestě';
+            language['report']['deletedPlayer'] = '(deleted)'; //todo: translate
+            language['report']['unread'] = '(new)'; //todo: translate
 
-            twcheese.language['twcheese']['Building'] = 'budově';
-            twcheese.language['twcheese']['Help'] = 'Pomoc';
-            twcheese.language['twcheese']['noReportsSelected'] = 'Nejdříve si musíte vybrat, které zprávy přejmenovat.';
+            language['twcheese']['Building'] = 'budově';
+            language['twcheese']['Help'] = 'Pomoc';
+            language['twcheese']['noReportsSelected'] = 'Nejdříve si musíte vybrat, které zprávy přejmenovat.';
             break;
 
         case 'se':
-            twcheese.language['buildings'][0] = 'Högkvarter';
-            twcheese.language['buildings'][1] = 'Barack';
-            twcheese.language['buildings'][2] = 'Stall';
-            twcheese.language['buildings'][3] = 'Verkstad';
-            twcheese.language['buildings'][4] = 'Kyrka';
-            twcheese.language['buildings'][5] = 'Första Kyrkan';
-            twcheese.language['buildings'][6] = 'Akademi';
-            twcheese.language['buildings'][7] = 'Smedja';
-            twcheese.language['buildings'][8] = 'Samlingsplats';
-            twcheese.language['buildings'][9] = 'Staty';
-            twcheese.language['buildings'][10] = 'Marknad';
-            twcheese.language['buildings'][11] = 'Sågverk';
-            twcheese.language['buildings'][12] = 'Lergrop';
-            twcheese.language['buildings'][13] = 'Järngruva';
-            twcheese.language['buildings'][14] = 'Farm';
-            twcheese.language['buildings'][15] = 'Förråd';
-            twcheese.language['buildings'][16] = 'Gömställe';
-            twcheese.language['buildings'][17] = 'Mur';
+            language['buildings'][0] = 'Högkvarter';
+            language['buildings'][1] = 'Barack';
+            language['buildings'][2] = 'Stall';
+            language['buildings'][3] = 'Verkstad';
+            language['buildings'][4] = 'Kyrka';
+            language['buildings'][5] = 'Första Kyrkan';
+            language['buildings'][6] = 'Akademi';
+            language['buildings'][7] = 'Smedja';
+            language['buildings'][8] = 'Samlingsplats';
+            language['buildings'][9] = 'Staty';
+            language['buildings'][10] = 'Marknad';
+            language['buildings'][11] = 'Sågverk';
+            language['buildings'][12] = 'Lergrop';
+            language['buildings'][13] = 'Järngruva';
+            language['buildings'][14] = 'Farm';
+            language['buildings'][15] = 'Förråd';
+            language['buildings'][16] = 'Gömställe';
+            language['buildings'][17] = 'Mur';
 
-            twcheese.language['months'][0] = 'Jan';
-            twcheese.language['months'][1] = 'Feb';
-            twcheese.language['months'][2] = 'Mar';
-            twcheese.language['months'][3] = 'Apr';
-            twcheese.language['months'][4] = 'Maj';
-            twcheese.language['months'][5] = 'Jun';
-            twcheese.language['months'][6] = 'Jul';
-            twcheese.language['months'][7] = 'Aug';
-            twcheese.language['months'][8] = 'Sep';
-            twcheese.language['months'][9] = 'Okt';
-            twcheese.language['months'][10] = 'Nov';
-            twcheese.language['months'][11] = 'Dec';
+            language['months'][0] = 'Jan';
+            language['months'][1] = 'Feb';
+            language['months'][2] = 'Mar';
+            language['months'][3] = 'Apr';
+            language['months'][4] = 'Maj';
+            language['months'][5] = 'Jun';
+            language['months'][6] = 'Jul';
+            language['months'][7] = 'Aug';
+            language['months'][8] = 'Sep';
+            language['months'][9] = 'Okt';
+            language['months'][10] = 'Nov';
+            language['months'][11] = 'Dec';
 
-            twcheese.language['report']['catDamage'] = 'Skada gjord av katapulter:';
-            twcheese.language['report']['ramDamage'] = 'Skada gjorda av Murbräckan:';
-            twcheese.language['report']['farmAssistant'] = 'Resurser spejade:';
-            twcheese.language['report']['haul'] = 'Byte:';
-            twcheese.language['report']['loyalty'] = 'Lojalitet:';
-            twcheese.language['report']['timeSent'] = 'Skickat';
-            twcheese.language['report']['unitsInTransit'] = 'Enheter utanför byn';
-            twcheese.language['report']['deletedPlayer'] = '(borttaget)';
-            twcheese.language['report']['unread'] = '(new)'; //todo: translate
+            language['report']['catDamage'] = 'Skada gjord av katapulter:';
+            language['report']['ramDamage'] = 'Skada gjorda av Murbräckan:';
+            language['report']['farmAssistant'] = 'Resurser spejade:';
+            language['report']['haul'] = 'Byte:';
+            language['report']['loyalty'] = 'Lojalitet:';
+            language['report']['timeSent'] = 'Skickat';
+            language['report']['unitsInTransit'] = 'Enheter utanför byn';
+            language['report']['deletedPlayer'] = '(borttaget)';
+            language['report']['unread'] = '(new)'; //todo: translate
 
-            twcheese.language['twcheese']['Building'] = 'Byggnad';
-            twcheese.language['twcheese']['Help'] = 'Hjälp';
-            twcheese.language['twcheese']['noReportsSelected'] = 'Du har inte valt några rapporter som skall döpas om.';
+            language['twcheese']['Building'] = 'Byggnad';
+            language['twcheese']['Help'] = 'Hjälp';
+            language['twcheese']['noReportsSelected'] = 'Du har inte valt några rapporter som skall döpas om.';
             break;
 
         /*==== fyletikesmaxes.gr/ ====*/
         case 'gr':
-            twcheese.language['buildings'][0] = 'Επιτελείο';
-            twcheese.language['buildings'][1] = 'Στρατώνας';
-            twcheese.language['buildings'][2] = 'Στάβλος';
-            twcheese.language['buildings'][3] = 'Εργαστήριο';
-            twcheese.language['buildings'][4] = 'Εκκλησία';
-            twcheese.language['buildings'][5] = 'ΠρώτηΕκκλησία';
-            twcheese.language['buildings'][6] = 'Ακαδημία';
-            twcheese.language['buildings'][7] = 'Οπλοποιείο';
-            twcheese.language['buildings'][8] = 'ΜέροςΣυγκέντρωσης';
-            twcheese.language['buildings'][9] = 'Άγαλμα';
-            twcheese.language['buildings'][10] = 'Αγορά';
-            twcheese.language['buildings'][11] = 'Ξυλουργείο';
-            twcheese.language['buildings'][12] = 'Λατομείο';
-            twcheese.language['buildings'][13] = 'Σιδηρωρυχείο';
-            twcheese.language['buildings'][14] = 'Αγρόκτημα';
-            twcheese.language['buildings'][15] = 'Αποθήκη';
-            twcheese.language['buildings'][16] = 'Κρυψώνα';
-            twcheese.language['buildings'][17] = 'Τείχος';
+            language['buildings'][0] = 'Επιτελείο';
+            language['buildings'][1] = 'Στρατώνας';
+            language['buildings'][2] = 'Στάβλος';
+            language['buildings'][3] = 'Εργαστήριο';
+            language['buildings'][4] = 'Εκκλησία';
+            language['buildings'][5] = 'ΠρώτηΕκκλησία';
+            language['buildings'][6] = 'Ακαδημία';
+            language['buildings'][7] = 'Οπλοποιείο';
+            language['buildings'][8] = 'ΜέροςΣυγκέντρωσης';
+            language['buildings'][9] = 'Άγαλμα';
+            language['buildings'][10] = 'Αγορά';
+            language['buildings'][11] = 'Ξυλουργείο';
+            language['buildings'][12] = 'Λατομείο';
+            language['buildings'][13] = 'Σιδηρωρυχείο';
+            language['buildings'][14] = 'Αγρόκτημα';
+            language['buildings'][15] = 'Αποθήκη';
+            language['buildings'][16] = 'Κρυψώνα';
+            language['buildings'][17] = 'Τείχος';
 
-            twcheese.language['months'][0] = 'Ιαν';
-            twcheese.language['months'][1] = 'Φεβ';
-            twcheese.language['months'][2] = 'Μαρ';
-            twcheese.language['months'][3] = 'Απρ';
-            twcheese.language['months'][4] = 'Μαι';
-            twcheese.language['months'][5] = 'Ιον';
-            twcheese.language['months'][6] = 'Ιολ';
-            twcheese.language['months'][7] = 'Αυγ';
-            twcheese.language['months'][8] = 'Σεπ';
-            twcheese.language['months'][9] = 'Οκτ';
-            twcheese.language['months'][10] = 'Νοε';
-            twcheese.language['months'][11] = 'Δεκ';
+            language['months'][0] = 'Ιαν';
+            language['months'][1] = 'Φεβ';
+            language['months'][2] = 'Μαρ';
+            language['months'][3] = 'Απρ';
+            language['months'][4] = 'Μαι';
+            language['months'][5] = 'Ιον';
+            language['months'][6] = 'Ιολ';
+            language['months'][7] = 'Αυγ';
+            language['months'][8] = 'Σεπ';
+            language['months'][9] = 'Οκτ';
+            language['months'][10] = 'Νοε';
+            language['months'][11] = 'Δεκ';
 
-            twcheese.language['report']['catDamage'] = 'Ζημία που έκαναν οι καταπέλτες:';
-            twcheese.language['report']['ramDamage'] = 'Ζημιά που προκλήθηκε από τον πολιορκητικό κριό:';
-            twcheese.language['report']['farmAssistant'] = 'Πιθανοί πόροι:';
-            twcheese.language['report']['haul'] = 'Αλλαγή:';
-            twcheese.language['report']['loyalty'] = 'Πίστη:';
-            twcheese.language['report']['timeSent'] = 'Απεσταλμένο';
-            twcheese.language['report']['unitsInTransit'] = 'Στρατεύματα αμυνόμενου που ήταν σε μεταφορά';
-            twcheese.language['report']['deletedPlayer'] = '(διεγραμμένο)';
-            twcheese.language['report']['unread'] = '(νέο)';
+            language['report']['catDamage'] = 'Ζημία που έκαναν οι καταπέλτες:';
+            language['report']['ramDamage'] = 'Ζημιά που προκλήθηκε από τον πολιορκητικό κριό:';
+            language['report']['farmAssistant'] = 'Πιθανοί πόροι:';
+            language['report']['haul'] = 'Αλλαγή:';
+            language['report']['loyalty'] = 'Πίστη:';
+            language['report']['timeSent'] = 'Απεσταλμένο';
+            language['report']['unitsInTransit'] = 'Στρατεύματα αμυνόμενου που ήταν σε μεταφορά';
+            language['report']['deletedPlayer'] = '(διεγραμμένο)';
+            language['report']['unread'] = '(νέο)';
 
-            twcheese.language['twcheese']['Building'] = 'Κτίριο';
-            twcheese.language['twcheese']['Help'] = 'Βοήθεια';
-            twcheese.language['twcheese']['noReportsSelected'] = 'Δεν έχεις επιλέξει  καμιά αναφορά για μετονομασία';
+            language['twcheese']['Building'] = 'Κτίριο';
+            language['twcheese']['Help'] = 'Βοήθεια';
+            language['twcheese']['noReportsSelected'] = 'Δεν έχεις επιλέξει  καμιά αναφορά για μετονομασία';
             break;
 
         /* the market where Arma plays :D */
         case 'hr':
-            twcheese.language['buildings'][0] = 'Sjedište';
-            twcheese.language['buildings'][1] = 'Vojarna';
-            twcheese.language['buildings'][2] = 'Štala';
-            twcheese.language['buildings'][3] = 'Radionica';
-            twcheese.language['buildings'][4] = 'Crkva';
-            twcheese.language['buildings'][5] = 'Prva crkva';
-            twcheese.language['buildings'][6] = 'Akademija';
-            twcheese.language['buildings'][7] = 'Kovačnica';
-            twcheese.language['buildings'][8] = 'Okupljalište';
-            twcheese.language['buildings'][9] = 'Spomenik';
-            twcheese.language['buildings'][10] = 'Tržnica';
-            twcheese.language['buildings'][11] = 'Drvosječa';
-            twcheese.language['buildings'][12] = 'Glinokop';
-            twcheese.language['buildings'][13] = 'Rudnik željeza';
-            twcheese.language['buildings'][14] = 'Farma';
-            twcheese.language['buildings'][15] = 'Spremište';
-            twcheese.language['buildings'][16] = 'Skrovište';
-            twcheese.language['buildings'][17] = 'Zid';
+            language['buildings'][0] = 'Sjedište';
+            language['buildings'][1] = 'Vojarna';
+            language['buildings'][2] = 'Štala';
+            language['buildings'][3] = 'Radionica';
+            language['buildings'][4] = 'Crkva';
+            language['buildings'][5] = 'Prva crkva';
+            language['buildings'][6] = 'Akademija';
+            language['buildings'][7] = 'Kovačnica';
+            language['buildings'][8] = 'Okupljalište';
+            language['buildings'][9] = 'Spomenik';
+            language['buildings'][10] = 'Tržnica';
+            language['buildings'][11] = 'Drvosječa';
+            language['buildings'][12] = 'Glinokop';
+            language['buildings'][13] = 'Rudnik željeza';
+            language['buildings'][14] = 'Farma';
+            language['buildings'][15] = 'Spremište';
+            language['buildings'][16] = 'Skrovište';
+            language['buildings'][17] = 'Zid';
 
-            twcheese.language['months'][0] = 'Sij';
-            twcheese.language['months'][1] = 'Vel';
-            twcheese.language['months'][2] = 'Ožu';
-            twcheese.language['months'][3] = 'Tra';
-            twcheese.language['months'][4] = 'Svi';
-            twcheese.language['months'][5] = 'Lip';
-            twcheese.language['months'][6] = 'Srp';
-            twcheese.language['months'][7] = 'Kol';
-            twcheese.language['months'][8] = 'Ruj';
-            twcheese.language['months'][9] = 'Lis';
-            twcheese.language['months'][10] = 'Stu';
-            twcheese.language['months'][11] = 'Pro';
+            language['months'][0] = 'Sij';
+            language['months'][1] = 'Vel';
+            language['months'][2] = 'Ožu';
+            language['months'][3] = 'Tra';
+            language['months'][4] = 'Svi';
+            language['months'][5] = 'Lip';
+            language['months'][6] = 'Srp';
+            language['months'][7] = 'Kol';
+            language['months'][8] = 'Ruj';
+            language['months'][9] = 'Lis';
+            language['months'][10] = 'Stu';
+            language['months'][11] = 'Pro';
 
-            twcheese.language['report']['catDamage'] = 'Šteta nanešena katapultima:	';
-            twcheese.language['report']['ramDamage'] = 'Šteta nanešena ovnovima:';
-            twcheese.language['report']['farmAssistant'] = 'Moguće sirovine:';
-            twcheese.language['report']['haul'] = 'Nosivost:';
-            twcheese.language['report']['loyalty'] = 'Odanost:';
-            twcheese.language['report']['timeSent'] = 'Poslano';
-            twcheese.language['report']['unitsInTransit'] = 'Obrambene postrojbe koje su bile na putu';
-            twcheese.language['report']['deletedPlayer'] = '(obrisano)';
+            language['report']['catDamage'] = 'Šteta nanešena katapultima:	';
+            language['report']['ramDamage'] = 'Šteta nanešena ovnovima:';
+            language['report']['farmAssistant'] = 'Moguće sirovine:';
+            language['report']['haul'] = 'Nosivost:';
+            language['report']['loyalty'] = 'Odanost:';
+            language['report']['timeSent'] = 'Poslano';
+            language['report']['unitsInTransit'] = 'Obrambene postrojbe koje su bile na putu';
+            language['report']['deletedPlayer'] = '(obrisano)';
             break;
 
         /* Norwegian */
         case 'no':
-            twcheese.language['buildings'][0] = 'Hovedkvarter';
-            twcheese.language['buildings'][1] = 'Brakker';
-            twcheese.language['buildings'][2] = 'Stall';
-            twcheese.language['buildings'][3] = 'Verksted';
-            twcheese.language['buildings'][4] = 'Kirke';
-            twcheese.language['buildings'][5] = 'Første Kirke';
-            twcheese.language['buildings'][6] = 'Akademi';
-            twcheese.language['buildings'][7] = 'Smie';
-            twcheese.language['buildings'][8] = 'Samlingsplass';
-            twcheese.language['buildings'][9] = 'Statue';
-            twcheese.language['buildings'][10] = 'Marked';
-            twcheese.language['buildings'][11] = 'Hogstfelt';
-            twcheese.language['buildings'][12] = 'Leirgrav';
-            twcheese.language['buildings'][13] = 'Jerngruve';
-            twcheese.language['buildings'][14] = 'Gård';
-            twcheese.language['buildings'][15] = 'Varehus';
-            twcheese.language['buildings'][16] = 'Skjulested';
-            twcheese.language['buildings'][17] = 'Mur';
+            language['buildings'][0] = 'Hovedkvarter';
+            language['buildings'][1] = 'Brakker';
+            language['buildings'][2] = 'Stall';
+            language['buildings'][3] = 'Verksted';
+            language['buildings'][4] = 'Kirke';
+            language['buildings'][5] = 'Første Kirke';
+            language['buildings'][6] = 'Akademi';
+            language['buildings'][7] = 'Smie';
+            language['buildings'][8] = 'Samlingsplass';
+            language['buildings'][9] = 'Statue';
+            language['buildings'][10] = 'Marked';
+            language['buildings'][11] = 'Hogstfelt';
+            language['buildings'][12] = 'Leirgrav';
+            language['buildings'][13] = 'Jerngruve';
+            language['buildings'][14] = 'Gård';
+            language['buildings'][15] = 'Varehus';
+            language['buildings'][16] = 'Skjulested';
+            language['buildings'][17] = 'Mur';
 
-            twcheese.language['months'][0] = 'Jan';
-            twcheese.language['months'][1] = 'Feb';
-            twcheese.language['months'][2] = 'Mar';
-            twcheese.language['months'][3] = 'Apr';
-            twcheese.language['months'][4] = 'Mai';
-            twcheese.language['months'][5] = 'Jun';
-            twcheese.language['months'][6] = 'Jul';
-            twcheese.language['months'][7] = 'Aug';
-            twcheese.language['months'][8] = 'Sep';
-            twcheese.language['months'][9] = 'Okt';
-            twcheese.language['months'][10] = 'Nov';
-            twcheese.language['months'][11] = 'Des';
+            language['months'][0] = 'Jan';
+            language['months'][1] = 'Feb';
+            language['months'][2] = 'Mar';
+            language['months'][3] = 'Apr';
+            language['months'][4] = 'Mai';
+            language['months'][5] = 'Jun';
+            language['months'][6] = 'Jul';
+            language['months'][7] = 'Aug';
+            language['months'][8] = 'Sep';
+            language['months'][9] = 'Okt';
+            language['months'][10] = 'Nov';
+            language['months'][11] = 'Des';
 
-            twcheese.language['report']['catDamage'] = 'Skade forårsaket av katapulter:';
-            twcheese.language['report']['ramDamage'] = 'Skade forårsaket av rambukker:';
-            twcheese.language['report']['farmAssistant'] = 'Speidede ressurser:';
-            twcheese.language['report']['haul'] = 'Bytte';
-            twcheese.language['report']['loyalty'] = 'Lojalitet:';
-            twcheese.language['report']['timeSent'] = 'Sendt';
-            twcheese.language['report']['unitsInTransit'] = 'Forsvarer';
-            twcheese.language['report']['timeSent'] = 'Kamptid';
-            twcheese.language['report']['unitsInTransit'] = 'Antall';
-            twcheese.language['report']['deletedPlayer'] = '(slettet)';
-            twcheese.language['report']['unread'] = '(ny)';
+            language['report']['catDamage'] = 'Skade forårsaket av katapulter:';
+            language['report']['ramDamage'] = 'Skade forårsaket av rambukker:';
+            language['report']['farmAssistant'] = 'Speidede ressurser:';
+            language['report']['haul'] = 'Bytte';
+            language['report']['loyalty'] = 'Lojalitet:';
+            language['report']['timeSent'] = 'Sendt';
+            language['report']['unitsInTransit'] = 'Forsvarer';
+            language['report']['timeSent'] = 'Kamptid';
+            language['report']['unitsInTransit'] = 'Antall';
+            language['report']['deletedPlayer'] = '(slettet)';
+            language['report']['unread'] = '(ny)';
 
 
-            twcheese.language['twcheese']['Building'] = 'Bygning';
-            twcheese.language['twcheese']['Help'] = 'Hjelp';
-            twcheese.language['twcheese']['noReportsSelected'] = 'Du har ikke valgt hvilke rapporter som skal endres navn på.';
+            language['twcheese']['Building'] = 'Bygning';
+            language['twcheese']['Help'] = 'Hjelp';
+            language['twcheese']['noReportsSelected'] = 'Du har ikke valgt hvilke rapporter som skal endres navn på.';
             break;
     }
 } catch (e) { console.error(e) }
@@ -597,7 +592,7 @@ function twcheese_ReportsFolderDisplaySettings() {
 function twcheese_getPlayerInfo(playerCell) {
     var player = new Array(0, 0);
 
-    if (playerCell.innerHTML.search(twcheese.language['report']['deletedPlayer']) != -1)
+    if (playerCell.innerHTML.search(language['report']['deletedPlayer']) != -1)
         return new Array(-1, playerCell.innerHTML);
     else if (playerCell.innerHTML == '---')
         return new Array(0, '---');
@@ -796,14 +791,14 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
             if (this.resultsTable) {
                 var thElements = this.resultsTable.getElementsByTagName('th');
                 for (var i = 0; i < thElements.length; i++) {
-                    if (thElements[i].innerHTML == twcheese.language['report']['catDamage']) {
+                    if (thElements[i].innerHTML == language['report']['catDamage']) {
                         var catDamage = new Array(0, 0, 0);
                         //var buildingNames = new Array('village headquarters','barracks','stable','workshop','church','first church','academy','smithy','rally point','statue','market','timber camp','clay pit','iron mine','farm','warehouse','hiding place','wall');
                         var damageCell = thElements[i].parentNode.cells[1];
                         for (var n = 0; n < 18; n++) {
                             //var searchText = damageCell.innerHTML.toLowerCase();
                             //if(searchText.search(buildingNames[n]) != -1)
-                            if (damageCell.innerHTML.search(twcheese.language['buildings'][n]) != -1)
+                            if (damageCell.innerHTML.search(language['buildings'][n]) != -1)
                                 catDamage[0] = n;
                         }
                         catDamage[1] = new Number(damageCell.getElementsByTagName('b')[0].innerHTML);
@@ -889,7 +884,7 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
             if (this.resultsTable) {
                 var thElements = this.resultsTable.getElementsByTagName('th');
                 for (var i = 0; i < thElements.length; i++) {
-                    if (thElements[i].innerHTML == twcheese.language['report']['haul']) {
+                    if (thElements[i].innerHTML == language['report']['haul']) {
                         return scrapeResources(thElements[i].parentNode.cells[1]).toIntArray();
                     }
                 }
@@ -915,7 +910,7 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
             if (this.resultsTable) {
                 var thElements = this.resultsTable.getElementsByTagName('th');
                 for (var i = 0; i < thElements.length; i++) {
-                    if (thElements[i].innerHTML == twcheese.language['report']['loyalty']) {
+                    if (thElements[i].innerHTML == language['report']['loyalty']) {
                         var bElements = thElements[i].parentNode.getElementsByTagName('b');
                         return new Array(bElements[0].innerHTML, bElements[1].innerHTML);
                     }
@@ -942,7 +937,7 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
             if (this.resultsTable) {
                 var thElements = this.resultsTable.getElementsByTagName('th');
                 for (var i = 0; i < thElements.length; i++) {
-                    if (thElements[i].innerHTML == twcheese.language['report']['ramDamage']) {
+                    if (thElements[i].innerHTML == language['report']['ramDamage']) {
                         var ramDamage = new Array(0, 0);
                         var damageCell = thElements[i].parentNode.cells[1];
                         ramDamage[0] = new Number(damageCell.getElementsByTagName('b')[0].innerHTML);
@@ -999,7 +994,7 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
                 let numbers = text.match(/[0-9]{1,}/g);
                 var month = text.match(/\w{3,}/);
                 for (var m = 0; m < 12; m++) {
-                    if (month == twcheese.language['months'][m]) {
+                    if (month == language['months'][m]) {
                         break;
                     }
                 }
@@ -1042,7 +1037,7 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
         this.getUnitsInTransit = function () {
             var h4elements = gameDocument.getElementsByTagName('h4');
             for (var i = 0; i < h4elements.length; i++) {
-                if (h4elements[i].innerHTML.search(twcheese.language['report']['unitsInTransit']) != -1)
+                if (h4elements[i].innerHTML.search(language['report']['unitsInTransit']) != -1)
                     return twcheese_getTroopCount(h4elements[i].nextSibling.nextSibling.rows[1], gameConfig);
             }
             return false;
@@ -1287,18 +1282,18 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
             raiderUnitsTable.insertRow(-1);
             raiderUnitsTable.rows[2].className = 'center';
 
-            var travelTimes = twcheese.calculateTravelTimes(twcheese_calculateDistance(report.attackerVillage, report.defenderVillage), gameConfig.speed, gameConfig.unit_speed);
+            var travelTimes = calculateTravelTimes(twcheese_calculateDistance(report.attackerVillage, report.defenderVillage), gameConfig.speed, gameConfig.unit_speed);
 
             for (let i = 0; i < 7; i++) {
                 raiderUnitsTable.rows[2].insertCell(-1);
             }    
-            raiderUnitsTable.rows[2].cells[0].innerHTML = twcheese.formatDateTo_timeString(travelTimes[0]);
-            raiderUnitsTable.rows[2].cells[1].innerHTML = twcheese.formatDateTo_timeString(travelTimes[1]);
-            raiderUnitsTable.rows[2].cells[2].innerHTML = twcheese.formatDateTo_timeString(travelTimes[2]);
-            raiderUnitsTable.rows[2].cells[3].innerHTML = twcheese.formatDateTo_timeString(travelTimes[3]);
-            raiderUnitsTable.rows[2].cells[4].innerHTML = twcheese.formatDateTo_timeString(travelTimes[5]);
-            raiderUnitsTable.rows[2].cells[5].innerHTML = twcheese.formatDateTo_timeString(travelTimes[6]);
-            raiderUnitsTable.rows[2].cells[6].innerHTML = twcheese.formatDateTo_timeString(travelTimes[7]);
+            raiderUnitsTable.rows[2].cells[0].innerHTML = formatDateTo_timeString(travelTimes[0]);
+            raiderUnitsTable.rows[2].cells[1].innerHTML = formatDateTo_timeString(travelTimes[1]);
+            raiderUnitsTable.rows[2].cells[2].innerHTML = formatDateTo_timeString(travelTimes[2]);
+            raiderUnitsTable.rows[2].cells[3].innerHTML = formatDateTo_timeString(travelTimes[3]);
+            raiderUnitsTable.rows[2].cells[4].innerHTML = formatDateTo_timeString(travelTimes[5]);
+            raiderUnitsTable.rows[2].cells[5].innerHTML = formatDateTo_timeString(travelTimes[6]);
+            raiderUnitsTable.rows[2].cells[6].innerHTML = formatDateTo_timeString(travelTimes[7]);
 
             raiderTable.insertRow(-1);
             raiderTable.rows[2].insertCell(-1);
@@ -1530,7 +1525,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
             var resultsHeaders = gameDoc.getElementById('attack_results').getElementsByTagName('th');
             var loyaltyRow;
             for (let i = 0; i < resultsHeaders.length; i++) {
-                if (resultsHeaders[i].innerHTML == twcheese.language['report']['loyalty']) {
+                if (resultsHeaders[i].innerHTML == language['report']['loyalty']) {
                     loyaltyRow = resultsHeaders[i].parentNode;
                 }
             }        
@@ -1671,7 +1666,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
      *	sets raiders displayed in the raider calculator
      *	@param	raiderTable:HTMLTableElement
      *	@param	units:Array	the units to display
-     *	@param 	report:twcheese.BattleReport	the report being viewed
+     *	@param 	report:twcheese_BattleReport	the report being viewed
      */
     function twcheese_setRaiders(raiderTable, units, report) {
         for (var i = 0; i < 7; i++) {
@@ -2094,7 +2089,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         }).text();
 
         report.isNew = false;
-        if (cellText.search(twcheese.language['report']['unread']) != -1)
+        if (cellText.search(language['report']['unread']) != -1)
             report.isNew = true;
 
         /*==== partial hauls ====*/
@@ -2414,7 +2409,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(" + Number(i + 24) + ",'buildings[" + i + "]')";
         var targetCell = reportsFolderSettingsTable.rows[i].cells[1];
         targetCell.innerHTML = '<input onClick="' + checkboxScript + '" type="checkbox"/>';
-        targetCell.innerHTML += twcheese.language['twcheese']['Building'] + ': ' + twcheese.language['buildings'][i];
+        targetCell.innerHTML += language['twcheese']['Building'] + ': ' + language['buildings'][i];
     }
 
 
@@ -2876,7 +2871,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         /*==== rename reports 1 by 1 ====*/
         if (reports.length == 0) {
             document.getElementById('twcheese_progress_count').innerHTML = 0;
-            window.UI.ErrorMessage(twcheese.language['twcheese']['noReportsSelected'], 3000);
+            window.UI.ErrorMessage(language['twcheese']['noReportsSelected'], 3000);
         }
         else {
             var reportID = reports.shift();
@@ -3417,7 +3412,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
  *	@param	text:String	text to be displayed inside the button
  *	@param	address:String	(optional) if included, causes the button to open a new window when clicked, directing the page to the specified address
  */
-twcheese.createFooterButton = function (text, address) {
+function createFooterButton(text, address) {
     var twcheese_menu = document.createElement('div');
     twcheese_menu.style.textAlign = 'center';
 
@@ -3588,7 +3583,7 @@ function twcheese_calculateDistance(village1, village2) {
  *	@param	unitSpeed:Number
  *	@return	times:Array(spear:Date,sword:Date,axe:Date,...)
  */
-twcheese.calculateTravelTimes = function (distance, worldSpeed, unitSpeed) {
+function calculateTravelTimes(distance, worldSpeed, unitSpeed) {
     var walkingTimes = new Array(18, 22, 18, 18, 9, 10, 11, 11, 30, 30, 10, 35); //minutes to walk across a field
     var modifier = worldSpeed / unitSpeed;
 
@@ -3978,9 +3973,9 @@ function twcheese_calculateRaidUnits(resources, haulBonus) {
  */
 function twcheese_nameReport(report, note) {
     var newName = 'twCheese: ';
-    newName += report.attacker[1].replace(twcheese.language['report']['deletedPlayer'], '') + ' ';
+    newName += report.attacker[1].replace(language['report']['deletedPlayer'], '') + ' ';
     newName += '(' + report.attackerVillage[0] + '|' + report.attackerVillage[1] + ',' + report.attackerVillage[2] + ')';
-    newName += report.defender[1].replace(twcheese.language['report']['deletedPlayer'], '');
+    newName += report.defender[1].replace(language['report']['deletedPlayer'], '');
     newName += '(' + report.defenderVillage[0] + '|' + report.defenderVillage[1] + ',' + report.defenderVillage[2] + ')';
 
     newName += '_t:' + Math.floor(new Date(report.timingInfo[0]).getTime() / 1000) + '. ';
@@ -4198,7 +4193,7 @@ function twcheese_dateToString(time) {
  *	@param	date:Date
  *	@return	time:String	[H]:mm:ss
  */
-twcheese.formatDateTo_timeString = function (date) {
+function formatDateTo_timeString(date) {
     var time = date.getTime();
     var hours = Math.floor(time / 1000 / 60 / 60);
     var minutes = Math.floor((time - (hours * 1000 * 60 * 60)) / 1000 / 60);
@@ -4352,7 +4347,7 @@ function initBRE() {
     narcismDiv.style.fontSize = '10px';
 
     /*==== help ====*/
-    twcheese.createFooterButton(twcheese.language['twcheese']['Help'], 'https://forum.tribalwars.net/index.php?threads/256225/');
+    createFooterButton(language['twcheese']['Help'], 'https://forum.tribalwars.net/index.php?threads/256225/');
 }
 
 

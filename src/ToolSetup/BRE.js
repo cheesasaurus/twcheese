@@ -522,11 +522,11 @@ try {
 
 /**
  * Reinforcements template
- * @attribute	troops:Array(spear,sword,archer,axe,scout,lcav,acav,hcav,ram,cat,paladin,noble)	- the troop count of the army supporting
+ * @attribute {TroopCounts} troops
  * @attribute {Village} village	- the information about the village being supported.
  */
 function twcheese_Reinforcements() {
-    this.troops = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    this.troops = new TroopCounts();
     this.village = new Village(0, 0, 0);
 }
 
@@ -1039,7 +1039,7 @@ function twcheese_BattleReportScraper(gameDocument) {
                 var reinforcements = new Array();
                 for (var i = 1; i < this.supportKilledTable.rows.length; i++) {
                     var currentReinforcement = new twcheese_Reinforcements();
-                    currentReinforcement.troops = scrapeTroopCounts(twcheese_removeTroopsLabel(this.supportKilledTable.rows[i])).toArray();
+                    currentReinforcement.troops = scrapeTroopCounts(twcheese_removeTroopsLabel(this.supportKilledTable.rows[i]));
                     currentReinforcement.village = scrapeVillage(this.supportKilledTable.rows[i].cells[0].firstChild);
                     reinforcements.push(currentReinforcement);
                 }
@@ -1050,7 +1050,7 @@ function twcheese_BattleReportScraper(gameDocument) {
         };
 
         /**
-         * @return	troops:Array(spear,sword,archer,axe,scout,lcav,acav,hcav,ram,cat,paladin,noble)
+         * @return {TroopCounts|false}
          * returns boolean false if no units In transit were detected
          */
         this.getUnitsInTransit = function () {
@@ -1063,7 +1063,7 @@ function twcheese_BattleReportScraper(gameDocument) {
         };
 
         /**
-         * @return	troops:Array(spear,sword,archer,axe,scout,lcav,acav,hcav,ram,cat,paladin,noble)
+         * @return {TroopCounts|false}
          * returns boolean false if no units outside were detected
          */
         this.getUnitsOutside = function () {

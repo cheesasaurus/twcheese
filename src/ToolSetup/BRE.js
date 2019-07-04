@@ -2171,7 +2171,19 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
     };
 
     /*==== toolbar tabs ====*/
-    reportsFolderToolbar.innerHTML += '<table style="border-style:solid; border-width:0px;" class="vis modemenu"><tbody><tr><td id="twcheese_displayConfig_tab" style="border-style:solid; border-width:1px;" onclick="document.getElementById(\'twcheese_reportsFolderToolbar\').toggleDisplayConfig();"><a>configure display</a></td><td id="twcheese_export_tab" style="border-style:solid; border-width:1px;" onclick="document.getElementById(\'twcheese_reportsFolderToolbar\').toggleExport();"><a>export repeat-attack links</a></td></tr></tbody></table>';
+    reportsFolderToolbar.innerHTML += `
+        <table style="border-style:solid; border-width:0px;" class="vis modemenu">
+            <tbody>
+                <tr>
+                    <td id="twcheese_displayConfig_tab" style="border-style:solid; border-width:1px; cursor:default;" onclick="document.getElementById(\'twcheese_reportsFolderToolbar\').toggleDisplayConfig();">
+                        <a>configure display</a>
+                    </td>
+                    <td id="twcheese_export_tab" style="border-style:solid; border-width:1px; cursor:default;" onclick="document.getElementById(\'twcheese_reportsFolderToolbar\').toggleExport();">
+                        <a>export repeat-attack links</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>`;
 
 
     /*==== export repeatLinks div ====*/
@@ -2198,9 +2210,15 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
 
     exportConfigTable.insertRow(-1);
     exportConfigTable.rows[1].insertCell(-1);
-    exportConfigTable.rows[1].cells[0].innerHTML = '<input type="radio" name="format" checked="true" value="BBCode"/> BBCode <br/><input type="radio" name="format" value="plain_links"/> plain links<br/><input type="radio" name="format" value="html_bookmarks"/> HTML';
+    exportConfigTable.rows[1].cells[0].innerHTML = `
+        <input type="radio" name="twcheese-repeat-attack-export-format" checked="true" value="bbcode"/> BBCode
+        <br/><input type="radio" name="twcheese-repeat-attack-export-format" value="plainLink"/> plain links
+        <br/><input type="radio" name="twcheese-repeat-attack-export-format" value="html"/> HTML`;
+
     exportConfigTable.rows[1].insertCell(-1);
-    exportConfigTable.rows[1].cells[1].innerHTML = '<input type="radio" name="attackingVillage" checked="true" value="currentVillage"/> current village<br/><input type="radio" name="attackingVillage" value="originalVillage"/> original village';
+    exportConfigTable.rows[1].cells[1].innerHTML = `
+        <input type="radio" name="twcheese-repeat-attack-export-village" checked="true" value="current"/> current village
+        <br/><input type="radio" name="twcheese-repeat-attack-export-village" value="original"/> original village`;
 
     exportConfigTable.insertRow(-1);
     exportConfigTable.rows[2].insertCell(-1);
@@ -2215,108 +2233,87 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
     reportsFolderExportContainer.exportLinks = function () {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
 
-        var format;
-        for (let i = 0; i < 3; i++) {
-            if (document.getElementsByName('format')[i].checked) {
-                switch (i) {
-                    case 0:
-                        format = 'bbcode';
-                        break;
-                    case 1:
-                        format = 'plainLink';
-                        break;
-                    case 2:
-                        format = 'html';
-                        break;
-                }
-            }
-        }
-
-        var attackingVillage;
-        for (let i = 0; i < 2; i++) {
-            if (document.getElementsByName('attackingVillage')[i].checked) {
-                switch (i) {
-                    case 0:
-                        attackingVillage = 'current';
-                        break;
-                    case 1:
-                        attackingVillage = 'original';
-                        break;
-                }
-            }
-        }
+        let format = $("input[name='twcheese-repeat-attack-export-format']:checked").val();
+        let attackingVillage = $("input[name='twcheese-repeat-attack-export-village']:checked").val();
 
         var header = document.getElementById('twcheese_export_header').value;
 
-        // TODO: simplify this a bit
+
+        function buildHeader() {
+            switch (format) {
+                case 'bbcode':
+                    return `[b][u][size=12]${header}[/size][/u][/b]`;
+
+                case 'plainLink':
+                    return header;
+
+                case 'html':
+                    return [
+                        '<!DOCTYPE NETSCAPE-Bookmark-file-1>\n<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">',
+                        `\n<DT><H3>${header}</H3></DT>\n<DL><P>`
+                    ].join('');
+            }
+        }
+
 
         function urlCurrentVillage(twcheeseReport) {
             return gameUrl('place', {try: 'confirm', type: 'same', report_id: twcheeseReport.reportID});
         }
 
+        function buildEntryCurrentVillage(twcheeseReport) {
+            switch (format) {
+                case 'bbcode':
+                    return '\n[url=' + urlCurrentVillage(twcheeseReport) + ']repeat attack ' + twcheeseReport.reportID + ' from (' + game_data.village.coord + ') to (' + twcheeseReport.defenderVillage[0] + '|' + twcheeseReport.defenderVillage[1] + ')[/url]';
+
+                case 'plainLink':
+                    return '\n' + urlCurrentVillage(twcheeseReport);
+
+                case 'html':
+                    let leadingZero = '';
+                    if (twcheeseReport.defenderDistance < 10) {
+                        leadingZero = '0';
+                    }
+                    return '\n<DT><A HREF="' + urlCurrentVillage(twcheeseReport) + '" >' + leadingZero + twcheeseReport.defenderDistance + ' Repeat Attack ' + twcheeseReport.reportID + ' from (' + game_data.village.coord + ') to (' + twcheeseReport.defenderVillage[0] + '|' + twcheeseReport.defenderVillage[1] + ')</A></DT>';                
+            }
+        }
+
+
         function urlOriginalVillage(twcheeseReport) {
             return gameUrl('place', {try: 'confirm', type: 'same', report_id: twcheeseReport.reportID, village: twcheeseReport.attackerVillage[2]});
         }
 
-        var exportString = '';
-        if (format == 'bbcode') {
-            exportString = '[b][u][size=12]' + header + '[/size][/u][/b]';
-            for (let i = 1; i < reportsTable.rows.length; i++) {
-                let twcheeseReport = reportsTable.rows[i].twcheeseReport;
-                if (attackingVillage == 'current') {
-                    if (twcheeseReport.attacker[1] == game_data.player.name) {
-                        exportString += '\n[url=' + urlCurrentVillage(twcheeseReport) + ']repeat attack ' + twcheeseReport.reportID + ' from (' + game_data.village.coord + ') to (' + twcheeseReport.defenderVillage[0] + '|' + twcheeseReport.defenderVillage[1] + ')[/url]';
-                    }
-                }
-                else if (attackingVillage == 'original') {
-                    if (twcheeseReport.attacker[1] == game_data.player.name && reportsTable.rows[i].twcheeseLabel) {
-                        exportString += '\n[url=' + urlOriginalVillage(twcheeseReport) + ']repeat attack ' + twcheeseReport.reportID + ' from (' + twcheeseReport.attackerVillage[0] + '|' + twcheeseReport.attackerVillage[1] + ') to (' + twcheeseReport.defenderVillage[0] + '|' + twcheeseReport.defenderVillage[1] + ')[/url]';
-                    }
-                }
+        function buildEntryOriginalVillage(twcheeseReport) {
+            switch (format) {
+                case 'bbcode':
+                    return '\n[url=' + urlOriginalVillage(twcheeseReport) + ']repeat attack ' + twcheeseReport.reportID + ' from (' + twcheeseReport.attackerVillage[0] + '|' + twcheeseReport.attackerVillage[1] + ') to (' + twcheeseReport.defenderVillage[0] + '|' + twcheeseReport.defenderVillage[1] + ')[/url]';
+
+                case 'plainLink':
+                    return '\n' + urlOriginalVillage(twcheeseReport);
+
+                case 'html':
+                    return '\n<DT><A HREF="' + urlOriginalVillage(twcheeseReport) + '" >Repeat Attack ' + twcheeseReport.reportID + ' from (' + twcheeseReport.attackerVillage[0] + '|' + twcheeseReport.attackerVillage[1] + ') to (' + twcheeseReport.defenderVillage[0] + '|' + twcheeseReport.defenderVillage[1] + ')</A></DT>';
             }
         }
-        else if (format == 'plainLink') {
-            exportString = header;
-            for (let i = 1; i < reportsTable.rows.length; i++) {
-                let twcheeseReport = reportsTable.rows[i].twcheeseReport;
 
-                if (attackingVillage == 'current') {
-                    if (twcheeseReport.attacker[1] == game_data.player.name) {
-                        exportString += '\n' + urlCurrentVillage(twcheeseReport);
-                    }
-                }
-                else if (attackingVillage == 'original') {
-                    if (twcheeseReport.attacker[1] == game_data.player.name && reportsTable.rows[i].twcheeseLabel) {
-                        exportString += '\n' + urlOriginalVillage(twcheeseReport);
-                    }
-                }
+        var exportString = buildHeader();
+
+        for (let i = 1; i < reportsTable.rows.length; i++) {
+            let twcheeseReport = reportsTable.rows[i].twcheeseReport;
+            if (twcheeseReport.attacker[1] !== game_data.player.name) {
+                continue; // can't repeat somebody else's attack
             }
+            if (attackingVillage == 'current') {
+                exportString += buildEntryCurrentVillage(twcheeseReport);
+            }
+            else if (attackingVillage == 'original' && reportsTable.rows[i].twcheeseLabel) {
+                exportString += buildEntryOriginalVillage(twcheeseReport);
+            } 
         }
-        else if (format == 'html') {
 
-            exportString = '<!DOCTYPE NETSCAPE-Bookmark-file-1>\n<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">';
-            exportString += '\n<DT><H3>' + header + '</H3></DT>\n<DL><P>';
-            for (let i = 1; i < reportsTable.rows.length; i++) {
-                var leadingZero = '';
-                if (reportsTable.rows[i].twcheeseReport.defenderDistance < 10) {
-                    leadingZero = '0';
-                }
-
-                let twcheeseReport = reportsTable.rows[i].twcheeseReport;
-
-                if (attackingVillage == 'current') {
-                    if (twcheeseReport.attacker[1] == game_data.player.name) {
-                        exportString += '\n<DT><A HREF="' + urlCurrentVillage(twcheeseReport) + '" >' + leadingZero + twcheeseReport.defenderDistance + ' Repeat Attack ' + twcheeseReport.reportID + ' from (' + game_data.village.coord + ') to (' + twcheeseReport.defenderVillage[0] + '|' + twcheeseReport.defenderVillage[1] + ')</A></DT>';
-                    }
-                }
-                else if (attackingVillage == 'original') {
-                    if (twcheeseReport.attacker[1] == game_data.player.name && reportsTable.rows[i].twcheeseLabel) {
-                        exportString += '\n<DT><A HREF="' + urlOriginalVillage(twcheeseReport) + '" >Repeat Attack ' + twcheeseReport.reportID + ' from (' + twcheeseReport.attackerVillage[0] + '|' + twcheeseReport.attackerVillage[1] + ') to (' + twcheeseReport.defenderVillage[0] + '|' + twcheeseReport.defenderVillage[1] + ')</A></DT>';
-                    }
-                }
-            }
+        if (format === 'html') {
             exportString += '\n</P></DL>';
         }
+
         document.getElementById('twcheese_reportsFolderExport').getElementsByTagName('textarea')[0].value = exportString;
     };
 

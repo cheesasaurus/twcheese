@@ -523,11 +523,11 @@ try {
 /**
  * Reinforcements template
  * @attribute	troops:Array(spear,sword,archer,axe,scout,lcav,acav,hcav,ram,cat,paladin,noble)	- the troop count of the army supporting
- * @attribute	village:Array(x,y,id)	- the information about the village being supported.
+ * @attribute {Village} village	- the information about the village being supported.
  */
 function twcheese_Reinforcements() {
     this.troops = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    this.village = new Array(0, 0, 0);
+    this.village = new Village(0, 0, 0);
 }
 
 /**
@@ -662,16 +662,28 @@ function twcheese_getTroopCount(troopRow, gameConfig) {
     return troops;
 }
 
+
+class Village {
+    constructor(id, x, y) {
+        this.id = id;
+        this.x = x;
+        this.y = y;
+    }
+
+    coordsToArray() {
+        return [this.x, this.y];
+    }
+}
+
 /**
- * @param	villageLink:HTMLAnchor - a link to a village with the name and coordinates
- * @return	village:Array(x,y,id)
+ * @param {HTMLAnchorElement} villageLink - a link to a village with the name and coordinates
+ * @return {Village}
  */
-function twcheese_getVillageInfo(villageLink) {
-    var village = new Array(0, 0, 0);
-    village[0] = Number(villageLink.innerHTML.substring(villageLink.innerHTML.lastIndexOf('(') + 1, villageLink.innerHTML.lastIndexOf('|')));
-    village[1] = Number(villageLink.innerHTML.substring(villageLink.innerHTML.lastIndexOf('|') + 1, villageLink.innerHTML.lastIndexOf(')')));
-    village[2] = Number(villageLink.href.match(/&id=[0-9]{1,}/)[0].substring(4))
-    return village;
+function scrapeVillage(villageLink) {
+    var x = Number(villageLink.innerHTML.substring(villageLink.innerHTML.lastIndexOf('(') + 1, villageLink.innerHTML.lastIndexOf('|')));
+    var y = Number(villageLink.innerHTML.substring(villageLink.innerHTML.lastIndexOf('|') + 1, villageLink.innerHTML.lastIndexOf(')')));
+    var id = Number(villageLink.href.match(/&id=[0-9]{1,}/)[0].substring(4))
+    return new Village(id, x, y);
 }
 
 /**
@@ -707,7 +719,7 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
         /* functions */
 
         /**
-         * @return	player:Array(id,name)
+         * @return {Player}
          */
         this.getAttacker = function () {
             if (this.attackerTable) {
@@ -733,11 +745,11 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
         };
 
         /**
-         * @return	village:Array(x,y,id)
+         * @return {Village}
          */
         this.getAttackerVillage = function () {
             if (this.attackerTable)
-                return twcheese_getVillageInfo(this.attackerTable.rows[1].cells[1].firstChild.firstChild);
+                return scrapeVillage(this.attackerTable.rows[1].cells[1].firstChild.firstChild);
         };
 
         /**
@@ -817,7 +829,7 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
         };
 
         /**
-         * @return	player:Array(id,name)
+         * @return {Player}
          */
         this.getDefender = function () {
             if (this.defenderTable) {
@@ -849,11 +861,11 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
         };
 
         /**
-         * @return	village:Array(x,y,id)
+         * @return {Village}
          */
         this.getDefenderVillage = function () {
             if (this.defenderTable)
-                return twcheese_getVillageInfo(this.defenderTable.rows[1].cells[1].firstChild.firstChild);
+                return scrapeVillage(this.defenderTable.rows[1].cells[1].firstChild.firstChild);
         };
 
         /**
@@ -1027,7 +1039,7 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
                 for (var i = 1; i < this.supportKilledTable.rows.length; i++) {
                     var currentReinforcement = new twcheese_Reinforcements();
                     currentReinforcement.troops = twcheese_getTroopCount(twcheese_removeTroopsLabel(this.supportKilledTable.rows[i]), gameConfig);
-                    currentReinforcement.village = twcheese_getVillageInfo(this.supportKilledTable.rows[i].cells[0].firstChild);
+                    currentReinforcement.village = scrapeVillage(this.supportKilledTable.rows[i].cells[0].firstChild);
                     reinforcements.push(currentReinforcement);
                 }
                 return reinforcements;
@@ -1216,7 +1228,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
 
             /*==== rally point link ====*/
             let rallyPointLink = document.createElement('a');
-            rallyPointLink.href = gameUrl('place', {target: report.defenderVillage[2]});
+            rallyPointLink.href = gameUrl('place', {target: report.defenderVillage.id});
             rallyPointLink.innerHTML = '&raquo; Send troops';
             raiderTable.rows[1].cells[0].appendChild(rallyPointLink);
 
@@ -1288,7 +1300,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
             raiderUnitsTable.insertRow(-1);
             raiderUnitsTable.rows[2].className = 'center';
 
-            var travelTimes = calculateTravelTimes(twcheese_calculateDistance(report.attackerVillage, report.defenderVillage), gameConfig.speed, gameConfig.unit_speed);
+            var travelTimes = calculateTravelTimes(twcheese_calculateDistance(report.attackerVillage.coordsToArray(), report.defenderVillage.coordsToArray()), gameConfig.speed, gameConfig.unit_speed);
 
             for (let i = 0; i < 7; i++) {
                 raiderUnitsTable.rows[2].insertCell(-1);
@@ -1391,15 +1403,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
                     if (i == 17) {
                         siege_weapon = 'ram';
                     }
-                    let rallyPointUrl = attackPrepUrl({[siege_weapon]: report.demolition[1][i]}, report.defenderVillage[2]);
-
-                    /*
-                    let rallyPointUrl = gameUrl('place', {
-                        from: 'simulator',
-                        ['att_' + siege_weapon]: report.demolition[1][i],
-                        target_village_id: report.defenderVillage[2]
-                    });
-                    */
+                    let rallyPointUrl = attackPrepUrl({[siege_weapon]: report.demolition[1][i]}, report.defenderVillage.id);
                     demolitionUnitsTable.rows[1].cells[i].innerHTML = '<a href="' + rallyPointUrl + '"><img src="' + imagePaths[buildingLanguage[i]] + '" alt="' + buildingLanguage[i] + '" /></a>';
                 }
                 demolitionUnitsTable.rows[2].insertCell(-1);
@@ -1655,7 +1659,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
         }
         else if (mode == 'predicted') {
             gameDoc.getElementById('twcheese_raider_selection').value = 'predicted';
-            report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village.coord.split('|'), report.defenderVillage, report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed, haulBonus);
+            report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village.coord.split('|'), report.defenderVillage.coordsToArray(), report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed, haulBonus);
             twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), report.raidPredicted, report);
             gameDoc.getElementById('twcheese_periodic_options').style.display = 'none';
         }
@@ -1687,7 +1691,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
 
         function attackUrl(unitCounts) {
             unitCounts = Object.assign({spy: scouts}, unitCounts);
-            return attackPrepUrl(unitCounts, report.defenderVillage[2]);
+            return attackPrepUrl(unitCounts, report.defenderVillage.id);
         }
             
         raiderTable.rows[0].cells[0].innerHTML = '<a href="' + attackUrl({spear: Math.round(units[0])}) + '"><img src="' + imagePaths['spear'] + '"/></a>';
@@ -1741,11 +1745,11 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
             reportsTableBody.rows[i + 1].cells[0].innerHTML += '<a href="' + game_data.link_base_pure + 'report&mode=' + game_data.mode + '&view=' + report.reportID + '"> view</a>';
             if (report.defender) {
                 if (report.defender.name == game_data.player.name) {
-                    reportsTableBody.rows[i + 1].cells[0].innerHTML += ' <img title="manage troops" style="float:right; cursor:pointer;" src="' + imagePaths['rally'] + '" onclick="window.location=\'game.php?village=' + report.defenderVillage[2] + '&screen=place&mode=units\'"></img>';
+                    reportsTableBody.rows[i + 1].cells[0].innerHTML += ' <img title="manage troops" style="float:right; cursor:pointer;" src="' + imagePaths['rally'] + '" onclick="window.location=\'game.php?village=' + report.defenderVillage.id + '&screen=place&mode=units\'"></img>';
                 }
                 if (report.loyalty) {
                     if (report.loyalty <= 0) {
-                        reportsTableBody.rows[i + 1].cells[0].innerHTML += ' <img title="manage troops" style="float:right; cursor:pointer;" src="' + imagePaths['rally'] + '" onclick="window.location=\'game.php?village=' + report.defenderVillage[2] + '&screen=place&mode=units\'"></img>';
+                        reportsTableBody.rows[i + 1].cells[0].innerHTML += ' <img title="manage troops" style="float:right; cursor:pointer;" src="' + imagePaths['rally'] + '" onclick="window.location=\'game.php?village=' + report.defenderVillage.id + '&screen=place&mode=units\'"></img>';
                     }
                 }
             }
@@ -1758,7 +1762,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                     let url = gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportID});
                     reportsTableBody.rows[i + 1].cells[1].innerHTML = '<a title="repeat attack, from current village" href="' + url + '"><img src="' + imagePaths['repeatFromCurrent'] + '" /></a>';
                     if (reportsTableBody.rows[i + 1].twcheeseLabel) {
-                        let url = gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportID, village: report.attackerVillage[2]});
+                        let url = gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportID, village: report.attackerVillage.id});
                         reportsTableBody.rows[i + 1].cells[1].innerHTML += ' | <a title="repeat attack, from original village" href="' + url + '"><img src="' + imagePaths['repeatFromOriginal'] + '" /></a>';
                     }    
                 }
@@ -1800,13 +1804,13 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 /*==== origin cell ====*/
                 reportsTableBody.rows[i + 1].insertCell(-1);
                 if (report.attackerVillage)
-                    reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = '<a href="' + game_data.link_base_pure + 'info_village&id=' + report.attackerVillage[2] + '" >' + report.attackerVillage[0] + '|' + report.attackerVillage[1] + '</a>';
+                    reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = '<a href="' + game_data.link_base_pure + 'info_village&id=' + report.attackerVillage.id + '" >' + report.attackerVillage.x + '|' + report.attackerVillage.y + '</a>';
                 cellIndex++;
 
                 /*==== target cell ====*/
                 reportsTableBody.rows[i + 1].insertCell(-1);
                 if (report.defenderVillage)
-                    reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = '<a href="' + game_data.link_base_pure + 'info_village&id=' + report.defenderVillage[2] + '" >' + report.defenderVillage[0] + '|' + report.defenderVillage[1] + '</a>';
+                    reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = '<a href="' + game_data.link_base_pure + 'info_village&id=' + report.defenderVillage.id + '" >' + report.defenderVillage.x + '|' + report.defenderVillage.y + '</a>';
                 cellIndex++;
 
                 /*==== feint cell ====*/
@@ -1819,7 +1823,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 reportsTableBody.rows[i + 1].insertCell(-1);
                 if (report.deadNoble) {
                     if (report.attacker.name == game_data.player.name)
-                        reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = '<a href="/game.php?village=' + report.attackerVillage[2] + '&screen=snob"><img src="' + imagePaths['priest'] + '" style="display:block; margin-left:auto; margin-right:auto" title="An attacking nobleman died."/></a>';
+                        reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = '<a href="/game.php?village=' + report.attackerVillage.id + '&screen=snob"><img src="' + imagePaths['priest'] + '" style="display:block; margin-left:auto; margin-right:auto" title="An attacking nobleman died."/></a>';
                     else
                         reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = '<img src="' + imagePaths['priest'] + '" style="display:block; margin-left:auto; margin-right:auto" title="An attacking nobleman died."/>';
                 }
@@ -2076,7 +2080,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         /*==== defender distance from current village ====*/
         if (report.defenderVillage)
             try {
-                report.defenderDistance = Math.round(twcheese_calculateDistance(home, report.defenderVillage) * 100) / 100;
+                report.defenderDistance = Math.round(twcheese_calculateDistance(home, report.defenderVillage.coordsToArray()) * 100) / 100;
             }
             catch (err) {
                 console.error(err);
@@ -2265,7 +2269,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         function buildEntryCurrentVillage(twcheeseReport) {
             switch (format) {
                 case 'bbcode':
-                    return '\n[url=' + urlCurrentVillage(twcheeseReport) + ']repeat attack ' + twcheeseReport.reportID + ' from (' + game_data.village.coord + ') to (' + twcheeseReport.defenderVillage[0] + '|' + twcheeseReport.defenderVillage[1] + ')[/url]';
+                    return '\n[url=' + urlCurrentVillage(twcheeseReport) + ']repeat attack ' + twcheeseReport.reportID + ' from (' + game_data.village.coord + ') to (' + twcheeseReport.defenderVillage.x + '|' + twcheeseReport.defenderVillage.y + ')[/url]';
 
                 case 'plainLink':
                     return '\n' + urlCurrentVillage(twcheeseReport);
@@ -2275,25 +2279,25 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                     if (twcheeseReport.defenderDistance < 10) {
                         leadingZero = '0';
                     }
-                    return '\n<DT><A HREF="' + urlCurrentVillage(twcheeseReport) + '" >' + leadingZero + twcheeseReport.defenderDistance + ' Repeat Attack ' + twcheeseReport.reportID + ' from (' + game_data.village.coord + ') to (' + twcheeseReport.defenderVillage[0] + '|' + twcheeseReport.defenderVillage[1] + ')</A></DT>';                
+                    return '\n<DT><A HREF="' + urlCurrentVillage(twcheeseReport) + '" >' + leadingZero + twcheeseReport.defenderDistance + ' Repeat Attack ' + twcheeseReport.reportID + ' from (' + game_data.village.coord + ') to (' + twcheeseReport.defenderVillage.x + '|' + twcheeseReport.defenderVillage.y + ')</A></DT>';                
             }
         }
 
 
         function urlOriginalVillage(twcheeseReport) {
-            return gameUrl('place', {try: 'confirm', type: 'same', report_id: twcheeseReport.reportID, village: twcheeseReport.attackerVillage[2]});
+            return gameUrl('place', {try: 'confirm', type: 'same', report_id: twcheeseReport.reportID, village: twcheeseReport.attackerVillage.id});
         }
 
         function buildEntryOriginalVillage(twcheeseReport) {
             switch (format) {
                 case 'bbcode':
-                    return '\n[url=' + urlOriginalVillage(twcheeseReport) + ']repeat attack ' + twcheeseReport.reportID + ' from (' + twcheeseReport.attackerVillage[0] + '|' + twcheeseReport.attackerVillage[1] + ') to (' + twcheeseReport.defenderVillage[0] + '|' + twcheeseReport.defenderVillage[1] + ')[/url]';
+                    return '\n[url=' + urlOriginalVillage(twcheeseReport) + ']repeat attack ' + twcheeseReport.reportID + ' from (' + twcheeseReport.attackerVillage.x + '|' + twcheeseReport.attackerVillage.y + ') to (' + twcheeseReport.defenderVillage.x + '|' + twcheeseReport.defenderVillage.y + ')[/url]';
 
                 case 'plainLink':
                     return '\n' + urlOriginalVillage(twcheeseReport);
 
                 case 'html':
-                    return '\n<DT><A HREF="' + urlOriginalVillage(twcheeseReport) + '" >Repeat Attack ' + twcheeseReport.reportID + ' from (' + twcheeseReport.attackerVillage[0] + '|' + twcheeseReport.attackerVillage[1] + ') to (' + twcheeseReport.defenderVillage[0] + '|' + twcheeseReport.defenderVillage[1] + ')</A></DT>';
+                    return '\n<DT><A HREF="' + urlOriginalVillage(twcheeseReport) + '" >Repeat Attack ' + twcheeseReport.reportID + ' from (' + twcheeseReport.attackerVillage.x + '|' + twcheeseReport.attackerVillage.y + ') to (' + twcheeseReport.defenderVillage.x + '|' + twcheeseReport.defenderVillage.y + ')</A></DT>';
             }
         }
 
@@ -2894,14 +2898,14 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                     report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
                 report.opponentsDefeatedSummary = twcheese_calculateOd(report.attackerLosses, report.defenderLosses);
                 if (report.loyalty)
-                    report.loyaltyExtra = twcheese_calculateLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village.coord.split('|'), report.defenderVillage);
+                    report.loyaltyExtra = twcheese_calculateLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village.coord.split('|'), report.defenderVillage.coordsToArray());
                 report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.sent, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
                 if (report.buildingLevels)
                     report.demolition = twcheese_calculateDemolition(report.buildingLevels);
                 if (report.espionageLevel >= 1)
                     report.raidScouted = twcheese_calculateRaidScouted(report.resources);
                 if (report.espionageLevel >= 2) {
-                    report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village.coord.split('|'), report.defenderVillage, report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed);
+                    report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village.coord.split('|'), report.defenderVillage.coordsToArray(), report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed);
                     report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, 8, gameConfig.speed);
                 }
                 report.reportID = reportID;
@@ -3112,7 +3116,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
 
         for (var i = 1; i < reportsTable.rows.length; i++) {
-            if (reportsTable.rows[i].twcheeseReport.attackerVillage[0] == coordinates.split('|')[0] && reportsTable.rows[i].twcheeseReport.attackerVillage[1] == coordinates.split('|')[1])
+            if (reportsTable.rows[i].twcheeseReport.attackerVillage.x == coordinates.split('|')[0] && reportsTable.rows[i].twcheeseReport.attackerVillage.y == coordinates.split('|')[1])
                 document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportID)[0].checked = true;
         }
     };
@@ -3121,7 +3125,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
 
         for (var i = 1; i < reportsTable.rows.length; i++) {
-            if (reportsTable.rows[i].twcheeseReport.defenderVillage[0] == coordinates.split('|')[0] && reportsTable.rows[i].twcheeseReport.defenderVillage[1] == coordinates.split('|')[1])
+            if (reportsTable.rows[i].twcheeseReport.defenderVillage.x == coordinates.split('|')[0] && reportsTable.rows[i].twcheeseReport.defenderVillage.y == coordinates.split('|')[1])
                 document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportID)[0].checked = true;
         }
     };
@@ -3575,8 +3579,8 @@ function twcheese_calculateLoyalty(worldSpeed, unitSpeed, loyalty, timeSent, tim
 }
 
 /**
- *	@param	village1:Array(x,y)
- *	@param	village1:Array(x,y)
+ *	@param village1:Array(x,y)
+ *	@param village2:Array(x,y)
  *	@return	distance:Number
  */
 function twcheese_calculateDistance(village1, village2) {
@@ -3604,13 +3608,13 @@ function calculateTravelTimes(distance, worldSpeed, unitSpeed) {
 /**
  *	@param	timeOfArrival:Date
  *	@param	attackerTroops:Array	an array of troops
- *	@param	attackerVillage:Array(x:Number,y:Number)
- *	@param	defenderVillage:Array(x:Number,y:Number)
+ *	@param {Village} attackerVillage
+ *	@param {Village} defenderVillage
  *	@return	timingInfo:Array(launchedTime:Number,returnTime:Number)
  */
 function twcheese_calculateTimingInfo(worldSpeed, unitSpeed, timeOfArrival, attackerTroops, attackerVillage, defenderVillage) {
     var timingInfo = new Array();
-    var distance = twcheese_calculateDistance(attackerVillage, defenderVillage);
+    var distance = twcheese_calculateDistance(attackerVillage.coordsToArray(), defenderVillage.coordsToArray());
     var attackSpeed;
 
     if (attackerTroops[11] > 0)
@@ -3859,6 +3863,10 @@ function twcheese_calculateRaidScouted(resourcesScouted, haulBonus) {
  *	@return	troops:Array(spear,sword,axe,archer,lcav,acav,hcav)	an array of how many of each type of troop should be sent to take all resources, provided only one type of troop is sent
  */
 function twcheese_calculateRaidPredicted(resourcesScouted, buildings, home, target, timeSent, timeNow, gameSpeed, unitSpeed, haulBonus) {
+    // todo
+    console.log('home:', home);
+    console.log('target', target);
+
     if (!haulBonus)
         haulBonus = 0;
 
@@ -3980,9 +3988,9 @@ function twcheese_calculateRaidUnits(resources, haulBonus) {
 function twcheese_nameReport(report, note) {
     var newName = 'twCheese: ';
     newName += report.attacker.name.replace(language['report']['deletedPlayer'], '') + ' ';
-    newName += '(' + report.attackerVillage[0] + '|' + report.attackerVillage[1] + ',' + report.attackerVillage[2] + ')';
+    newName += '(' + report.attackerVillage.x + '|' + report.attackerVillage.y + ',' + report.attackerVillage.id + ')';
     newName += report.defender.name.replace(language['report']['deletedPlayer'], '');
-    newName += '(' + report.defenderVillage[0] + '|' + report.defenderVillage[1] + ',' + report.defenderVillage[2] + ')';
+    newName += '(' + report.defenderVillage.x + '|' + report.defenderVillage.y + ',' + report.defenderVillage.id + ')';
 
     newName += '_t:' + Math.floor(new Date(report.timingInfo[0]).getTime() / 1000) + '. ';
     if (report.attackerLosses[11] > 0) //dead noble
@@ -4041,16 +4049,15 @@ function twcheese_interpretReportName(reportName) {
         }
 
 
-        report.attackerVillage = new Array();
-        report.defenderVillage = new Array();
+        report.attackerVillage = new Village(0, 0, 0);
+        report.defenderVillage = new Village(0, 0, 0);
         if (report.twcheeseLabel) /* report named with twCheese format */ {
             /*==== set attacker village ====*/
             try {
                 data[0] = data[0].substring(data[0].lastIndexOf('(') + 1, data[0].lastIndexOf(')'));
-                report.attackerVillage = new Array();
-                report.attackerVillage[0] = data[0].split(',')[0].split('|')[0];
-                report.attackerVillage[1] = data[0].split(',')[0].split('|')[1];
-                report.attackerVillage[2] = data[0].split(',')[1];
+                report.attackerVillage.x = data[0].split(',')[0].split('|')[0];
+                report.attackerVillage.y = data[0].split(',')[0].split('|')[1];
+                report.attackerVillage.id = data[0].split(',')[1];
             }
             catch (err) {
                 console.warn('swallowed:', err);
@@ -4059,9 +4066,9 @@ function twcheese_interpretReportName(reportName) {
             /*==== set defender village ====*/
             try {
                 data[1] = data[1].substring(data[1].lastIndexOf('(') + 1, data[1].lastIndexOf(')'));
-                report.defenderVillage[0] = data[1].split(',')[0].split('|')[0];
-                report.defenderVillage[1] = data[1].split(',')[0].split('|')[1];
-                report.defenderVillage[2] = data[1].split(',')[1];
+                report.defenderVillage.x = data[1].split(',')[0].split('|')[0];
+                report.defenderVillage.y = data[1].split(',')[0].split('|')[1];
+                report.defenderVillage.id = data[1].split(',')[1];
             }
             catch (err) {
                 report.defenderVillage = null;
@@ -4160,8 +4167,8 @@ function twcheese_interpretReportName(reportName) {
                     defIndex = data.length - 1
 
                 data[defIndex] = data[defIndex].substring(data[defIndex].lastIndexOf('(') + 1, data[defIndex].lastIndexOf(')'));
-                report.defenderVillage[0] = data[defIndex].split(',')[0].split('|')[0];
-                report.defenderVillage[1] = data[defIndex].split(',')[0].split('|')[1];
+                report.defenderVillage.x = data[defIndex].split(',')[0].split('|')[0];
+                report.defenderVillage.y = data[defIndex].split(',')[0].split('|')[1];
             }
             catch (err) {
                 report.defenderVillage = null;
@@ -4370,14 +4377,14 @@ function enhanceReport(gameConfig) {
         report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
     report.opponentsDefeatedSummary = twcheese_calculateOd(report.attackerLosses, report.defenderLosses);
     if (report.loyalty)
-        report.loyaltyExtra = twcheese_calculateLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village.coord.split('|'), report.defenderVillage);
+        report.loyaltyExtra = twcheese_calculateLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village.coord.split('|'), report.defenderVillage.coordsToArray());
     report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.sent, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
     if (report.buildingLevels)
         report.demolition = twcheese_calculateDemolition(report.buildingLevels);
     if (report.espionageLevel >= 1)
         report.raidScouted = twcheese_calculateRaidScouted(report.resources);
     if (report.espionageLevel >= 2) {
-        report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village.coord.split('|'), report.defenderVillage, report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed);
+        report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village.coord.split('|'), report.defenderVillage.coordsToArray(), report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed);
         report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, 8, gameConfig.speed);
     }
 

@@ -23,8 +23,21 @@ async function requestDocument(url) {
 
 
 function gameUrl(screen, uriParams, method = 'GET') {
-    return window.TribalWars.buildURL(method, screen, uriParams);
+    return 'https://' + document.domain + window.TribalWars.buildURL(method, screen, uriParams);
 }
 
 
-export { requestDocument, gameUrl };
+function attackPrepUrl(unitCounts, targetVillageId, originVillageId = window.game_data.village.id) {
+    let uriParams = {
+        from: 'simulator',
+        village: originVillageId,
+        target_village_id: targetVillageId        
+    };
+    for (let [unitType, count] of Object.entries(unitCounts)) {
+        uriParams['att_' + unitType] = count;
+    }
+    return gameUrl('place', uriParams);
+}
+
+
+export { requestDocument, gameUrl, attackPrepUrl };

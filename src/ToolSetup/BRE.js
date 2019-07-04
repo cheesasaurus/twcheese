@@ -3,6 +3,7 @@ import { initCss, escapeHtml } from '/twcheese/src/Util/UI.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { scrapeResources } from '/twcheese/src/Scrape/res.js';
 import { userConfig } from '/twcheese/src/Util/UserConfig.js';
+import { gameUrl, attackPrepUrl } from '/twcheese/src/Util/Network.js';
 import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.js';
 
 import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/BRE/Default.js';
@@ -1213,7 +1214,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
 
             /*==== rally point link ====*/
             let rallyPointLink = document.createElement('a');
-            rallyPointLink.href = 'game.php?village=' + game_data.village.id + twcheese.babyUriComponent + '&screen=place&target=' + report.defenderVillage[2];
+            rallyPointLink.href = gameUrl('place', {target: report.defenderVillage[2]});
             rallyPointLink.innerHTML = '&raquo; Send troops';
             raiderTable.rows[1].cells[0].appendChild(rallyPointLink);
 
@@ -1388,7 +1389,16 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
                     if (i == 17) {
                         siege_weapon = 'ram';
                     }
-                    demolitionUnitsTable.rows[1].cells[i].innerHTML = '<a href="game.php?village=' + game_data.village.id + '&screen=place&from=simulator&att_' + siege_weapon + '=' + report.demolition[1][i] + '&target_village_id=' + report.defenderVillage[2] + twcheese.babyUriComponent + '"><img src="' + imagePaths[buildingLanguage[i]] + '" alt="' + buildingLanguage[i] + '" /></a>';
+                    let rallyPointUrl = attackPrepUrl({[siege_weapon]: report.demolition[1][i]}, report.defenderVillage[2]);
+
+                    /*
+                    let rallyPointUrl = gameUrl('place', {
+                        from: 'simulator',
+                        ['att_' + siege_weapon]: report.demolition[1][i],
+                        target_village_id: report.defenderVillage[2]
+                    });
+                    */
+                    demolitionUnitsTable.rows[1].cells[i].innerHTML = '<a href="' + rallyPointUrl + '"><img src="' + imagePaths[buildingLanguage[i]] + '" alt="' + buildingLanguage[i] + '" /></a>';
                 }
                 demolitionUnitsTable.rows[2].insertCell(-1);
                 demolitionUnitsTable.rows[2].cells[i].innerHTML = report.demolition[0][i];
@@ -1667,16 +1677,24 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
             raiderTable.rows[1].cells[i].innerHTML = units[i];
         }
 
-        if (game_data.market != 'uk') {
-            var scouts = document.getElementById('twcheese_raider_scouts').value;
-            raiderTable.rows[0].cells[0].innerHTML = '<a href="game.php?village=' + game_data.village.id + '&screen=place&from=simulator&att_spy=' + scouts + '&att_spear=' + Math.round(units[0]) + '&target_village_id=' + report.defenderVillage[2] + twcheese.babyUriComponent + '"><img src="' + imagePaths['spear'] + '"/></a>';
-            raiderTable.rows[0].cells[1].innerHTML = '<a href="game.php?village=' + game_data.village.id + '&screen=place&from=simulator&att_spy=' + scouts + '&att_sword=' + Math.round(units[1]) + '&target_village_id=' + report.defenderVillage[2] + twcheese.babyUriComponent + '"><img src="' + imagePaths['sword'] + '"/></a>';
-            raiderTable.rows[0].cells[2].innerHTML = '<a href="game.php?village=' + game_data.village.id + '&screen=place&from=simulator&att_spy=' + scouts + '&att_axe=' + Math.round(units[2]) + '&target_village_id=' + report.defenderVillage[2] + twcheese.babyUriComponent + '"><img src="' + imagePaths['axe'] + '"/></a>';
-            raiderTable.rows[0].cells[3].innerHTML = '<a href="game.php?village=' + game_data.village.id + '&screen=place&from=simulator&att_spy=' + scouts + '&att_archer=' + Math.round(units[3]) + '&target_village_id=' + report.defenderVillage[2] + twcheese.babyUriComponent + '"><img src="' + imagePaths['archer'] + '"/></a>';
-            raiderTable.rows[0].cells[4].innerHTML = '<a href="game.php?village=' + game_data.village.id + '&screen=place&from=simulator&att_spy=' + scouts + '&att_light=' + Math.round(units[4]) + '&target_village_id=' + report.defenderVillage[2] + twcheese.babyUriComponent + '"><img src="' + imagePaths['lcav'] + '"/></a>';
-            raiderTable.rows[0].cells[5].innerHTML = '<a href="game.php?village=' + game_data.village.id + '&screen=place&from=simulator&att_spy=' + scouts + '&att_marcher=' + Math.round(units[5]) + '&target_village_id=' + report.defenderVillage[2] + twcheese.babyUriComponent + '"><img src="' + imagePaths['acav'] + '"/></a>';
-            raiderTable.rows[0].cells[6].innerHTML = '<a href="game.php?village=' + game_data.village.id + '&screen=place&from=simulator&att_spy=' + scouts + '&att_heavy=' + Math.round(units[6]) + '&target_village_id=' + report.defenderVillage[2] + twcheese.babyUriComponent + '"><img src="' + imagePaths['hcav'] + '"/></a>';
+        if (game_data.market === 'uk') {
+            return;
         }
+
+        var scouts = document.getElementById('twcheese_raider_scouts').value;
+
+        function attackUrl(unitCounts) {
+            unitCounts = Object.assign({spy: scouts}, unitCounts);
+            return attackPrepUrl(unitCounts, report.defenderVillage[2]);
+        }
+            
+        raiderTable.rows[0].cells[0].innerHTML = '<a href="' + attackUrl({spear: Math.round(units[0])}) + '"><img src="' + imagePaths['spear'] + '"/></a>';
+        raiderTable.rows[0].cells[1].innerHTML = '<a href="' + attackUrl({sword: Math.round(units[1])}) + '"><img src="' + imagePaths['sword'] + '"/></a>';
+        raiderTable.rows[0].cells[2].innerHTML = '<a href="' + attackUrl({axe: Math.round(units[2])}) + '"><img src="' + imagePaths['axe'] + '"/></a>';
+        raiderTable.rows[0].cells[3].innerHTML = '<a href="' + attackUrl({archer: Math.round(units[3])}) + '"><img src="' + imagePaths['archer'] + '"/></a>';
+        raiderTable.rows[0].cells[4].innerHTML = '<a href="' + attackUrl({light: Math.round(units[4])}) + '"><img src="' + imagePaths['lcav'] + '"/></a>';
+        raiderTable.rows[0].cells[5].innerHTML = '<a href="' + attackUrl({marcher: Math.round(units[5])}) + '"><img src="' + imagePaths['acav'] + '"/></a>';
+        raiderTable.rows[0].cells[6].innerHTML = '<a href="' + attackUrl({heavy: Math.round(units[6])}) + '"><img src="' + imagePaths['hcav'] + '"/></a>';
     }
 
 }
@@ -1735,9 +1753,12 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
             reportsTableBody.rows[i + 1].insertCell(-1);
             if (report.attacker) {
                 if (report.attacker[1] == game_data.player.name) {
-                    reportsTableBody.rows[i + 1].cells[1].innerHTML = '<a title="repeat attack, from current village" href="game.php?village=' + game_data.village.id + twcheese.babyUriComponent + '&screen=place&try=confirm&type=same&report_id=' + report.reportID + '"><img src="' + imagePaths['repeatFromCurrent'] + '" /></a>';
-                    if (reportsTableBody.rows[i + 1].twcheeseLabel)
-                        reportsTableBody.rows[i + 1].cells[1].innerHTML += ' | <a title="repeat attack, from original village" href="/game.php?village=' + report.attackerVillage[2] + twcheese.babyUriComponent + '&screen=place&try=confirm&type=same&report_id=' + report.reportID + '"><img src="' + imagePaths['repeatFromOriginal'] + '" /></a>';
+                    let url = gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportID});
+                    reportsTableBody.rows[i + 1].cells[1].innerHTML = '<a title="repeat attack, from current village" href="' + url + '"><img src="' + imagePaths['repeatFromCurrent'] + '" /></a>';
+                    if (reportsTableBody.rows[i + 1].twcheeseLabel) {
+                        let url = gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportID, village: report.attackerVillage[2]});
+                        reportsTableBody.rows[i + 1].cells[1].innerHTML += ' | <a title="repeat attack, from original village" href="' + url + '"><img src="' + imagePaths['repeatFromOriginal'] + '" /></a>';
+                    }    
                 }
             }
 
@@ -2227,30 +2248,47 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
 
         var header = document.getElementById('twcheese_export_header').value;
 
+        // TODO: simplify this a bit
+
+        function urlCurrentVillage(twcheeseReport) {
+            return gameUrl('place', {try: 'confirm', type: 'same', report_id: twcheeseReport.reportID});
+        }
+
+        function urlOriginalVillage(twcheeseReport) {
+            return gameUrl('place', {try: 'confirm', type: 'same', report_id: twcheeseReport.reportID, village: twcheeseReport.attackerVillage[2]});
+        }
+
         var exportString = '';
         if (format == 'bbcode') {
             exportString = '[b][u][size=12]' + header + '[/size][/u][/b]';
             for (let i = 1; i < reportsTable.rows.length; i++) {
+                let twcheeseReport = reportsTable.rows[i].twcheeseReport;
                 if (attackingVillage == 'current') {
-                    if (reportsTable.rows[i].twcheeseReport.attacker[1] == game_data.player.name)
-                        exportString += '\n[url=https://' + document.domain + '/game.php?village=' + game_data.village.id + twcheese.babyUriComponent + '&screen=place&try=confirm&type=same&report_id=' + reportsTable.rows[i].twcheeseReport.reportID + ']repeat attack ' + reportsTable.rows[i].twcheeseReport.reportID + ' from (' + game_data.village.coord + ') to (' + reportsTable.rows[i].twcheeseReport.defenderVillage[0] + '|' + reportsTable.rows[i].twcheeseReport.defenderVillage[1] + ')[/url]';
+                    if (twcheeseReport.attacker[1] == game_data.player.name) {
+                        exportString += '\n[url=' + urlCurrentVillage(twcheeseReport) + ']repeat attack ' + twcheeseReport.reportID + ' from (' + game_data.village.coord + ') to (' + twcheeseReport.defenderVillage[0] + '|' + twcheeseReport.defenderVillage[1] + ')[/url]';
+                    }
                 }
                 else if (attackingVillage == 'original') {
-                    if (reportsTable.rows[i].twcheeseReport.attacker[1] == game_data.player.name && reportsTable.rows[i].twcheeseLabel)
-                        exportString += '\n[url=https://' + document.domain + '/game.php?village=' + reportsTable.rows[i].twcheeseReport.attackerVillage[2] + twcheese.babyUriComponent + '&screen=place&try=confirm&type=same&report_id=' + reportsTable.rows[i].twcheeseReport.reportID + ']repeat attack ' + reportsTable.rows[i].twcheeseReport.reportID + ' from (' + reportsTable.rows[i].twcheeseReport.attackerVillage[0] + '|' + reportsTable.rows[i].twcheeseReport.attackerVillage[1] + ') to (' + reportsTable.rows[i].twcheeseReport.defenderVillage[0] + '|' + reportsTable.rows[i].twcheeseReport.defenderVillage[1] + ')[/url]';
+                    if (twcheeseReport.attacker[1] == game_data.player.name && reportsTable.rows[i].twcheeseLabel) {
+                        exportString += '\n[url=' + urlOriginalVillage(twcheeseReport) + ']repeat attack ' + twcheeseReport.reportID + ' from (' + twcheeseReport.attackerVillage[0] + '|' + twcheeseReport.attackerVillage[1] + ') to (' + twcheeseReport.defenderVillage[0] + '|' + twcheeseReport.defenderVillage[1] + ')[/url]';
+                    }
                 }
             }
         }
         else if (format == 'plainLink') {
             exportString = header;
             for (let i = 1; i < reportsTable.rows.length; i++) {
+                let twcheeseReport = reportsTable.rows[i].twcheeseReport;
+
                 if (attackingVillage == 'current') {
-                    if (reportsTable.rows[i].twcheeseReport.attacker[1] == game_data.player.name)
-                        exportString += '\nhttps://' + document.domain + '/game.php?village=' + game_data.village.id + twcheese.babyUriComponent + '&screen=place&try=confirm&type=same&report_id=' + reportsTable.rows[i].twcheeseReport.reportID;
+                    if (twcheeseReport.attacker[1] == game_data.player.name) {
+                        exportString += '\n' + urlCurrentVillage(twcheeseReport);
+                    }
                 }
                 else if (attackingVillage == 'original') {
-                    if (reportsTable.rows[i].twcheeseReport.attacker[1] == game_data.player.name && reportsTable.rows[i].twcheeseLabel)
-                        exportString += '\nhttps://' + document.domain + '/game.php?village=' + reportsTable.rows[i].twcheeseReport.attackerVillage[2] + twcheese.babyUriComponent + '&screen=place&try=confirm&type=same&report_id=' + reportsTable.rows[i].twcheeseReport.reportID;
+                    if (twcheeseReport.attacker[1] == game_data.player.name && reportsTable.rows[i].twcheeseLabel) {
+                        exportString += '\n' + urlOriginalVillage(twcheeseReport);
+                    }
                 }
             }
         }
@@ -2264,14 +2302,16 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                     leadingZero = '0';
                 }
 
+                let twcheeseReport = reportsTable.rows[i].twcheeseReport;
+
                 if (attackingVillage == 'current') {
-                    if (reportsTable.rows[i].twcheeseReport.attacker[1] == game_data.player.name) {
-                        exportString += '\n<DT><A HREF="https://' + document.domain + '/game.php?village=' + game_data.village.id + twcheese.babyUriComponent + '&screen=place&try=confirm&type=same&report_id=' + reportsTable.rows[i].twcheeseReport.reportID + '" >' + leadingZero + reportsTable.rows[i].twcheeseReport.defenderDistance + ' Repeat Attack ' + reportsTable.rows[i].twcheeseReport.reportID + ' from (' + game_data.village.coord + ') to (' + reportsTable.rows[i].twcheeseReport.defenderVillage[0] + '|' + reportsTable.rows[i].twcheeseReport.defenderVillage[1] + ')</A></DT>';
+                    if (twcheeseReport.attacker[1] == game_data.player.name) {
+                        exportString += '\n<DT><A HREF="' + urlCurrentVillage(twcheeseReport) + '" >' + leadingZero + twcheeseReport.defenderDistance + ' Repeat Attack ' + twcheeseReport.reportID + ' from (' + game_data.village.coord + ') to (' + twcheeseReport.defenderVillage[0] + '|' + twcheeseReport.defenderVillage[1] + ')</A></DT>';
                     }
                 }
                 else if (attackingVillage == 'original') {
-                    if (reportsTable.rows[i].twcheeseReport.attacker[1] == game_data.player.name && reportsTable.rows[i].twcheeseLabel) {
-                        exportString += '\n<DT><A HREF="https://' + document.domain + '/game.php?village=' + reportsTable.rows[i].twcheeseReport.attackerVillage[2] + twcheese.babyUriComponent + '&screen=place&try=confirm&type=same&report_id=' + reportsTable.rows[i].twcheeseReport.reportID + '" >Repeat Attack ' + reportsTable.rows[i].twcheeseReport.reportID + ' from (' + reportsTable.rows[i].twcheeseReport.attackerVillage[0] + '|' + reportsTable.rows[i].twcheeseReport.attackerVillage[1] + ') to (' + reportsTable.rows[i].twcheeseReport.defenderVillage[0] + '|' + reportsTable.rows[i].twcheeseReport.defenderVillage[1] + ')</A></DT>';
+                    if (twcheeseReport.attacker[1] == game_data.player.name && reportsTable.rows[i].twcheeseLabel) {
+                        exportString += '\n<DT><A HREF="' + urlOriginalVillage(twcheeseReport) + '" >Repeat Attack ' + twcheeseReport.reportID + ' from (' + twcheeseReport.attackerVillage[0] + '|' + twcheeseReport.attackerVillage[1] + ') to (' + twcheeseReport.defenderVillage[0] + '|' + twcheeseReport.defenderVillage[1] + ')</A></DT>';
                     }
                 }
             }
@@ -2843,11 +2883,13 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         else {
             var reportID = reports.shift();
             var startTime = new Date();
+
+            // todo: scrape report without inserting to dom
             var reportDoc = document.createElement('div');
             reportDoc.style.display = 'none';
             reportDoc.id = 'hidden_report'
             document.getElementById('content_value').appendChild(reportDoc);
-            reportDoc.innerHTML = twcheese_requestXML('https://' + document.domain + '/game.php?village=' + game_data.village.id + '&screen=report&mode=' + game_data.mode + '&view=' + reportID + twcheese.babyUriComponent);
+            reportDoc.innerHTML = twcheese_requestXML(gameUrl('report', {mode: game_data.mode, view: reportID}));
 
             try {
                 var report = twcheese_scrapeBattleReport(document, gameConfig);
@@ -2883,9 +2925,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                     },
                     {}
                 );
-
-                //document.getElementById('editInput_'+report.reportID).value = name;
-                //editSubmit('label_'+report.reportID, 'labelText_'+report.reportID, 'edit_'+report.reportID, 'editInput_'+report.reportID, '/game.php?village='+game_data.village.id+'&screen=report&ajaxaction=edit_subject&h='+game_data.csrf+'&report_id='+report.reportID + twcheese.babyUriComponent);
 
                 /*==== update reports information so row can be redrawn with updated information====*/
                 var oldReport = reportsTable.rows[document.getElementsByName('id_' + report.reportID)[0].parentNode.parentNode.rowIndex].twcheeseReport;
@@ -4322,22 +4361,6 @@ function initBRE() {
 
     /*==== help ====*/
     twcheese.createFooterButton(twcheese.language['twcheese']['Help'], 'https://forum.tribalwars.net/index.php?threads/256225/');
-
-    /*==== check for sitter mode ====*/
-    twcheese.baby = false;
-    twcheese.babyUriComponent = '';
-
-    if (document.URL.search('&t=') != -1) {
-        twcheese.baby = document.URL.substring(document.URL.indexOf('&t=') + 3);
-    }
-    else if (document.URL.search('\\?t=') != -1) {
-        twcheese.baby = document.URL.substring(document.URL.indexOf('?t=') + 3);
-    }
-    if (twcheese.baby) {
-        if (twcheese.baby.search('&') != -1)
-            twcheese.baby = twcheese.baby.substring(0, twcheese.baby.indexOf('&'));
-        twcheese.babyUriComponent = '&t=' + twcheese.baby;
-    }
 }
 
 

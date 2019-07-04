@@ -730,11 +730,11 @@ function twcheese_BattleReportScraper(gameDocument) {
         };
 
         /**
-         * @return	troops:Array(spear,sword,archer,axe,scout,lcav,acav,hcav,ram,cat,paladin,noble)
+         * @return {TroopCounts}
          */
         this.getAttackerLosses = function () {
             if (this.attackerUnitsTable)
-                return scrapeTroopCounts(twcheese_removeTroopsLabel(this.attackerUnitsTable.rows[2])).toArray();
+                return scrapeTroopCounts(twcheese_removeTroopsLabel(this.attackerUnitsTable.rows[2]));
         };
 
         /**
@@ -1575,7 +1575,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
         launchRow.cells[1].innerHTML = twcheese_dateToString(report.timingInfo[0]);
 
         /*==== determine whether return time should be displayed. ====*/
-        var attackerSurvivors = twcheese_calculateSurvivors(report.attackerQuantity.toArray(), report.attackerLosses);
+        var attackerSurvivors = twcheese_calculateSurvivors(report.attackerQuantity.toArray(), report.attackerLosses.toArray());
         var showReturnTime = false;
         for (let i = 0; i < attackerSurvivors.length; i++) {
             if (attackerSurvivors[i] > 0) {
@@ -2897,7 +2897,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                     report.survivors = twcheese_calculateSurvivors(report.defenderQuantity.toArray(), report.defenderLosses.toArray());
                 if (report.buildingLevels)
                     report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity.toArray(), report.unitsOutside.toArray());
-                report.opponentsDefeatedSummary = twcheese_calculateOd(report.attackerLosses, report.defenderLosses.toArray());
+                report.opponentsDefeatedSummary = twcheese_calculateOd(report.attackerLosses.toArray(), report.defenderLosses.toArray());
                 if (report.loyalty)
                     report.loyaltyExtra = twcheese_calculateLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village.coord.split('|'), report.defenderVillage.coordsToArray());
                 report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.sent, report.attackerQuantity.toArray(), report.attackerVillage, report.defenderVillage);
@@ -3991,7 +3991,7 @@ function twcheese_nameReport(report, note) {
     newName += '(' + report.defenderVillage.x + '|' + report.defenderVillage.y + ',' + report.defenderVillage.id + ')';
 
     newName += '_t:' + Math.floor(new Date(report.timingInfo[0]).getTime() / 1000) + '. ';
-    if (report.attackerLosses[11] > 0) //dead noble
+    if (report.attackerLosses.snob > 0) //dead noble
         newName += '_x';
     if (report.loyalty)
         newName += '_l:' + report.loyalty[1] + '.';
@@ -4368,12 +4368,12 @@ function enhanceReport(gameConfig) {
     /*==== calculate additional information ===*/
     let report = new twcheese_scrapeBattleReport(document);
     if (report.defenderQuantity)
-        report.attacker_survivors = twcheese_calculateSurvivors(report.attackerQuantity.toArray(), report.attackerLosses);
+        report.attacker_survivors = twcheese_calculateSurvivors(report.attackerQuantity.toArray(), report.attackerLosses.toArray());
     if (report.defenderQuantity)
         report.survivors = twcheese_calculateSurvivors(report.defenderQuantity.toArray(), report.defenderLosses.toArray());
     if (report.buildingLevels)
         report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity.toArray(), report.unitsOutside.toArray());
-    report.opponentsDefeatedSummary = twcheese_calculateOd(report.attackerLosses, report.defenderLosses.toArray());
+    report.opponentsDefeatedSummary = twcheese_calculateOd(report.attackerLosses.toArray(), report.defenderLosses.toArray());
     if (report.loyalty)
         report.loyaltyExtra = twcheese_calculateLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village.coord.split('|'), report.defenderVillage.coordsToArray());
     report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.sent, report.attackerQuantity.toArray(), report.attackerVillage, report.defenderVillage);

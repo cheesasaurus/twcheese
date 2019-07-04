@@ -1069,7 +1069,7 @@ function twcheese_BattleReportScraper(gameDocument) {
         this.getUnitsOutside = function () {
             try {
                 if (this.getEspionageLevel() == 3) {
-                    return scrapeTroopCounts(this.$gameDoc.find('#attack_spy_away').find('table')[0].rows[1]).toArray();
+                    return scrapeTroopCounts(this.$gameDoc.find('#attack_spy_away').find('table')[0].rows[1]);
                 }
                 else
                     return false;
@@ -2896,7 +2896,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 if (report.defenderQuantity)
                     report.survivors = twcheese_calculateSurvivors(report.defenderQuantity, report.defenderLosses);
                 if (report.buildingLevels)
-                    report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
+                    report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside.toArray());
                 report.opponentsDefeatedSummary = twcheese_calculateOd(report.attackerLosses, report.defenderLosses);
                 if (report.loyalty)
                     report.loyaltyExtra = twcheese_calculateLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village.coord.split('|'), report.defenderVillage.coordsToArray());
@@ -4372,7 +4372,7 @@ function enhanceReport(gameConfig) {
     if (report.defenderQuantity)
         report.survivors = twcheese_calculateSurvivors(report.defenderQuantity, report.defenderLosses);
     if (report.buildingLevels)
-        report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
+        report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside.toArray());
     report.opponentsDefeatedSummary = twcheese_calculateOd(report.attackerLosses, report.defenderLosses);
     if (report.loyalty)
         report.loyaltyExtra = twcheese_calculateLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village.coord.split('|'), report.defenderVillage.coordsToArray());

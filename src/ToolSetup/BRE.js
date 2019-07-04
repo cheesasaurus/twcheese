@@ -8,8 +8,7 @@ import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.
 import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/BRE/Default.js';
 
 var twcheese_gameConfig,
-    twcheese_BRESettings,
-    twcheese_reportsFolderDisplaySettings
+    twcheese_BRESettings
 ;
 
 if (!twcheese)
@@ -1690,7 +1689,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig) {
  *	modifies page on the reports folder view
  *	@param gameDoc:HTMLDocument	the document from game.php?screen=report&mode=attack
  */
-function twcheese_BattleReportsFolderEnhancer(gameDoc) {
+function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDisplaySettings) {
     var pageMod = this;
     this.reports = new Array();
 
@@ -4402,9 +4401,9 @@ function enhanceReport() {
 
 
 function enhanceReportsFolder() {
-    twcheese_reportsFolderDisplaySettings = twcheese_loadReportsFolderDisplaySettings();
+    let twcheese_reportsFolderDisplaySettings = twcheese_loadReportsFolderDisplaySettings();
     twcheese_saveReportsFolderDisplaySettings(twcheese_reportsFolderDisplaySettings);
-    let pageMod = new twcheese_BattleReportsFolderEnhancer(document);
+    let pageMod = new twcheese_BattleReportsFolderEnhancer(document, twcheese_reportsFolderDisplaySettings);
     pageMod.applySettings(twcheese_reportsFolderDisplaySettings);
 }
 

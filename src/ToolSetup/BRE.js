@@ -3,7 +3,7 @@ import { initCss, escapeHtml } from '/twcheese/src/Util/UI.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { scrapeResources } from '/twcheese/src/Scrape/res.js';
 import { userConfig } from '/twcheese/src/Util/UserConfig.js';
-import { gameUrl, attackPrepUrl } from '/twcheese/src/Util/Network.js';
+import { requestDocument, gameUrl, attackPrepUrl } from '/twcheese/src/Util/Network.js';
 import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.js';
 
 import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/BRE/Default.js';
@@ -695,6 +695,7 @@ function twcheese_removeTroopsLabel(troopRow) {
 function twcheese_BattleReportScraper(gameDocument, gameConfig) {
     try {
         this.gameDocument = gameDocument;
+        this.$gameDoc = $(gameDocument);
         this.attackerTable = gameDocument.getElementById('attack_info_att');
         this.attackerUnitsTable = gameDocument.getElementById('attack_info_att_units');
         this.defenderTable = gameDocument.getElementById('attack_info_def');
@@ -769,7 +770,7 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
                     var building_levels = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
                     var building_ids = ['main', 'barracks', 'stable', 'garage', 'church', 'church_f', 'snob', 'smith', 'place', 'statue', 'market', 'wood', 'stone', 'iron', 'farm', 'storage', 'hide', 'wall'];
 
-                    var building_data = JSON.parse($('#attack_spy_building_data').val());
+                    var building_data = JSON.parse(this.$gameDoc.find('#attack_spy_building_data').val());
                     for (let i = 0; i < building_data.length; i++) {
                         var building = building_data[i];
                         building_levels[building_ids.indexOf(building.id)] = Number(building.level);
@@ -875,9 +876,9 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
          * 3		external troops
          */
         this.getEspionageLevel = function () {
-            var spied_resources = $('#attack_spy_resources').length > 0;
-            var spied_buildings = $('#attack_spy_building_data').length > 0;
-            var spied_external = $('#attack_spy_away').length > 0;
+            var spied_resources = this.$gameDoc.find('#attack_spy_resources').length > 0;
+            var spied_buildings = this.$gameDoc.find('#attack_spy_building_data').length > 0;
+            var spied_external = this.$gameDoc.find('#attack_spy_away').length > 0;
             return Number(Number(spied_resources) + Number(spied_buildings) + Number(spied_external));
         };
 
@@ -969,9 +970,9 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
          * @return	resources:Array(timber:Number,clay:Number,iron:Number)
          */
         this.getResources = function () {
-            if ($('#attack_spy_resources').length > 0)
+            if (this.$gameDoc.find('#attack_spy_resources').length > 0)
 
-                return scrapeResources($('#attack_spy_resources').find('td')[0]).toIntArray();
+                return scrapeResources(this.$gameDoc.find('#attack_spy_resources').find('td')[0]).toIntArray();
             else
                 return false;
         };
@@ -981,7 +982,7 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
          * @return	sent:Date
          */
         this.getSent = function () {
-            var text = $($('#attack_luck').parents('table')[0].rows[1].cells[1]).text(); //from the element with the battle time
+            var text = $(this.$gameDoc.find('#attack_luck').parents('table')[0].rows[1].cells[1]).text(); //from the element with the battle time
             var sent = new Date();
 
             if (game_data.market == 'cz') {
@@ -1054,7 +1055,7 @@ function twcheese_BattleReportScraper(gameDocument, gameConfig) {
         this.getUnitsOutside = function () {
             try {
                 if (this.getEspionageLevel() == 3) {
-                    return twcheese_getTroopCount($('#attack_spy_away').find('table')[0].rows[1], gameConfig);
+                    return twcheese_getTroopCount(this.$gameDoc.find('#attack_spy_away').find('table')[0].rows[1], gameConfig);
                 }
                 else
                     return false;
@@ -2853,7 +2854,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
      *	@param reports:Array(reportID:String)	an array of reportIDs for reports that still need to be renamed
      *	@param total:Number		the total amount of reports that will have been renamed
      */
-    reportsTable.massRename = function (reports, total) {
+    reportsTable.massRename = async function (reports, total) {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         var inputs = reportsTable.getElementsByTagName('input');
         if (!reports) {
@@ -2881,15 +2882,10 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
             var reportID = reports.shift();
             var startTime = new Date();
 
-            // todo: scrape report without inserting to dom
-            var reportDoc = document.createElement('div');
-            reportDoc.style.display = 'none';
-            reportDoc.id = 'hidden_report'
-            document.getElementById('content_value').appendChild(reportDoc);
-            reportDoc.innerHTML = twcheese_requestXML(gameUrl('report', {mode: game_data.mode, view: reportID}));
+            let reportDoc = await requestDocument(gameUrl('report', {mode: game_data.mode, view: reportID}));
 
             try {
-                var report = twcheese_scrapeBattleReport(document, gameConfig);
+                var report = twcheese_scrapeBattleReport(reportDoc, gameConfig);
 
                 if (report.defenderQuantity)
                     report.survivors = twcheese_calculateSurvivors(report.defenderQuantity, report.defenderLosses);
@@ -2909,7 +2905,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 }
                 report.reportID = reportID;
 
-                document.getElementById('content_value').removeChild(reportDoc);
                 var name = twcheese_nameReport(report, '');
 
                 var url = window.TribalWars.buildURL('POST', 'report', { ajaxaction: 'edit_subject', report_id: report.reportID });

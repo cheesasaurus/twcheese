@@ -3478,24 +3478,48 @@ function twcheese_calculateSurvivors(quantity, losses) {
     return survivors;
 }
 
+var population = new Array(1, 1, 1, 1, 2, 4, 5, 6, 5, 8, 10, 100);
+
+let troopPop = {
+    spear: 1,
+    sword: 1,
+    axe: 1,
+    archer: 1,
+    spy: 2,
+    light: 4,
+    marcher: 5,
+    heavy: 6,
+    ram: 5,
+    catapult: 8,
+    knight: 10,
+    snob: 100,
+    militia: 0
+};
+
+
+/**
+ * @param {TroopCounts} troops
+ * @return {int}
+ */
+function calcTroopPopulation(troops) {
+    let pop = 0;
+    for (let [unitType, count] of Object.entries(troops)) {
+        if (typeof troopPop[unitType] === 'undefined') {
+            console.warn(`Couldn't determine troop population for ${unitType}`);
+            continue;
+        }
+        pop += troopPop[unitType] * count;
+    }
+    return pop;
+}
+
 /**
  *	determines if an attack was likely just a distraction
- *	@param report:twcheese_BattleReport
- *	@return isFeint:Boolean - true if it's a feint, false if it's not
+ *	@param {TroopCounts} troops
+ *	@return {boolean}
  */
-function twcheese_detectFeint(report) {
-    var popMax = 130;
-
-    var isFeint = false;
-    var population = new Array(1, 1, 1, 1, 2, 4, 5, 6, 5, 8, 10, 100);
-    var popSum = 0;
-    for (var i = 0; i < 12; i++) {
-        popSum += report.attackerQuantity.toArray()[i] * population[i];
-    }
-    if (popSum <= popMax && report.attackerQuantity.toArray()[12] == 0)
-        isFeint = true;
-
-    return isFeint;
+function twcheese_isFeint(troops) {
+    return troops.snob === 0 && calcTroopPopulation(troops) <= 130;
 }
 
 /**
@@ -3981,7 +4005,7 @@ function twcheese_nameReport(report, note) {
         newName += '_b[' + report.buildingLevels + '] ';
     if (report.resources)
         newName += '_r[' + report.resources + '] ';
-    if (twcheese_detectFeint(report))
+    if (twcheese_isFeint(report.attackerQuantity))
         newName += '_f';
     if (note)
         newName += '_n:' + note;

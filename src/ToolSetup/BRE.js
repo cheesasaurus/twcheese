@@ -1057,7 +1057,7 @@ function twcheese_BattleReportScraper(gameDocument) {
             var h4elements = gameDocument.getElementsByTagName('h4');
             for (var i = 0; i < h4elements.length; i++) {
                 if (h4elements[i].innerHTML.search(language['report']['unitsInTransit']) != -1)
-                    return scrapeTroopCounts(h4elements[i].nextSibling.nextSibling.rows[1]).toArray();
+                    return scrapeTroopCounts(h4elements[i].nextSibling.nextSibling.rows[1]);
             }
             return false;
         };

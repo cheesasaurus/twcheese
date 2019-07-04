@@ -738,11 +738,11 @@ function twcheese_BattleReportScraper(gameDocument) {
         };
 
         /**
-         * @return	troops:Array(spear,sword,archer,axe,scout,lcav,acav,hcav,ram,cat,paladin,noble)
+         * @return {TroopCounts}
          */
         this.getAttackerQuantity = function () {
             if (this.attackerUnitsTable)
-                return scrapeTroopCounts(twcheese_removeTroopsLabel(this.attackerUnitsTable.rows[1])).toArray();
+                return scrapeTroopCounts(twcheese_removeTroopsLabel(this.attackerUnitsTable.rows[1]));
         };
 
         /**
@@ -1575,7 +1575,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
         launchRow.cells[1].innerHTML = twcheese_dateToString(report.timingInfo[0]);
 
         /*==== determine whether return time should be displayed. ====*/
-        var attackerSurvivors = twcheese_calculateSurvivors(report.attackerQuantity, report.attackerLosses);
+        var attackerSurvivors = twcheese_calculateSurvivors(report.attackerQuantity.toArray(), report.attackerLosses);
         var showReturnTime = false;
         for (let i = 0; i < attackerSurvivors.length; i++) {
             if (attackerSurvivors[i] > 0) {
@@ -2900,7 +2900,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 report.opponentsDefeatedSummary = twcheese_calculateOd(report.attackerLosses, report.defenderLosses.toArray());
                 if (report.loyalty)
                     report.loyaltyExtra = twcheese_calculateLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village.coord.split('|'), report.defenderVillage.coordsToArray());
-                report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.sent, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
+                report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.sent, report.attackerQuantity.toArray(), report.attackerVillage, report.defenderVillage);
                 if (report.buildingLevels)
                     report.demolition = twcheese_calculateDemolition(report.buildingLevels);
                 if (report.espionageLevel >= 1)
@@ -3489,9 +3489,9 @@ function twcheese_detectFeint(report) {
     var population = new Array(1, 1, 1, 1, 2, 4, 5, 6, 5, 8, 10, 100);
     var popSum = 0;
     for (var i = 0; i < 12; i++) {
-        popSum += report.attackerQuantity[i] * population[i];
+        popSum += report.attackerQuantity.toArray()[i] * population[i];
     }
-    if (popSum <= popMax && report.attackerQuantity[12] == 0)
+    if (popSum <= popMax && report.attackerQuantity.toArray()[12] == 0)
         isFeint = true;
 
     return isFeint;
@@ -4368,7 +4368,7 @@ function enhanceReport(gameConfig) {
     /*==== calculate additional information ===*/
     let report = new twcheese_scrapeBattleReport(document);
     if (report.defenderQuantity)
-        report.attacker_survivors = twcheese_calculateSurvivors(report.attackerQuantity, report.attackerLosses);
+        report.attacker_survivors = twcheese_calculateSurvivors(report.attackerQuantity.toArray(), report.attackerLosses);
     if (report.defenderQuantity)
         report.survivors = twcheese_calculateSurvivors(report.defenderQuantity.toArray(), report.defenderLosses.toArray());
     if (report.buildingLevels)
@@ -4376,7 +4376,7 @@ function enhanceReport(gameConfig) {
     report.opponentsDefeatedSummary = twcheese_calculateOd(report.attackerLosses, report.defenderLosses.toArray());
     if (report.loyalty)
         report.loyaltyExtra = twcheese_calculateLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village.coord.split('|'), report.defenderVillage.coordsToArray());
-    report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.sent, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
+    report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.sent, report.attackerQuantity.toArray(), report.attackerVillage, report.defenderVillage);
     if (report.buildingLevels)
         report.demolition = twcheese_calculateDemolition(report.buildingLevels);
     if (report.espionageLevel >= 1)

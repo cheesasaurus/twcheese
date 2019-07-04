@@ -851,12 +851,12 @@ function twcheese_BattleReportScraper(gameDocument) {
         };
 
         /**
-         * @return	troops:Array(spear,sword,archer,axe,scout,lcav,acav,hcav,ram,cat,paladin,noble)
+         * @return {TroopCounts}
          * if no information about the strength of the enemy's army could be collected, returns boolean false
          */
         this.getDefenderQuantity = function () {
             if (this.defenderUnitsTable)
-                return scrapeTroopCounts(twcheese_removeTroopsLabel(this.defenderUnitsTable.rows[1])).toArray();
+                return scrapeTroopCounts(twcheese_removeTroopsLabel(this.defenderUnitsTable.rows[1]));
             else
                 return false;
         };
@@ -2894,9 +2894,9 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 var report = twcheese_scrapeBattleReport(reportDoc);
 
                 if (report.defenderQuantity)
-                    report.survivors = twcheese_calculateSurvivors(report.defenderQuantity, report.defenderLosses);
+                    report.survivors = twcheese_calculateSurvivors(report.defenderQuantity.toArray(), report.defenderLosses);
                 if (report.buildingLevels)
-                    report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside.toArray());
+                    report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity.toArray(), report.unitsOutside.toArray());
                 report.opponentsDefeatedSummary = twcheese_calculateOd(report.attackerLosses, report.defenderLosses);
                 if (report.loyalty)
                     report.loyaltyExtra = twcheese_calculateLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village.coord.split('|'), report.defenderVillage.coordsToArray());
@@ -4370,9 +4370,9 @@ function enhanceReport(gameConfig) {
     if (report.defenderQuantity)
         report.attacker_survivors = twcheese_calculateSurvivors(report.attackerQuantity, report.attackerLosses);
     if (report.defenderQuantity)
-        report.survivors = twcheese_calculateSurvivors(report.defenderQuantity, report.defenderLosses);
+        report.survivors = twcheese_calculateSurvivors(report.defenderQuantity.toArray(), report.defenderLosses);
     if (report.buildingLevels)
-        report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside.toArray());
+        report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity.toArray(), report.unitsOutside.toArray());
     report.opponentsDefeatedSummary = twcheese_calculateOd(report.attackerLosses, report.defenderLosses);
     if (report.loyalty)
         report.loyaltyExtra = twcheese_calculateLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village.coord.split('|'), report.defenderVillage.coordsToArray());

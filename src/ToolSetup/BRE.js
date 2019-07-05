@@ -1604,7 +1604,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
         launchRow.insertCell(-1);
         launchRow.cells[0].innerHTML = '<span title="the time the attacker sent the attack">Launched</span>';
         launchRow.insertCell(-1);
-        launchRow.cells[1].innerHTML = twcheese_dateToString(report.timingInfo[0]);
+        launchRow.cells[1].innerHTML = twcheese_dateToString(report.timingInfo.launchTime);
 
         /*==== determine whether return time should be displayed. ====*/
         var attackerSurvivors = report.attackerQuantity.subtract(report.attackerLosses);
@@ -1615,7 +1615,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
         if (showReturnTime) {
             returnRow.cells[0].innerHTML = '<span title="the time the attacking troops return to the attacker\'s village">Returns</span>';
             returnRow.insertCell(-1);
-            returnRow.cells[1].innerHTML = twcheese_dateToString(report.timingInfo[1]);
+            returnRow.cells[1].innerHTML = twcheese_dateToString(report.timingInfo.returnTime);
         }
 
         /*==== rally point Manage Troops link ====*/
@@ -2928,7 +2928,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 report.killScores = calcKillScores(report.attackerLosses, report.defenderLosses);
                 if (report.loyalty)
                     report.loyaltyExtra = twcheese_calculateLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village.coord.split('|'), report.defenderVillage.coordsToArray());
-                report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.sent, report.attackerQuantity.toArray(), report.attackerVillage, report.defenderVillage);
+                report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.sent, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
                 if (report.buildingLevels)
                     report.demolition = twcheese_calculateDemolition(report.buildingLevels);
                 if (report.espionageLevel >= 1)
@@ -3619,37 +3619,36 @@ function calculateTravelTimes(distance, worldSpeed, unitSpeed) {
 
 /**
  *	@param	timeOfArrival:Date
- *	@param	attackerTroops:Array	an array of troops
+ *	@param {TroopCounts} attackerTroops
  *	@param {Village} attackerVillage
  *	@param {Village} defenderVillage
- *	@return	timingInfo:Array(launchedTime:Number,returnTime:Number)
+ *	@return	{{launchTime:Date, returnTime:Date}}
  */
 function twcheese_calculateTimingInfo(worldSpeed, unitSpeed, timeOfArrival, attackerTroops, attackerVillage, defenderVillage) {
-    var timingInfo = new Array();
     var distance = twcheese_calculateDistance(attackerVillage.coordsToArray(), defenderVillage.coordsToArray());
     var attackSpeed;
 
-    if (attackerTroops[11] > 0)
+    if (attackerTroops.snob > 0)
         attackSpeed = 35 / worldSpeed / unitSpeed;
-    else if (attackerTroops[8] > 0 || attackerTroops[9] > 0)
+    else if (attackerTroops.ram > 0 || attackerTroops.catapult > 0)
         attackSpeed = 30 / worldSpeed / unitSpeed;
-    else if (attackerTroops[1] > 0)
+    else if (attackerTroops.sword > 0)
         attackSpeed = 22 / worldSpeed / unitSpeed;
-    else if (attackerTroops[0] > 0 || attackerTroops[2] > 0 || attackerTroops[3] > 0)
+    else if (attackerTroops.spear > 0 || attackerTroops.axe > 0 || attackerTroops.archer > 0)
         attackSpeed = 18 / worldSpeed / unitSpeed;
-    else if (attackerTroops[7] > 0)
+    else if (attackerTroops.heavy > 0)
         attackSpeed = 11 / worldSpeed / unitSpeed;
-    else if (attackerTroops[5] > 0 || attackerTroops[6] > 0 || attackerTroops[10] > 0)
+    else if (attackerTroops.light > 0 || attackerTroops.marcher > 0 || attackerTroops.knight > 0)
         attackSpeed = 10 / worldSpeed / unitSpeed;
     else
         attackSpeed = 9 / worldSpeed / unitSpeed;
 
-    var travelTime = new Date();
-    travelTime.setTime(attackSpeed * distance * 60000);
+    let travelDurationMillis = attackSpeed * distance * 60000;
 
-    timingInfo[0] = new Date(timeOfArrival.getTime() - travelTime.getTime());
-    timingInfo[1] = new Date(timeOfArrival.getTime() + travelTime.getTime());
-    return timingInfo;
+    return {
+        launchTime: new Date(timeOfArrival.getTime() - travelDurationMillis),
+        returnTime: new Date(timeOfArrival.getTime() + travelDurationMillis)
+    };
 }
 
 /**
@@ -4001,7 +4000,7 @@ function twcheese_nameReport(report, note) {
     newName += report.defender.name.replace(language['report']['deletedPlayer'], '');
     newName += '(' + report.defenderVillage.x + '|' + report.defenderVillage.y + ',' + report.defenderVillage.id + ')';
 
-    newName += '_t:' + Math.floor(new Date(report.timingInfo[0]).getTime() / 1000) + '. ';
+    newName += '_t:' + Math.floor(new Date(report.timingInfo.launchTime).getTime() / 1000) + '. ';
     if (report.attackerLosses.snob > 0) //dead noble
         newName += '_x';
     if (report.loyalty)
@@ -4383,7 +4382,7 @@ function enhanceReport(gameConfig) {
     report.killScores = calcKillScores(report.attackerLosses, report.defenderLosses);
     if (report.loyalty)
         report.loyaltyExtra = twcheese_calculateLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village.coord.split('|'), report.defenderVillage.coordsToArray());
-    report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.sent, report.attackerQuantity.toArray(), report.attackerVillage, report.defenderVillage);
+    report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.sent, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
     if (report.buildingLevels)
         report.demolition = twcheese_calculateDemolition(report.buildingLevels);
     if (report.espionageLevel >= 1)

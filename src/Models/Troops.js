@@ -95,12 +95,12 @@ class TroopCounts {
 
 
 /**
- *	@param	distance:Number
- *	@param	worldSpeed:Number
- *	@param	unitSpeed:Number
- *	@return	milliseconds:Array(spear:Number,sword:Number,axe:Number,...)
+ *	@param {number} distance
+ *	@param {number} worldSpeed
+ *	@param {number} unitSpeed
+ *	@return	{{spear:number, sword:number, ...}} milliseconds
  */
-function calcTravelTimes(distance, worldSpeed, unitSpeed) {
+function calcTravelDurations(distance, worldSpeed, unitSpeed) {
     let t = 1 / worldSpeed / unitSpeed;
 
     let travelTimes = {};
@@ -123,4 +123,4 @@ function calcTravelDuration(minutesPerField, distance) {
 }
 
 
-export { TroopCounts, calcTravelTimes };
+export { TroopCounts, calcTravelDurations };

@@ -61,6 +61,10 @@ class BuildingLevels {
         });
         return levels;
     }
+
+    static typeAt(index) {
+        return buildingTypes[index];
+    }
 }
 
 

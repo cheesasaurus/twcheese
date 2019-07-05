@@ -1012,7 +1012,7 @@ function twcheese_scrapeBattleReport(gameDoc) {
         report.attackerLosses = reportScraper.getAttackerLosses();
         report.attackerQuantity = reportScraper.getAttackerQuantity();
         report.attackerVillage = reportScraper.getAttackerVillage();
-        report.buildingLevels = reportScraper.getBuildingLevels().toArray();
+        report.buildingLevels = reportScraper.getBuildingLevels();
         report.catDamage = reportScraper.getCatDamage();
         report.defender = reportScraper.getDefender();
         report.defenderLosses = reportScraper.getDefenderLosses();
@@ -1033,15 +1033,15 @@ function twcheese_scrapeBattleReport(gameDoc) {
 
         if (report.ramDamage) {
             if (!report.buildingLevels) {
-                report.buildingLevels = new BuildingLevels('?').toArray();
+                report.buildingLevels = new BuildingLevels('?');
             }    
-            report.buildingLevels[17] = report.ramDamage[1];
+            report.buildingLevels.wall = report.ramDamage[1];
         }
         if (report.catDamage) {
             if (!report.buildingLevels) {
-                report.buildingLevels = new BuildingLevels('?').toArray();
+                report.buildingLevels = new BuildingLevels('?');
             }
-            report.buildingLevels[report.catDamage[0]] = report.catDamage[2];
+            report.buildingLevels[BuildingLevels.typeAt(report.catDamage[0])] = report.catDamage[2];
         }
 
         return report;
@@ -1169,7 +1169,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
             periodInput.maxLength = 4;
             periodInput.value = 8;
             periodInput.addEventListener('input', function() {
-                report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, Number(this.value), gameConfig.speed, Number(document.getElementById('twcheese_raider_haulBonus')));
+                report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels.toArray(), Number(this.value), gameConfig.speed, Number(document.getElementById('twcheese_raider_haulBonus')));
                 twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), report.raidPeriodic, report);
             });
             periodicDiv.appendChild(periodInput);
@@ -1564,13 +1564,13 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
         }
         else if (mode == 'predicted') {
             gameDoc.getElementById('twcheese_raider_selection').value = 'predicted';
-            report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed, haulBonus);
+            report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels.toArray(), game_data.village, report.defenderVillage, report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed, haulBonus);
             twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), report.raidPredicted, report);
             gameDoc.getElementById('twcheese_periodic_options').style.display = 'none';
         }
         else if (mode == 'periodic') {
             gameDoc.getElementById('twcheese_raider_selection').value = 'periodic';
-            report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, Number(gameDoc.getElementById('twcheese_period').value), gameConfig.speed, haulBonus);
+            report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels.toArray(), Number(gameDoc.getElementById('twcheese_period').value), gameConfig.speed, haulBonus);
             twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), report.raidPeriodic, report);
             gameDoc.getElementById('twcheese_periodic_options').style.display = '';
         }
@@ -1768,9 +1768,10 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                     reportsTableBody.rows[i + 1].insertCell(-1);
                     reportsTableBody.rows[i + 1].cells[cellIndex].style.textAlign = 'center';
                     if (report.buildingLevels) {
-                        if (report.buildingLevels[j] != '?')
-                            reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = report.buildingLevels[j];
-                        if (report.buildingLevels[j] == 0)
+                        let buildingLevels = report.buildingLevels.toArray();
+                        if (buildingLevels[j] !== '?')
+                            reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = buildingLevels[j];
+                        if (buildingLevels[j] == 0)
                             reportsTableBody.rows[i + 1].cells[cellIndex].className = 'hidden';
                     }
                     cellIndex++;
@@ -2800,18 +2801,18 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 if (report.defenderQuantity)
                     report.defenderSurvivors = report.defenderQuantity.subtract(report.defenderLosses);
                 if (report.buildingLevels)
-                    report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
+                    report.populationSummary = twcheese_calculatePopulation(report.buildingLevels.toArray(), report.defenderQuantity, report.unitsOutside);
                 report.killScores = calcKillScores(report.attackerLosses, report.defenderLosses);
                 if (report.loyalty)
                     report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village, report.defenderVillage);
                 report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.sent, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
                 if (report.buildingLevels)
-                    report.demolition = twcheese_calculateDemolition(report.buildingLevels);
+                    report.demolition = twcheese_calculateDemolition(report.buildingLevels.toArray());
                 if (report.espionageLevel >= 1)
                     report.raidScouted = twcheese_calculateRaidScouted(report.resources);
                 if (report.espionageLevel >= 2) {
-                    report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed);
-                    report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, 8, gameConfig.speed);
+                    report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels.toArray(), game_data.village, report.defenderVillage, report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed);
+                    report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels.toArray(), 8, gameConfig.speed);
                 }
                 report.reportID = reportID;
 
@@ -3774,7 +3775,7 @@ function twcheese_nameReport(report, note) {
     if (report.defenderSurvivors)
         newName += '_d[' + report.defenderSurvivors.toArray() + '] ';
     if (report.buildingLevels)
-        newName += '_b[' + report.buildingLevels + '] ';
+        newName += '_b[' + report.buildingLevels.toArray() + '] ';
     if (report.resources)
         newName += '_r[' + report.resources + '] ';
     if (twcheese_isFeint(report.attackerQuantity))
@@ -3864,7 +3865,7 @@ function twcheese_interpretReportName(reportName) {
                     //if(text.search('\\?') != -1)
                     //{
                     text = text.substring(1, text.length - 1);
-                    report.buildingLevels = text.split(',');
+                    report.buildingLevels = BuildingLevels.fromArray(text.split(','));
                     //}
                     //else
                     //report.buildingLevels = eval(text);
@@ -4119,18 +4120,18 @@ function enhanceReport(gameConfig) {
     if (report.defenderQuantity)
         report.defenderSurvivors = report.defenderQuantity.subtract(report.defenderLosses);
     if (report.buildingLevels)
-        report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
+        report.populationSummary = twcheese_calculatePopulation(report.buildingLevels.toArray(), report.defenderQuantity, report.unitsOutside);
     report.killScores = calcKillScores(report.attackerLosses, report.defenderLosses);
     if (report.loyalty)
         report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village, report.defenderVillage);
     report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.sent, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
     if (report.buildingLevels)
-        report.demolition = twcheese_calculateDemolition(report.buildingLevels);
+        report.demolition = twcheese_calculateDemolition(report.buildingLevels.toArray());
     if (report.espionageLevel >= 1)
         report.raidScouted = twcheese_calculateRaidScouted(report.resources);
     if (report.espionageLevel >= 2) {
-        report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed);
-        report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, 8, gameConfig.speed);
+        report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels.toArray(), game_data.village, report.defenderVillage, report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed);
+        report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels.toArray(), 8, gameConfig.speed);
     }
 
     /*==== add stuff to the page ====*/

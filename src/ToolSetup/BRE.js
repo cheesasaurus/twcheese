@@ -3,7 +3,7 @@ import { initCss, escapeHtml } from '/twcheese/src/Util/UI.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { calcKillScores } from '/twcheese/src/Models/KillScores.js';
 import { calcLoyalty } from '/twcheese/src/Models/Loyalty.js';
-import { calcTroopPopulation } from '/twcheese/src/Models/Troops.js';
+import { TroopCounts, calcTroopPopulation } from '/twcheese/src/Models/Troops.js';
 import { scrapeResources } from '/twcheese/src/Scrape/res.js';
 import { userConfig } from '/twcheese/src/Util/UserConfig.js';
 import { requestDocument, gameUrl, attackPrepUrl } from '/twcheese/src/Util/Network.js';
@@ -611,60 +611,6 @@ function scrapePlayer(playerCell) {
     player.id = Number(playerLink.href.match(/&id=[0-9]{1,}/)[0].substring(4));
     player.name = playerLink.innerHTML;
     return player;
-}
-
-
-let troopOrder = ['spear', 'sword', 'axe', 'archer', 'spy', 'light', 'marcher', 'heavy', 'ram', 'catapult', 'knight', 'snob', 'militia'];
-
-class TroopCounts {
-    constructor() {
-        this.spear = 0;
-        this.sword = 0;
-        this.axe = 0;
-        this.archer = 0;
-        this.spy = 0;
-        this.light = 0;
-        this.marcher = 0;
-        this.heavy = 0;
-        this.ram = 0;
-        this.catapult = 0;
-        this.knight = 0;
-        this.snob = 0;
-        this.militia = 0;
-    }
-
-    isZero() {
-        for (let count of Object.values(this)) {
-            if (count !== 0) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * @param {TroopCounts} subtrahend
-     * @return {TroopCounts} difference
-     */
-    subtract(subtrahend) {
-        let difference = new TroopCounts();
-        for (let [unitType, count] of Object.entries(this)) {
-            difference[unitType] = count - subtrahend[unitType];
-        }
-        return difference;
-    }
-
-    toArray() {
-        return troopOrder.map(unitType => this[unitType]);
-    }
-
-    static fromArray(array) {
-        let troops = new TroopCounts();
-        array.forEach((count, i) => {
-            troops[troopOrder[i]] = count;
-        });
-        return troops;
-    }
 }
 
 

@@ -103,9 +103,9 @@ class TroopCounts {
 function calcTravelTimes(distance, worldSpeed, unitSpeed) {
     let t = 1 / worldSpeed / unitSpeed;
 
-    var travelTimes = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    for (var i = 0; i < 12; i++) {
-        travelTimes[i] = Math.round(t * distance * travelMinutes[troopTypes[i]] * 60) * 1000;
+    let travelTimes = {};
+    for (let type of troopTypes) {
+        travelTimes[type] = Math.round(t * distance * travelMinutes[type] * 60) * 1000;
     }
     return travelTimes;
 };

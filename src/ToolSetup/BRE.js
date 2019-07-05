@@ -1278,13 +1278,13 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
             for (let i = 0; i < 7; i++) {
                 raiderUnitsTable.rows[2].insertCell(-1);
             }
-            raiderUnitsTable.rows[2].cells[0].innerHTML = window.Format.timeSpan(travelTimes[0]);
-            raiderUnitsTable.rows[2].cells[1].innerHTML = window.Format.timeSpan(travelTimes[1]);
-            raiderUnitsTable.rows[2].cells[2].innerHTML = window.Format.timeSpan(travelTimes[2]);
-            raiderUnitsTable.rows[2].cells[3].innerHTML = window.Format.timeSpan(travelTimes[3]);
-            raiderUnitsTable.rows[2].cells[4].innerHTML = window.Format.timeSpan(travelTimes[5]);
-            raiderUnitsTable.rows[2].cells[5].innerHTML = window.Format.timeSpan(travelTimes[6]);
-            raiderUnitsTable.rows[2].cells[6].innerHTML = window.Format.timeSpan(travelTimes[7]);
+            raiderUnitsTable.rows[2].cells[0].innerHTML = window.Format.timeSpan(travelTimes.spear);
+            raiderUnitsTable.rows[2].cells[1].innerHTML = window.Format.timeSpan(travelTimes.sword);
+            raiderUnitsTable.rows[2].cells[2].innerHTML = window.Format.timeSpan(travelTimes.axe);
+            raiderUnitsTable.rows[2].cells[3].innerHTML = window.Format.timeSpan(travelTimes.archer);
+            raiderUnitsTable.rows[2].cells[4].innerHTML = window.Format.timeSpan(travelTimes.light);
+            raiderUnitsTable.rows[2].cells[5].innerHTML = window.Format.timeSpan(travelTimes.marcher);
+            raiderUnitsTable.rows[2].cells[6].innerHTML = window.Format.timeSpan(travelTimes.heavy);
 
             raiderTable.insertRow(-1);
             raiderTable.rows[2].insertCell(-1);

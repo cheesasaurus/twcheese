@@ -2,6 +2,7 @@
 import { initCss, escapeHtml } from '/twcheese/src/Util/UI.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { calcKillScores } from '/twcheese/src/Models/KillScores.js';
+import { calcLoyalty } from '/twcheese/src/Models/Loyalty.js';
 import { scrapeResources } from '/twcheese/src/Scrape/res.js';
 import { userConfig } from '/twcheese/src/Util/UserConfig.js';
 import { requestDocument, gameUrl, attackPrepUrl } from '/twcheese/src/Util/Network.js';
@@ -3536,32 +3537,6 @@ function twcheese_calculatePopulation(buildings, troopsDefending, troopsOutside)
 
     let militaryPopulation = calcTroopPopulation(troopsDefending) + calcTroopPopulation(troopsOutside);
     return new Array(buildingPopulation, militaryPopulation, (maxPopulation - buildingPopulation - militaryPopulation));
-}
-
-
-/**
- * @param {number} worldSpeed
- * @param {number} unitSpeed
- * @param {number} reportedLoyalty
- * @param {Date} timeReported
- * @param {Date} timeNow
- * @param {Village|{x:number, y:number}} home
- * @param {Village} target
- * @return {{loyaltyNow:Number, loyatyAtArrival:Number}}
- */
-function calcLoyalty(worldSpeed, unitSpeed, reportedLoyalty, timeReported, timeNow, home, target) {
-    if (reportedLoyalty <= 0) {
-        reportedLoyalty = 25; // loyalty jumps to 25 after a village is conquered
-    }
-
-    let hoursPassed = (timeNow - timeReported) / 3600000;
-    let loyaltyNow = Math.min(100, parseInt(reportedLoyalty) + parseInt(hoursPassed * worldSpeed));
-
-    let distance = target.distanceTo(home);
-    let travelHours = (distance * 35 / worldSpeed / unitSpeed) / 60;
-    let loyaltyAtArrival = Math.min(100, Math.floor(loyaltyNow + travelHours * worldSpeed));
-
-    return {loyaltyNow, loyaltyAtArrival};
 }
 
 

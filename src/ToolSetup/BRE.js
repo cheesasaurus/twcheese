@@ -688,6 +688,15 @@ class Village {
         this.x = x;
         this.y = y;
     }
+
+    /**
+     * @param {Village} otherVillage 
+     */
+    distanceTo(otherVillage) {
+        let diffX = this.x - otherVillage.x;
+        let diffY = this.y - otherVillage.y;
+        return Math.hypot(diffX, diffY);
+    }
 }
 
 /**
@@ -1315,7 +1324,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
             raiderUnitsTable.insertRow(-1);
             raiderUnitsTable.rows[2].className = 'center';
 
-            var travelTimes = calculateTravelTimes(twcheese_calculateDistance(report.attackerVillage, report.defenderVillage), gameConfig.speed, gameConfig.unit_speed);
+            var travelTimes = calculateTravelTimes(report.attackerVillage.distanceTo(report.defenderVillage), gameConfig.speed, gameConfig.unit_speed);
 
             for (let i = 0; i < 7; i++) {
                 raiderUnitsTable.rows[2].insertCell(-1);
@@ -2081,7 +2090,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         /*==== defender distance from current village ====*/
         if (report.defenderVillage)
             try {
-                report.defenderDistance = Math.round(twcheese_calculateDistance(game_data.village, report.defenderVillage) * 100) / 100;
+                report.defenderDistance = Math.round(report.defenderVillage.distanceTo(game_data.village) * 100) / 100;
             }
             catch (err) {
                 console.error(err);
@@ -3536,7 +3545,7 @@ function twcheese_calculatePopulation(buildings, troopsDefending, troopsOutside)
  * @param {number} reportedLoyalty
  * @param {Date} timeReported
  * @param {Date} timeNow
- * @param {Village} home
+ * @param {Village|{x:number, y:number}} home
  * @param {Village} target
  * @return {{loyaltyNow:Number, loyatyAtArrival:Number}}
  */
@@ -3548,23 +3557,13 @@ function calcLoyalty(worldSpeed, unitSpeed, reportedLoyalty, timeReported, timeN
     let hoursPassed = (timeNow - timeReported) / 3600000;
     let loyaltyNow = Math.min(100, parseInt(reportedLoyalty) + parseInt(hoursPassed * worldSpeed));
 
-    let distance = twcheese_calculateDistance(home, target);
+    let distance = target.distanceTo(home);
     let travelHours = (distance * 35 / worldSpeed / unitSpeed) / 60;
     let loyaltyAtArrival = Math.min(100, Math.floor(loyaltyNow + travelHours * worldSpeed));
 
     return {loyaltyNow, loyaltyAtArrival};
 }
 
-/**
- *	@param {Village} village1
- *	@param {Village} village2
- *	@return	{Number}
- */
-function twcheese_calculateDistance(village1, village2) {
-    let diffX = village1.x - village2.x;
-    let diffY = village1.y - village2.y;
-    return Math.hypot(diffX, diffY);
-}
 
 /**
  *	@param	distance:Number
@@ -3592,7 +3591,7 @@ function calculateTravelTimes(distance, worldSpeed, unitSpeed) {
  *	@return	{{launchTime:Date, returnTime:Date}}
  */
 function twcheese_calculateTimingInfo(worldSpeed, unitSpeed, timeOfArrival, attackerTroops, attackerVillage, defenderVillage) {
-    var distance = twcheese_calculateDistance(attackerVillage, defenderVillage);
+    var distance = attackerVillage.distanceTo(defenderVillage);
     var attackSpeed;
 
     if (attackerTroops.snob > 0)
@@ -3833,7 +3832,7 @@ function twcheese_calculateRaidScouted(resourcesScouted, haulBonus) {
 /**
  *	@param	resourcesScouted:Array(timber,clay,iron)
  *	@param	buildings:Array	an array of the building levels
- *	@param {Village} home
+ *	@param {Village|{x:number, y:number}} home
  *	@param {Village} target
  *	@param	timeSent:Date	the time the player received the report
  *	@param	timeNow:Date	the current time
@@ -3871,7 +3870,7 @@ function twcheese_calculateRaidPredicted(resourcesScouted, buildings, home, targ
     /*==== calculate travel times (in hours) ====*/
     var travelTimes = new Array();
     for (var i = 0; i < 7; i++)
-        travelTimes[i] = speeds[i] / gameSpeed / unitSpeed * twcheese_calculateDistance(home, target) / 60;
+        travelTimes[i] = speeds[i] / gameSpeed / unitSpeed * target.distanceTo(home) / 60;
 
     /*==== add resources produced during travel ====*/
     var totalResources = new Array(0, 0, 0, 0, 0, 0, 0);

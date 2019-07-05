@@ -1032,13 +1032,15 @@ function twcheese_scrapeBattleReport(gameDoc) {
         report.unitsInTransit = reportScraper.getUnitsInTransit();
 
         if (report.ramDamage) {
-            if (!report.buildingLevels)
-                report.buildingLevels = new Array('?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?');
+            if (!report.buildingLevels) {
+                report.buildingLevels = new BuildingLevels('?').toArray();
+            }    
             report.buildingLevels[17] = report.ramDamage[1];
         }
         if (report.catDamage) {
-            if (!report.buildingLevels)
-                report.buildingLevels = new Array('?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?');
+            if (!report.buildingLevels) {
+                report.buildingLevels = new BuildingLevels('?').toArray();
+            }
             report.buildingLevels[report.catDamage[0]] = report.catDamage[2];
         }
 

@@ -44,9 +44,9 @@ let buildingTypes = [
 
 
 class BuildingLevels {
-    constructor() {
+    constructor(fill = 0) {
         for (let type of buildingTypes) {
-            this[type] = 0;
+            this[type] = fill;
         }
     }
 

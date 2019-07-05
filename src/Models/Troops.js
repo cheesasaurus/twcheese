@@ -94,4 +94,21 @@ class TroopCounts {
 }
 
 
-export { TroopCounts };
+/**
+ *	@param	distance:Number
+ *	@param	worldSpeed:Number
+ *	@param	unitSpeed:Number
+ *	@return	milliseconds:Array(spear:Number,sword:Number,axe:Number,...)
+ */
+function calcTravelTimes(distance, worldSpeed, unitSpeed) {
+    let t = 1 / worldSpeed / unitSpeed;
+
+    var travelTimes = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    for (var i = 0; i < 12; i++) {
+        travelTimes[i] = Math.round(t * distance * travelMinutes[troopTypes[i]] * 60) * 1000;
+    }
+    return travelTimes;
+};
+
+
+export { TroopCounts, calcTravelTimes };

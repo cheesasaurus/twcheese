@@ -3,7 +3,7 @@ import { initCss, escapeHtml } from '/twcheese/src/Util/UI.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { calcKillScores } from '/twcheese/src/Models/KillScores.js';
 import { calcLoyalty } from '/twcheese/src/Models/Loyalty.js';
-import { TroopCounts } from '/twcheese/src/Models/Troops.js';
+import { TroopCounts, calcTravelTimes } from '/twcheese/src/Models/Troops.js';
 import { scrapeResources } from '/twcheese/src/Scrape/res.js';
 import { userConfig } from '/twcheese/src/Util/UserConfig.js';
 import { requestDocument, gameUrl, attackPrepUrl } from '/twcheese/src/Util/Network.js';
@@ -1273,7 +1273,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
             raiderUnitsTable.rows[2].className = 'center';
 
             // todo
-            var travelTimes = calculateTravelTimes(report.attackerVillage.distanceTo(report.defenderVillage), gameConfig.speed, gameConfig.unit_speed);
+            var travelTimes = calcTravelTimes(report.attackerVillage.distanceTo(report.defenderVillage), gameConfig.speed, gameConfig.unit_speed);
 
             for (let i = 0; i < 7; i++) {
                 raiderUnitsTable.rows[2].insertCell(-1);
@@ -3454,24 +3454,6 @@ function twcheese_calculatePopulation(buildings, troopsDefending, troopsOutside)
     let militaryPopulation = troopsDefending.population + troopsOutside.population;
     return new Array(buildingPopulation, militaryPopulation, (maxPopulation - buildingPopulation - militaryPopulation));
 }
-
-
-/**
- *	@param	distance:Number
- *	@param	worldSpeed:Number
- *	@param	unitSpeed:Number
- *	@return	milliseconds:Array(spear:Number,sword:Number,axe:Number,...)
- */
-function calculateTravelTimes(distance, worldSpeed, unitSpeed) {
-    var walkingTimes = new Array(18, 22, 18, 18, 9, 10, 10, 11, 30, 30, 10, 35); //minutes to walk across a field
-    var modifier = 1 / worldSpeed / unitSpeed;
-
-    var travelTimes = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    for (var i = 0; i < 12; i++) {
-        travelTimes[i] = Math.round(distance * walkingTimes[i] * modifier * 60) * 1000;
-    }
-    return travelTimes;
-};
 
 /**
  *	@param	timeOfArrival:Date

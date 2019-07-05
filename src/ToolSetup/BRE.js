@@ -1272,18 +1272,19 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
             raiderUnitsTable.insertRow(-1);
             raiderUnitsTable.rows[2].className = 'center';
 
+            // todo
             var travelTimes = calculateTravelTimes(report.attackerVillage.distanceTo(report.defenderVillage), gameConfig.speed, gameConfig.unit_speed);
 
             for (let i = 0; i < 7; i++) {
                 raiderUnitsTable.rows[2].insertCell(-1);
-            }    
-            raiderUnitsTable.rows[2].cells[0].innerHTML = formatDateTo_timeString(travelTimes[0]);
-            raiderUnitsTable.rows[2].cells[1].innerHTML = formatDateTo_timeString(travelTimes[1]);
-            raiderUnitsTable.rows[2].cells[2].innerHTML = formatDateTo_timeString(travelTimes[2]);
-            raiderUnitsTable.rows[2].cells[3].innerHTML = formatDateTo_timeString(travelTimes[3]);
-            raiderUnitsTable.rows[2].cells[4].innerHTML = formatDateTo_timeString(travelTimes[5]);
-            raiderUnitsTable.rows[2].cells[5].innerHTML = formatDateTo_timeString(travelTimes[6]);
-            raiderUnitsTable.rows[2].cells[6].innerHTML = formatDateTo_timeString(travelTimes[7]);
+            }
+            raiderUnitsTable.rows[2].cells[0].innerHTML = window.Format.timeSpan(travelTimes[0]);
+            raiderUnitsTable.rows[2].cells[1].innerHTML = window.Format.timeSpan(travelTimes[1]);
+            raiderUnitsTable.rows[2].cells[2].innerHTML = window.Format.timeSpan(travelTimes[2]);
+            raiderUnitsTable.rows[2].cells[3].innerHTML = window.Format.timeSpan(travelTimes[3]);
+            raiderUnitsTable.rows[2].cells[4].innerHTML = window.Format.timeSpan(travelTimes[5]);
+            raiderUnitsTable.rows[2].cells[5].innerHTML = window.Format.timeSpan(travelTimes[6]);
+            raiderUnitsTable.rows[2].cells[6].innerHTML = window.Format.timeSpan(travelTimes[7]);
 
             raiderTable.insertRow(-1);
             raiderTable.rows[2].insertCell(-1);
@@ -3459,7 +3460,7 @@ function twcheese_calculatePopulation(buildings, troopsDefending, troopsOutside)
  *	@param	distance:Number
  *	@param	worldSpeed:Number
  *	@param	unitSpeed:Number
- *	@return	times:Array(spear:Date,sword:Date,axe:Date,...)
+ *	@return	milliseconds:Array(spear:Number,sword:Number,axe:Number,...)
  */
 function calculateTravelTimes(distance, worldSpeed, unitSpeed) {
     var walkingTimes = new Array(18, 22, 18, 18, 9, 10, 10, 11, 30, 30, 10, 35); //minutes to walk across a field
@@ -3467,8 +3468,7 @@ function calculateTravelTimes(distance, worldSpeed, unitSpeed) {
 
     var travelTimes = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     for (var i = 0; i < 12; i++) {
-        travelTimes[i] = new Date((distance * walkingTimes[i] * modifier * 60 * 1000));
-        //travelTimes[i] = Math.floor(distance * walkingTimes[i] / modifier * 60 * 1000);
+        travelTimes[i] = distance * walkingTimes[i] * modifier * 60 * 1000;
     }
     return travelTimes;
 };
@@ -4045,31 +4045,6 @@ function twcheese_dateToString(time) {
     timeString += time.getSeconds();
     return timeString;
 }
-
-/**
- *	@param	date:Date
- *	@return	time:String	[H]:mm:ss
- */
-function formatDateTo_timeString(date) {
-    var time = date.getTime();
-    var hours = Math.floor(time / 1000 / 60 / 60);
-    var minutes = Math.floor((time - (hours * 1000 * 60 * 60)) / 1000 / 60);
-    var seconds = time / 1000;
-
-    //==== round time ====
-
-    //==== format with leading zeroes ====*/
-    if (minutes < 10) {
-        minutes = '0' + minutes;
-    }    
-    seconds = date.getSeconds();
-    if (seconds < 10) {
-        seconds = '0' + seconds;
-    }
-
-    return hours + ':' + minutes + ':' + seconds;
-    //return Math.floor(date.getTime()/1000/60/60) + ':' + date.getMinutes() + ':' + date.getSeconds(); //does not round
-};
 
 /**
  *	requests the xml from a page

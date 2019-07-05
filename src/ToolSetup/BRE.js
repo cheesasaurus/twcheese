@@ -629,6 +629,27 @@ class TroopCounts {
         this.militia = 0;
     }
 
+    isZero() {
+        for (let count of Object.values(this)) {
+            if (count !== 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @param {TroopCounts} subtrahend
+     * @return {TroopCounts} difference
+     */
+    subtract(subtrahend) {
+        let difference = new TroopCounts();
+        for (let [unitType, count] of Object.entries(this)) {
+            difference[unitType] = count - subtrahend[unitType];
+        }
+        return difference;
+    }
+
     toArray() {
         return [
             this.spear,
@@ -645,6 +666,25 @@ class TroopCounts {
             this.snob,
             this.militia
         ];
+    }
+
+    static fromArray(array) {
+        let troops = new TroopCounts();
+        troops.spear = array[0];
+        troops.spear = array[1];
+        troops.sword = array[2];
+        troops.archer = array[3];
+        troops.axe = array[4];
+        troops.spy = array[5];
+        troops.light = array[6];
+        troops.marcher = array[7];
+        troops.heavy = array[8];
+        troops.ram = array[9];
+        troops.catapult = array[10];
+        troops.knight = array[11];
+        troops.snob = array[12];
+        troops.militia = array[13];
+        return troops;
     }
 }
 
@@ -1460,55 +1500,46 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
         /*==== surviving defenders ====*/
         if (gameDoc.getElementById('attack_info_def_units')) {
             var defenseUnitsTable = gameDoc.getElementById('attack_info_def_units');
+            let rowAbove = defenseUnitsTable.rows[defenseUnitsTable.rows.length - 1];
             let survivorsRow = defenseUnitsTable.insertRow(-1);
             survivorsRow.className = "center";
             survivorsRow.insertCell(-1);
             survivorsRow.cells[0].innerHTML = 'Survivors:';
-
-
-
-            for (var i = 1; i < 13; i++) {
-                survivorsRow.insertCell(-1);
-                if (report.survivors[i - 1] == 0)
-                    survivorsRow.cells[i].className = "hidden";
-                survivorsRow.cells[i].innerHTML = report.survivors[i - 1];
-            }
-
-            /* remove displays for disabled units (note: need to progress right to left) */
-
-            if (gameConfig.paladin < 1)
-                survivorsRow.removeChild(survivorsRow.cells[12]);
-
-            if (gameConfig.archer < 1) {
-                survivorsRow.removeChild(survivorsRow.cells[7]);
-                survivorsRow.removeChild(survivorsRow.cells[4]);
+            survivorsRow.cells[0].align = 'left';
+            
+            for (let unitType of window.game_data.units) {
+                if (survivorsRow.cells.length >= rowAbove.cells.length) {
+                    break;
+                }
+                let cell = survivorsRow.insertCell(-1);
+                let unitCount = report.survivors[unitType];
+                if (unitCount === 0) {
+                    cell.className = 'hidden';
+                }
+                cell.innerHTML = unitCount;
             }
         }
 
         /*==== surviving attackers ====*/
         if (gameDoc.getElementById('attack_info_att_units')) {
             var unit_table = gameDoc.getElementById('attack_info_att_units');
+            let rowAbove = unit_table.rows[unit_table.rows.length - 1];
             let survivorsRow = unit_table.insertRow(-1);
             survivorsRow.className = "center";
             survivorsRow.insertCell(-1);
             survivorsRow.cells[0].innerHTML = 'Survivors:';
             survivorsRow.cells[0].align = 'left';
 
-            for (let i = 1; i < 13; i++) {
-                survivorsRow.insertCell(-1);
-                if (report.attacker_survivors[i - 1] == 0)
-                    survivorsRow.cells[i].className = "hidden";
-                survivorsRow.cells[i].innerHTML = report.attacker_survivors[i - 1];
-            }
-
-            /* remove displays for disabled units (note: need to progress right to left) */
-
-            if (gameConfig.paladin < 1)
-                survivorsRow.removeChild(survivorsRow.cells[12]);
-
-            if (gameConfig.archer < 1) {
-                survivorsRow.removeChild(survivorsRow.cells[7]);
-                survivorsRow.removeChild(survivorsRow.cells[4]);
+            for (let unitType of window.game_data.units) {
+                if (survivorsRow.cells.length >= rowAbove.cells.length) {
+                    break;
+                }
+                let cell = survivorsRow.insertCell(-1);
+                let unitCount = report.attackerSurvivors[unitType];
+                if (unitCount === 0) {
+                    cell.className = 'hidden';
+                }
+                cell.innerHTML = unitCount;
             }
         }
 
@@ -1576,13 +1607,8 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
         launchRow.cells[1].innerHTML = twcheese_dateToString(report.timingInfo[0]);
 
         /*==== determine whether return time should be displayed. ====*/
-        var attackerSurvivors = twcheese_calculateSurvivors(report.attackerQuantity.toArray(), report.attackerLosses.toArray());
-        var showReturnTime = false;
-        for (let i = 0; i < attackerSurvivors.length; i++) {
-            if (attackerSurvivors[i] > 0) {
-                showReturnTime = true;
-            }
-        }
+        var attackerSurvivors = twcheese_calculateSurvivors(report.attackerQuantity, report.attackerLosses);
+        let showReturnTime = !attackerSurvivors.isZero();
 
         var returnRow = reportTable.insertRow(3);
         returnRow.insertCell(-1);
@@ -1850,10 +1876,11 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                     reportsTableBody.rows[i + 1].insertCell(-1);
                     reportsTableBody.rows[i + 1].cells[cellIndex].style.textAlign = 'center';
                     if (report.survivors) {
-                        reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = report.survivors[j];
-                        if (report.survivors[j] == 0)
+                        let survivors = report.survivors.toArray();
+                        reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = survivors[j];
+                        if (survivors[j] == 0)
                             reportsTableBody.rows[i + 1].cells[cellIndex].className = 'unit-item hidden';
-                        reportsTableBody.rows[i + 1].cells[cellIndex].troopDigits = report.survivors[j].length;
+                        reportsTableBody.rows[i + 1].cells[cellIndex].troopDigits = survivors[j].length;
                     }
                     cellIndex++;
                 }
@@ -2895,7 +2922,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 var report = twcheese_scrapeBattleReport(reportDoc);
 
                 if (report.defenderQuantity)
-                    report.survivors = twcheese_calculateSurvivors(report.defenderQuantity.toArray(), report.defenderLosses.toArray());
+                    report.survivors = twcheese_calculateSurvivors(report.defenderQuantity, report.defenderLosses);
                 if (report.buildingLevels)
                     report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
                 report.killScores = calcKillScores(report.attackerLosses, report.defenderLosses);
@@ -3140,8 +3167,9 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         var maxDigits = new Array(2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2);
         for (var row = 1; row < reportsTableBody.rows.length; row++) {
             if (reportsTableBody.rows[row].twcheeseLabel && reportsTableBody.rows[row].twcheeseReport.survivors) {
+                let survivors = reportsTableBody.rows[row].twcheeseReport.survivors.toArray();
                 for (var i = 0; i < 12; i++) {
-                    var digits = new String(reportsTableBody.rows[row].twcheeseReport.survivors[i]).length;
+                    var digits = new String(survivors[i]).length;
                     if (digits > maxDigits[i])
                         maxDigits[i] = digits;
                 }
@@ -3466,16 +3494,12 @@ function createFooterButton(text, address) {
 
 /**
  *	calculates surviving troops
- *	@param quantity:Array	an array of troops, in specific, the ones before the battle
- *	@param losses:Array	an array of troops, in specific, the ones that died
- *	@return	survivors:Array	an array of troops, in specific, the ones that survived
+ *	@param {TroopCounts} quantity
+ *	@param {TroopCounts} losses
+ *	@return	{TroopCounts} survivors
  */
 function twcheese_calculateSurvivors(quantity, losses) {
-    var survivors = new Array();
-    for (var i = 0; i < quantity.length; i++)
-        survivors[i] = quantity[i] - losses[i];
-
-    return survivors;
+    return quantity.subtract(losses);
 }
 
 
@@ -3994,7 +4018,7 @@ function twcheese_nameReport(report, note) {
     if (report.loyalty)
         newName += '_l:' + report.loyalty[1] + '.';
     if (report.survivors)
-        newName += '_d[' + report.survivors + '] ';
+        newName += '_d[' + report.survivors.toArray() + '] ';
     if (report.buildingLevels)
         newName += '_b[' + report.buildingLevels + '] ';
     if (report.resources)
@@ -4108,12 +4132,8 @@ function twcheese_interpretReportName(reportName) {
                 if (reportName.search('_d') != -1) {
                     let text = reportName.substring(reportName.indexOf('_d') + 2);
                     text = text.substring(0, text.indexOf(']') + 1);
-                    report.survivors = eval(text);
-                    var survivorCount = 0;
-                    for (var i = 0; i < 12; i++)
-                        survivorCount += report.survivors[i];
-                    if (survivorCount == 0)
-                        report.isCleared = true;
+                    report.survivors = TroopCounts.fromArray(JSON.parse(text));
+                    report.isCleared = report.survivors.isZero();
                 }
 
                 /*==== set loyalty ====*/
@@ -4366,9 +4386,9 @@ function enhanceReport(gameConfig) {
     /*==== calculate additional information ===*/
     let report = new twcheese_scrapeBattleReport(document);
     if (report.defenderQuantity)
-        report.attacker_survivors = twcheese_calculateSurvivors(report.attackerQuantity.toArray(), report.attackerLosses.toArray());
+        report.attackerSurvivors = twcheese_calculateSurvivors(report.attackerQuantity, report.attackerLosses);
     if (report.defenderQuantity)
-        report.survivors = twcheese_calculateSurvivors(report.defenderQuantity.toArray(), report.defenderLosses.toArray());
+        report.survivors = twcheese_calculateSurvivors(report.defenderQuantity, report.defenderLosses);
     if (report.buildingLevels)
         report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
     report.killScores = calcKillScores(report.attackerLosses, report.defenderLosses);

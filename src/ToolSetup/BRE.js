@@ -6,6 +6,7 @@ import { Village } from '/twcheese/src/Models/Village.js';
 import { calcKillScores } from '/twcheese/src/Models/KillScores.js';
 import { calcLoyalty } from '/twcheese/src/Models/Loyalty.js';
 import { TroopCounts, calcTravelDurations } from '/twcheese/src/Models/Troops.js';
+import { BuildingLevels } from '/twcheese/src/Models/Buildings.js';
 import { scrapeResources } from '/twcheese/src/Scrape/res.js';
 import { userConfig } from '/twcheese/src/Util/UserConfig.js';
 import { requestDocument, gameUrl, attackPrepUrl } from '/twcheese/src/Util/Network.js';
@@ -702,52 +703,19 @@ function twcheese_BattleReportScraper(gameDocument) {
         };
 
         /**
-         * @return	buildingLevels:Array()
-         * if no buildings were scouted, returns boolean false
-         * -------------------
-         * Building		Index
-         * hq:			0
-         * barracks:	1
-         * stable:		2
-         * workshop:	3
-         * church:		4
-         * church_f:	5
-         * academy:		6
-         * smithy:		7
-         * rally:		8
-         * statue:		9
-         * market:		10
-         * timber:		11
-         * clay:		12
-         * iron:		13
-         * farm:		14
-         * warehouse:	15
-         * hiding:		16
-         * wall:		17
+         * @return {BuildingLevels|false}
          */
         this.getBuildingLevels = function () {
-            if (this.getEspionageLevel() >= 2) {
-
-                try {
-                    var building_levels = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-                    var building_ids = ['main', 'barracks', 'stable', 'garage', 'church', 'church_f', 'snob', 'smith', 'place', 'statue', 'market', 'wood', 'stone', 'iron', 'farm', 'storage', 'hide', 'wall'];
-
-                    var building_data = JSON.parse(this.$gameDoc.find('#attack_spy_building_data').val());
-                    for (let i = 0; i < building_data.length; i++) {
-                        var building = building_data[i];
-                        building_levels[building_ids.indexOf(building.id)] = Number(building.level);
-                    }
-
-                    // church
-                    if (building_levels[5] > 0) {
-                        building_levels[4] = 0;
-                    }
-                    return building_levels;
-                }
-                catch (e) { console.error(e); }
+            if (this.getEspionageLevel() < 2) {
+                return false;
             }
-            else
-                return Boolean(false);
+
+            let levels = new BuildingLevels();
+            let buildingData = JSON.parse(this.$gameDoc.find('#attack_spy_building_data').val());
+            for (let building of buildingData) {
+                levels[building.id] = parseInt(building.level);
+            }
+            return levels;
         };
 
         /**
@@ -1044,7 +1012,7 @@ function twcheese_scrapeBattleReport(gameDoc) {
         report.attackerLosses = reportScraper.getAttackerLosses();
         report.attackerQuantity = reportScraper.getAttackerQuantity();
         report.attackerVillage = reportScraper.getAttackerVillage();
-        report.buildingLevels = reportScraper.getBuildingLevels();
+        report.buildingLevels = reportScraper.getBuildingLevels().toArray();
         report.catDamage = reportScraper.getCatDamage();
         report.defender = reportScraper.getDefender();
         report.defenderLosses = reportScraper.getDefenderLosses();

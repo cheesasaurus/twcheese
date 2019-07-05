@@ -1,4 +1,25 @@
 
+/**
+ * Building		Index
+ * hq:			0
+ * barracks:	1
+ * stable:		2
+ * workshop:	3
+ * church:		4
+ * church_f:	5
+ * academy:		6
+ * smithy:		7
+ * rally:		8
+ * statue:		9
+ * market:		10
+ * timber:		11
+ * clay:		12
+ * iron:		13
+ * farm:		14
+ * warehouse:	15
+ * hiding:		16
+ * wall:		17
+ */
 let buildingTypes = [
     'main',
     'barracks',

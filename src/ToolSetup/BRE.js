@@ -3482,24 +3482,8 @@ function calculateTravelTimes(distance, worldSpeed, unitSpeed) {
  */
 function twcheese_calculateTimingInfo(worldSpeed, unitSpeed, timeOfArrival, attackerTroops, attackerVillage, defenderVillage) {
     var distance = attackerVillage.distanceTo(defenderVillage);
-    var attackSpeed;
-
-    if (attackerTroops.snob > 0)
-        attackSpeed = 35 / worldSpeed / unitSpeed;
-    else if (attackerTroops.ram > 0 || attackerTroops.catapult > 0)
-        attackSpeed = 30 / worldSpeed / unitSpeed;
-    else if (attackerTroops.sword > 0)
-        attackSpeed = 22 / worldSpeed / unitSpeed;
-    else if (attackerTroops.spear > 0 || attackerTroops.axe > 0 || attackerTroops.archer > 0)
-        attackSpeed = 18 / worldSpeed / unitSpeed;
-    else if (attackerTroops.heavy > 0)
-        attackSpeed = 11 / worldSpeed / unitSpeed;
-    else if (attackerTroops.light > 0 || attackerTroops.marcher > 0 || attackerTroops.knight > 0)
-        attackSpeed = 10 / worldSpeed / unitSpeed;
-    else
-        attackSpeed = 9 / worldSpeed / unitSpeed;
-
-    let travelDurationMillis = attackSpeed * distance * 60000;
+    let minutesPerField = attackerTroops.travelMinutes('attack', worldSpeed, unitSpeed);
+    let travelDurationMillis = distance * minutesPerField * 60000;
 
     return {
         launchTime: new Date(timeOfArrival.getTime() - travelDurationMillis),

@@ -17,6 +17,22 @@ let troopPop = {
     militia: 0
 };
 
+let travelMinutes = {
+    spear: 18,
+    sword: 22,
+    axe: 18,
+    archer: 18,
+    spy: 9,
+    light: 10,
+    marcher: 10,
+    heavy: 11,
+    ram: 30,
+    catapult: 30,
+    knight: 10,
+    snob: 35,
+    militia: 0
+}
+
 
 class TroopCounts {
     constructor() {
@@ -36,6 +52,20 @@ class TroopCounts {
 
     get population() {
         return troopTypes.reduce((sum, type) => sum + troopPop[type] * this[type], 0);
+    }
+
+    travelMinutes(role = 'attack', worldSpeed = 1, unitSpeed = 1) {
+        let t = 1 / worldSpeed / unitSpeed;
+
+        if (role === 'support' && this.knight > 0) {
+            return t * travelMinutes.knight;
+        }
+
+        let relevantMinutes = troopTypes
+            .filter(type => this[type] > 0)
+            .map(type => travelMinutes[type]);
+
+        return t * Math.max(...relevantMinutes);
     }
 
     /**

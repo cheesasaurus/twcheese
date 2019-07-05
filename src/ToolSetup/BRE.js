@@ -612,6 +612,8 @@ function scrapePlayer(playerCell) {
 }
 
 
+let troopOrder = ['spear', 'sword', 'axe', 'archer', 'spy', 'light', 'marcher', 'heavy', 'ram', 'catapult', 'knight', 'snob', 'militia'];
+
 class TroopCounts {
     constructor() {
         this.spear = 0;
@@ -651,39 +653,14 @@ class TroopCounts {
     }
 
     toArray() {
-        return [
-            this.spear,
-            this.sword,
-            this.archer,
-            this.axe,            
-            this.spy,
-            this.light,
-            this.marcher,
-            this.heavy,
-            this.ram,
-            this.catapult,
-            this.knight,
-            this.snob,
-            this.militia
-        ];
+        return troopOrder.map(unitType => this[unitType]);
     }
 
     static fromArray(array) {
         let troops = new TroopCounts();
-        troops.spear = array[0];
-        troops.spear = array[1];
-        troops.sword = array[2];
-        troops.archer = array[3];
-        troops.axe = array[4];
-        troops.spy = array[5];
-        troops.light = array[6];
-        troops.marcher = array[7];
-        troops.heavy = array[8];
-        troops.ram = array[9];
-        troops.catapult = array[10];
-        troops.knight = array[11];
-        troops.snob = array[12];
-        troops.militia = array[13];
+        array.forEach((count, i) => {
+            troops[troopOrder[i]] = count;
+        });
         return troops;
     }
 }

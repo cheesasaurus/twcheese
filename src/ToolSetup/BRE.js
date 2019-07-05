@@ -852,7 +852,7 @@ function twcheese_BattleReportScraper(gameDocument) {
                 var thElements = this.resultsTable.getElementsByTagName('th');
                 for (var i = 0; i < thElements.length; i++) {
                     if (thElements[i].innerHTML == language['report']['haul']) {
-                        return scrapeResources(thElements[i].parentNode.cells[1]).toIntArray();
+                        return scrapeResources(thElements[i].parentNode.cells[1]).toArray();
                     }
                 }
             }
@@ -934,7 +934,7 @@ function twcheese_BattleReportScraper(gameDocument) {
         this.getResources = function () {
             if (this.$gameDoc.find('#attack_spy_resources').length > 0)
 
-                return scrapeResources(this.$gameDoc.find('#attack_spy_resources').find('td')[0]).toIntArray();
+                return scrapeResources(this.$gameDoc.find('#attack_spy_resources').find('td')[0]).toArray();
             else
                 return false;
         };

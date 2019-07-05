@@ -28,7 +28,7 @@ class Resources {
             && this.iron.valueOf() === other.iron.valueOf();
     }
 
-    toIntArray() {
+    toArray() {
         return [this.timber.amount, this.clay.amount, this.iron.amount];
     }
 

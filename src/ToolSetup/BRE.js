@@ -3468,7 +3468,7 @@ function calculateTravelTimes(distance, worldSpeed, unitSpeed) {
 
     var travelTimes = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     for (var i = 0; i < 12; i++) {
-        travelTimes[i] = distance * walkingTimes[i] * modifier * 60 * 1000;
+        travelTimes[i] = Math.round(distance * walkingTimes[i] * modifier * 60) * 1000;
     }
     return travelTimes;
 };
@@ -3483,7 +3483,7 @@ function calculateTravelTimes(distance, worldSpeed, unitSpeed) {
 function twcheese_calculateTimingInfo(worldSpeed, unitSpeed, timeOfArrival, attackerTroops, attackerVillage, defenderVillage) {
     var distance = attackerVillage.distanceTo(defenderVillage);
     let minutesPerField = attackerTroops.travelMinutes('attack', worldSpeed, unitSpeed);
-    let travelDurationMillis = distance * minutesPerField * 60000;
+    let travelDurationMillis = Math.round(distance * minutesPerField * 60) * 1000;
 
     return {
         launchTime: new Date(timeOfArrival.getTime() - travelDurationMillis),

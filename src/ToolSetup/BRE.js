@@ -1554,8 +1554,8 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
             loyaltyRow.removeChild(loyaltyRow.cells[1]);
             loyaltyRow.insertCell(-1);
             loyaltyRow.cells[1].innerHTML = loyaltyHTML;
-            loyaltyRow.cells[1].innerHTML += '<br/><span title="the current predicted loyalty, based on time passed since this report">@Current Time: ' + report.loyaltyExtra[0] + '</span>';
-            loyaltyRow.cells[1].innerHTML += '<br/><span title="the predicted loyalty at time of arrival, should you send a nobleman from your current village right now">@Arrival: ' + report.loyaltyExtra[1] + '</span>';
+            loyaltyRow.cells[1].innerHTML += '<br/><span title="the current predicted loyalty, based on time passed since this report">@Current Time: ' + report.loyaltyExtra.loyaltyNow + '</span>';
+            loyaltyRow.cells[1].innerHTML += '<br/><span title="the predicted loyalty at time of arrival, should you send a nobleman from your current village right now">@Arrival: ' + report.loyaltyExtra.loyaltyAtArrival + '</span>';
         }
 
         /*==== opponents defeated ====*/
@@ -2904,7 +2904,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                     report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
                 report.killScores = calcKillScores(report.attackerLosses, report.defenderLosses);
                 if (report.loyalty)
-                    report.loyaltyExtra = twcheese_calculateLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village.coord.split('|'), report.defenderVillage.coordsToArray());
+                    report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village, report.defenderVillage);
                 report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.sent, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
                 if (report.buildingLevels)
                     report.demolition = twcheese_calculateDemolition(report.buildingLevels);
@@ -3514,7 +3514,7 @@ function twcheese_isFeint(troops) {
 /**
  *	calculates some population information based on a scout report
  *	@param	buildings:Array	an array of the building levels in the village
- *	@param {TroopCounts} troopsDefending
+ *  @param {TroopCounts} troopsDefending
  *	@param {TroopCounts} troopsOutside
  *	@return	population:Array(buildingPop:Number,militaryPop:Number,idlePop:Number)
  */
@@ -3536,35 +3536,28 @@ function twcheese_calculatePopulation(buildings, troopsDefending, troopsOutside)
 
 
 /**
- *	calculate loyalty
- *	@param	loyalty:Number
- *	@param	timeSent:Date
- *	@param	home:Array(x,y)
- *	@param	target:Array(x,y)
- *	@return loyaltyExtra:Array(now:Number,arrival:Number)
+ * @param {number} worldSpeed
+ * @param {number} unitSpeed
+ * @param {number} reportedLoyalty
+ * @param {Date} timeReported
+ * @param {Date} timeNow
+ * @param {Village} home
+ * @param {Village} target
+ * @return {{loyaltyNow:Number, loyatyAtArrival:Number}}
  */
-function twcheese_calculateLoyalty(worldSpeed, unitSpeed, loyalty, timeSent, timeNow, home, target) {
-    if (loyalty <= 0)
-        loyalty = 25;
+function calcLoyalty(worldSpeed, unitSpeed, reportedLoyalty, timeReported, timeNow, home, target) {
+    if (reportedLoyalty <= 0) {
+        reportedLoyalty = 25; // loyalty jumps to 25 after a village is conquered
+    }
 
-    var loyaltyExtra = new Array();
+    let hoursPassed = (timeNow - timeReported) / 3600000;
+    let loyaltyNow = Math.min(100, parseInt(reportedLoyalty) + parseInt(hoursPassed * worldSpeed));
 
-    /*=== calculate current loyalty ====*/
-    var hoursPassed = (timeNow - timeSent) / 3600000;
-    if (Number(parseInt(loyalty) + parseInt(hoursPassed * worldSpeed)) > 100)
-        loyaltyExtra[0] = 100;
-    else
-        loyaltyExtra[0] = Math.floor(Number(parseInt(loyalty) + parseInt(hoursPassed * worldSpeed)));
+    let distance = twcheese_calculateDistance(home, target);
+    let travelHours = (distance * 35 / worldSpeed / unitSpeed) / 60;
+    let loyaltyAtArrival = Math.min(100, Math.floor(loyaltyNow + travelHours * worldSpeed));
 
-    /*==== calculate loyalty at TOA ====*/
-    var distance = twcheese_calculateDistance(home, target);
-    var travelTime = (distance * 35 / worldSpeed / unitSpeed) / 60;
-    if (loyaltyExtra[0] + travelTime * worldSpeed > 100)
-        loyaltyExtra[1] = 100;
-    else
-        loyaltyExtra[1] = Math.floor(loyaltyExtra[0] + travelTime * worldSpeed);
-
-    return loyaltyExtra;
+    return {loyaltyNow, loyaltyAtArrival};
 }
 
 /**
@@ -3573,6 +3566,13 @@ function twcheese_calculateLoyalty(worldSpeed, unitSpeed, loyalty, timeSent, tim
  *	@return	distance:Number
  */
 function twcheese_calculateDistance(village1, village2) {
+    if (typeof village1.x !== 'undefined' && typeof village1.y !== 'undefined') {
+        village1 = [village1.x, village1.y];
+    }
+    if (typeof village2.x !== 'undefined' && typeof village2.y !== 'undefined') {
+        village2 = [village2.x, village2.y];
+    }
+
     return Math.sqrt((village1[0] - village2[0]) * (village1[0] - village2[0]) + (village1[1] - village2[1]) * (village1[1] - village2[1]));
 }
 
@@ -4358,7 +4358,7 @@ function enhanceReport(gameConfig) {
         report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
     report.killScores = calcKillScores(report.attackerLosses, report.defenderLosses);
     if (report.loyalty)
-        report.loyaltyExtra = twcheese_calculateLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village.coord.split('|'), report.defenderVillage.coordsToArray());
+        report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village, report.defenderVillage);
     report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.sent, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
     if (report.buildingLevels)
         report.demolition = twcheese_calculateDemolition(report.buildingLevels);

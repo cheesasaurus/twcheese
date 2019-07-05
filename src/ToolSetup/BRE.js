@@ -1607,7 +1607,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
         launchRow.cells[1].innerHTML = twcheese_dateToString(report.timingInfo[0]);
 
         /*==== determine whether return time should be displayed. ====*/
-        var attackerSurvivors = twcheese_calculateSurvivors(report.attackerQuantity, report.attackerLosses);
+        var attackerSurvivors = report.attackerQuantity.subtract(report.attackerLosses);
         let showReturnTime = !attackerSurvivors.isZero();
 
         var returnRow = reportTable.insertRow(3);
@@ -2922,7 +2922,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 var report = twcheese_scrapeBattleReport(reportDoc);
 
                 if (report.defenderQuantity)
-                    report.defenderSurvivors = twcheese_calculateSurvivors(report.defenderQuantity, report.defenderLosses);
+                    report.defenderSurvivors = report.defenderQuantity.subtract(report.defenderLosses);
                 if (report.buildingLevels)
                     report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
                 report.killScores = calcKillScores(report.attackerLosses, report.defenderLosses);
@@ -3491,17 +3491,6 @@ function createFooterButton(text, address) {
 
 
 /*==== calculator functions ====*/
-
-/**
- *	calculates surviving troops
- *	@param {TroopCounts} quantity
- *	@param {TroopCounts} losses
- *	@return	{TroopCounts} survivors
- */
-function twcheese_calculateSurvivors(quantity, losses) {
-    return quantity.subtract(losses);
-}
-
 
 let troopPop = {
     spear: 1,
@@ -4385,10 +4374,10 @@ function enhanceReport(gameConfig) {
 
     /*==== calculate additional information ===*/
     let report = new twcheese_scrapeBattleReport(document);
+    if (report.attackerQuantity)
+        report.attackerSurvivors = report.attackerQuantity.subtract(report.attackerLosses);
     if (report.defenderQuantity)
-        report.attackerSurvivors = twcheese_calculateSurvivors(report.attackerQuantity, report.attackerLosses);
-    if (report.defenderQuantity)
-        report.defenderSurvivors = twcheese_calculateSurvivors(report.defenderQuantity, report.defenderLosses);
+        report.defenderSurvivors = report.defenderQuantity.subtract(report.defenderLosses);
     if (report.buildingLevels)
         report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
     report.killScores = calcKillScores(report.attackerLosses, report.defenderLosses);

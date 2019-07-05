@@ -2,6 +2,7 @@
 import { initCss, escapeHtml } from '/twcheese/src/Util/UI.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { Player } from '/twcheese/src/Models/Player.js';
+import { Village } from '/twcheese/src/Models/Village.js';
 import { calcKillScores } from '/twcheese/src/Models/KillScores.js';
 import { calcLoyalty } from '/twcheese/src/Models/Loyalty.js';
 import { TroopCounts, calcTravelDurations } from '/twcheese/src/Models/Troops.js';
@@ -621,24 +622,6 @@ function scrapeTroopCounts(troopRow) {
         }        
     }
     return troops;
-}
-
-
-class Village {
-    constructor(id, x, y) {
-        this.id = id;
-        this.x = x;
-        this.y = y;
-    }
-
-    /**
-     * @param {Village} otherVillage 
-     */
-    distanceTo(otherVillage) {
-        let diffX = this.x - otherVillage.x;
-        let diffY = this.y - otherVillage.y;
-        return Math.hypot(diffX, diffY);
-    }
 }
 
 /**

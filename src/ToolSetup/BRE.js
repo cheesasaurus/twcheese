@@ -1272,7 +1272,6 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
             raiderUnitsTable.insertRow(-1);
             raiderUnitsTable.rows[2].className = 'center';
 
-            // todo
             var travelTimes = calcTravelDurations(report.attackerVillage.distanceTo(report.defenderVillage), gameConfig.speed, gameConfig.unit_speed);
 
             for (let i = 0; i < 7; i++) {
@@ -3464,12 +3463,10 @@ function twcheese_calculatePopulation(buildings, troopsDefending, troopsOutside)
  */
 function twcheese_calculateTimingInfo(worldSpeed, unitSpeed, timeOfArrival, attackerTroops, attackerVillage, defenderVillage) {
     var distance = attackerVillage.distanceTo(defenderVillage);
-    let minutesPerField = attackerTroops.travelMinutes('attack', worldSpeed, unitSpeed);
-    let travelDurationMillis = Math.round(distance * minutesPerField * 60) * 1000;
-
+    let travelDuration = attackerTroops.travelDuration(distance, 'attack', worldSpeed, unitSpeed);
     return {
-        launchTime: new Date(timeOfArrival.getTime() - travelDurationMillis),
-        returnTime: new Date(timeOfArrival.getTime() + travelDurationMillis)
+        launchTime: new Date(timeOfArrival.getTime() - travelDuration),
+        returnTime: new Date(timeOfArrival.getTime() + travelDuration)
     };
 }
 

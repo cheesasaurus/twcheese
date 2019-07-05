@@ -54,7 +54,12 @@ class TroopCounts {
         return troopTypes.reduce((sum, type) => sum + troopPop[type] * this[type], 0);
     }
 
-    travelMinutes(role = 'attack', worldSpeed = 1, unitSpeed = 1) {
+    travelDuration(distance, role = 'attack', worldSpeed = 1, unitSpeed = 1) {
+        let minutesPerField = this.travelMinutesPerField(role, worldSpeed, unitSpeed);
+        return calcTravelDuration(minutesPerField, distance);
+    }
+
+    travelMinutesPerField(role = 'attack', worldSpeed = 1, unitSpeed = 1) {
         let t = 1 / worldSpeed / unitSpeed;
 
         if (role === 'support' && this.knight > 0) {

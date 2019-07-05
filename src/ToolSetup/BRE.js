@@ -688,10 +688,6 @@ class Village {
         this.x = x;
         this.y = y;
     }
-
-    coordsToArray() {
-        return [this.x, this.y];
-    }
 }
 
 /**
@@ -3560,19 +3556,14 @@ function calcLoyalty(worldSpeed, unitSpeed, reportedLoyalty, timeReported, timeN
 }
 
 /**
- *	@param village1:Array(x,y)
- *	@param village2:Array(x,y)
- *	@return	distance:Number
+ *	@param {Village} village1
+ *	@param {Village} village2
+ *	@return	{Number}
  */
 function twcheese_calculateDistance(village1, village2) {
-    if (typeof village1.x !== 'undefined' && typeof village1.y !== 'undefined') {
-        village1 = [village1.x, village1.y];
-    }
-    if (typeof village2.x !== 'undefined' && typeof village2.y !== 'undefined') {
-        village2 = [village2.x, village2.y];
-    }
-
-    return Math.sqrt((village1[0] - village2[0]) * (village1[0] - village2[0]) + (village1[1] - village2[1]) * (village1[1] - village2[1]));
+    let diffX = village1.x - village2.x;
+    let diffY = village1.y - village2.y;
+    return Math.hypot(diffX, diffY);
 }
 
 /**

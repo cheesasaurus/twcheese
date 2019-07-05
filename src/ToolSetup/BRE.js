@@ -1,6 +1,7 @@
 /* global $, game_data */
 import { initCss, escapeHtml } from '/twcheese/src/Util/UI.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
+import { Player } from '/twcheese/src/Models/Player.js';
 import { calcKillScores } from '/twcheese/src/Models/KillScores.js';
 import { calcLoyalty } from '/twcheese/src/Models/Loyalty.js';
 import { TroopCounts, calcTravelDurations } from '/twcheese/src/Models/Troops.js';
@@ -587,13 +588,6 @@ function twcheese_ReportsFolderDisplaySettings() {
 }
 
 /*==== report scraper functions ====*/
-
-class Player {
-    constructor(id, name) {
-        this.id = id;
-        this.name = name;
-    }
-}
 
 /**
  * @param	playerCell:HTMLTableCellElement - a cell containing a link to a player profile

@@ -1319,7 +1319,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
             raiderUnitsTable.insertRow(-1);
             raiderUnitsTable.rows[2].className = 'center';
 
-            var travelTimes = calculateTravelTimes(twcheese_calculateDistance(report.attackerVillage.coordsToArray(), report.defenderVillage.coordsToArray()), gameConfig.speed, gameConfig.unit_speed);
+            var travelTimes = calculateTravelTimes(twcheese_calculateDistance(report.attackerVillage, report.defenderVillage), gameConfig.speed, gameConfig.unit_speed);
 
             for (let i = 0; i < 7; i++) {
                 raiderUnitsTable.rows[2].insertCell(-1);
@@ -1664,7 +1664,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
         }
         else if (mode == 'predicted') {
             gameDoc.getElementById('twcheese_raider_selection').value = 'predicted';
-            report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village.coord.split('|'), report.defenderVillage.coordsToArray(), report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed, haulBonus);
+            report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed, haulBonus);
             twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), report.raidPredicted, report);
             gameDoc.getElementById('twcheese_periodic_options').style.display = 'none';
         }
@@ -2075,7 +2075,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
     /*==== scrape reports information ====*/
     this.reports = new Array();
     var partialHauls = new Array();
-    var home = game_data.village.coord.split('|');
 
     for (var i = 1; i < reportsTable.rows.length - 1; i++) {
         var report = twcheese_interpretReportName(reportsTable.rows[i].cells[1].getElementsByTagName('a')[0].getElementsByTagName('span')[0].innerHTML);
@@ -2086,7 +2085,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         /*==== defender distance from current village ====*/
         if (report.defenderVillage)
             try {
-                report.defenderDistance = Math.round(twcheese_calculateDistance(home, report.defenderVillage.coordsToArray()) * 100) / 100;
+                report.defenderDistance = Math.round(twcheese_calculateDistance(game_data.village, report.defenderVillage) * 100) / 100;
             }
             catch (err) {
                 console.error(err);
@@ -2911,7 +2910,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 if (report.espionageLevel >= 1)
                     report.raidScouted = twcheese_calculateRaidScouted(report.resources);
                 if (report.espionageLevel >= 2) {
-                    report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village.coord.split('|'), report.defenderVillage.coordsToArray(), report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed);
+                    report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed);
                     report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, 8, gameConfig.speed);
                 }
                 report.reportID = reportID;
@@ -3602,7 +3601,7 @@ function calculateTravelTimes(distance, worldSpeed, unitSpeed) {
  *	@return	{{launchTime:Date, returnTime:Date}}
  */
 function twcheese_calculateTimingInfo(worldSpeed, unitSpeed, timeOfArrival, attackerTroops, attackerVillage, defenderVillage) {
-    var distance = twcheese_calculateDistance(attackerVillage.coordsToArray(), defenderVillage.coordsToArray());
+    var distance = twcheese_calculateDistance(attackerVillage, defenderVillage);
     var attackSpeed;
 
     if (attackerTroops.snob > 0)
@@ -3843,8 +3842,8 @@ function twcheese_calculateRaidScouted(resourcesScouted, haulBonus) {
 /**
  *	@param	resourcesScouted:Array(timber,clay,iron)
  *	@param	buildings:Array	an array of the building levels
- *	@param	home:Array(x,y)
- *	@param	target:Array(x,y)
+ *	@param {Village} home
+ *	@param {Village} target
  *	@param	timeSent:Date	the time the player received the report
  *	@param	timeNow:Date	the current time
  *	@param	haulBonus:Number	the extra % bonus haul from flags, events, etc. Example: 30 for 30%, NOT 0.3
@@ -4365,7 +4364,7 @@ function enhanceReport(gameConfig) {
     if (report.espionageLevel >= 1)
         report.raidScouted = twcheese_calculateRaidScouted(report.resources);
     if (report.espionageLevel >= 2) {
-        report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village.coord.split('|'), report.defenderVillage.coordsToArray(), report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed);
+        report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed);
         report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, 8, gameConfig.speed);
     }
 

@@ -3,7 +3,7 @@ import { initCss, escapeHtml } from '/twcheese/src/Util/UI.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { calcKillScores } from '/twcheese/src/Models/KillScores.js';
 import { calcLoyalty } from '/twcheese/src/Models/Loyalty.js';
-import { TroopCounts, calcTroopPopulation } from '/twcheese/src/Models/Troops.js';
+import { TroopCounts } from '/twcheese/src/Models/Troops.js';
 import { scrapeResources } from '/twcheese/src/Scrape/res.js';
 import { userConfig } from '/twcheese/src/Util/UserConfig.js';
 import { requestDocument, gameUrl, attackPrepUrl } from '/twcheese/src/Util/Network.js';
@@ -3428,7 +3428,7 @@ function createFooterButton(text, address) {
  *	@return {boolean}
  */
 function twcheese_isFeint(troops) {
-    return troops.snob === 0 && calcTroopPopulation(troops) <= 130;
+    return troops.snob === 0 && troops.population <= 130;
 }
 
 /**
@@ -3450,7 +3450,7 @@ function twcheese_calculatePopulation(buildings, troopsDefending, troopsOutside)
         }
     }
 
-    let militaryPopulation = calcTroopPopulation(troopsDefending) + calcTroopPopulation(troopsOutside);
+    let militaryPopulation = troopsDefending.population + troopsOutside.population;
     return new Array(buildingPopulation, militaryPopulation, (maxPopulation - buildingPopulation - militaryPopulation));
 }
 

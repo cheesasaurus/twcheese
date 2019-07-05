@@ -1,4 +1,6 @@
 
+let troopTypes = ['spear', 'sword', 'axe', 'archer', 'spy', 'light', 'marcher', 'heavy', 'ram', 'catapult', 'knight', 'snob', 'militia'];
+
 let troopPop = {
     spear: 1,
     sword: 1,
@@ -15,24 +17,12 @@ let troopPop = {
     militia: 0
 };
 
-let troopOrder = ['spear', 'sword', 'axe', 'archer', 'spy', 'light', 'marcher', 'heavy', 'ram', 'catapult', 'knight', 'snob', 'militia'];
-
 
 class TroopCounts {
     constructor() {
-        this.spear = 0;
-        this.sword = 0;
-        this.axe = 0;
-        this.archer = 0;
-        this.spy = 0;
-        this.light = 0;
-        this.marcher = 0;
-        this.heavy = 0;
-        this.ram = 0;
-        this.catapult = 0;
-        this.knight = 0;
-        this.snob = 0;
-        this.militia = 0;
+        for (let type of troopTypes) {
+            this[type] = 0;
+        }
     }
 
     isZero() {
@@ -44,47 +34,34 @@ class TroopCounts {
         return true;
     }
 
+    get population() {
+        return troopTypes.reduce((sum, type) => sum + troopPop[type] * this[type], 0);
+    }
+
     /**
      * @param {TroopCounts} subtrahend
      * @return {TroopCounts} difference
      */
     subtract(subtrahend) {
         let difference = new TroopCounts();
-        for (let [unitType, count] of Object.entries(this)) {
-            difference[unitType] = count - subtrahend[unitType];
+        for (let [troopType, count] of Object.entries(this)) {
+            difference[troopType] = count - subtrahend[troopType];
         }
         return difference;
     }
 
     toArray() {
-        return troopOrder.map(unitType => this[unitType]);
+        return troopTypes.map(type => this[type]);
     }
 
     static fromArray(array) {
         let troops = new TroopCounts();
         array.forEach((count, i) => {
-            troops[troopOrder[i]] = count;
+            troops[troopTypes[i]] = count;
         });
         return troops;
     }
 }
 
 
-/**
- * @param {TroopCounts} troops
- * @return {int}
- */
-function calcTroopPopulation(troops) {
-    let pop = 0;
-    for (let [unitType, count] of Object.entries(troops)) {
-        if (typeof troopPop[unitType] === 'undefined') {
-            console.warn(`Couldn't determine troop population for ${unitType}`);
-            continue;
-        }
-        pop += troopPop[unitType] * count;
-    }
-    return pop;
-}
-
-
-export { TroopCounts, calcTroopPopulation };
+export { TroopCounts };

@@ -105,10 +105,22 @@ function calcTravelTimes(distance, worldSpeed, unitSpeed) {
 
     let travelTimes = {};
     for (let type of troopTypes) {
-        travelTimes[type] = Math.round(t * distance * travelMinutes[type] * 60) * 1000;
+        travelTimes[type] = calcTravelDuration(t * travelMinutes[type], distance);
     }
     return travelTimes;
 };
+
+
+function calcTravelDuration(minutesPerField, distance) {
+    // The game rounds travel duration to the nearest second.
+    // The milliseconds part of the scheduled arrival is NOT some fraction of travel seconds.
+    // But rather, copied from the clock when the server started processing the request to travel.
+    //
+    // e.g. The clock says its 12:30:00.123.
+    // The server processes a request for troops to travel somewhere that takes them 10 minutes to reach.
+    // The scheduled arrival will be 12:40:00.123
+    return Math.round(distance * minutesPerField * 60) * 1000;
+}
 
 
 export { TroopCounts, calcTravelTimes };

@@ -3,6 +3,7 @@ import { initCss, escapeHtml } from '/twcheese/src/Util/UI.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { calcKillScores } from '/twcheese/src/Models/KillScores.js';
 import { calcLoyalty } from '/twcheese/src/Models/Loyalty.js';
+import { calcTroopPopulation } from '/twcheese/src/Models/Troops.js';
 import { scrapeResources } from '/twcheese/src/Scrape/res.js';
 import { userConfig } from '/twcheese/src/Util/UserConfig.js';
 import { requestDocument, gameUrl, attackPrepUrl } from '/twcheese/src/Util/Network.js';
@@ -3474,38 +3475,6 @@ function createFooterButton(text, address) {
 
 /*==== calculator functions ====*/
 
-let troopPop = {
-    spear: 1,
-    sword: 1,
-    axe: 1,
-    archer: 1,
-    spy: 2,
-    light: 4,
-    marcher: 5,
-    heavy: 6,
-    ram: 5,
-    catapult: 8,
-    knight: 10,
-    snob: 100,
-    militia: 0
-};
-
-
-/**
- * @param {TroopCounts} troops
- * @return {int}
- */
-function calcTroopPopulation(troops) {
-    let pop = 0;
-    for (let [unitType, count] of Object.entries(troops)) {
-        if (typeof troopPop[unitType] === 'undefined') {
-            console.warn(`Couldn't determine troop population for ${unitType}`);
-            continue;
-        }
-        pop += troopPop[unitType] * count;
-    }
-    return pop;
-}
 
 /**
  *	determines if an attack was likely just a distraction

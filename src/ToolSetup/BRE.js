@@ -3463,11 +3463,11 @@ function twcheese_calculatePopulation(buildings, troopsDefending, troopsOutside)
  */
 function calculateTravelTimes(distance, worldSpeed, unitSpeed) {
     var walkingTimes = new Array(18, 22, 18, 18, 9, 10, 11, 11, 30, 30, 10, 35); //minutes to walk across a field
-    var modifier = worldSpeed / unitSpeed;
+    var modifier = 1 / worldSpeed / unitSpeed;
 
     var travelTimes = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     for (var i = 0; i < 12; i++) {
-        travelTimes[i] = new Date((distance * walkingTimes[i] / modifier * 60 * 1000));
+        travelTimes[i] = new Date((distance * walkingTimes[i] * modifier * 60 * 1000));
         //travelTimes[i] = Math.floor(distance * walkingTimes[i] / modifier * 60 * 1000);
     }
     return travelTimes;

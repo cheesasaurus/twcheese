@@ -1633,50 +1633,48 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
     this.populateReportsTable = function () {
         for (var i = 0; i < this.reports.length; i++) {
             var report = this.reports[i];
-            reportsTableBody.insertRow(-1);
-            if (report.twcheeseLabel)
-                reportsTableBody.rows[i + 1].twcheeseLabel = true;
+            let row = reportsTableBody.insertRow(-1);
+            if (report.twcheeseLabel) // todo
+                row.twcheeseLabel = true;
             else
-                reportsTableBody.rows[i + 1].twcheeseLabel = false;
+                row.twcheeseLabel = false;
 
             /*==== basic cell ====*/
-            reportsTableBody.rows[i + 1].insertCell(-1);
-            reportsTableBody.rows[i + 1].cells[0].innerHTML = '<input name="id_' + report.reportID + '" type="checkbox">';
-            reportsTableBody.rows[i + 1].cells[0].innerHTML += ' <img src="' + report.dotIcon + '"> ';
-            if (report.lootIcon)
-                reportsTableBody.rows[i + 1].cells[0].innerHTML += '<img src="' + report.lootIcon + '"> ';
-            if (report.isForwarded)
-                reportsTableBody.rows[i + 1].cells[0].innerHTML += '<img src="graphic/forwarded.png?1" />';
-            reportsTableBody.rows[i + 1].cells[0].innerHTML += '<a href="' + game_data.link_base_pure + 'report&mode=' + game_data.mode + '&view=' + report.reportID + '"> view</a>';
+            let cell = row.insertCell(-1);
+            cell.innerHTML = '<input name="id_' + report.reportID + '" type="checkbox">';
+            cell.innerHTML += ' <img src="' + report.dotIcon + '"> ';
+            if (report.lootIcon) {
+                cell.innerHTML += '<img src="' + report.lootIcon + '"> ';
+            }
+            if (report.isForwarded) {
+                cell.innerHTML += '<img src="graphic/forwarded.png?1" />';
+            }
+            cell.innerHTML += '<a href="' + game_data.link_base_pure + 'report&mode=' + game_data.mode + '&view=' + report.reportID + '"> view</a>';
             if (report.defender) {
                 if (report.defender.name == game_data.player.name) {
-                    reportsTableBody.rows[i + 1].cells[0].innerHTML += ' <img title="manage troops" style="float:right; cursor:pointer;" src="' + imagePaths['rally'] + '" onclick="window.location=\'game.php?village=' + report.defenderVillage.id + '&screen=place&mode=units\'"></img>';
+                    cell.innerHTML += ' <img title="manage troops" style="float:right; cursor:pointer;" src="' + imagePaths['rally'] + '" onclick="window.location=\'game.php?village=' + report.defenderVillage.id + '&screen=place&mode=units\'"></img>';
                 }
-                if (report.loyalty) {
-                    if (report.loyalty <= 0) {
-                        reportsTableBody.rows[i + 1].cells[0].innerHTML += ' <img title="manage troops" style="float:right; cursor:pointer;" src="' + imagePaths['rally'] + '" onclick="window.location=\'game.php?village=' + report.defenderVillage.id + '&screen=place&mode=units\'"></img>';
-                    }
+                if (report.loyalty && report.loyalty <= 0) {
+                    cell.innerHTML += ' <img title="manage troops" style="float:right; cursor:pointer;" src="' + imagePaths['rally'] + '" onclick="window.location=\'game.php?village=' + report.defenderVillage.id + '&screen=place&mode=units\'"></img>';
                 }
             }
 
-
             /*==== repeat attack cell ====*/
-            reportsTableBody.rows[i + 1].insertCell(-1);
-            if (report.attacker) {
-                if (report.attacker.name == game_data.player.name) {
-                    let url = gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportID});
-                    reportsTableBody.rows[i + 1].cells[1].innerHTML = '<a title="repeat attack, from current village" href="' + url + '"><img src="' + imagePaths['repeatFromCurrent'] + '" /></a>';
-                    if (reportsTableBody.rows[i + 1].twcheeseLabel) {
-                        let url = gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportID, village: report.attackerVillage.id});
-                        reportsTableBody.rows[i + 1].cells[1].innerHTML += ' | <a title="repeat attack, from original village" href="' + url + '"><img src="' + imagePaths['repeatFromOriginal'] + '" /></a>';
-                    }    
+            cell = row.insertCell(-1);
+            if (report.attacker && report.attacker.name === game_data.player.name) {
+                let url = gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportID});
+                cell.innerHTML = '<a title="repeat attack, from current village" href="' + url + '"><img src="' + imagePaths['repeatFromCurrent'] + '" /></a>';
+                if (report.twcheeseLabel) {
+                    let url = gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportID, village: report.attackerVillage.id});
+                    cell.innerHTML += ' | <a title="repeat attack, from original village" href="' + url + '"><img src="' + imagePaths['repeatFromOriginal'] + '" /></a>';
                 }
             }
 
             /*==== distance cell ====*/
-            reportsTableBody.rows[i + 1].insertCell(-1);
-            if (report.defenderDistance)
-                reportsTableBody.rows[i + 1].cells[2].innerHTML = report.defenderDistance;
+            cell = row.insertCell(-1);
+            if (report.defenderDistance) {
+                cell.innerHTML = report.defenderDistance;
+            }
 
             /*==== full subject cell ====*/
             reportsTableBody.rows[i + 1].insertCell(-1);
@@ -1686,148 +1684,141 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
             }
 
             if (report.twcheeseLabel) {
-                var cellIndex = 4;
-
                 /*==== note cell ====*/
-                reportsTableBody.rows[i + 1].insertCell(-1);
-                if (report.note)
-                    reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = report.note;
-                cellIndex++;
+                let cell = row.insertCell(-1);
+                if (report.note) {
+                    cell.innerHTML = report.note;
+                }
 
                 /*==== attacker cell ====*/
-                reportsTableBody.rows[i + 1].insertCell(-1);
-                if (report.attacker)
-                    reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = report.attacker.name;
-                cellIndex++;
+                cell = row.insertCell(-1);
+                if (report.attacker) {
+                    cell.innerHTML = report.attacker.name;
+                }
 
                 /*==== defender cell ====*/
-                reportsTableBody.rows[i + 1].insertCell(-1);
-                if (report.defender)
-                    reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = report.defender.name;
-                cellIndex++;
+                cell = row.insertCell(-1);
+                if (report.defender) {
+                    cell.innerHTML = report.defender.name;
+                }
 
                 /*==== origin cell ====*/
-                reportsTableBody.rows[i + 1].insertCell(-1);
-                if (report.attackerVillage)
-                    reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = '<a href="' + game_data.link_base_pure + 'info_village&id=' + report.attackerVillage.id + '" >' + report.attackerVillage.x + '|' + report.attackerVillage.y + '</a>';
-                cellIndex++;
+                cell = row.insertCell(-1);
+                if (report.attackerVillage) {
+                    cell.innerHTML = '<a href="' + game_data.link_base_pure + 'info_village&id=' + report.attackerVillage.id + '" >' + report.attackerVillage.x + '|' + report.attackerVillage.y + '</a>';
+                }
 
                 /*==== target cell ====*/
-                reportsTableBody.rows[i + 1].insertCell(-1);
-                if (report.defenderVillage)
-                    reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = '<a href="' + game_data.link_base_pure + 'info_village&id=' + report.defenderVillage.id + '" >' + report.defenderVillage.x + '|' + report.defenderVillage.y + '</a>';
-                cellIndex++;
+                cell = row.insertCell(-1);
+                if (report.defenderVillage) {
+                    cell.innerHTML = '<a href="' + game_data.link_base_pure + 'info_village&id=' + report.defenderVillage.id + '" >' + report.defenderVillage.x + '|' + report.defenderVillage.y + '</a>';
+                }
 
                 /*==== feint cell ====*/
-                reportsTableBody.rows[i + 1].insertCell(-1);
-                if (report.isFeint)
-                    reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = '<img title="The attack contained only a small amount of units" style="display:block; margin-left:auto; margin-right:auto" src="graphic/dots/grey.png?1">';
-                cellIndex++;
+                cell = row.insertCell(-1);
+                if (report.isFeint) {
+                    cell.innerHTML = '<img title="The attack contained only a small amount of units" style="display:block; margin-left:auto; margin-right:auto" src="graphic/dots/grey.png?1">';
+                }
 
                 /*==== deadNoble cell ====*/
-                reportsTableBody.rows[i + 1].insertCell(-1);
+                cell = row.insertCell(-1);
                 if (report.deadNoble) {
-                    if (report.attacker.name == game_data.player.name)
-                        reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = '<a href="/game.php?village=' + report.attackerVillage.id + '&screen=snob"><img src="' + imagePaths['priest'] + '" style="display:block; margin-left:auto; margin-right:auto" title="An attacking nobleman died."/></a>';
-                    else
-                        reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = '<img src="' + imagePaths['priest'] + '" style="display:block; margin-left:auto; margin-right:auto" title="An attacking nobleman died."/>';
+                    if (report.attacker.name == game_data.player.name) {
+                        cell.innerHTML = '<a href="/game.php?village=' + report.attackerVillage.id + '&screen=snob"><img src="' + imagePaths['priest'] + '" style="display:block; margin-left:auto; margin-right:auto" title="An attacking nobleman died."/></a>';
+                    }
+                    else {
+                        cell.innerHTML = '<img src="' + imagePaths['priest'] + '" style="display:block; margin-left:auto; margin-right:auto" title="An attacking nobleman died."/>';
+                    }
                 }
-                cellIndex++;
 
                 /*==== loyalty cell ====*/
-                reportsTableBody.rows[i + 1].insertCell(-1);
-                if (report.loyalty)
-                    reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = '<span class="icon ally lead" title="Loyalty change"></span> ' + report.loyalty[1];
-                cellIndex++;
-
-                /*==== survivors ====*/
-                /*if(report.cleared)
-                {
-                    reportsTableBody.rows[i+1].insertCell(-1);
-                    reportsTableBody.rows[i+1].cells[cellIndex].innerHTML = '<b>CLEAR</b>';
-                    reportsTableBody.rows[i+1].cells[cellIndex].colSpan = 12;
-                    cellIndex ++;
+                cell = row.insertCell(-1);
+                if (report.loyalty) {
+                    cell.innerHTML = '<span class="icon ally lead" title="Loyalty change"></span> ' + report.loyalty[1];
                 }
-                else *///note: changed my mind about doing this. Might change it again later so left intact
+
+                /*==== defender survivors ====*/
                 for (var j = 0; j < 12; j++) {
-                    reportsTableBody.rows[i + 1].insertCell(-1);
-                    reportsTableBody.rows[i + 1].cells[cellIndex].style.textAlign = 'center';
+                    let cell = row.insertCell(-1);
+                    cell.style.textAlign = 'center';
                     if (report.defenderSurvivors) {
                         let survivors = report.defenderSurvivors.toArray();
-                        reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = survivors[j];
-                        if (survivors[j] == 0)
-                            reportsTableBody.rows[i + 1].cells[cellIndex].className = 'unit-item hidden';
-                        reportsTableBody.rows[i + 1].cells[cellIndex].troopDigits = survivors[j].length;
+                        cell.innerHTML = survivors[j];
+                        if (survivors[j] == 0) {
+                            cell.className = 'unit-item hidden';
+                        }
+                        cell.troopDigits = survivors[j].length;
                     }
-                    cellIndex++;
                 }
 
 
                 /*==== buildings ====*/
                 for (let j = 0; j < 18; j++) {
-                    reportsTableBody.rows[i + 1].insertCell(-1);
-                    reportsTableBody.rows[i + 1].cells[cellIndex].style.textAlign = 'center';
+                    let cell = row.insertCell(-1);
+                    cell.style.textAlign = 'center';
                     if (report.buildingLevels) {
                         let buildingLevels = report.buildingLevels.toArray();
-                        if (buildingLevels[j] !== '?')
-                            reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = buildingLevels[j];
-                        if (buildingLevels[j] == 0)
-                            reportsTableBody.rows[i + 1].cells[cellIndex].className = 'hidden';
+                        if (buildingLevels[j] !== '?') {
+                            cell.innerHTML = buildingLevels[j];
+                        }
+                        if (buildingLevels[j] == 0) {
+                            cell.className = 'hidden';
+                        }
                     }
-                    cellIndex++;
                 }
 
                 /*==== timber, clay, iron ====*/
                 for (let j = 0; j < 3; j++) {
-                    reportsTableBody.rows[i + 1].insertCell(-1);
-                    reportsTableBody.rows[i + 1].cells[cellIndex].style.textAlign = 'center';
+                    let cell = row.insertCell(-1);
+                    cell.style.textAlign = 'center';
                     if (report.resources) {
-                        reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = report.resources[j];
-                        if (report.resources[j] == 0)
-                            reportsTableBody.rows[i + 1].cells[cellIndex].className = 'hidden';
-                        reportsTableBody.rows[i + 1].cells[cellIndex].resourceDigits = report.resources[j].length;
+                        cell.innerHTML = report.resources[j];
+                        if (report.resources[j] == 0) {
+                            cell.className = 'hidden';
+                        }
+                        cell.resourceDigits = report.resources[j].length;
                     }
-                    cellIndex++;
                 }
 
                 /*==== resources total cell ====*/
-                reportsTableBody.rows[i + 1].insertCell(-1);
-                reportsTableBody.rows[i + 1].cells[cellIndex].style.textAlign = 'center';
-                if (report.resourcesTotal)
-                    reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = report.resourcesTotal;
-                if (report.resourcesTotal == 0)
-                    reportsTableBody.rows[i + 1].cells[cellIndex].className = 'hidden';
-                cellIndex++;
+                cell = row.insertCell(-1);
+                cell.style.textAlign = 'center';
+                if (report.resourcesTotal) {
+                    cell.innerHTML = report.resourcesTotal;
+                }
+                if (report.resourcesTotal == 0) {
+                    cell.className = 'hidden';
+                }
 
                 /*==== timeLaunched cell ====*/
-                reportsTableBody.rows[i + 1].insertCell(-1);
-                if (report.timeLaunched)
-                    reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = twcheese_dateToString(report.timeLaunched);
-                cellIndex++;
+                cell = row.insertCell(-1);
+                if (report.timeLaunched) {
+                    cell.innerHTML = twcheese_dateToString(report.timeLaunched);
+                }
 
                 /*==== timeReceived cell ====*/
-                reportsTableBody.rows[i + 1].insertCell(-1);
-                if (report.timeReceived)
-                    reportsTableBody.rows[i + 1].cells[cellIndex].innerHTML = report.timeReceived;
-                cellIndex++;
+                cell = row.insertCell(-1);
+                if (report.timeReceived) {
+                    cell.innerHTML = report.timeReceived;
+                }
             }
             else {
                 /*==== timeReceived cell ====*/
-                reportsTableBody.rows[i + 1].insertCell(-1);
+                let cell = row.insertCell(-1);
                 if (report.timeReceived) {
-                    reportsTableBody.rows[i + 1].cells[4].innerHTML = report.timeReceived;
+                    cell.innerHTML = report.timeReceived;
                 }
             }
 
             /*==== indicate if row is twcheese format ====*/
-            if (report.twcheeseLabel) {
-                reportsTableBody.rows[i + 1].twcheeseLabel = true;
+            if (report.twcheeseLabel) { // todo
+                row.twcheeseLabel = true;
             }
             else {
-                reportsTableBody.rows[i + 1].twcheeseLabel = false;
+                row.twcheeseLabel = false;
             }
 
-            reportsTableBody.rows[i + 1].twcheeseReport = report;
+            row.twcheeseReport = report;
         }
         yTableEmulator.style.height = reportsTableBody.clientHeight + 'px';
         xTableEmulator.style.width = reportsTableBody.clientWidth + 'px';

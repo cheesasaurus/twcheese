@@ -2785,9 +2785,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 var report = twcheese_scrapeBattleReport(reportDoc);
 
                 if (report.defenderQuantity)
-                    report.defenderSurvivors = report.defenderQuantity.subtract(report.defenderLosses);
-                if (report.buildingLevels)
-                    report.populationSummary = twcheese_calculatePopulation(report.buildingLevels.toArray(), report.defenderQuantity, report.unitsOutside);
+                    report.defenderSurvivors = report.defenderQuantity.subtract(report.defenderLosses);                    
                 report.killScores = calcKillScores(report.attackerLosses, report.defenderLosses);
                 if (report.loyalty)
                     report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village, report.defenderVillage);
@@ -2797,6 +2795,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 if (report.espionageLevel >= 1)
                     report.raidScouted = twcheese_calculateRaidScouted(report.resources);
                 if (report.espionageLevel >= 2) {
+                    report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
                     report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels.toArray(), game_data.village, report.defenderVillage, report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed);
                     report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels.toArray(), 8, gameConfig.speed);
                 }
@@ -3367,12 +3366,13 @@ function twcheese_isFeint(troops) {
 
 /**
  *	calculates some population information based on a scout report
- *	@param	buildings:Array	an array of the building levels in the village
+ *	@param {BuildingLevels} buildingLevels
  *  @param {TroopCounts} troopsDefending
  *	@param {TroopCounts} troopsOutside
  *	@return	population:Array(buildingPop:Number,militaryPop:Number,idlePop:Number)
  */
-function twcheese_calculatePopulation(buildings, troopsDefending, troopsOutside) {
+function twcheese_calculatePopulation(buildingLevels, troopsDefending, troopsOutside) {
+    var buildings = buildingLevels.toArray();
     var buildingPopBases = new Array(1.17, 1.17, 1.17, 1.17, 1.55, 1.55, 1.17, 1.17, 1.17, 1.17, 1.17, 1.155, 1.14, 1.17, 1, 1.15, 1.17, 1.17);
     var buildingPopFactors = new Array(5, 7, 8, 8, 5000, 5, 80, 20, 0, 10, 20, 5, 10, 10, 0, 0, 2, 5);
 
@@ -4104,9 +4104,7 @@ function enhanceReport(gameConfig) {
     if (report.attackerQuantity)
         report.attackerSurvivors = report.attackerQuantity.subtract(report.attackerLosses);
     if (report.defenderQuantity)
-        report.defenderSurvivors = report.defenderQuantity.subtract(report.defenderLosses);
-    if (report.buildingLevels)
-        report.populationSummary = twcheese_calculatePopulation(report.buildingLevels.toArray(), report.defenderQuantity, report.unitsOutside);
+        report.defenderSurvivors = report.defenderQuantity.subtract(report.defenderLosses);        
     report.killScores = calcKillScores(report.attackerLosses, report.defenderLosses);
     if (report.loyalty)
         report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village, report.defenderVillage);
@@ -4116,6 +4114,7 @@ function enhanceReport(gameConfig) {
     if (report.espionageLevel >= 1)
         report.raidScouted = twcheese_calculateRaidScouted(report.resources);
     if (report.espionageLevel >= 2) {
+        report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
         report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels.toArray(), game_data.village, report.defenderVillage, report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed);
         report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels.toArray(), 8, gameConfig.speed);
     }

@@ -128,4 +128,4 @@ function calcTravelDuration(minutesPerField, distance) {
 }
 
 
-export { TroopCounts, calcTravelDurations };
+export { TroopCounts, calcTravelDurations, troopTypes };

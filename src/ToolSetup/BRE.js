@@ -5,7 +5,7 @@ import { Player } from '/twcheese/src/Models/Player.js';
 import { Village } from '/twcheese/src/Models/Village.js';
 import { calcKillScores } from '/twcheese/src/Models/KillScores.js';
 import { calcLoyalty } from '/twcheese/src/Models/Loyalty.js';
-import { TroopCounts, calcTravelDurations } from '/twcheese/src/Models/Troops.js';
+import { TroopCounts, calcTravelDurations, troopTypes } from '/twcheese/src/Models/Troops.js';
 import { BuildingLevels, buildingTypes } from '/twcheese/src/Models/Buildings.js';
 import { scrapeResources } from '/twcheese/src/Scrape/res.js';
 import { userConfig } from '/twcheese/src/Util/UserConfig.js';
@@ -1734,19 +1734,22 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 }
 
                 /*==== defender survivors ====*/
-                for (var j = 0; j < 12; j++) {
+                for (let troopType of troopTypes) {
+                    if (troopType === 'militia') {
+                        continue;
+                        // todo: change headers and display options to handle various troop types, instead of hardcoded
+                    }
                     let cell = row.insertCell(-1);
                     cell.style.textAlign = 'center';
                     if (report.defenderSurvivors) {
-                        let survivors = report.defenderSurvivors.toArray();
-                        cell.innerHTML = survivors[j];
-                        if (survivors[j] == 0) {
+                        let survivorCount = report.defenderSurvivors[troopType];
+                        cell.innerHTML = survivorCount;
+                        if (survivorCount === 0) {
                             cell.className = 'unit-item hidden';
                         }
-                        cell.troopDigits = survivors[j].length;
+                        cell.troopDigits = String(survivorCount).length;
                     }
                 }
-
 
                 /*==== buildings ====*/
                 for (let buildingType of buildingTypes) {

@@ -1631,13 +1631,9 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
      *	fills reportsTableBody with information
      */
     this.populateReportsTable = function () {
-        for (var i = 0; i < this.reports.length; i++) {
-            var report = this.reports[i];
+        for (let report of this.reports) {
             let row = reportsTableBody.insertRow(-1);
-            if (report.twcheeseLabel) // todo
-                row.twcheeseLabel = true;
-            else
-                row.twcheeseLabel = false;
+            row.twcheeseLabel = report.twcheeseLabel;
 
             /*==== basic cell ====*/
             let cell = row.insertCell(-1);
@@ -1677,10 +1673,10 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
             }
 
             /*==== full subject cell ====*/
-            reportsTableBody.rows[i + 1].insertCell(-1);
-            reportsTableBody.rows[i + 1].cells[3].innerHTML = report.subjectHTML;
+            cell = row.insertCell(-1);
+            cell.innerHTML = report.subjectHTML;
             if (!report.twcheeseLabel) {
-                reportsTableBody.rows[i + 1].cells[3].colSpan = 44;
+                cell.colSpan = 44;
             }
 
             if (report.twcheeseLabel) {
@@ -1808,14 +1804,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 if (report.timeReceived) {
                     cell.innerHTML = report.timeReceived;
                 }
-            }
-
-            /*==== indicate if row is twcheese format ====*/
-            if (report.twcheeseLabel) { // todo
-                row.twcheeseLabel = true;
-            }
-            else {
-                row.twcheeseLabel = false;
             }
 
             row.twcheeseReport = report;

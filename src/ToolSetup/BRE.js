@@ -6,7 +6,7 @@ import { Village } from '/twcheese/src/Models/Village.js';
 import { calcKillScores } from '/twcheese/src/Models/KillScores.js';
 import { calcLoyalty } from '/twcheese/src/Models/Loyalty.js';
 import { TroopCounts, calcTravelDurations } from '/twcheese/src/Models/Troops.js';
-import { BuildingLevels } from '/twcheese/src/Models/Buildings.js';
+import { BuildingLevels, buildingTypes } from '/twcheese/src/Models/Buildings.js';
 import { scrapeResources } from '/twcheese/src/Scrape/res.js';
 import { userConfig } from '/twcheese/src/Util/UserConfig.js';
 import { requestDocument, gameUrl, attackPrepUrl } from '/twcheese/src/Util/Network.js';
@@ -1749,15 +1749,19 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
 
 
                 /*==== buildings ====*/
-                for (let j = 0; j < 18; j++) {
+                for (let buildingType of buildingTypes) {
+                    if (buildingType === 'watchtower') {
+                        continue;
+                        // todo: change headers and display options to handle various building types, instead of hardcoded
+                    }
                     let cell = row.insertCell(-1);
                     cell.style.textAlign = 'center';
                     if (report.buildingLevels) {
-                        let buildingLevels = report.buildingLevels.toArray();
-                        if (buildingLevels[j] !== '?') {
-                            cell.innerHTML = buildingLevels[j];
+                        let level = report.buildingLevels[buildingType];
+                        if (level !== '?') {
+                            cell.innerHTML = level;
                         }
-                        if (buildingLevels[j] == 0) {
+                        if (level === 0) {
                             cell.className = 'hidden';
                         }
                     }

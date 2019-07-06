@@ -68,4 +68,4 @@ class BuildingLevels {
 }
 
 
-export { BuildingLevels };
+export { BuildingLevels, buildingTypes };

@@ -50,6 +50,14 @@ class BuildingLevels {
         }
     }
 
+    population() {
+        // todo
+    }
+
+    populationCap() {
+        return Math.round(240 * 1.172103 ** (this.farm - 1));
+    }
+
     toArray() {
         return buildingTypes.map(type => this[type]);
     }

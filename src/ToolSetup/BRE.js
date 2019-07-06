@@ -3377,7 +3377,7 @@ function twcheese_calculatePopulation(buildingLevels, troopsDefending, troopsOut
     var buildingPopFactors = new Array(5, 7, 8, 8, 5000, 5, 80, 20, 0, 10, 20, 5, 10, 10, 0, 0, 2, 5);
 
     var buildingPopulation = 0;
-    var maxPopulation = Math.round(240 * Math.pow(1.172103, buildings[14] - 1));
+    var maxPopulation = buildingLevels.populationCap();
     for (var i = 0; i < 18; i++) {
         if (buildings[i] > 0) {
             buildingPopulation += Math.round(buildingPopFactors[i] * Math.pow(buildingPopBases[i], (buildings[i] - 1)));

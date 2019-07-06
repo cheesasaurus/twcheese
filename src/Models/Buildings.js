@@ -1,4 +1,8 @@
 
+import { cfg } from '/twcheese/conf/Buildings.js';
+// todo: model a single Building
+// todo: hotswap configs (e.g. after loading from interface.php?func=get_building_info)
+
 /**
  * Building		Index
  * hq:			0
@@ -42,7 +46,6 @@ let buildingTypes = [
     'watchtower'
 ];
 
-
 class BuildingLevels {
     constructor(fill = 0) {
         for (let type of buildingTypes) {
@@ -50,8 +53,15 @@ class BuildingLevels {
         }
     }
 
-    population() {
-        // todo
+    populationUsed() {
+        let pop = 0;
+        for (let [buildingType, b] of Object.entries(cfg)) {
+            let level = this[buildingType];
+            if (level > 0) {
+                pop += Math.round(b.pop * b.popFactor ** (level - 1));
+            }            
+        }
+        return pop;
     }
 
     populationCap() {

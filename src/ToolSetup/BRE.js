@@ -3372,20 +3372,10 @@ function twcheese_isFeint(troops) {
  *	@return	population:Array(buildingPop:Number,militaryPop:Number,idlePop:Number)
  */
 function twcheese_calculatePopulation(buildingLevels, troopsDefending, troopsOutside) {
-    var buildings = buildingLevels.toArray();
-    var buildingPopBases = new Array(1.17, 1.17, 1.17, 1.17, 1.55, 1.55, 1.17, 1.17, 1.17, 1.17, 1.17, 1.155, 1.14, 1.17, 1, 1.15, 1.17, 1.17);
-    var buildingPopFactors = new Array(5, 7, 8, 8, 5000, 5, 80, 20, 0, 10, 20, 5, 10, 10, 0, 0, 2, 5);
-
-    var buildingPopulation = 0;
-    var maxPopulation = buildingLevels.populationCap();
-    for (var i = 0; i < 18; i++) {
-        if (buildings[i] > 0) {
-            buildingPopulation += Math.round(buildingPopFactors[i] * Math.pow(buildingPopBases[i], (buildings[i] - 1)));
-        }
-    }
-
-    let militaryPopulation = troopsDefending.population + troopsOutside.population;
-    return new Array(buildingPopulation, militaryPopulation, (maxPopulation - buildingPopulation - militaryPopulation));
+    let buildingPop = buildingLevels.populationUsed();
+    let militaryPop = troopsDefending.population + troopsOutside.population; // todo: rename .population to .populationUsed
+    let idlePop = buildingLevels.populationCap() - buildingPop - militaryPop;
+    return new Array(buildingPop, militaryPop, idlePop); // todo: return map with meaningful keys
 }
 
 /**

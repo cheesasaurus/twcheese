@@ -3412,190 +3412,48 @@ function twcheese_calculateDemolition(buildingLevels) {
     var catAmountsChurch = new Array(0, 400, 500, 600, 600);
     var ramAmounts = new Array(0, 2, 4, 7, 10, 14, 19, 24, 30, 37, 45, 55, 65, 77, 91, 106, 124, 143, 166, 191, 219);
 
+    function assignDemolition(i, siegeAmounts) {
+        let buildingType = BuildingLevels.typeAt(i);
+        let level = buildingLevels[buildingType];
+        if (level === '?') {
+            demoScouted[i] = '?';
+            demoBuffer[i] = '?';
+            return;
+        }
+        demoScouted[i] = siegeAmounts[level];
+        let bufferLevel = buildingLevels.canUpgrade(buildingType) ? level + 1 : level;
+        demoBuffer[i] = siegeAmounts[bufferLevel];
+    }
+
     /*==== hq ====*/
-    if (buildings[0] == '?') {
-        demoScouted[0] = '?';
-        demoBuffer[0] = '?';
-    }
-    else {
-        demoScouted[0] = catAmounts[buildings[0]];
-        if (buildingLevels.canUpgrade('main'))
-            demoBuffer[0] = catAmounts[buildings[0] + 1];
-        else
-            demoBuffer[0] = demoScouted[0];
-    }
-
-    /*==== barracks ====*/
-    if (buildings[1] == '?') {
-        demoScouted[1] = '?';
-        demoBuffer[1] = '?';
-    }
-    else {
-        demoScouted[1] = catAmounts[buildings[1]];
-        if (buildingLevels.canUpgrade('barracks'))
-            demoBuffer[1] = catAmounts[buildings[1] + 1];
-        else
-            demoBuffer[1] = demoScouted[1];
-    }
-
-    /*==== stable ====*/
-    if (buildings[2] == '?') {
-        demoScouted[2] = '?';
-        demoBuffer[2] = '?';
-    }
-    else {
-        demoScouted[2] = catAmounts[buildings[2]];
-        if (buildingLevels.canUpgrade('stable'))
-            demoBuffer[2] = catAmounts[buildings[2] + 1];
-        else
-            demoBuffer[2] = demoScouted[2];
-    }
-
-    /*==== workshop ====*/
-    if (buildings[3] == '?') {
-        demoScouted[3] = '?';
-        demoBuffer[3] = '?';
-    }
-    else {
-        demoScouted[3] = catAmounts[buildings[3]];
-        if (buildingLevels.canUpgrade('garage'))
-            demoBuffer[3] = catAmounts[buildings[3] + 1];
-        else
-            demoBuffer[3] = demoScouted[3];
-    }
-
-
-    /*==== church ====*/
-    if (buildings[4] == '?') {
-        demoScouted[4] = '?';
-        demoBuffer[4] = '?';
-    }
-    else {
-        demoScouted[4] = catAmounts[buildings[4]];
-        if (buildingLevels.canUpgrade('church'))
-            demoBuffer[4] = catAmountsChurch[buildings[4] + 1];
-        else
-            demoBuffer[4] = demoScouted[4];
-    }
+    assignDemolition(0, catAmounts); // hq
+    assignDemolition(1, catAmounts); // barracks
+    assignDemolition(2, catAmounts); // stable
+    assignDemolition(3, catAmounts); // workshop
+    assignDemolition(4, catAmountsChurch); // church
 
     /*==== church_f ====*/
     // first church is indestructible
     demoScouted[5] = 'NA';
     demoBuffer[5] = 'NA';
 
-    /*==== academy ====*/
-    if (buildings[6] == '?') {
-        demoScouted[6] = '?';
-        demoBuffer[6] = '?';
-    }
-    else {
-        demoScouted[6] = catAmounts[buildings[6]];
-        if (buildingLevels.canUpgrade('snob'))
-            demoBuffer[6] = catAmounts[buildings[6] + 1];
-        else
-            demoBuffer[6] = demoScouted[6];
-    }
-
-    /*==== smithy ====*/
-    if (buildings[7] == '?') {
-        demoScouted[7] = '?';
-        demoBuffer[7] = '?';
-    }
-    else {
-        demoScouted[7] = catAmounts[buildings[7]];
-        if (buildingLevels.canUpgrade('smith'))
-            demoBuffer[7] = catAmounts[buildings[7] + 1];
-        else
-            demoBuffer[7] = demoScouted[7];
-    }
-
-    /*==== statue and rally point====*/
-    for (var i = 8; i <= 9; i++) {
-        if (buildings[i] == '?') {
-            demoScouted[i] = '?';
-            demoBuffer[i] = '?';
-        }
-        else {
-            demoScouted[i] = catAmounts[buildings[i]];
-            if (buildings[i] < 1)
-                demoBuffer[i] = catAmounts[buildings[i] + 1];
-            else
-                demoBuffer[i] = demoScouted[i];
-        }
-    }
-
-    /*==== market ====*/
-    if (buildings[10] == '?') {
-        demoScouted[10] = '?';
-        demoBuffer[10] = '?';
-    }
-    else {
-        demoScouted[10] = catAmounts[buildings[10]];
-        if (buildingLevels.canUpgrade('market'))
-            demoBuffer[10] = catAmounts[buildings[10] + 1];
-        else
-            demoBuffer[10] = demoScouted[10];
-    }
-
-    /*==== timber camp, clay pit, and iron mine ====*/
-    for (let i = 11; i <= 13; i++) {
-        if (buildings[i] == '?') {
-            demoScouted[i] = '?';
-            demoBuffer[i] = '?';
-        }
-        else {
-            demoScouted[i] = catAmounts[buildings[i]];
-            if (buildings[i] < 30)
-                demoBuffer[i] = catAmounts[buildings[i] + 1];
-            else
-                demoBuffer[i] = demoScouted[i];
-        }
-    }
-
-    /*==== farm ====*/
-    if (buildings[14] == '?') {
-        demoScouted[14] = '?';
-        demoBuffer[14] = '?';
-    }
-    else {
-        demoScouted[14] = catAmounts[buildings[14]];
-        if (buildingLevels.canUpgrade('farm'))
-            demoBuffer[14] = catAmounts[buildings[14] + 1];
-        else
-            demoBuffer[14] = demoScouted[14];
-    }
-
-    /*==== warehouse ====*/
-    if (buildings[15] == '?') {
-        demoScouted[15] = '?';
-        demoBuffer[15] = '?';
-    }
-    else {
-        demoScouted[15] = catAmounts[buildings[15]];
-        if (buildingLevels.canUpgrade('storage'))
-            demoBuffer[15] = catAmounts[buildings[15] + 1];
-        else
-            demoBuffer[15] = demoScouted[15];
-    }
+    assignDemolition(6, catAmounts); // academy
+    assignDemolition(7, catAmounts); // smithy
+    assignDemolition(8, catAmounts); // statue
+    assignDemolition(9, catAmounts); // rally point
+    assignDemolition(10, catAmounts); // market
+    assignDemolition(11, catAmounts); // timber camp
+    assignDemolition(12, catAmounts); // clay pit
+    assignDemolition(13, catAmounts); // iron mine
+    assignDemolition(14, catAmounts); // farm
+    assignDemolition(15, catAmounts); // warehouse
 
     /*==== hiding place ====*/
+    // hiding place is indestructible
     demoScouted[16] = 'NA';
     demoBuffer[16] = 'NA';
 
-    /*==== wall ====*/
-    if (buildings[17] == '?') {
-        demoScouted[17] = '?';
-        demoBuffer[17] = '?';
-    }
-    else {
-        demoScouted[17] = ramAmounts[buildings[17]];
-        if (buildingLevels.canUpgrade('wall')) {
-            demoBuffer[17] = ramAmounts[buildings[17] + 1];
-        }
-        else {
-            demoBuffer[17] = demoScouted[17];
-        }
-    }
+    assignDemolition(17, ramAmounts); // wall
 
     return new Array(demoScouted, demoBuffer);
 }

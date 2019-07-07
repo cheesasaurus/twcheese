@@ -72,6 +72,17 @@ class BuildingLevels {
     resourceCap() {
         return Math.round(1000 * 1.2294934 ** (this.storage - 1));
     }
+    
+    resourceProductionHourly(resourceType, gameSpeed = 1) {
+        if (typeof this[resourceType] === 'undefined') {
+            throw Error(`there's no building that makes "${resourceType}"`);
+        }
+        let level = this[resourceType];
+        if (level === 0) {
+            return gameSpeed * 5;
+        }
+        return gameSpeed * 30 * (1.163118 ** (level - 1));
+    }
 
     hideableResources() {
         if (this.hide === 0) {

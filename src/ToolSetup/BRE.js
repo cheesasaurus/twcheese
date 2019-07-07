@@ -1169,7 +1169,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
             periodInput.maxLength = 4;
             periodInput.value = 8;
             periodInput.addEventListener('input', function() {
-                report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels.toArray(), Number(this.value), gameConfig.speed, Number(document.getElementById('twcheese_raider_haulBonus')));
+                report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, Number(this.value), gameConfig.speed, Number(document.getElementById('twcheese_raider_haulBonus')));
                 twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), report.raidPeriodic, report);
             });
             periodicDiv.appendChild(periodInput);
@@ -1570,7 +1570,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
         }
         else if (mode == 'periodic') {
             gameDoc.getElementById('twcheese_raider_selection').value = 'periodic';
-            report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels.toArray(), Number(gameDoc.getElementById('twcheese_period').value), gameConfig.speed, haulBonus);
+            report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, Number(gameDoc.getElementById('twcheese_period').value), gameConfig.speed, haulBonus);
             twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), report.raidPeriodic, report);
             gameDoc.getElementById('twcheese_periodic_options').style.display = '';
         }
@@ -2797,7 +2797,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 if (report.espionageLevel >= 2) {
                     report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
                     report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed);
-                    report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels.toArray(), 8, gameConfig.speed);
+                    report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, 8, gameConfig.speed);
                 }
                 report.reportID = reportID;
 
@@ -3672,13 +3672,14 @@ function twcheese_calculateRaidPredicted(resourcesScouted, buildingLevels, home,
 }
 
 /**
- *	@param	buildings:Array	an array of the building levels
+ *	@param {BuildingLevels} buildingLevels
  *	@param	period:Number	the number of hours that resources have been accumulating
  *	@param	gameSpeed:Number
  *	@param	haulBonus:Number	the extra % bonus haul from flags, events, etc. Example: 30 for 30%, NOT 0.3
  *	@return	troops:Array(spear,sword,axe,archer,lcav,acav,hcav)	an array of how many of each type of troop should be sent to take all resources, provided only one type of troop is sent
  */
-function twcheese_calculateRaidPeriodic(buildings, period, gameSpeed, haulBonus) {
+function twcheese_calculateRaidPeriodic(buildingLevels, period, gameSpeed, haulBonus) {
+    var buildings = buildingLevels.toArray(); // todo
     if (!haulBonus)
         haulBonus = 0;
 
@@ -4104,7 +4105,7 @@ function enhanceReport(gameConfig) {
     if (report.espionageLevel >= 2) {
         report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
         report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed);
-        report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels.toArray(), 8, gameConfig.speed);
+        report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, 8, gameConfig.speed);
     }
 
     /*==== add stuff to the page ====*/

@@ -1430,12 +1430,12 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
             populationHeader.innerHTML = 'Population:';
             populationRow.appendChild(populationHeader);
             populationRow.insertCell(-1);
-            populationRow.cells[1].innerHTML = 'Buildings <b>(' + report.populationSummary[0] + ')</b><br/>Military <b>(' + report.populationSummary[1] + ')</b><br/>';
+            populationRow.cells[1].innerHTML = 'Buildings <b>(' + report.populationSummary.buildings + ')</b><br/>Military <b>(' + report.populationSummary.troops + ')</b><br/>';
             if (report.espionageLevel == 3)
                 populationRow.cells[1].innerHTML += 'Idle';
             else
                 populationRow.cells[1].innerHTML += 'Unknown';
-            populationRow.cells[1].innerHTML += ' <b>(' + report.populationSummary[2] + ')</b>';
+            populationRow.cells[1].innerHTML += ' <b>(' + report.populationSummary.idle + ')</b>';
 
             $(building_table).after(population_summary);
         }
@@ -3369,13 +3369,16 @@ function twcheese_isFeint(troops) {
  *	@param {BuildingLevels} buildingLevels
  *  @param {TroopCounts} troopsDefending
  *	@param {TroopCounts} troopsOutside
- *	@return	population:Array(buildingPop:Number,militaryPop:Number,idlePop:Number)
+ *	@return	{{buildings:number, troops:number, idle:number}} population
  */
 function twcheese_calculatePopulation(buildingLevels, troopsDefending, troopsOutside) {
     let buildingPop = buildingLevels.populationUsed();
-    let militaryPop = troopsDefending.populationUsed() + troopsOutside.populationUsed();
-    let idlePop = buildingLevels.populationCap() - buildingPop - militaryPop;
-    return new Array(buildingPop, militaryPop, idlePop); // todo: return map with meaningful keys
+    let troopPop = troopsDefending.populationUsed() + troopsOutside.populationUsed();
+    return {
+        buildings: buildingPop,
+        troops: troopPop,
+        idle: buildingLevels.populationCap() - buildingPop - troopPop
+    };
 }
 
 /**

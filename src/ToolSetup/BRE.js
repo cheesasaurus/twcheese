@@ -3402,19 +3402,24 @@ function twcheese_calculateTimingInfo(worldSpeed, unitSpeed, timeOfArrival, atta
  *	@return smashUnits:Array(demoScouted:Array,demoBuffer:Array)	an array of arrays of #cats to downgrade each building as much as possible (and #rams for wall). demoScouted is for scouted levels, demoBuffer is for buildings 1 level higher than scouted
  */
 function twcheese_calculateDemolition(buildingLevels) {
-    var buildings = buildingLevels.toArray(); // todo
-
-
     var demoScouted = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     var demoBuffer = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     var catAmounts = new Array(0, 2, 6, 10, 15, 21, 28, 36, 45, 56, 68, 82, 98, 115, 136, 159, 185, 215, 248, 286, 328, 376, 430, 490, 558, 634, 720, 815, 922, 1041, 1175, 1175);
-    //var catAmountsOne = new Array(0,0,2,6,11,17,23,31,39,49,61,74,89,106,126,148,173,202,234,270,312,358,410,469,534,608,691,784,888,1005,1135);
     var catAmountsChurch = new Array(0, 400, 500, 600, 600);
     var ramAmounts = new Array(0, 2, 4, 7, 10, 14, 19, 24, 30, 37, 45, 55, 65, 77, 91, 106, 124, 143, 166, 191, 219);
     let invulnerable = ['church_f', 'hide'];
 
-    function assignDemolition(i, siegeAmounts) {
+    function whichSiegeLookup(buildingType) {
+        switch (buildingType) {
+            case 'wall':    return ramAmounts;
+            case 'church':  return catAmountsChurch;
+            default:        return catAmounts;
+        }
+    }
+
+    function assignDemolition(i) {
         let buildingType = BuildingLevels.typeAt(i);
+
         if (invulnerable.includes(buildingType)) {
             demoScouted[i] = 'NA';
             demoBuffer[i] = 'NA';
@@ -3428,32 +3433,18 @@ function twcheese_calculateDemolition(buildingLevels) {
             return;
         }
 
+        let siegeAmounts = whichSiegeLookup(buildingType);
+
         demoScouted[i] = siegeAmounts[level];
         let bufferLevel = buildingLevels.canUpgrade(buildingType) ? level + 1 : level;
         demoBuffer[i] = siegeAmounts[bufferLevel];
     }
 
-    /*==== hq ====*/
-    assignDemolition(0, catAmounts); // hq
-    assignDemolition(1, catAmounts); // barracks
-    assignDemolition(2, catAmounts); // stable
-    assignDemolition(3, catAmounts); // workshop
-    assignDemolition(4, catAmountsChurch); // church
-    assignDemolition(5, catAmountsChurch); // first church
-    assignDemolition(6, catAmounts); // academy
-    assignDemolition(7, catAmounts); // smithy
-    assignDemolition(8, catAmounts); // statue
-    assignDemolition(9, catAmounts); // rally point
-    assignDemolition(10, catAmounts); // market
-    assignDemolition(11, catAmounts); // timber camp
-    assignDemolition(12, catAmounts); // clay pit
-    assignDemolition(13, catAmounts); // iron mine
-    assignDemolition(14, catAmounts); // farm
-    assignDemolition(15, catAmounts); // warehouse
-    assignDemolition(16, catAmounts); // hiding place
-    assignDemolition(17, ramAmounts); // wall
+    for (let i = 0; i < 18; i++) {
+        assignDemolition(i); // todo: assign to maps keyed by buildingType instead of arrays
+    }
 
-    return new Array(demoScouted, demoBuffer);
+    return new Array(demoScouted, demoBuffer); // todo: return map with meaningful keys instead of array
 }
 
 /**

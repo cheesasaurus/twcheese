@@ -1,10 +1,14 @@
 let cfg = {
     main: {
+        maxLevel: 30,
+        minLevel: 1,
         pop: 5,
         popFactor: 1.17,
         req: {}
     },
     barracks: {
+        maxLevel: 25,
+        minLevel: 0,
         pop: 7,
         popFactor: 1.17,
         req: {
@@ -12,6 +16,8 @@ let cfg = {
         }
     },
     stable: {
+        maxLevel: 20,
+        minLevel: 0,
         pop: 8,
         popFactor: 1.17,
         req: {
@@ -21,6 +27,8 @@ let cfg = {
         }
     },
     garage: {
+        maxLevel: 15,
+        minLevel: 0,
         pop: 8,
         popFactor: 1.17,
         req: {
@@ -29,6 +37,8 @@ let cfg = {
         }
     },
     church: {
+        maxLevel: 3,
+        minLevel: 0,
         pop: 5000,
         popFactor: 1.55,
         req: {
@@ -37,11 +47,15 @@ let cfg = {
         }
     },
     church_f: {
+        maxLevel: 1,
+        minLevel: 0,
         pop: 5,
         popFactor: 1.55,
         req: {}
     },
     snob: {
+        maxLevel: 3,
+        minLevel: 0,
         pop: 80,
         popFactor: 1.17,
         req: {
@@ -51,6 +65,8 @@ let cfg = {
         }
     },
     smith: {
+        maxLevel: 20,
+        minLevel: 0,
         pop: 20,
         popFactor: 1.17,
         req: {
@@ -59,16 +75,22 @@ let cfg = {
         }
     },
     place: {
+        maxLevel: 1,
+        minLevel: 0,
         pop: 0,
         popFactor: 1.17,
         req: {}
     },
     statue: {
+        maxLevel: 1,
+        minLevel: 0,
         pop: 10,
         popFactor: 1.17,
         req: {}
     },
     market: {
+        maxLevel: 25,
+        minLevel: 0,
         pop: 20,
         popFactor: 1.17,
         req: {
@@ -77,36 +99,50 @@ let cfg = {
         }
     },
     wood: {
+        maxLevel: 30,
+        minLevel: 0,
         pop: 5,
         popFactor: 1.155,
         req: {}
     },
     stone: {
+        maxLevel: 30,
+        minLevel: 0,
         pop: 10,
         popFactor: 1.14,
         req: {}
     },
     iron: {
+        maxLevel: 30,
+        minLevel: 0,
         pop: 10,
         popFactor: 1.17,
         req: {}
     },
     farm: {
+        maxLevel: 30,
+        minLevel: 1,
         pop: 0,
         popFactor: 1,
         req: {}
     },
     storage: {
+        maxLevel: 30,
+        minLevel: 1,
         pop: 0,
         popFactor: 1.15,
         req: {}
     },
     hide: {
+        maxLevel: 10,
+        minLevel: 0,
         pop: 2,
         popFactor: 1.17,
         req: {}
     },
     wall: {
+        maxLevel: 20,
+        minLevel: 0,
         pop: 5,
         popFactor: 1.17,
         req: {
@@ -114,6 +150,8 @@ let cfg = {
         }
     },
     watchtower: {
+        maxLevel: 20,
+        minLevel: 0,
         pop: 500,
         popFactor: 1.18,
         req: {

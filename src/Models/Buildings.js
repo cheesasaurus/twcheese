@@ -91,6 +91,11 @@ class BuildingLevels {
         return Math.round(112.4859 * 1.3335 ** this.hide);
     }
 
+    canUpgrade(buildingType) {
+        let alreadyMaxed = this[buildingType] >= cfg[buildingType].maxLevel;        
+        return !alreadyMaxed && this.areRequirementsMet(buildingType);
+    }
+
     areRequirementsMet(buildingType) {
         let reqs = cfg[buildingType].req;
         for (let [reqType, reqLevel] of Object.entries(reqs)) {

@@ -3402,7 +3402,7 @@ function twcheese_calculateTimingInfo(worldSpeed, unitSpeed, timeOfArrival, atta
  *	@return smashUnits:Array(demoScouted:Array,demoBuffer:Array)	an array of arrays of #cats to downgrade each building as much as possible (and #rams for wall). demoScouted is for scouted levels, demoBuffer is for buildings 1 level higher than scouted
  */
 function twcheese_calculateDemolition(buildingLevels) {
-    var buildings = buildingLevels.toArray();
+    var buildings = buildingLevels.toArray(); // todo
 
 
     var demoScouted = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -3419,7 +3419,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[0] = catAmounts[buildings[0]];
-        if (buildings[0] < 30)
+        if (buildingLevels.canUpgrade('main'))
             demoBuffer[0] = catAmounts[buildings[0] + 1];
         else
             demoBuffer[0] = demoScouted[0];
@@ -3432,7 +3432,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[1] = catAmounts[buildings[1]];
-        if (buildings[1] < 30 && buildingLevels.areRequirementsMet('barracks'))
+        if (buildingLevels.canUpgrade('barracks'))
             demoBuffer[1] = catAmounts[buildings[1] + 1];
         else
             demoBuffer[1] = demoScouted[1];
@@ -3445,7 +3445,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[2] = catAmounts[buildings[2]];
-        if (buildings[2] < 20 && buildingLevels.areRequirementsMet('stable'))
+        if (buildingLevels.canUpgrade('stable'))
             demoBuffer[2] = catAmounts[buildings[2] + 1];
         else
             demoBuffer[2] = demoScouted[2];
@@ -3458,7 +3458,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[3] = catAmounts[buildings[3]];
-        if (buildings[3] < 15 && buildingLevels.areRequirementsMet('garage'))
+        if (buildingLevels.canUpgrade('garage'))
             demoBuffer[3] = catAmounts[buildings[3] + 1];
         else
             demoBuffer[3] = demoScouted[3];
@@ -3472,7 +3472,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[4] = catAmounts[buildings[4]];
-        if (buildings[4] < 3 && buildingLevels.areRequirementsMet('church'))
+        if (buildingLevels.canUpgrade('church'))
             demoBuffer[4] = catAmountsChurch[buildings[4] + 1];
         else
             demoBuffer[4] = demoScouted[4];
@@ -3490,7 +3490,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[6] = catAmounts[buildings[6]];
-        if (buildings[6] < 3 && buildingLevels.areRequirementsMet('snob'))
+        if (buildingLevels.canUpgrade('snob'))
             demoBuffer[6] = catAmounts[buildings[6] + 1];
         else
             demoBuffer[6] = demoScouted[6];
@@ -3503,7 +3503,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[7] = catAmounts[buildings[7]];
-        if (buildings[7] < 20 && buildingLevels.areRequirementsMet('smith'))
+        if (buildingLevels.canUpgrade('smith'))
             demoBuffer[7] = catAmounts[buildings[7] + 1];
         else
             demoBuffer[7] = demoScouted[7];
@@ -3531,7 +3531,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[10] = catAmounts[buildings[10]];
-        if (buildings[10] < 25 && buildingLevels.areRequirementsMet('market'))
+        if (buildingLevels.canUpgrade('market'))
             demoBuffer[10] = catAmounts[buildings[10] + 1];
         else
             demoBuffer[10] = demoScouted[10];
@@ -3559,7 +3559,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[14] = catAmounts[buildings[14]];
-        if (buildings[14] < 30)
+        if (buildingLevels.canUpgrade('farm'))
             demoBuffer[14] = catAmounts[buildings[14] + 1];
         else
             demoBuffer[14] = demoScouted[14];
@@ -3572,7 +3572,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[15] = catAmounts[buildings[15]];
-        if (buildings[15] < 30)
+        if (buildingLevels.canUpgrade('storage'))
             demoBuffer[15] = catAmounts[buildings[15] + 1];
         else
             demoBuffer[15] = demoScouted[15];
@@ -3589,7 +3589,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[17] = ramAmounts[buildings[17]];
-        if (buildings[17] < 20 && buildingLevels.areRequirementsMet('wall')) {
+        if (buildingLevels.canUpgrade('wall')) {
             demoBuffer[17] = ramAmounts[buildings[17] + 1];
         }
         else {

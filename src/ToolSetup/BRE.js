@@ -3626,8 +3626,7 @@ function twcheese_calculateRaidPredicted(resourcesScouted, buildingLevels, home,
         haulBonus = 0;
     }
 
-    var hidden = new Array(0, 150, 200, 267, 356, 474, 632, 843, 1125, 1500, 2000);
-    var maxHaul = buildingLevels.resourceCap() - hidden[buildings[16]];
+    var maxHaul = buildingLevels.resourceCap() - buildingLevels.hideableResources();
     var speeds = new Array(18, 22, 18, 18, 10, 10, 11);
     var resources = resourcesScouted.slice();
 

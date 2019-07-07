@@ -46,6 +46,7 @@ let buildingTypes = [
     'watchtower'
 ];
 
+
 class BuildingLevels {
     constructor(fill = 0) {
         for (let type of buildingTypes) {
@@ -70,6 +71,13 @@ class BuildingLevels {
 
     resourceCap() {
         return Math.round(1000 * 1.2294934 ** (this.storage - 1));
+    }
+
+    hideableResources() {
+        if (this.hide === 0) {
+            return 0;
+        }
+        return Math.round(112.4859 * 1.3335 ** this.hide);
     }
 
     toArray() {

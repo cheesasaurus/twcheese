@@ -3432,7 +3432,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[1] = catAmounts[buildings[1]];
-        if (buildings[1] < 30 && buildings[0] >= 3)
+        if (buildings[1] < 30 && buildingLevels.main >= 3)
             demoBuffer[1] = catAmounts[buildings[1] + 1];
         else
             demoBuffer[1] = demoScouted[1];
@@ -3445,7 +3445,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[2] = catAmounts[buildings[2]];
-        if (buildings[2] < 20 && buildings[0] >= 10 && buildings[1] >= 5 && buildings[7] >= 5)
+        if (buildings[2] < 20 && buildingLevels.main >= 10 && buildingLevels.barracks >= 5 && buildingLevels.smith >= 5)
             demoBuffer[2] = catAmounts[buildings[2] + 1];
         else
             demoBuffer[2] = demoScouted[2];
@@ -3458,7 +3458,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[3] = catAmounts[buildings[3]];
-        if (buildings[3] < 15 && buildings[0] >= 10 && buildings[7] >= 10)
+        if (buildings[3] < 15 && buildingLevels.main >= 10 && buildingLevels.smith >= 10)
             demoBuffer[3] = catAmounts[buildings[3] + 1];
         else
             demoBuffer[3] = demoScouted[3];
@@ -3489,7 +3489,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[6] = catAmounts[buildings[6]];
-        if (buildings[6] < 3 && buildings[0] >= 20 && buildings[7] == 20 && buildings[10] >= 10)
+        if (buildings[6] < 3 && buildingLevels.main >= 20 && buildingLevels.smith >= 20 && buildingLevels.market >= 10)
             demoBuffer[6] = catAmounts[buildings[6] + 1];
         else
             demoBuffer[6] = demoScouted[6];
@@ -3502,7 +3502,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[7] = catAmounts[buildings[7]];
-        if (buildings[7] < 20 && buildings[0] >= 5 && buildings[1] >= 1)
+        if (buildings[7] < 20 && buildingLevels.main >= 5 && buildingLevels.barracks >= 1)
             demoBuffer[7] = catAmounts[buildings[7] + 1];
         else
             demoBuffer[7] = demoScouted[7];
@@ -3530,7 +3530,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[10] = catAmounts[buildings[10]];
-        if (buildings[10] < 25 && buildings[0] >= 3 && buildings[15] >= 2)
+        if (buildings[10] < 25 && buildingLevels.main >= 3 && buildingLevels.storage >= 2)
             demoBuffer[10] = catAmounts[buildings[10] + 1];
         else
             demoBuffer[10] = demoScouted[10];
@@ -3588,7 +3588,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[17] = ramAmounts[buildings[17]];
-        if (buildings[1] >= 1 && buildings[17] < 20) {
+        if (buildings[17] < 20 && buildings.barracks >= 1) {
             demoBuffer[17] = ramAmounts[buildings[17] + 1];
         }
         else {

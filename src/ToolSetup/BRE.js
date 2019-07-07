@@ -2791,7 +2791,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                     report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village, report.defenderVillage);
                 report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.sent, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
                 if (report.buildingLevels)
-                    report.demolition = twcheese_calculateDemolition(report.buildingLevels.toArray());
+                    report.demolition = twcheese_calculateDemolition(report.buildingLevels);
                 if (report.espionageLevel >= 1)
                     report.raidScouted = twcheese_calculateRaidScouted(report.resources);
                 if (report.espionageLevel >= 2) {
@@ -3398,10 +3398,13 @@ function twcheese_calculateTimingInfo(worldSpeed, unitSpeed, timeOfArrival, atta
 }
 
 /**
- *	@param	buildings:Array	an array of the building levels scouted
+ *	@param {BuildingLevels} buildings
  *	@return smashUnits:Array(demoScouted:Array,demoBuffer:Array)	an array of arrays of #cats to downgrade each building as much as possible (and #rams for wall). demoScouted is for scouted levels, demoBuffer is for buildings 1 level higher than scouted
  */
-function twcheese_calculateDemolition(buildings) {
+function twcheese_calculateDemolition(buildingLevels) {
+    var buildings = buildingLevels.toArray();
+
+
     var demoScouted = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     var demoBuffer = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     var catAmounts = new Array(0, 2, 6, 10, 15, 21, 28, 36, 45, 56, 68, 82, 98, 115, 136, 159, 185, 215, 248, 286, 328, 376, 430, 490, 558, 634, 720, 815, 922, 1041, 1175, 1175);
@@ -4093,7 +4096,7 @@ function enhanceReport(gameConfig) {
         report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village, report.defenderVillage);
     report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.sent, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
     if (report.buildingLevels)
-        report.demolition = twcheese_calculateDemolition(report.buildingLevels.toArray());
+        report.demolition = twcheese_calculateDemolition(report.buildingLevels);
     if (report.espionageLevel >= 1)
         report.raidScouted = twcheese_calculateRaidScouted(report.resources);
     if (report.espionageLevel >= 2) {

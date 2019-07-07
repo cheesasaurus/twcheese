@@ -3361,7 +3361,7 @@ function createFooterButton(text, address) {
  *	@return {boolean}
  */
 function twcheese_isFeint(troops) {
-    return troops.snob === 0 && troops.population <= 130;
+    return troops.snob === 0 && troops.populationUsed() <= 130;
 }
 
 /**
@@ -3373,7 +3373,7 @@ function twcheese_isFeint(troops) {
  */
 function twcheese_calculatePopulation(buildingLevels, troopsDefending, troopsOutside) {
     let buildingPop = buildingLevels.populationUsed();
-    let militaryPop = troopsDefending.population + troopsOutside.population; // todo: rename .population to .populationUsed
+    let militaryPop = troopsDefending.populationUsed() + troopsOutside.populationUsed();
     let idlePop = buildingLevels.populationCap() - buildingPop - militaryPop;
     return new Array(buildingPop, militaryPop, idlePop); // todo: return map with meaningful keys
 }

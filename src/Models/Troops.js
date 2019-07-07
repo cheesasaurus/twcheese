@@ -50,7 +50,7 @@ class TroopCounts {
         return true;
     }
 
-    get population() {
+    populationUsed() {
         return troopTypes.reduce((sum, type) => sum + troopPop[type] * this[type], 0);
     }
 

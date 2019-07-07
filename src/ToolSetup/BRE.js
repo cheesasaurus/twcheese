@@ -3411,15 +3411,23 @@ function twcheese_calculateDemolition(buildingLevels) {
     //var catAmountsOne = new Array(0,0,2,6,11,17,23,31,39,49,61,74,89,106,126,148,173,202,234,270,312,358,410,469,534,608,691,784,888,1005,1135);
     var catAmountsChurch = new Array(0, 400, 500, 600, 600);
     var ramAmounts = new Array(0, 2, 4, 7, 10, 14, 19, 24, 30, 37, 45, 55, 65, 77, 91, 106, 124, 143, 166, 191, 219);
+    let invulnerable = ['church_f', 'hide'];
 
     function assignDemolition(i, siegeAmounts) {
         let buildingType = BuildingLevels.typeAt(i);
+        if (invulnerable.includes(buildingType)) {
+            demoScouted[i] = 'NA';
+            demoBuffer[i] = 'NA';
+            return;
+        }
+
         let level = buildingLevels[buildingType];
         if (level === '?') {
             demoScouted[i] = '?';
             demoBuffer[i] = '?';
             return;
         }
+
         demoScouted[i] = siegeAmounts[level];
         let bufferLevel = buildingLevels.canUpgrade(buildingType) ? level + 1 : level;
         demoBuffer[i] = siegeAmounts[bufferLevel];
@@ -3431,12 +3439,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     assignDemolition(2, catAmounts); // stable
     assignDemolition(3, catAmounts); // workshop
     assignDemolition(4, catAmountsChurch); // church
-
-    /*==== church_f ====*/
-    // first church is indestructible
-    demoScouted[5] = 'NA';
-    demoBuffer[5] = 'NA';
-
+    assignDemolition(5, catAmountsChurch); // first church
     assignDemolition(6, catAmounts); // academy
     assignDemolition(7, catAmounts); // smithy
     assignDemolition(8, catAmounts); // statue
@@ -3447,12 +3450,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     assignDemolition(13, catAmounts); // iron mine
     assignDemolition(14, catAmounts); // farm
     assignDemolition(15, catAmounts); // warehouse
-
-    /*==== hiding place ====*/
-    // hiding place is indestructible
-    demoScouted[16] = 'NA';
-    demoBuffer[16] = 'NA';
-
+    assignDemolition(16, catAmounts); // hiding place
     assignDemolition(17, ramAmounts); // wall
 
     return new Array(demoScouted, demoBuffer);

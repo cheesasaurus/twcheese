@@ -3679,22 +3679,16 @@ function twcheese_calculateRaidPredicted(resourcesScouted, buildingLevels, home,
  *	@return	troops:Array(spear,sword,axe,archer,lcav,acav,hcav)	an array of how many of each type of troop should be sent to take all resources, provided only one type of troop is sent
  */
 function twcheese_calculateRaidPeriodic(buildingLevels, period, gameSpeed, haulBonus) {
-    var buildings = buildingLevels.toArray(); // todo
     if (!haulBonus)
         haulBonus = 0;
 
     /*==== calculate maximum of each resource hauled ====*/
-    var capacity = 1000 * Math.pow(1.2294934, (buildings[15] - 1));
-    var hidden = new Array(0, 150, 200, 267, 356, 474, 632, 843, 1125, 1500, 2000);
-    var maxHaul = capacity - hidden[buildings[16]];
+    var maxHaul = buildingLevels.resourceCap() - buildingLevels.hideableResources();
 
     /*==== calculate production rates ====*/
     var production = new Array(0, 0, 0);
-    for (let i = 0; i < 3; i++) {
-        if (buildings[i + 11] > 0)
-            production[i] = gameSpeed * 30 * Math.pow(1.163118, (buildings[i + 11] - 1));
-        else
-            production[i] = gameSpeed * 5;
+    for (let [i, resType] of [[0, 'wood'], [1, 'stone'], [2, 'iron']]) {
+        production[i] = buildingLevels.resourceProductionHourly(resType, gameSpeed);
     }
 
     /*==== calculate resources produced */

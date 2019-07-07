@@ -91,6 +91,16 @@ class BuildingLevels {
         return Math.round(112.4859 * 1.3335 ** this.hide);
     }
 
+    areRequirementsMet(buildingType) {
+        let reqs = cfg[buildingType].req;
+        for (let [reqType, reqLevel] of Object.entries(reqs)) {
+            if (reqLevel > this[reqType]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     toArray() {
         return buildingTypes.map(type => this[type]);
     }

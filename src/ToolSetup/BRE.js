@@ -3432,7 +3432,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[1] = catAmounts[buildings[1]];
-        if (buildings[1] < 30 && buildingLevels.main >= 3)
+        if (buildings[1] < 30 && buildingLevels.areRequirementsMet('barracks'))
             demoBuffer[1] = catAmounts[buildings[1] + 1];
         else
             demoBuffer[1] = demoScouted[1];
@@ -3445,7 +3445,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[2] = catAmounts[buildings[2]];
-        if (buildings[2] < 20 && buildingLevels.main >= 10 && buildingLevels.barracks >= 5 && buildingLevels.smith >= 5)
+        if (buildings[2] < 20 && buildingLevels.areRequirementsMet('stable'))
             demoBuffer[2] = catAmounts[buildings[2] + 1];
         else
             demoBuffer[2] = demoScouted[2];
@@ -3458,7 +3458,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[3] = catAmounts[buildings[3]];
-        if (buildings[3] < 15 && buildingLevels.main >= 10 && buildingLevels.smith >= 10)
+        if (buildings[3] < 15 && buildingLevels.areRequirementsMet('garage'))
             demoBuffer[3] = catAmounts[buildings[3] + 1];
         else
             demoBuffer[3] = demoScouted[3];
@@ -3472,13 +3472,14 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[4] = catAmounts[buildings[4]];
-        if (buildings[4] < 3)
+        if (buildings[4] < 3 && buildingLevels.areRequirementsMet('church'))
             demoBuffer[4] = catAmountsChurch[buildings[4] + 1];
         else
             demoBuffer[4] = demoScouted[4];
     }
 
     /*==== church_f ====*/
+    // first church is indestructible
     demoScouted[5] = 'NA';
     demoBuffer[5] = 'NA';
 
@@ -3489,7 +3490,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[6] = catAmounts[buildings[6]];
-        if (buildings[6] < 3 && buildingLevels.main >= 20 && buildingLevels.smith >= 20 && buildingLevels.market >= 10)
+        if (buildings[6] < 3 && buildingLevels.areRequirementsMet('snob'))
             demoBuffer[6] = catAmounts[buildings[6] + 1];
         else
             demoBuffer[6] = demoScouted[6];
@@ -3502,7 +3503,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[7] = catAmounts[buildings[7]];
-        if (buildings[7] < 20 && buildingLevels.main >= 5 && buildingLevels.barracks >= 1)
+        if (buildings[7] < 20 && buildingLevels.areRequirementsMet('smith'))
             demoBuffer[7] = catAmounts[buildings[7] + 1];
         else
             demoBuffer[7] = demoScouted[7];
@@ -3530,7 +3531,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[10] = catAmounts[buildings[10]];
-        if (buildings[10] < 25 && buildingLevels.main >= 3 && buildingLevels.storage >= 2)
+        if (buildings[10] < 25 && buildingLevels.areRequirementsMet('market'))
             demoBuffer[10] = catAmounts[buildings[10] + 1];
         else
             demoBuffer[10] = demoScouted[10];
@@ -3588,7 +3589,7 @@ function twcheese_calculateDemolition(buildingLevels) {
     }
     else {
         demoScouted[17] = ramAmounts[buildings[17]];
-        if (buildings[17] < 20 && buildings.barracks >= 1) {
+        if (buildings[17] < 20 && buildingLevels.areRequirementsMet('wall')) {
             demoBuffer[17] = ramAmounts[buildings[17] + 1];
         }
         else {

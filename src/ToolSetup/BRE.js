@@ -3620,15 +3620,14 @@ function twcheese_calculateRaidScouted(resourcesScouted, haulBonus) {
  *	@return	troops:Array(spear,sword,axe,archer,lcav,acav,hcav)	an array of how many of each type of troop should be sent to take all resources, provided only one type of troop is sent
  */
 function twcheese_calculateRaidPredicted(resourcesScouted, buildingLevels, home, target, timeSent, timeNow, gameSpeed, unitSpeed, haulBonus) {
-    var buildings = buildingLevels;
+    var buildings = buildingLevels; // todo
 
     if (!haulBonus) {
         haulBonus = 0;
     }
 
-    var capacity = 1000 * Math.pow(1.2294934, (buildings[15] - 1));
     var hidden = new Array(0, 150, 200, 267, 356, 474, 632, 843, 1125, 1500, 2000);
-    var maxHaul = capacity - hidden[buildings[16]];
+    var maxHaul = buildingLevels.resourceCap() - hidden[buildings[16]];
     var speeds = new Array(18, 22, 18, 18, 10, 10, 11);
     var resources = resourcesScouted.slice();
 

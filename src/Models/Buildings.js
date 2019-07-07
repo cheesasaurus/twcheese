@@ -68,6 +68,10 @@ class BuildingLevels {
         return Math.round(240 * 1.172103 ** (this.farm - 1));
     }
 
+    resourceCap() {
+        return Math.round(1000 * 1.2294934 ** (this.storage - 1));
+    }
+
     toArray() {
         return buildingTypes.map(type => this[type]);
     }

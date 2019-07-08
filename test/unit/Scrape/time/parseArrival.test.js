@@ -20,7 +20,7 @@ function assertServerTime(expected, actual) {
 describe('parseArrival', function() {
 
     it('should handle en format', function() {
-        let actual = parseArrival('Jul 08, 2019  19:36:07:906');
+        let actual = parseArrival('Jul 08, 2019  19:36:07:906', 'en');
         let expected = {
             year: 2019,
             month: 6,
@@ -33,8 +33,18 @@ describe('parseArrival', function() {
         assertServerTime(expected, actual);
     });
 
-    xit('should handle pt format', function() {
-        // todo
+    it('should handle pt format', function() {
+        let actual = parseArrival('09/jul/2019 (20:03:15):895', 'pt');
+        let expected = {
+            year: 2019,
+            month: 6,
+            date: 9,
+            hours: 20,
+            minutes: 3,
+            seconds: 15,
+            millis: 895
+        };
+        assertServerTime(expected, actual);
     });
 
 });

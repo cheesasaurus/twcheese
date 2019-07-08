@@ -1352,13 +1352,13 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
                     if (i == 17) {
                         siege_weapon = 'ram';
                     }
-                    let rallyPointUrl = attackPrepUrl({[siege_weapon]: report.demolition[1][i]}, report.defenderVillage.id);
+                    let rallyPointUrl = attackPrepUrl({[siege_weapon]: report.demolition.oneShotUpgraded[i]}, report.defenderVillage.id);
                     demolitionUnitsTable.rows[1].cells[i].innerHTML = '<a href="' + rallyPointUrl + '"><img src="' + imagePaths[buildingLanguage[i]] + '" alt="' + buildingLanguage[i] + '" /></a>';
                 }
                 demolitionUnitsTable.rows[2].insertCell(-1);
-                demolitionUnitsTable.rows[2].cells[i].innerHTML = report.demolition[0][i];
+                demolitionUnitsTable.rows[2].cells[i].innerHTML = report.demolition.oneShotScouted[i];
                 demolitionUnitsTable.rows[3].insertCell(-1);
-                demolitionUnitsTable.rows[3].cells[i].innerHTML = report.demolition[1][i];
+                demolitionUnitsTable.rows[3].cells[i].innerHTML = report.demolition.oneShotUpgraded[i];
             }
 
             demolitionTable.insertRow(-1);
@@ -3473,7 +3473,10 @@ function twcheese_calculateDemolition(buildingLevels) {
         assignDemolition(i); // todo: assign to maps keyed by buildingType instead of arrays
     }
 
-    return new Array(demoScouted, demoBuffer); // todo: return map with meaningful keys instead of array
+    return {
+        oneShotScouted: demoScouted,
+        oneShotUpgraded: demoBuffer
+    };
 }
 
 /**

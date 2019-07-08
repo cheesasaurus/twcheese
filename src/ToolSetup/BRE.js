@@ -770,7 +770,7 @@ function twcheese_BattleReportScraper(gameDocument) {
         };
 
         /**
-         *	@return catDamage:Array(buildingIndex:Number,beforeLevel:Number,afterLevel:Number)
+         *	@return {{buildingIndex:number, levelBefore:number, levelAfter:number} | false}
          *	if no catapult damage was done, returns boolean false
          */
         this.getCatDamage = function () {
@@ -778,18 +778,17 @@ function twcheese_BattleReportScraper(gameDocument) {
                 var thElements = this.resultsTable.getElementsByTagName('th');
                 for (var i = 0; i < thElements.length; i++) {
                     if (thElements[i].innerHTML == language['report']['catDamage']) {
-                        var catDamage = new Array(0, 0, 0);
-                        //var buildingNames = new Array('village headquarters','barracks','stable','workshop','church','first church','academy','smithy','rally point','statue','market','timber camp','clay pit','iron mine','farm','warehouse','hiding place','wall');
                         var damageCell = thElements[i].parentNode.cells[1];
-                        for (var n = 0; n < 18; n++) {
-                            //var searchText = damageCell.innerHTML.toLowerCase();
-                            //if(searchText.search(buildingNames[n]) != -1)
-                            if (damageCell.innerHTML.search(language['buildings'][n]) != -1)
-                                catDamage[0] = n;
+                        for (var buildingIndex = 0; buildingIndex < 18; buildingIndex++) {
+                            if (damageCell.innerHTML.includes(language['buildings'][buildingIndex])) {
+                                break;
+                            }
                         }
-                        catDamage[1] = new Number(damageCell.getElementsByTagName('b')[0].innerHTML);
-                        catDamage[2] = new Number(damageCell.getElementsByTagName('b')[1].innerHTML);
-                        return catDamage;
+                        return {
+                            buildingIndex,
+                            levelBefore: parseInt(damageCell.getElementsByTagName('b')[0].innerHTML),
+                            levelAfter: parseInt(damageCell.getElementsByTagName('b')[1].innerHTML)
+                        };
                     }
                 }
             }
@@ -1070,7 +1069,7 @@ function twcheese_scrapeBattleReport(gameDoc) {
             if (!report.buildingLevels) {
                 report.buildingLevels = new BuildingLevels('?');
             }
-            report.buildingLevels[BuildingLevels.typeAt(report.catDamage[0])] = report.catDamage[2];
+            report.buildingLevels[BuildingLevels.typeAt(report.catDamage.buildingIndex)] = report.catDamage.levelAfter;
         }
 
         return report;

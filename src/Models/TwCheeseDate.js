@@ -71,8 +71,36 @@ class TwCheeseDate extends Date {
         return this.addMilliseconds(-milliseconds);
     }
 
+    getServerYear() {
+        return pretendServerIsUTC(this).getUTCFullYear();
+    }
+
+    getServerMonth() {
+        return pretendServerIsUTC(this).getUTCMonth();
+    }
+
+    getServerDate() {
+        return pretendServerIsUTC(this).getUTCDate();
+    }
+
     getServerHours() {
         return pretendServerIsUTC(this).getUTCHours();
+    }
+
+    getServerHours() {
+        return pretendServerIsUTC(this).getUTCHours();
+    }
+
+    getServerMinutes() {
+        return pretendServerIsUTC(this).getUTCMinutes();
+    }
+
+    getServerSeconds() {
+        return pretendServerIsUTC(this).getUTCSeconds();
+    }
+
+    getServerMilliseconds() {
+        return pretendServerIsUTC(this).getUTCMilliseconds();
     }
 
     isTodayOnServer() {

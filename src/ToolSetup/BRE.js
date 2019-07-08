@@ -7,6 +7,8 @@ import { calcKillScores } from '/twcheese/src/Models/KillScores.js';
 import { calcLoyalty } from '/twcheese/src/Models/Loyalty.js';
 import { TroopCounts, calcTravelDurations, troopTypes } from '/twcheese/src/Models/Troops.js';
 import { BuildingLevels, buildingTypes } from '/twcheese/src/Models/Buildings.js';
+import { TwCheeseDate } from '/twcheese/src/Models/TwCheeseDate.js';
+import { parseArrival } from '/twcheese/src/Scrape/time.js';
 import { scrapeResources } from '/twcheese/src/Scrape/res.js';
 import { userConfig } from '/twcheese/src/Util/UserConfig.js';
 import { requestDocument, gameUrl, attackPrepUrl } from '/twcheese/src/Util/Network.js';
@@ -958,41 +960,20 @@ function twcheese_BattleReportScraper(gameDocument) {
 
 
         /**
-         * @return	sent:Date
+         * @return {TwCheeseDate}
          */
         this.getSent = function () {
             var text = $(this.$gameDoc.find('#attack_luck').parents('table')[0].rows[1].cells[1]).text(); //from the element with the battle time
-            var sent = new Date();
 
             if (game_data.market == 'cz') {
+                // todo: extract to parseArrival
                 var targetString = text;
-                let numbers = targetString.match(/[0-9]{1,}/g);
-
-                sent.setSeconds(numbers[5]);
-                sent.setMinutes(numbers[4]);
-                sent.setHours(numbers[3]);
-                sent.setMonth(numbers[1] - 1, numbers[0]);
-                sent.setYear('20' + numbers[2]);
+                let [day, monthNumber, yearShort, hours, minutes, seconds] = targetString.match(/[0-9]{1,}/g);
+                let year = '20' + yearShort;
+                let month = monthNumber - 1;
+                return TwCheeseDate.newServerDate(year, month, day, hours, minutes, seconds);
             }
-            else { /* .net, .us, .co.uk */
-                let numbers = text.match(/[0-9]{1,}/g);
-                var month = text.match(/\w{3,}/);
-                for (var m = 0; m < 12; m++) {
-                    if (month == language['months'][m]) {
-                        break;
-                    }
-                }
-
-                if (numbers[5]) {
-                    sent.setMilliseconds(numbers[5]);
-                }
-                sent.setSeconds(numbers[4]);
-                sent.setMinutes(numbers[3]);
-                sent.setHours(numbers[2]);
-                sent.setMonth(m, numbers[0]);
-                sent.setYear(numbers[1]);
-            }
-            return sent;
+            return parseArrival(text);
         };
 
         /**
@@ -1613,7 +1594,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
         }
         else if (mode == 'predicted') {
             gameDoc.getElementById('twcheese_raider_selection').value = 'predicted';
-            report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed, haulBonus);
+            report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.sent, TwCheeseDate.newServerDate(), gameConfig.speed, gameConfig.unit_speed, haulBonus);
             twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), report.raidPredicted, report);
             gameDoc.getElementById('twcheese_periodic_options').style.display = 'none';
         }
@@ -2826,18 +2807,18 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         }
         else {
             var reportID = reports.shift();
-            var startTime = new Date();
+            var startTime = performance.now();
 
             let reportDoc = await requestDocument(gameUrl('report', {mode: game_data.mode, view: reportID}));
 
             try {
+                let now = TwCheeseDate.newServerDate();
                 var report = twcheese_scrapeBattleReport(reportDoc);
-
                 if (report.defenderQuantity)
                     report.defenderSurvivors = report.defenderQuantity.subtract(report.defenderLosses);                    
                 report.killScores = calcKillScores(report.attackerLosses, report.defenderLosses);
                 if (report.loyalty)
-                    report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village, report.defenderVillage);
+                    report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, now, game_data.village, report.defenderVillage);
                 report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.sent, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
                 if (report.buildingLevels)
                     report.demolition = twcheese_calculateDemolition(report.buildingLevels);
@@ -2845,7 +2826,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                     report.raidScouted = twcheese_calculateRaidScouted(report.resources);
                 if (report.espionageLevel >= 2) {
                     report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
-                    report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed);
+                    report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.sent, now, gameConfig.speed, gameConfig.unit_speed);
                     report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, 8, gameConfig.speed);
                 }
                 report.reportID = reportID;
@@ -2878,9 +2859,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 pageMod.reports[document.getElementsByName('id_' + report.reportID)[0].parentNode.parentNode.rowIndex - 1] = report;
 
                 /*==== update progress display ====*/
-                var endTime = new Date();
-                var timeElapsed = endTime.getTime() - startTime.getTime();
-                estimatedTimeRemaining = (timeElapsed * reports.length) / 1000;
+                var millisElapsed = performance.now() - startTime;
+                estimatedTimeRemaining = (millisElapsed * reports.length) / 1000;
                 var minutesRemaining = Math.floor(estimatedTimeRemaining / 60);
                 var secondsRemaining = Math.round(estimatedTimeRemaining - (minutesRemaining * 60));
                 if (minutesRemaining < 10)
@@ -3431,18 +3411,18 @@ function twcheese_calculatePopulation(buildingLevels, troopsDefending, troopsOut
 }
 
 /**
- *	@param	timeOfArrival:Date
+ *	@param {TwCheeseDate} timeOfArrival
  *	@param {TroopCounts} attackerTroops
  *	@param {Village} attackerVillage
  *	@param {Village} defenderVillage
- *	@return	{{launchTime:Date, returnTime:Date}}
+ *	@return	{{launchTime:TwCheeseDate, returnTime:TwCheeseDate}}
  */
 function twcheese_calculateTimingInfo(worldSpeed, unitSpeed, timeOfArrival, attackerTroops, attackerVillage, defenderVillage) {
     var distance = attackerVillage.distanceTo(defenderVillage);
     let travelDuration = attackerTroops.travelDuration(distance, 'attack', worldSpeed, unitSpeed);
     return {
-        launchTime: new Date(timeOfArrival.getTime() - travelDuration),
-        returnTime: new Date(timeOfArrival.getTime() + travelDuration)
+        launchTime: new TwCheeseDate(timeOfArrival.getTime() - travelDuration),
+        returnTime: new TwCheeseDate(timeOfArrival.getTime() + travelDuration)
     };
 }
 
@@ -3514,8 +3494,8 @@ function twcheese_calculateRaidScouted(resourcesScouted, haulBonus) {
  *	@param {BuildingLevels} buildingLevels
  *	@param {Village|{x:number, y:number}} home
  *	@param {Village} target
- *	@param	timeSent:Date	the time the player received the report
- *	@param	timeNow:Date	the current time
+ *	@param {TwCheeseDate} timeSent the time the player received the report
+ *	@param {TwCheeseDate} timeNow the current time
  *	@param	haulBonus:Number	the extra % bonus haul from flags, events, etc. Example: 30 for 30%, NOT 0.3
  *	@return	troops:Array(spear,sword,axe,archer,lcav,acav,hcav)	an array of how many of each type of troop should be sent to take all resources, provided only one type of troop is sent
  */
@@ -3636,7 +3616,7 @@ function twcheese_nameReport(report, note) {
     newName += report.defender.name.replace(language['report']['deletedPlayer'], '');
     newName += '(' + report.defenderVillage.x + '|' + report.defenderVillage.y + ',' + report.defenderVillage.id + ')';
 
-    newName += '_t:' + Math.floor(new Date(report.timingInfo.launchTime).getTime() / 1000) + '. ';
+    newName += '_t:' + Math.floor(report.timingInfo.launchTime.getTime() / 1000) + '. ';
     if (report.attackerLosses.snob > 0) //dead noble
         newName += '_x';
     if (report.loyalty)
@@ -3783,7 +3763,7 @@ function twcheese_interpretReportName(reportName) {
                 if (reportName.search('_t:') != -1) {
                     let text = reportName.substring(reportName.indexOf('_t:') + 3);
                     text = text.substring(0, text.indexOf('.'));
-                    report.timeLaunched = new Date(Number(text) * 1000);
+                    report.timeLaunched = TwCheeseDate.newServerDate(parseInt(text) * 1000);
                 }
 
                 /*==== set defender ====*/
@@ -3819,26 +3799,26 @@ function twcheese_interpretReportName(reportName) {
 }
 
 /**
- *	@param time:Date
+ *	@param {TwCheeseDate} time
  *	@return time:String	formatted TW style
  */
 function twcheese_dateToString(time) {
     var monthText = new Array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
     var timeString = '';
-    timeString += monthText[time.getMonth()] + ' ';
-    if (time.getDate() < 10)
+    timeString += monthText[time.getServerMonth()] + ' ';
+    if (time.getServerDate() < 10)
         timeString += '0';
-    timeString += time.getDate() + ', ';
-    timeString += time.getFullYear() + '  ';
-    if (time.getHours() < 10)
+    timeString += time.getServerDate() + ', ';
+    timeString += time.getServerYear() + '  ';
+    if (time.getServerHours() < 10)
         timeString += '0';
-    timeString += time.getHours() + ':';
-    if (time.getMinutes() < 10)
+    timeString += time.getServerHours() + ':';
+    if (time.getServerMinutes() < 10)
         timeString += '0';
-    timeString += time.getMinutes() + ':';
-    if (time.getSeconds() < 10)
+    timeString += time.getServerMinutes() + ':';
+    if (time.getServerSeconds() < 10)
         timeString += '0';
-    timeString += time.getSeconds();
+    timeString += time.getServerSeconds();
     return timeString;
 }
 
@@ -3852,24 +3832,6 @@ function twcheese_requestXML(targetUrl) {
     xmlhttp.open("GET", targetUrl, false);
     xmlhttp.send("");
     return xmlhttp.responseText;
-}
-
-/**
- *	@return serverTime:Date();
- */
-function twcheese_getServerTime() {
-    var serverTime = new Date();
-    var date = document.getElementById('serverDate').innerHTML;
-    var time = document.getElementById('serverTime').innerHTML;
-
-    serverTime.setYear(date.split('/')[2]);
-    serverTime.setMonth(date.split('/')[1] - 1);
-    serverTime.setDate(date.split('/')[0]);
-    serverTime.setHours(time.split(':')[0]);
-    serverTime.setMinutes(time.split(':')[1]);
-    serverTime.setSeconds(time.split(':')[2]);
-
-    return serverTime;
 }
 
 /*==== storage functions ====*/
@@ -3983,6 +3945,7 @@ function enhanceReport(gameConfig) {
     let twcheese_BRESettings = twcheese_getBRESettings();
 
     /*==== calculate additional information ===*/
+    let now = TwCheeseDate.newServerDate();
     let report = new twcheese_scrapeBattleReport(document);
     if (report.attackerQuantity)
         report.attackerSurvivors = report.attackerQuantity.subtract(report.attackerLosses);
@@ -3990,7 +3953,7 @@ function enhanceReport(gameConfig) {
         report.defenderSurvivors = report.defenderQuantity.subtract(report.defenderLosses);        
     report.killScores = calcKillScores(report.attackerLosses, report.defenderLosses);
     if (report.loyalty)
-        report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, twcheese_getServerTime(), game_data.village, report.defenderVillage);
+        report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, now, game_data.village, report.defenderVillage);
     report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.sent, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
     if (report.buildingLevels)
         report.demolition = twcheese_calculateDemolition(report.buildingLevels);
@@ -3998,7 +3961,7 @@ function enhanceReport(gameConfig) {
         report.raidScouted = twcheese_calculateRaidScouted(report.resources);
     if (report.espionageLevel >= 2) {
         report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
-        report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.sent, twcheese_getServerTime(), gameConfig.speed, gameConfig.unit_speed);
+        report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.sent, now, gameConfig.speed, gameConfig.unit_speed);
         report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, 8, gameConfig.speed);
     }
 

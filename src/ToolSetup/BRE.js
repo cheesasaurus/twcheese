@@ -1337,28 +1337,38 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
 
             demolitionUnitsTable.rows[0].insertCell(-1);
             demolitionUnitsTable.rows[0].insertCell(-1);
-            demolitionUnitsTable.rows[0].cells[0].colSpan = 17;
+            demolitionUnitsTable.rows[0].cells[0].colSpan = buildingTypes.length - 2; // use catapults for everything except the wall. and exclude the watchtower for now
             demolitionUnitsTable.rows[0].cells[0].innerHTML = '<img src="' + imagePaths['catapult'] + '" alt="catapults" />';
             demolitionUnitsTable.rows[0].cells[1].innerHTML = '<img src="' + imagePaths['ram'] + '" alt="rams" />';
 
             var buildingLanguage = new Array('hq', 'barracks', 'stable', 'workshop', 'church', 'church_f', 'academy', 'smithy', 'rally', 'statue', 'market', 'timber', 'clay', 'iron', 'farm', 'warehouse', 'hiding', 'wall');
             var siege_weapon = 'catapult';
-            for (let i = 0; i < 18; i++) {
-                demolitionUnitsTable.rows[1].insertCell(-1);
-                demolitionUnitsTable.rows[1].cells[i].width = "35px";
+
+            for (let buildingType of buildingTypes) {
+                if (buildingType === 'watchtower') {
+                    continue;
+                    // todo: handle watchtower.
+                    // backwards compatible with old named reports, without the watchtower in the array of building levels.
+                    // and list the wall last
+                }
+
+                let headerCell = demolitionUnitsTable.rows[1].insertCell(-1);
+                headerCell.width = "35px";
                 if (game_data.market == 'uk') {
-                    demolitionUnitsTable.rows[1].cells[i].innerHTML = '<img src="' + imagePaths[buildingLanguage[i]] + '" alt="' + buildingLanguage[i] + '" />';
+                    headerCell.innerHTML = '<img src="' + ImageSrc.buildingIcon(buildingType) + '" alt="' + buildingLanguage[i] + '" />';
                 } else {
                     if (i == 17) {
                         siege_weapon = 'ram';
                     }
                     let rallyPointUrl = attackPrepUrl({[siege_weapon]: report.demolition.oneShotUpgraded[i]}, report.defenderVillage.id);
-                    demolitionUnitsTable.rows[1].cells[i].innerHTML = '<a href="' + rallyPointUrl + '"><img src="' + imagePaths[buildingLanguage[i]] + '" alt="' + buildingLanguage[i] + '" /></a>';
+                    headerCell.innerHTML = '<a href="' + rallyPointUrl + '"><img src="' + ImageSrc.buildingIcon(buildingType) + '" alt="' + buildingLanguage[i] + '" /></a>';
                 }
-                demolitionUnitsTable.rows[2].insertCell(-1);
-                demolitionUnitsTable.rows[2].cells[i].innerHTML = report.demolition.oneShotScouted[i];
-                demolitionUnitsTable.rows[3].insertCell(-1);
-                demolitionUnitsTable.rows[3].cells[i].innerHTML = report.demolition.oneShotUpgraded[i];
+
+                let scoutedCell = demolitionUnitsTable.rows[2].insertCell(-1);
+                scoutedCell.innerHTML = report.demolition.oneShotScouted[buildingType];
+
+                let upgradedCell = demolitionUnitsTable.rows[3].insertCell(-1);
+                upgradedCell.innerHTML = report.demolition.oneShotUpgraded[buildingType];
             }
 
             demolitionTable.insertRow(-1);
@@ -3427,12 +3437,21 @@ function twcheese_calculateTimingInfo(worldSpeed, unitSpeed, timeOfArrival, atta
 }
 
 /**
- *	@param {BuildingLevels} buildings
- *	@return smashUnits:Array(demoScouted:Array,demoBuffer:Array)	an array of arrays of #cats to downgrade each building as much as possible (and #rams for wall). demoScouted is for scouted levels, demoBuffer is for buildings 1 level higher than scouted
+ * @param {BuildingLevels} buildingLevels
+ * @return {{oneShotScouted:object, oneShotUpgraded:object}} mappings of how many siege units to demolish buildings
+ *     example: {
+ *         oneShotScouted: {
+ *             barracks: 23, // 23 catapults to demolish the scouted barracks level in one shot
+ *             wall: 42 // 42 rams to demolish the scouted wall level in one shot
+ *         },
+ *         oneShotUpgraded: {
+ *             barracks: 69, // 69 catapults to demolish the scouted barracks level, +1 upgrade, in one shot
+ *             wall: 1337 // 1337 rams to demolish the scouted wall level, +1 upgrade, in one shot
+ *         }
+ *     }
+ *  
  */
 function twcheese_calculateDemolition(buildingLevels) {
-    var demoScouted = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    var demoBuffer = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     var catAmounts = new Array(0, 2, 6, 10, 15, 21, 28, 36, 45, 56, 68, 82, 98, 115, 136, 159, 185, 215, 248, 286, 328, 376, 430, 490, 558, 634, 720, 815, 922, 1041, 1175, 1175);
     var catAmountsChurch = new Array(0, 400, 500, 600, 600);
     var ramAmounts = new Array(0, 2, 4, 7, 10, 14, 19, 24, 30, 37, 45, 55, 65, 77, 91, 106, 124, 143, 166, 191, 219);
@@ -3442,35 +3461,37 @@ function twcheese_calculateDemolition(buildingLevels) {
         switch (buildingType) {
             case 'wall':    return ramAmounts;
             case 'church':  return catAmountsChurch;
+            // todo: check if watchtower uses something special
             default:        return catAmounts;
         }
     }
 
-    function assignDemolition(i) {
-        let buildingType = BuildingLevels.typeAt(i);
+    let demoScouted = {};
+    let demoBuffer = {};
 
+    function assignDemolition(buildingType) {
         if (invulnerable.includes(buildingType)) {
-            demoScouted[i] = 'NA';
-            demoBuffer[i] = 'NA';
+            demoScouted[buildingType] = 'NA';
+            demoBuffer[buildingType] = 'NA';
             return;
         }
 
         let level = buildingLevels[buildingType];
         if (level === '?') {
-            demoScouted[i] = '?';
-            demoBuffer[i] = '?';
+            demoScouted[buildingType] = '?';
+            demoBuffer[buildingType] = '?';
             return;
         }
 
         let siegeAmounts = whichSiegeLookup(buildingType);
 
-        demoScouted[i] = siegeAmounts[level];
+        demoScouted[buildingType] = siegeAmounts[level];
         let bufferLevel = buildingLevels.canUpgrade(buildingType) ? level + 1 : level;
-        demoBuffer[i] = siegeAmounts[bufferLevel];
+        demoBuffer[buildingType] = siegeAmounts[bufferLevel];
     }
 
-    for (let i = 0; i < 18; i++) {
-        assignDemolition(i); // todo: assign to maps keyed by buildingType instead of arrays
+    for (let buildingType of buildingTypes) {
+        assignDemolition(buildingType);
     }
 
     return {

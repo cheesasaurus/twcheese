@@ -25,7 +25,8 @@ let ImageSrc = {
     legacy: {
         helpBackground: self + 'legacy/help_background.png',
         helpBackgroundBright: self + 'legacy/help_background_highlight.png'
-    }
+    },    
+    buildingIcon: buildingType => game + `buildings/${buildingType}.png`
 };
 
 export { ImageSrc };

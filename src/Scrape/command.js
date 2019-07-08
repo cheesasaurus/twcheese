@@ -14,7 +14,7 @@ function scrapeCommand(gameDoc) {
     let tables = content.getElementsByTagName('table');
     let rowMap = mapFirstTable(tables);
 
-    command.arrival = parseArrival($(rowMap.arrival.cells[1]).text());
+    command.arrival = parseArrival($(rowMap.arrival.cells[1]).text(), window.game_data.market);
 
     if (tables.length < 3) {
         return command;

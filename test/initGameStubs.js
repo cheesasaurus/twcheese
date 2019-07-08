@@ -7,6 +7,10 @@ window.TwCheese = {
 window.image_base = 'https://dsen.innogamescdn.com/asset/5cfabaf2/graphic/';
 window.server_utc_diff = 3600;
 
+window.game_data = {
+    market: 'en'
+};
+
 window.Timing = {
     getCurrentServerTime: () => 1560761394661
 };

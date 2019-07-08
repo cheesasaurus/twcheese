@@ -973,7 +973,7 @@ function twcheese_BattleReportScraper(gameDocument) {
                 let month = monthNumber - 1;
                 return TwCheeseDate.newServerDate(year, month, day, hours, minutes, seconds);
             }
-            return parseArrival(text);
+            return parseArrival(text, window.game_data.market);
         };
 
         /**

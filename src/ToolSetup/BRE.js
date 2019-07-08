@@ -916,7 +916,7 @@ function twcheese_BattleReportScraper(gameDocument) {
         };
 
         /**
-         *	@return ramDamage:Array(beforeLevel:Number,afterLevel:Number)
+         *	@return {{levelBefore:number, levelAfter:number} | false}
          *	if no ram damage was done, returns boolean false
          */
         this.getRamDamage = function () {
@@ -924,15 +924,14 @@ function twcheese_BattleReportScraper(gameDocument) {
                 var thElements = this.resultsTable.getElementsByTagName('th');
                 for (var i = 0; i < thElements.length; i++) {
                     if (thElements[i].innerHTML == language['report']['ramDamage']) {
-                        var ramDamage = new Array(0, 0);
                         var damageCell = thElements[i].parentNode.cells[1];
-                        ramDamage[0] = new Number(damageCell.getElementsByTagName('b')[0].innerHTML);
-                        ramDamage[1] = new Number(damageCell.getElementsByTagName('b')[1].innerHTML);
-                        return ramDamage;
+                        return {
+                            levelBefore: parseInt(damageCell.getElementsByTagName('b')[0].innerHTML),
+                            levelAfter: parseInt(damageCell.getElementsByTagName('b')[1].innerHTML)
+                        };
                     }
                 }
             }
-
             return false;
         };
 
@@ -1065,7 +1064,7 @@ function twcheese_scrapeBattleReport(gameDoc) {
             if (!report.buildingLevels) {
                 report.buildingLevels = new BuildingLevels('?');
             }    
-            report.buildingLevels.wall = report.ramDamage[1];
+            report.buildingLevels.wall = report.ramDamage.levelAfter;
         }
         if (report.catDamage) {
             if (!report.buildingLevels) {

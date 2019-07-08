@@ -521,6 +521,55 @@ try {
             language['twcheese']['Help'] = 'Hjelp';
             language['twcheese']['noReportsSelected'] = 'Du har ikke valgt hvilke rapporter som skal endres navn på.';
             break;
+
+        // Portugal
+        case 'pt':
+            twcheese.language['buildings'][0] = 'Edifício Principal';
+            twcheese.language['buildings'][1] = 'Quartel';
+            twcheese.language['buildings'][2] = 'Estábulo';
+            twcheese.language['buildings'][3] = 'Oficina';
+            twcheese.language['buildings'][4] = 'Igreja';
+            twcheese.language['buildings'][5] = 'Primeira Igreja';
+            twcheese.language['buildings'][6] = 'Academia';
+            twcheese.language['buildings'][7] = 'Ferreiro';
+            twcheese.language['buildings'][8] = 'Praça de Reuniões';
+            twcheese.language['buildings'][9] = 'Estátua';
+            twcheese.language['buildings'][10] = 'Mercado';
+            twcheese.language['buildings'][11] = 'Bosque';
+            twcheese.language['buildings'][12] = 'Poço de Argila';
+            twcheese.language['buildings'][13] = 'Mina de Ferro';
+            twcheese.language['buildings'][14] = 'Fazenda';
+            twcheese.language['buildings'][15] = 'Armazém';
+            twcheese.language['buildings'][16] = 'Esconderijo';
+            twcheese.language['buildings'][17] = 'Muralha';
+                    
+            twcheese.language['months'][0] = 'jan';
+            twcheese.language['months'][1] = 'fev';
+            twcheese.language['months'][2] = 'mar';
+            twcheese.language['months'][3] = 'abr';
+            twcheese.language['months'][4] = 'mai';
+            twcheese.language['months'][5] = 'jun';
+            twcheese.language['months'][6] = 'jul';
+            twcheese.language['months'][7] = 'ago';
+            twcheese.language['months'][8] = 'set';
+            twcheese.language['months'][9] = 'out';
+            twcheese.language['months'][10] = 'nov';
+            twcheese.language['months'][11] = 'dez';
+        
+            twcheese.language['report']['catDamage'] = 'Dano provocado por catapultas:';
+            twcheese.language['report']['ramDamage'] = 'Dano provocado por aríetes:';
+            twcheese.language['report']['farmAssistant'] = 'Possíveis recursos:';
+            twcheese.language['report']['haul'] = 'Busca minuciosa:';
+            twcheese.language['report']['loyalty'] = 'Lealdade:';
+            twcheese.language['report']['timeSent'] = 'Tempo de batalha';
+            twcheese.language['report']['unitsInTransit'] = 'Unidades fora da aldeia';
+            twcheese.language['report']['deletedPlayer'] = '(eliminado)';
+            twcheese.language['report']['unread'] = '(novo)';
+        
+            twcheese.language['twcheese']['Building'] = 'Building';
+            twcheese.language['twcheese']['Help'] = 'Help';
+            twcheese.language['twcheese']['noReportsSelected'] = 'You haven\'t selected any reports to be renamed.';
+                            
     }
 } catch (e) { console.error(e) }
 

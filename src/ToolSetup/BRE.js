@@ -235,24 +235,24 @@ try {
     switch (game_data.market) {
         default:
             /*==== tribalwars.net, tribalwars.us, tribalwars.co.uk, beta.tribalwars.net ====*/
-            language['buildings'][0] = 'Headquarters';
-            language['buildings'][1] = 'Barracks';
-            language['buildings'][2] = 'Stable';
-            language['buildings'][3] = 'Workshop';
-            language['buildings'][4] = 'Church';
-            language['buildings'][5] = 'First church';
-            language['buildings'][6] = 'Academy';
-            language['buildings'][7] = 'Smithy';
-            language['buildings'][8] = 'Rally point';
-            language['buildings'][9] = 'Statue';
-            language['buildings'][10] = 'Market';
-            language['buildings'][11] = 'Timber camp';
-            language['buildings'][12] = 'Clay pit';
-            language['buildings'][13] = 'Iron mine';
-            language['buildings'][14] = 'Farm';
-            language['buildings'][15] = 'Warehouse';
-            language['buildings'][16] = 'Hiding place';
-            language['buildings'][17] = 'Wall';
+            language['buildings']['main'] = 'Headquarters';
+            language['buildings']['barracks'] = 'Barracks';
+            language['buildings']['stable'] = 'Stable';
+            language['buildings']['garage'] = 'Workshop';
+            language['buildings']['church'] = 'Church';
+            language['buildings']['church_f'] = 'First church';
+            language['buildings']['snob'] = 'Academy';
+            language['buildings']['smith'] = 'Smithy';
+            language['buildings']['place'] = 'Rally point';
+            language['buildings']['statue'] = 'Statue';
+            language['buildings']['market'] = 'Market';
+            language['buildings']['wood'] = 'Timber camp';
+            language['buildings']['stone'] = 'Clay pit';
+            language['buildings']['iron'] = 'Iron mine';
+            language['buildings']['farm'] = 'Farm';
+            language['buildings']['storage'] = 'Warehouse';
+            language['buildings']['hide'] = 'Hiding place';
+            language['buildings']['wall'] = 'Wall';
 
             language['months'][0] = 'Jan';
             language['months'][1] = 'Feb';
@@ -284,24 +284,24 @@ try {
 
         case 'cz':
             /*==== divokekmeny.cz/ ====*/
-            language['buildings'][0] = 'Hlavní budova';
-            language['buildings'][1] = 'Kasárna';
-            language['buildings'][2] = 'Stáj';
-            language['buildings'][3] = 'Dílna';
-            language['buildings'][4] = 'Kostel';
-            language['buildings'][5] = 'První kostel';
-            language['buildings'][6] = 'Panský dvůr';
-            language['buildings'][7] = 'Kovárna';
-            language['buildings'][8] = 'Nádvoří';
-            language['buildings'][9] = 'Socha';
-            language['buildings'][10] = 'Tržiště';
-            language['buildings'][11] = 'Dřevorubec';
-            language['buildings'][12] = 'Lom na těžbu hlíny';
-            language['buildings'][13] = 'Železný důl';
-            language['buildings'][14] = 'Selský dvůr';
-            language['buildings'][15] = 'Skladiště';
-            language['buildings'][16] = 'Skrýš';
-            language['buildings'][17] = 'Hradby';
+            language['buildings']['main'] = 'Hlavní budova';
+            language['buildings']['barracks'] = 'Kasárna';
+            language['buildings']['stable'] = 'Stáj';
+            language['buildings']['garage'] = 'Dílna';
+            language['buildings']['church'] = 'Kostel';
+            language['buildings']['church_f'] = 'První kostel';
+            language['buildings']['snob'] = 'Panský dvůr';
+            language['buildings']['smith'] = 'Kovárna';
+            language['buildings']['place'] = 'Nádvoří';
+            language['buildings']['statue'] = 'Socha';
+            language['buildings']['market'] = 'Tržiště';
+            language['buildings']['wood'] = 'Dřevorubec';
+            language['buildings']['stone'] = 'Lom na těžbu hlíny';
+            language['buildings']['iron'] = 'Železný důl';
+            language['buildings']['farm'] = 'Selský dvůr';
+            language['buildings']['storage'] = 'Skladiště';
+            language['buildings']['hide'] = 'Skrýš';
+            language['buildings']['wall'] = 'Hradby';
 
             language['months'][0] = 'Jan';
             language['months'][1] = 'Feb';
@@ -332,24 +332,24 @@ try {
             break;
 
         case 'se':
-            language['buildings'][0] = 'Högkvarter';
-            language['buildings'][1] = 'Barack';
-            language['buildings'][2] = 'Stall';
-            language['buildings'][3] = 'Verkstad';
-            language['buildings'][4] = 'Kyrka';
-            language['buildings'][5] = 'Första Kyrkan';
-            language['buildings'][6] = 'Akademi';
-            language['buildings'][7] = 'Smedja';
-            language['buildings'][8] = 'Samlingsplats';
-            language['buildings'][9] = 'Staty';
-            language['buildings'][10] = 'Marknad';
-            language['buildings'][11] = 'Sågverk';
-            language['buildings'][12] = 'Lergrop';
-            language['buildings'][13] = 'Järngruva';
-            language['buildings'][14] = 'Farm';
-            language['buildings'][15] = 'Förråd';
-            language['buildings'][16] = 'Gömställe';
-            language['buildings'][17] = 'Mur';
+            language['buildings']['main'] = 'Högkvarter';
+            language['buildings']['barracks'] = 'Barack';
+            language['buildings']['stable'] = 'Stall';
+            language['buildings']['garage'] = 'Verkstad';
+            language['buildings']['church'] = 'Kyrka';
+            language['buildings']['church_f'] = 'Första Kyrkan';
+            language['buildings']['snob'] = 'Akademi';
+            language['buildings']['smith'] = 'Smedja';
+            language['buildings']['place'] = 'Samlingsplats';
+            language['buildings']['statue'] = 'Staty';
+            language['buildings']['market'] = 'Marknad';
+            language['buildings']['wood'] = 'Sågverk';
+            language['buildings']['stone'] = 'Lergrop';
+            language['buildings']['iron'] = 'Järngruva';
+            language['buildings']['farm'] = 'Farm';
+            language['buildings']['storage'] = 'Förråd';
+            language['buildings']['hide'] = 'Gömställe';
+            language['buildings']['wall'] = 'Mur';
 
             language['months'][0] = 'Jan';
             language['months'][1] = 'Feb';
@@ -381,24 +381,24 @@ try {
 
         /*==== fyletikesmaxes.gr/ ====*/
         case 'gr':
-            language['buildings'][0] = 'Επιτελείο';
-            language['buildings'][1] = 'Στρατώνας';
-            language['buildings'][2] = 'Στάβλος';
-            language['buildings'][3] = 'Εργαστήριο';
-            language['buildings'][4] = 'Εκκλησία';
-            language['buildings'][5] = 'ΠρώτηΕκκλησία';
-            language['buildings'][6] = 'Ακαδημία';
-            language['buildings'][7] = 'Οπλοποιείο';
-            language['buildings'][8] = 'ΜέροςΣυγκέντρωσης';
-            language['buildings'][9] = 'Άγαλμα';
-            language['buildings'][10] = 'Αγορά';
-            language['buildings'][11] = 'Ξυλουργείο';
-            language['buildings'][12] = 'Λατομείο';
-            language['buildings'][13] = 'Σιδηρωρυχείο';
-            language['buildings'][14] = 'Αγρόκτημα';
-            language['buildings'][15] = 'Αποθήκη';
-            language['buildings'][16] = 'Κρυψώνα';
-            language['buildings'][17] = 'Τείχος';
+            language['buildings']['main'] = 'Επιτελείο';
+            language['buildings']['barracks'] = 'Στρατώνας';
+            language['buildings']['stable'] = 'Στάβλος';
+            language['buildings']['garage'] = 'Εργαστήριο';
+            language['buildings']['church'] = 'Εκκλησία';
+            language['buildings']['church_f'] = 'ΠρώτηΕκκλησία';
+            language['buildings']['snob'] = 'Ακαδημία';
+            language['buildings']['smith'] = 'Οπλοποιείο';
+            language['buildings']['place'] = 'ΜέροςΣυγκέντρωσης';
+            language['buildings']['statue'] = 'Άγαλμα';
+            language['buildings']['market'] = 'Αγορά';
+            language['buildings']['wood'] = 'Ξυλουργείο';
+            language['buildings']['stone'] = 'Λατομείο';
+            language['buildings']['iron'] = 'Σιδηρωρυχείο';
+            language['buildings']['farm'] = 'Αγρόκτημα';
+            language['buildings']['storage'] = 'Αποθήκη';
+            language['buildings']['hide'] = 'Κρυψώνα';
+            language['buildings']['wall'] = 'Τείχος';
 
             language['months'][0] = 'Ιαν';
             language['months'][1] = 'Φεβ';
@@ -430,24 +430,24 @@ try {
 
         /* the market where Arma plays :D */
         case 'hr':
-            language['buildings'][0] = 'Sjedište';
-            language['buildings'][1] = 'Vojarna';
-            language['buildings'][2] = 'Štala';
-            language['buildings'][3] = 'Radionica';
-            language['buildings'][4] = 'Crkva';
-            language['buildings'][5] = 'Prva crkva';
-            language['buildings'][6] = 'Akademija';
-            language['buildings'][7] = 'Kovačnica';
-            language['buildings'][8] = 'Okupljalište';
-            language['buildings'][9] = 'Spomenik';
-            language['buildings'][10] = 'Tržnica';
-            language['buildings'][11] = 'Drvosječa';
-            language['buildings'][12] = 'Glinokop';
-            language['buildings'][13] = 'Rudnik željeza';
-            language['buildings'][14] = 'Farma';
-            language['buildings'][15] = 'Spremište';
-            language['buildings'][16] = 'Skrovište';
-            language['buildings'][17] = 'Zid';
+            language['buildings']['main'] = 'Sjedište';
+            language['buildings']['barracks'] = 'Vojarna';
+            language['buildings']['stable'] = 'Štala';
+            language['buildings']['garage'] = 'Radionica';
+            language['buildings']['church'] = 'Crkva';
+            language['buildings']['church_f'] = 'Prva crkva';
+            language['buildings']['snob'] = 'Akademija';
+            language['buildings']['smith'] = 'Kovačnica';
+            language['buildings']['place'] = 'Okupljalište';
+            language['buildings']['statue'] = 'Spomenik';
+            language['buildings']['market'] = 'Tržnica';
+            language['buildings']['wood'] = 'Drvosječa';
+            language['buildings']['stone'] = 'Glinokop';
+            language['buildings']['iron'] = 'Rudnik željeza';
+            language['buildings']['farm'] = 'Farma';
+            language['buildings']['storage'] = 'Spremište';
+            language['buildings']['hide'] = 'Skrovište';
+            language['buildings']['wall'] = 'Zid';
 
             language['months'][0] = 'Sij';
             language['months'][1] = 'Vel';
@@ -474,24 +474,24 @@ try {
 
         /* Norwegian */
         case 'no':
-            language['buildings'][0] = 'Hovedkvarter';
-            language['buildings'][1] = 'Brakker';
-            language['buildings'][2] = 'Stall';
-            language['buildings'][3] = 'Verksted';
-            language['buildings'][4] = 'Kirke';
-            language['buildings'][5] = 'Første Kirke';
-            language['buildings'][6] = 'Akademi';
-            language['buildings'][7] = 'Smie';
-            language['buildings'][8] = 'Samlingsplass';
-            language['buildings'][9] = 'Statue';
-            language['buildings'][10] = 'Marked';
-            language['buildings'][11] = 'Hogstfelt';
-            language['buildings'][12] = 'Leirgrav';
-            language['buildings'][13] = 'Jerngruve';
-            language['buildings'][14] = 'Gård';
-            language['buildings'][15] = 'Varehus';
-            language['buildings'][16] = 'Skjulested';
-            language['buildings'][17] = 'Mur';
+            language['buildings']['main'] = 'Hovedkvarter';
+            language['buildings']['barracks'] = 'Brakker';
+            language['buildings']['stable'] = 'Stall';
+            language['buildings']['garage'] = 'Verksted';
+            language['buildings']['church'] = 'Kirke';
+            language['buildings']['church_f'] = 'Første Kirke';
+            language['buildings']['snob'] = 'Akademi';
+            language['buildings']['smith'] = 'Smie';
+            language['buildings']['place'] = 'Samlingsplass';
+            language['buildings']['statue'] = 'Statue';
+            language['buildings']['market'] = 'Marked';
+            language['buildings']['wood'] = 'Hogstfelt';
+            language['buildings']['stone'] = 'Leirgrav';
+            language['buildings']['iron'] = 'Jerngruve';
+            language['buildings']['farm'] = 'Gård';
+            language['buildings']['storage'] = 'Varehus';
+            language['buildings']['hide'] = 'Skjulested';
+            language['buildings']['wall'] = 'Mur';
 
             language['months'][0] = 'Jan';
             language['months'][1] = 'Feb';
@@ -526,24 +526,24 @@ try {
 
         // Portugal
         case 'pt':
-            language['buildings'][0] = 'Edifício Principal';
-            language['buildings'][1] = 'Quartel';
-            language['buildings'][2] = 'Estábulo';
-            language['buildings'][3] = 'Oficina';
-            language['buildings'][4] = 'Igreja';
-            language['buildings'][5] = 'Primeira Igreja';
-            language['buildings'][6] = 'Academia';
-            language['buildings'][7] = 'Ferreiro';
-            language['buildings'][8] = 'Praça de Reuniões';
-            language['buildings'][9] = 'Estátua';
-            language['buildings'][10] = 'Mercado';
-            language['buildings'][11] = 'Bosque';
-            language['buildings'][12] = 'Poço de Argila';
-            language['buildings'][13] = 'Mina de Ferro';
-            language['buildings'][14] = 'Fazenda';
-            language['buildings'][15] = 'Armazém';
-            language['buildings'][16] = 'Esconderijo';
-            language['buildings'][17] = 'Muralha';
+            language['buildings']['main'] = 'Edifício Principal';
+            language['buildings']['barracks'] = 'Quartel';
+            language['buildings']['stable'] = 'Estábulo';
+            language['buildings']['garage'] = 'Oficina';
+            language['buildings']['church'] = 'Igreja';
+            language['buildings']['church_f'] = 'Primeira Igreja';
+            language['buildings']['snob'] = 'Academia';
+            language['buildings']['smith'] = 'Ferreiro';
+            language['buildings']['place'] = 'Praça de Reuniões';
+            language['buildings']['statue'] = 'Estátua';
+            language['buildings']['market'] = 'Mercado';
+            language['buildings']['wood'] = 'Bosque';
+            language['buildings']['stone'] = 'Poço de Argila';
+            language['buildings']['iron'] = 'Mina de Ferro';
+            language['buildings']['farm'] = 'Fazenda';
+            language['buildings']['storage'] = 'Armazém';
+            language['buildings']['hide'] = 'Esconderijo';
+            language['buildings']['wall'] = 'Muralha';
                     
             language['months'][0] = 'jan';
             language['months'][1] = 'fev';
@@ -780,8 +780,7 @@ function twcheese_BattleReportScraper(gameDocument) {
                     if (thElements[i].innerHTML == language['report']['catDamage']) {
                         var damageCell = thElements[i].parentNode.cells[1];
                         for (var buildingType of buildingTypes) {
-                            let index = buildingTypes.indexOf(buildingType); // todo: change language keys
-                            if (damageCell.innerHTML.includes(language['buildings'][index])) {
+                            if (damageCell.innerHTML.includes(language['buildings'][buildingType])) {
                                 break;
                             }
                         }
@@ -2347,10 +2346,11 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
 
     /*=== building options ====*/
     for (let i = 0; i < 18; i++) {
+        // todo: all buildings, not hardcoded
         checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(" + Number(i + 24) + ",'buildings[" + i + "]')";
         var targetCell = reportsFolderSettingsTable.rows[i].cells[1];
         targetCell.innerHTML = '<input onClick="' + checkboxScript + '" type="checkbox"/>';
-        targetCell.innerHTML += language['twcheese']['Building'] + ': ' + language['buildings'][i]; // todo: change language keys
+        targetCell.innerHTML += language['twcheese']['Building'] + ': ' + language['buildings'][buildingTypes[i]];
     }
 
 

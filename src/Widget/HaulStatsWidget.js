@@ -55,7 +55,7 @@ class HaulStatsWidget extends AbstractWidget {
             hourlyBreakdowns.push(`
                 <tr>
                     <td>${hourOfDay}:00 - ${hourOfDay}:59 ${dayHint}</td>
-                    <td>${result.haul.timber}</td>
+                    <td>${result.haul.wood}</td>
                     <td>${result.haul.clay}</td>
                     <td>${result.haul.iron}</td>
                     <td>${result.sumLoot()}/${result.haulCapacity}</td>
@@ -100,7 +100,7 @@ class HaulStatsWidget extends AbstractWidget {
                             <tr><td colspan="6" style="text-align: center; font-size: 16px;">Incoming Resources ${pageInfo}</td></tr>
                             <tr>
                                 <th>Arrival</th>
-                                <th><img src="${ImageSrc.timber}"></img></th>
+                                <th><img src="${ImageSrc.wood}"></img></th>
                                 <th><img src="${ImageSrc.clay}"></img></th>
                                 <th><img src="${ImageSrc.iron}"></img></th>
                                 <th colspan="2">Performance</th>
@@ -150,7 +150,7 @@ class HaulStatsWidget extends AbstractWidget {
         let sum = Command.sumPropsFromTimeframe(this.commands, startTime, endTime);
 
         this.$sum.html(`
-            <img src="${ImageSrc.timber}"> ${sum.haul.timber}
+            <img src="${ImageSrc.wood}"> ${sum.haul.wood}
             <img src="${ImageSrc.clay}"> ${sum.haul.clay}
             <img src="${ImageSrc.iron}"> ${sum.haul.iron}
             &nbsp;&nbsp;| ${sum.sumLoot()}/${sum.haulCapacity} (${sum.calcHaulPercent()}%)

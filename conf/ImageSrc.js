@@ -4,7 +4,7 @@ let self = window.TwCheese.ROOT + '/assets/images/';
 let ImageSrc = {
     plus: game + 'plus.png',
     minus: game + 'minus.png',
-    timber: game + 'holz.png',
+    wood: game + 'holz.png',
     clay: game + 'lehm.png',
     iron: game + 'eisen.png',
     popupBackground: game + 'popup/content_background.png',

@@ -1602,7 +1602,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
         }
         else if (mode == 'predicted') {
             gameDoc.getElementById('twcheese_raider_selection').value = 'predicted';
-            report.raidPredicted = twcheese_calculateRaidPredicted(report.resources.toArray(), report.buildingLevels, game_data.village, report.defenderVillage, report.sent, TwCheeseDate.newServerDate(), gameConfig.speed, gameConfig.unit_speed, haulBonus);
+            report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.sent, TwCheeseDate.newServerDate(), gameConfig.speed, gameConfig.unit_speed, haulBonus);
             twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), report.raidPredicted, report);
             gameDoc.getElementById('twcheese_periodic_options').style.display = 'none';
         }
@@ -2836,7 +2836,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                     report.raidScouted = twcheese_calculateRaidScouted(report.resources);
                 if (report.espionageLevel >= 2) {
                     report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
-                    report.raidPredicted = twcheese_calculateRaidPredicted(report.resources.toArray(), report.buildingLevels, game_data.village, report.defenderVillage, report.sent, now, gameConfig.speed, gameConfig.unit_speed);
+                    report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.sent, now, gameConfig.speed, gameConfig.unit_speed);
                     report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, 8, gameConfig.speed);
                 }
                 report.reportID = reportID;
@@ -3511,55 +3511,54 @@ function twcheese_calculateRaidScouted(resourcesScouted, haulBonus = 0) {
 }
 
 /**
- *	@param	resourcesScouted:Array(wood,stone,iron)
+ *	@param {Resources} resourcesScouted
  *	@param {BuildingLevels} buildingLevels
  *	@param {Village|{x:number, y:number}} home
  *	@param {Village} target
  *	@param {TwCheeseDate} timeSent the time the player received the report
  *	@param {TwCheeseDate} timeNow the current time
- *	@param	haulBonus:Number	the extra % bonus haul from flags, events, etc. Example: 30 for 30%, NOT 0.3
+ *	@param {number} haulBonus the extra % bonus haul from flags, events, etc. Example: 30 for 30%, NOT 0.3
  *	@return	troops:Array(spear,sword,axe,archer,lcav,acav,hcav)	an array of how many of each type of troop should be sent to take all resources, provided only one type of troop is sent
  */
-function twcheese_calculateRaidPredicted(resourcesScouted, buildingLevels, home, target, timeSent, timeNow, gameSpeed, unitSpeed, haulBonus) {
-    if (!haulBonus) {
-        haulBonus = 0;
+function twcheese_calculateRaidPredicted(resourcesScouted, buildingLevels, home, target, timeSent, timeNow, gameSpeed, unitSpeed, haulBonus = 0) {
+    var maxLoot = buildingLevels.resourceCap() - buildingLevels.hideableResources();
+    var speeds = new Array(18, 22, 18, 18, 10, 10, 11); // todo: key by troop types, rather than numeric index
+
+    function capRes(amount) {
+        return Math.min(amount, maxLoot);
     }
 
-    var maxHaul = buildingLevels.resourceCap() - buildingLevels.hideableResources();
-    var speeds = new Array(18, 22, 18, 18, 10, 10, 11);
-    var resources = resourcesScouted.slice();
-
     /*==== calculate production rates ====*/
-    var production = new Array(0, 0, 0);
-    for (let [i, resType] of [[0, 'wood'], [1, 'stone'], [2, 'iron']]) {
-        production[i] = buildingLevels.resourceProductionHourly(resType, gameSpeed);
+    let hourlyProduction = {};
+    for (let resType of Resources.TYPES) {
+        hourlyProduction[resType] = buildingLevels.resourceProductionHourly(resType, gameSpeed);
     }
 
     /*==== add resources produced between the current time and the time of the report*/
-    var timeElapsed = (timeNow - timeSent) / 3600000;
-    for (i = 0; i < 3; i++) {
-        resources[i] += timeElapsed * production[i];
-        if (resources[i] > maxHaul)
-            resources[i] = maxHaul;
-    }
+    var hoursElapsed = (timeNow - timeSent) / 3600000;
+    let resourcesProducedSinceReport = new Resources(
+        hourlyProduction.wood * hoursElapsed,
+        hourlyProduction.stone * hoursElapsed,
+        hourlyProduction.iron * hoursElapsed,
+    );
+    let resourcesNow = resourcesScouted.add(resourcesProducedSinceReport);
 
     /*==== calculate travel times (in hours) ====*/
-    var travelTimes = new Array();
+    var travelHours = new Array();
     for (var i = 0; i < 7; i++)
-        travelTimes[i] = speeds[i] / gameSpeed / unitSpeed * target.distanceTo(home) / 60;
+        travelHours[i] = speeds[i] / gameSpeed / unitSpeed * target.distanceTo(home) / 60;
 
     /*==== add resources produced during travel ====*/
     var totalResources = new Array(0, 0, 0, 0, 0, 0, 0);
     for (let i = 0; i < 7; i++) {
-        var resTotal = new Array(0, 0, 0);
-        for (let j = 0; j < 3; j++) {
-            resTotal[j] = resources[j] + travelTimes[i] * production[j];
-            if (resTotal[j] > maxHaul)
-                resTotal[j] = maxHaul;
-        }
-        totalResources[i] = resTotal[0] + resTotal[1] + resTotal[2];
+        let resourcesProducedDuringTravel = new Resources(
+            hourlyProduction.wood * travelHours[i],
+            hourlyProduction.stone * travelHours[i],
+            hourlyProduction.iron * travelHours[i],
+        );
+        let totalRes = resourcesNow.add(resourcesProducedDuringTravel);
+        totalResources[i] = capRes(totalRes.wood) + capRes(totalRes.stone) + capRes(totalRes.iron);
     }
-
 
     /*==== calculate units to take resources ====*/
     var units = new Array(0, 0, 0, 0, 0, 0, 0);
@@ -3983,7 +3982,7 @@ function enhanceReport(gameConfig) {
         report.raidScouted = twcheese_calculateRaidScouted(report.resources);
     } if (report.espionageLevel >= 2) {
         report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
-        report.raidPredicted = twcheese_calculateRaidPredicted(report.resources.toArray(), report.buildingLevels, game_data.village, report.defenderVillage, report.sent, now, gameConfig.speed, gameConfig.unit_speed);
+        report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.sent, now, gameConfig.speed, gameConfig.unit_speed);
         report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, 8, gameConfig.speed);
     }
 

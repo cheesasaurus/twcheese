@@ -770,7 +770,7 @@ function twcheese_BattleReportScraper(gameDocument) {
         };
 
         /**
-         *	@return {{buildingIndex:number, levelBefore:number, levelAfter:number} | false}
+         *	@return {{buildingType:string, levelBefore:number, levelAfter:number} | false}
          *	if no catapult damage was done, returns boolean false
          */
         this.getCatDamage = function () {
@@ -779,13 +779,14 @@ function twcheese_BattleReportScraper(gameDocument) {
                 for (var i = 0; i < thElements.length; i++) {
                     if (thElements[i].innerHTML == language['report']['catDamage']) {
                         var damageCell = thElements[i].parentNode.cells[1];
-                        for (var buildingIndex = 0; buildingIndex < 18; buildingIndex++) {
-                            if (damageCell.innerHTML.includes(language['buildings'][buildingIndex])) {
+                        for (var buildingType of buildingTypes) {
+                            let index = buildingTypes.indexOf(buildingType); // todo: change language keys
+                            if (damageCell.innerHTML.includes(language['buildings'][index])) {
                                 break;
                             }
                         }
                         return {
-                            buildingIndex,
+                            buildingType,
                             levelBefore: parseInt(damageCell.getElementsByTagName('b')[0].innerHTML),
                             levelAfter: parseInt(damageCell.getElementsByTagName('b')[1].innerHTML)
                         };
@@ -1069,7 +1070,7 @@ function twcheese_scrapeBattleReport(gameDoc) {
             if (!report.buildingLevels) {
                 report.buildingLevels = new BuildingLevels('?');
             }
-            report.buildingLevels[BuildingLevels.typeAt(report.catDamage.buildingIndex)] = report.catDamage.levelAfter;
+            report.buildingLevels[report.catDamage.buildingType] = report.catDamage.levelAfter;
         }
 
         return report;
@@ -2349,7 +2350,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(" + Number(i + 24) + ",'buildings[" + i + "]')";
         var targetCell = reportsFolderSettingsTable.rows[i].cells[1];
         targetCell.innerHTML = '<input onClick="' + checkboxScript + '" type="checkbox"/>';
-        targetCell.innerHTML += language['twcheese']['Building'] + ': ' + language['buildings'][i];
+        targetCell.innerHTML += language['twcheese']['Building'] + ': ' + language['buildings'][i]; // todo: change language keys
     }
 
 

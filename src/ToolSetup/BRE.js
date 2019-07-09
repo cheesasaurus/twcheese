@@ -863,14 +863,14 @@ function twcheese_BattleReportScraper(gameDocument) {
         };
 
         /**
-         * @return	resources:Array(timber:Number,clay:Number,iron:Number)
+         * @return {Resources}
          */
         this.getHaul = function () {
             if (this.resultsTable) {
                 var thElements = this.resultsTable.getElementsByTagName('th');
                 for (var i = 0; i < thElements.length; i++) {
                     if (thElements[i].innerHTML == language['report']['haul']) {
-                        return scrapeResources(thElements[i].parentNode.cells[1]).toArray();
+                        return scrapeResources(thElements[i].parentNode.cells[1]);
                     }
                 }
             }

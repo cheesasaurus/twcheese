@@ -1596,7 +1596,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
 
         if (mode == 'scouted') {
             gameDoc.getElementById('twcheese_raider_selection').value = 'scouted';
-            report.raidScouted = twcheese_calculateRaidScouted(report.resources.toArray(), haulBonus);
+            report.raidScouted = twcheese_calculateRaidScouted(report.resources, haulBonus);
             twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), report.raidScouted, report);
             gameDoc.getElementById('twcheese_periodic_options').style.display = 'none';
         }
@@ -2833,7 +2833,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 if (report.buildingLevels)
                     report.demolition = twcheese_calculateDemolition(report.buildingLevels);
                 if (report.espionageLevel >= 1)
-                    report.raidScouted = twcheese_calculateRaidScouted(report.resources.toArray());
+                    report.raidScouted = twcheese_calculateRaidScouted(report.resources);
                 if (report.espionageLevel >= 2) {
                     report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
                     report.raidPredicted = twcheese_calculateRaidPredicted(report.resources.toArray(), report.buildingLevels, game_data.village, report.defenderVillage, report.sent, now, gameConfig.speed, gameConfig.unit_speed);
@@ -3502,16 +3502,12 @@ function twcheese_calculateDemolition(buildingLevels) {
 }
 
 /**
- *	@param	resourcesScouted:Array(wood,stone,iron)
- *	@param	haulBonus:Number	the extra % bonus haul from flags, events, etc.  Example: 30 for 30%, NOT 0.3
+ *	@param {Resources} resourcesScouted
+ *	@param {Number} haulBonus the extra % bonus haul from flags, events, etc.  Example: 30 for 30%, NOT 0.3
  *	@return	troops:Array(spear,sword,axe,archer,lcav,acav,hcav)	an array of how many of each type of troop should be sent to take all resources, provided only one type of troop is sent
  */
-function twcheese_calculateRaidScouted(resourcesScouted, haulBonus) {
-    if (!haulBonus)
-        haulBonus = 0;
-
-    var totalResources = resourcesScouted[0] + resourcesScouted[1] + resourcesScouted[2];
-    return twcheese_calculateRaidUnits(totalResources, haulBonus);
+function twcheese_calculateRaidScouted(resourcesScouted, haulBonus = 0) {
+    return twcheese_calculateRaidUnits(resourcesScouted.sum(), haulBonus);
 }
 
 /**
@@ -3984,7 +3980,7 @@ function enhanceReport(gameConfig) {
     if (report.buildingLevels)
         report.demolition = twcheese_calculateDemolition(report.buildingLevels);
     if (report.espionageLevel >= 1) {
-        report.raidScouted = twcheese_calculateRaidScouted(report.resources.toArray());
+        report.raidScouted = twcheese_calculateRaidScouted(report.resources);
     } if (report.espionageLevel >= 2) {
         report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
         report.raidPredicted = twcheese_calculateRaidPredicted(report.resources.toArray(), report.buildingLevels, game_data.village, report.defenderVillage, report.sent, now, gameConfig.speed, gameConfig.unit_speed);

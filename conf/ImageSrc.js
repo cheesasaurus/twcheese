@@ -5,7 +5,7 @@ let ImageSrc = {
     plus: game + 'plus.png',
     minus: game + 'minus.png',
     wood: game + 'holz.png',
-    clay: game + 'lehm.png',
+    stone: game + 'lehm.png',
     iron: game + 'eisen.png',
     popupBackground: game + 'popup/content_background.png',
     popupBorder: game + 'popup/border.png',

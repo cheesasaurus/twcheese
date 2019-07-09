@@ -1,7 +1,7 @@
 import { Resources } from '/twcheese/src/Models/Resources.js';
 
 /**
- * @param {HTMLElement} resourcesContainer an element containing wood/clay/iron amounts
+ * @param {HTMLElement} resourcesContainer an element containing wood/stone/iron amounts
  * @return {Resources}
  */
 function scrapeResources(resourcesContainer) {

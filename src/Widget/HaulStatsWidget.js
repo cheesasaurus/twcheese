@@ -56,7 +56,7 @@ class HaulStatsWidget extends AbstractWidget {
                 <tr>
                     <td>${hourOfDay}:00 - ${hourOfDay}:59 ${dayHint}</td>
                     <td>${result.haul.wood}</td>
-                    <td>${result.haul.clay}</td>
+                    <td>${result.haul.stone}</td>
                     <td>${result.haul.iron}</td>
                     <td>${result.sumLoot()}/${result.haulCapacity}</td>
                     <td>${result.calcHaulPercent()}%</td>
@@ -101,7 +101,7 @@ class HaulStatsWidget extends AbstractWidget {
                             <tr>
                                 <th>Arrival</th>
                                 <th><img src="${ImageSrc.wood}"></img></th>
-                                <th><img src="${ImageSrc.clay}"></img></th>
+                                <th><img src="${ImageSrc.stone}"></img></th>
                                 <th><img src="${ImageSrc.iron}"></img></th>
                                 <th colspan="2">Performance</th>
                             </tr>
@@ -151,7 +151,7 @@ class HaulStatsWidget extends AbstractWidget {
 
         this.$sum.html(`
             <img src="${ImageSrc.wood}"> ${sum.haul.wood}
-            <img src="${ImageSrc.clay}"> ${sum.haul.clay}
+            <img src="${ImageSrc.stone}"> ${sum.haul.stone}
             <img src="${ImageSrc.iron}"> ${sum.haul.iron}
             &nbsp;&nbsp;| ${sum.sumLoot()}/${sum.haulCapacity} (${sum.calcHaulPercent()}%)
         `);

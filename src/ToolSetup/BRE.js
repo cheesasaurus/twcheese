@@ -46,7 +46,7 @@ import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/BRE
     imagePaths['statue'] = 'https://' + document.domain + '/graphic/buildings/statue.png?1';
     imagePaths['market'] = 'https://' + document.domain + '/graphic/buildings/market.png?1';
     imagePaths['wood'] = 'https://' + document.domain + '/graphic/buildings/wood.png?1';
-    imagePaths['clay'] = 'https://' + document.domain + '/graphic/buildings/stone.png?1';
+    imagePaths['stone'] = 'https://' + document.domain + '/graphic/buildings/stone.png?1';
     imagePaths['iron'] = 'https://' + document.domain + '/graphic/buildings/iron.png?1';
     imagePaths['warehouse'] = 'https://' + document.domain + '/graphic/buildings/storage.png?1';
     imagePaths['farm'] = 'https://' + document.domain + '/graphic/buildings/farm.png?1';
@@ -1339,7 +1339,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
             demolitionUnitsTable.rows[0].cells[0].innerHTML = '<img src="' + imagePaths['catapult'] + '" alt="catapults" />';
             demolitionUnitsTable.rows[0].cells[1].innerHTML = '<img src="' + imagePaths['ram'] + '" alt="rams" />';
 
-            var buildingLanguage = new Array('hq', 'barracks', 'stable', 'workshop', 'church', 'church_f', 'academy', 'smithy', 'rally', 'statue', 'market', 'wood', 'clay', 'iron', 'farm', 'warehouse', 'hiding', 'wall');
+            var buildingLanguage = new Array('hq', 'barracks', 'stable', 'workshop', 'church', 'church_f', 'academy', 'smithy', 'rally', 'statue', 'market', 'wood', 'stone', 'iron', 'farm', 'warehouse', 'hiding', 'wall');
             var siege_weapon = 'catapult';
 
             for (let buildingType of buildingTypes) {
@@ -1808,7 +1808,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                     }
                 }
 
-                /*==== wood, clay, iron ====*/
+                /*==== wood, stone, iron ====*/
                 for (let j = 0; j < 3; j++) {
                     let cell = row.insertCell(-1);
                     cell.style.textAlign = 'center';
@@ -2325,7 +2325,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
     checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(42,'resourcesTimber')";
     reportsFolderSettingsTable.rows[12].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Resources: Timber';
 
-    /*==== resourcesClay option ====*/
+    /*==== resourcesstone option ====*/
     checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(43,'resourcesClay')";
     reportsFolderSettingsTable.rows[13].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Resources: Clay';
 
@@ -2519,9 +2519,9 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
     reportsTableHeader.rows[0].cells[cellIndex - 11].style.width = '16px';
     cellIndex++;
 
-    /*==== clay header ====*/
+    /*==== stone header ====*/
     reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = '<img style="display:block; margin-left:auto; margin-right:auto" src="' + ImageSrc.clay + '" />';
+    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = '<img style="display:block; margin-left:auto; margin-right:auto" src="' + ImageSrc.stone + '" />';
     reportsTableHeader.rows[1].cells[cellIndex].style.width = '16px';
     reportsTableHeader.rows[0].cells[cellIndex - 11].style.width = '16px';
     cellIndex++;
@@ -3502,7 +3502,7 @@ function twcheese_calculateDemolition(buildingLevels) {
 }
 
 /**
- *	@param	resourcesScouted:Array(wood,clay,iron)
+ *	@param	resourcesScouted:Array(wood,stone,iron)
  *	@param	haulBonus:Number	the extra % bonus haul from flags, events, etc.  Example: 30 for 30%, NOT 0.3
  *	@return	troops:Array(spear,sword,axe,archer,lcav,acav,hcav)	an array of how many of each type of troop should be sent to take all resources, provided only one type of troop is sent
  */
@@ -3515,7 +3515,7 @@ function twcheese_calculateRaidScouted(resourcesScouted, haulBonus) {
 }
 
 /**
- *	@param	resourcesScouted:Array(wood,clay,iron)
+ *	@param	resourcesScouted:Array(wood,stone,iron)
  *	@param {BuildingLevels} buildingLevels
  *	@param {Village|{x:number, y:number}} home
  *	@param {Village} target

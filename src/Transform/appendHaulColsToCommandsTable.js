@@ -15,7 +15,7 @@ async function appendHaulColsToCommandsTable(progressMonitor) {
 
     $(commandsTable.rows[0]).append(`
         <th><img src="${ImageSrc.wood}" title="Wood" alt="Timber"></th>
-        <th><img src="${ImageSrc.clay}" title="Clay" alt="Clay"></th>
+        <th><img src="${ImageSrc.stone}" title="Clay" alt="Clay"></th>
         <th><img src="${ImageSrc.iron}" title="Iron" alt="Iron"></th>
         <th>Performance</th>
     `);
@@ -50,7 +50,7 @@ async function appendHaulColsToCommandsTable(progressMonitor) {
     
             $(row).append(`
                 <td>${command.haul.wood}</td>
-                <td>${command.haul.clay}</td>
+                <td>${command.haul.stone}</td>
                 <td>${command.haul.iron}</td>
                 <td>${command.haul.sum()}/${command.haulCapacity} (${command.calcHaulPercent()}%)</td>
             `);

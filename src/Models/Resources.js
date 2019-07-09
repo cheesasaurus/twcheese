@@ -1,20 +1,20 @@
 import { Resource } from '/twcheese/src/Models/Resource.js';
 
 class Resources {
-    constructor(woodAmount, clayAmount, ironAmount) {
+    constructor(woodAmount, stoneAmount, ironAmount) {
         this.wood = new Resource(Resource.TYPE_TIMBER, woodAmount);
-        this.clay = new Resource(Resource.TYPE_CLAY, clayAmount);
+        this.stone = new Resource(Resource.TYPE_CLAY, stoneAmount);
         this.iron = new Resource(Resource.TYPE_IRON, ironAmount);
     }
 
     sum() {
-        return this.wood + this.clay + this.iron;
+        return this.wood + this.stone + this.iron;
     }
 
     add(other) {
         return new Resources(
             this.wood + other.wood,
-            this.clay + other.clay,
+            this.stone + other.stone,
             this.iron + other.iron
         );
     }
@@ -24,12 +24,12 @@ class Resources {
      */
     equals(other) {
         return this.wood.valueOf() === other.wood.valueOf()
-            && this.clay.valueOf() === other.clay.valueOf()
+            && this.stone.valueOf() === other.stone.valueOf()
             && this.iron.valueOf() === other.iron.valueOf();
     }
 
     toArray() {
-        return [this.wood.amount, this.clay.amount, this.iron.amount];
+        return [this.wood.amount, this.stone.amount, this.iron.amount];
     }
 
 }

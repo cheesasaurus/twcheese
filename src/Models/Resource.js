@@ -25,7 +25,7 @@ class Resource {
 }
 
 Resource.TYPE_TIMBER = 'wood';
-Resource.TYPE_CLAY = 'clay';
+Resource.TYPE_CLAY = 'stone';
 Resource.TYPE_IRON = 'iron';
 
 export { Resource };

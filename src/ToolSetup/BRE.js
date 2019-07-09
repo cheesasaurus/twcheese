@@ -1809,16 +1809,16 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 }
 
                 /*==== wood, stone, iron ====*/
-                for (let j = 0; j < 3; j++) {
+                for (let resType of Resources.TYPES) {
                     let cell = row.insertCell(-1);
                     cell.style.textAlign = 'center';
                     if (report.resources) {
-                        let res = report.resources.toArray();
-                        cell.innerHTML = res[j];
-                        if (res[j] == 0) {
+                        let res = report.resources[resType];
+                        cell.innerHTML = res.amount;
+                        if (res.amount === 0) {
                             cell.className = 'hidden';
                         }
-                        cell.resourceDigits = res[j].length;
+                        cell.resourceDigits = String(res).length;
                     }
                 }
 

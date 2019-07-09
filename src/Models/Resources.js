@@ -34,4 +34,6 @@ class Resources {
 
 }
 
+Resources.TYPES = [Resource.TYPE_TIMBER, Resource.TYPE_CLAY, Resource.TYPE_IRON];
+
 export { Resources };

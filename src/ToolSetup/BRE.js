@@ -711,6 +711,7 @@ class BattleReportScraper {
         this.gameDoc = gameDoc;
         this.$gameDoc = $(gameDoc);
         this.mainTable = this.$gameDoc.find('#attack_luck').parents('table')[0];
+        this.luckTable = gameDoc.getElementById('attack_luck');
         this.attackerTable = gameDoc.getElementById('attack_info_att');
         this.attackerUnitsTable = gameDoc.getElementById('attack_info_att_units');
         this.defenderTable = gameDoc.getElementById('attack_info_def');
@@ -721,7 +722,7 @@ class BattleReportScraper {
     }
 
     _validate() {
-        let shouldAlwaysBeThere = ['mainTable', 'attackerTable', 'attackerUnitsTable', 'defenderTable'];
+        let shouldAlwaysBeThere = ['mainTable', 'luckTable', 'attackerTable', 'attackerUnitsTable', 'defenderTable'];
         for (let propName of shouldAlwaysBeThere) {
             if (!this[propName]) {
                 throw Error(`BattleReportScraper failed: couldn't locate the ${propName}`);
@@ -884,14 +885,10 @@ class BattleReportScraper {
     }
 
     /**
-     * @return {number|null}
+     * @return {number}
      */
     getLuck() {
-        let luckContainer = this.gameDoc.getElementById('attack_luck');
-        if (!luckContainer) {
-            return null;
-        }
-        var luckString = luckContainer.getElementsByTagName('b')[0].innerHTML;
+        var luckString = this.luckTable.getElementsByTagName('b')[0].innerHTML;
         return new Number(luckString.substring(0, luckString.indexOf('%')));
     }
 

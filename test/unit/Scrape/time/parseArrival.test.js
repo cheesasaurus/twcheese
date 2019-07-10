@@ -47,6 +47,34 @@ describe('parseArrival', function() {
         assertServerTime(expected, actual);
     });
 
+    it('should handle cz format', function() {
+        let actual = parseArrival('10.07.19 04:43:15:967', 'cz');
+        let expected = {
+            year: 2019,
+            month: 6,
+            date: 10,
+            hours: 4,
+            minutes: 43,
+            seconds: 15,
+            millis: 967
+        };
+        assertServerTime(expected, actual);
+    });
+
+    it('should handle cz format with millis disabled', function() {
+        let actual = parseArrival('10.07.19 04:43:15', 'cz');
+        let expected = {
+            year: 2019,
+            month: 6,
+            date: 10,
+            hours: 4,
+            minutes: 43,
+            seconds: 15,
+            millis: 0
+        };
+        assertServerTime(expected, actual);
+    });
+
     it('should handle pt format', function() {
         let actual = parseArrival('09/jul/2019 (20:03:15):895', 'pt');
         let expected = {

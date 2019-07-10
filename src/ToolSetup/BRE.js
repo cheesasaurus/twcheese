@@ -961,15 +961,6 @@ function twcheese_BattleReportScraper(gameDocument) {
          */
         this.getSent = function () {
             var text = $(this.$gameDoc.find('#attack_luck').parents('table')[0].rows[1].cells[1]).text(); //from the element with the battle time
-
-            if (game_data.market == 'cz') {
-                // todo: extract to parseArrival
-                var targetString = text;
-                let [day, monthNumber, yearShort, hours, minutes, seconds] = targetString.match(/[0-9]{1,}/g);
-                let year = '20' + yearShort;
-                let month = monthNumber - 1;
-                return TwCheeseDate.newServerDate(year, month, day, hours, minutes, seconds);
-            }
             return parseArrival(text, window.game_data.market);
         };
 

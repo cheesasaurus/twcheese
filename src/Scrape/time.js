@@ -9,16 +9,25 @@ import { TwCheeseDate } from '/twcheese/src/Models/TwCheeseDate.js';
  */
 function parseArrival(text, market) {    
     switch (market) {
-        case 'pt': return parseArrivalPortuguese(text);            
+        case 'cz': return parseArrivalCzech(text);
+        case 'pt': return parseArrivalPortuguese(text);        
     }
     return parseArrivalEnglish(text);
 };
 
 function parseArrivalEnglish(text) {
     // e.g. "Jun 12, 2019  15:36:23:000"
-    let expr = /(\D{3}) (\d{1,2}), (\d{4})  (\d{2}):(\d{2}):(\d{2}):?(\d{3})?/;
+    let expr = /(\D+) (\d+), (\d+)  (\d+):(\d+):(\d+):?(\d+)?/;
     let [, monthName, day, year, hours, minutes, seconds, millis] = text.match(expr);    
     let month = TwCheeseDate.monthNumber(monthName);
+    return TwCheeseDate.newServerDate(year, month, day, hours, minutes, seconds, millis || 0);
+}
+
+function parseArrivalCzech(text) {
+    // e.g. "10.07.19 04:43:15:967"
+    let [day, monthNumber, yearShort, hours, minutes, seconds, millis] = text.match(/\d+/g);
+    let year = '20' + yearShort;
+    let month = monthNumber - 1;
     return TwCheeseDate.newServerDate(year, month, day, hours, minutes, seconds, millis || 0);
 }
 
@@ -29,6 +38,5 @@ function parseArrivalPortuguese(text) {
     let month = TwCheeseDate.monthNumber(monthName);
     return TwCheeseDate.newServerDate(year, month, day, hours, minutes, seconds, millis || 0);
 }
-
 
 export { parseArrival };

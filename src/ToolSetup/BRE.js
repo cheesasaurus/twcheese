@@ -611,7 +611,7 @@ function twcheese_BattleReport() {
     this.ramDamage;
     this.reportID;
     this.resources;
-    this.sent;
+    this.battleTime;
     this.unitsInTransit;
     this.unitsOutside;
 }
@@ -752,6 +752,14 @@ function twcheese_BattleReportScraper(gameDocument) {
         this.getAttackerVillage = function () {
             if (this.attackerTable)
                 return scrapeVillage(this.attackerTable.rows[1].cells[1].firstChild.firstChild);
+        };
+
+        /**
+         * @return {TwCheeseDate}
+         */
+        this.getBattleTime = function () {
+            var text = $(this.mainTable.rows[1].cells[1]).text();
+            return parseArrival(text, window.game_data.market);
         };
 
         /**
@@ -955,15 +963,6 @@ function twcheese_BattleReportScraper(gameDocument) {
                 return false;
         };
 
-
-        /**
-         * @return {TwCheeseDate}
-         */
-        this.getSent = function () {
-            var text = $(this.mainTable.rows[1].cells[1]).text(); //from the element with the battle time
-            return parseArrival(text, window.game_data.market);
-        };
-
         /**
          * @return	reinforcements:Array(reinforcement0:Reinforcements, reinforcement1:Reinforcements, reinforcement2:Reinforcements...)
          * if no "Defender's troops in other villages" were killed, returns boolean false
@@ -1030,6 +1029,7 @@ function twcheese_scrapeBattleReport(gameDoc) {
         report.attackerLosses = reportScraper.getAttackerLosses();
         report.attackerQuantity = reportScraper.getAttackerQuantity();
         report.attackerVillage = reportScraper.getAttackerVillage();
+        report.battleTime = reportScraper.getBattleTime();
         report.buildingLevels = reportScraper.getBuildingLevels();
         report.catDamage = reportScraper.getCatDamage();
         report.defender = reportScraper.getDefender();
@@ -1044,8 +1044,7 @@ function twcheese_scrapeBattleReport(gameDoc) {
         report.morale = reportScraper.getMorale();
         report.ramDamage = reportScraper.getRamDamage();
         report.reportID = reportScraper.getReportId();
-        report.resources = reportScraper.getResources();
-        report.sent = reportScraper.getSent();
+        report.resources = reportScraper.getResources();        
         report.unitsOutside = reportScraper.getUnitsOutside();
         report.unitsInTransit = reportScraper.getUnitsInTransit();
 
@@ -1592,7 +1591,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
         }
         else if (mode == 'predicted') {
             gameDoc.getElementById('twcheese_raider_selection').value = 'predicted';
-            report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.sent, TwCheeseDate.newServerDate(), gameConfig.speed, gameConfig.unit_speed, haulBonus);
+            report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.battleTime, TwCheeseDate.newServerDate(), gameConfig.speed, gameConfig.unit_speed, haulBonus);
             twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), report.raidPredicted, report);
             gameDoc.getElementById('twcheese_periodic_options').style.display = 'none';
         }
@@ -2818,15 +2817,15 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                     report.defenderSurvivors = report.defenderQuantity.subtract(report.defenderLosses);                    
                 report.killScores = calcKillScores(report.attackerLosses, report.defenderLosses);
                 if (report.loyalty)
-                    report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, now, game_data.village, report.defenderVillage);
-                report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.sent, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
+                    report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.battleTime, now, game_data.village, report.defenderVillage);
+                report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.battleTime, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
                 if (report.buildingLevels)
                     report.demolition = twcheese_calculateDemolition(report.buildingLevels);
                 if (report.espionageLevel >= 1)
                     report.raidScouted = twcheese_calculateRaidScouted(report.resources);
                 if (report.espionageLevel >= 2) {
                     report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
-                    report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.sent, now, gameConfig.speed, gameConfig.unit_speed);
+                    report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.battleTime, now, gameConfig.speed, gameConfig.unit_speed);
                     report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, 8, gameConfig.speed);
                 }
                 report.reportID = reportID;
@@ -3964,15 +3963,15 @@ function enhanceReport(gameConfig) {
         report.defenderSurvivors = report.defenderQuantity.subtract(report.defenderLosses);        
     report.killScores = calcKillScores(report.attackerLosses, report.defenderLosses);
     if (report.loyalty)
-        report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.sent, now, game_data.village, report.defenderVillage);
-    report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.sent, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
+        report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.battleTime, now, game_data.village, report.defenderVillage);
+    report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.battleTime, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
     if (report.buildingLevels)
         report.demolition = twcheese_calculateDemolition(report.buildingLevels);
     if (report.espionageLevel >= 1) {
         report.raidScouted = twcheese_calculateRaidScouted(report.resources);
     } if (report.espionageLevel >= 2) {
         report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
-        report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.sent, now, gameConfig.speed, gameConfig.unit_speed);
+        report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.battleTime, now, gameConfig.speed, gameConfig.unit_speed);
         report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, 8, gameConfig.speed);
     }
 

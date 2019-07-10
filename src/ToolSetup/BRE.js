@@ -720,37 +720,44 @@ class BattleReportScraper {
     }
 
     /**
-     * @return {Player}
+     * @return {Player|null}
      */
     getAttacker() {
-        if (this.attackerTable) {
-            var playerCell = this.attackerTable.rows[0].cells[1];
-            return scrapePlayer(playerCell);
+        if (!this.attackerTable) {
+            return null;
         }
+        var playerCell = this.attackerTable.rows[0].cells[1];
+        return scrapePlayer(playerCell);
     }
 
     /**
-     * @return {TroopCounts}
+     * @return {TroopCounts|null}
      */
     getAttackerLosses() {
-        if (this.attackerUnitsTable)
-            return scrapeTroopCounts(twcheese_removeTroopsLabel(this.attackerUnitsTable.rows[2]));
+        if (!this.attackerUnitsTable) {
+            return null;
+        }
+        return scrapeTroopCounts(twcheese_removeTroopsLabel(this.attackerUnitsTable.rows[2]));
     }
 
     /**
-     * @return {TroopCounts}
+     * @return {TroopCounts|null}
      */
     getAttackerQuantity() {
-        if (this.attackerUnitsTable)
-            return scrapeTroopCounts(twcheese_removeTroopsLabel(this.attackerUnitsTable.rows[1]));
+        if (!this.attackerUnitsTable) {
+            return null;
+        }
+        return scrapeTroopCounts(twcheese_removeTroopsLabel(this.attackerUnitsTable.rows[1]));
     }
 
     /**
-     * @return {Village}
+     * @return {Village|null}
      */
     getAttackerVillage() {
-        if (this.attackerTable)
-            return scrapeVillage(this.attackerTable.rows[1].cells[1].firstChild.firstChild);
+        if (!this.attackerTable) {
+            return null;
+        }
+        return scrapeVillage(this.attackerTable.rows[1].cells[1].firstChild.firstChild);
     }
 
     /**
@@ -762,11 +769,11 @@ class BattleReportScraper {
     }
 
     /**
-     * @return {BuildingLevels|false}
+     * @return {BuildingLevels|null}
      */
     getBuildingLevels() {
         if (this.getEspionageLevel() < 2) {
-            return false;
+            return null;
         }
 
         let levels = new BuildingLevels();
@@ -778,69 +785,69 @@ class BattleReportScraper {
     }
 
     /**
-     * @return {{buildingType:string, levelBefore:number, levelAfter:number} | false}
-     * if no catapult damage was done, returns boolean false
+     * @return {{buildingType:string, levelBefore:number, levelAfter:number} | null}
      */
     getCatDamage() {
-        if (this.resultsTable) {
-            var thElements = this.resultsTable.getElementsByTagName('th');
-            for (var i = 0; i < thElements.length; i++) {
-                if (thElements[i].innerHTML == language['report']['catDamage']) {
-                    var damageCell = thElements[i].parentNode.cells[1];
-                    for (var buildingType of buildingTypes) {
-                        if (damageCell.innerHTML.includes(language['buildings'][buildingType])) {
-                            break;
-                        }
+        if (!this.resultsTable) {
+            return null;
+        }
+        var thElements = this.resultsTable.getElementsByTagName('th');
+        for (var i = 0; i < thElements.length; i++) {
+            if (thElements[i].innerHTML == language['report']['catDamage']) {
+                var damageCell = thElements[i].parentNode.cells[1];
+                for (var buildingType of buildingTypes) {
+                    if (damageCell.innerHTML.includes(language['buildings'][buildingType])) {
+                        break;
                     }
-                    return {
-                        buildingType,
-                        levelBefore: parseInt(damageCell.getElementsByTagName('b')[0].innerHTML),
-                        levelAfter: parseInt(damageCell.getElementsByTagName('b')[1].innerHTML)
-                    };
                 }
+                return {
+                    buildingType,
+                    levelBefore: parseInt(damageCell.getElementsByTagName('b')[0].innerHTML),
+                    levelAfter: parseInt(damageCell.getElementsByTagName('b')[1].innerHTML)
+                };
             }
         }
-        return false;
     }
 
     /**
-     * @return {Player}
+     * @return {Player|null}
      */
     getDefender() {
-        if (this.defenderTable) {
-            var playerCell = this.defenderTable.rows[0].cells[1];
-            return scrapePlayer(playerCell);
+        if (!this.defenderTable) {
+            return null;   
         }
+        var playerCell = this.defenderTable.rows[0].cells[1];
+        return scrapePlayer(playerCell);
     }
 
     /**
-     * @return {TroopCounts|false}
-     * if no information about the strength of the enemy's army could be collected, returns boolean false
+     * @return {TroopCounts|null}
      */
     getDefenderLosses() {
-        if (this.defenderUnitsTable)
-            return scrapeTroopCounts(twcheese_removeTroopsLabel(this.defenderUnitsTable.rows[2]));
-        else
-            return false;
+        if (!this.defenderUnitsTable) {
+            return null;
+        }
+        return scrapeTroopCounts(twcheese_removeTroopsLabel(this.defenderUnitsTable.rows[2]));
     }
 
     /**
-     * @return {TroopCounts|false}
-     * if no information about the strength of the enemy's army could be collected, returns boolean false
+     * @return {TroopCounts|null}
      */
     getDefenderQuantity() {
-        if (this.defenderUnitsTable)
-            return scrapeTroopCounts(twcheese_removeTroopsLabel(this.defenderUnitsTable.rows[1]));
-        else
-            return false;
+        if (!this.defenderUnitsTable) {
+            return null;
+        }
+        return scrapeTroopCounts(twcheese_removeTroopsLabel(this.defenderUnitsTable.rows[1]));
     }
 
     /**
-     * @return {Village}
+     * @return {Village|null}
      */
     getDefenderVillage() {
-        if (this.defenderTable)
-            return scrapeVillage(this.defenderTable.rows[1].cells[1].firstChild.firstChild);
+        if (!this.defenderTable) {
+            return null;
+        }
+        return scrapeVillage(this.defenderTable.rows[1].cells[1].firstChild.firstChild);
     }
 
     /**
@@ -870,75 +877,78 @@ class BattleReportScraper {
     }
 
     /**
-     * @return {Resources|false}
+     * @return {Resources|null}
      */
     getHaul() {
-        if (this.resultsTable) {
-            var thElements = this.resultsTable.getElementsByTagName('th');
-            for (var i = 0; i < thElements.length; i++) {
-                if (thElements[i].innerHTML == language['report']['haul']) {
-                    return scrapeResources(thElements[i].parentNode.cells[1]);
-                }
+        if (!this.resultsTable) {
+            return null;
+        }
+        var thElements = this.resultsTable.getElementsByTagName('th');
+        for (var i = 0; i < thElements.length; i++) {
+            if (thElements[i].innerHTML == language['report']['haul']) {
+                return scrapeResources(thElements[i].parentNode.cells[1]);
             }
         }
-        return false;
     }
 
     /**
-     * @return {number} luck
+     * @return {number|null}
      */
     getLuck() {
-        if (this.gameDoc.getElementById('attack_luck')) {
-            var luckString = this.gameDoc.getElementById('attack_luck').getElementsByTagName('b')[0].innerHTML;
-            return new Number(luckString.substring(0, luckString.indexOf('%')));
+        let luckContainer = this.gameDoc.getElementById('attack_luck');
+        if (!luckContainer) {
+            return null;
         }
+        var luckString = luckContainer.getElementsByTagName('b')[0].innerHTML;
+        return new Number(luckString.substring(0, luckString.indexOf('%')));
     }
 
     /**
      * @return	loyalty:Array(from:Number,to:Number)
-     * if no change was detected, returns boolean false
+     * if no change was detected, returns null
      */
     getLoyalty() {
-        if (this.resultsTable) {
-            var thElements = this.resultsTable.getElementsByTagName('th');
-            for (var i = 0; i < thElements.length; i++) {
-                if (thElements[i].innerHTML == language['report']['loyalty']) {
-                    var bElements = thElements[i].parentNode.getElementsByTagName('b');
-                    return new Array(bElements[0].innerHTML, bElements[1].innerHTML);
-                }
+        if (!this.resultsTable) {
+            return null;            
+        }
+        var thElements = this.resultsTable.getElementsByTagName('th');
+        for (var i = 0; i < thElements.length; i++) {
+            if (thElements[i].innerHTML == language['report']['loyalty']) {
+                var bElements = thElements[i].parentNode.getElementsByTagName('b');
+                return new Array(bElements[0].innerHTML, bElements[1].innerHTML);
             }
         }
-        return false;
     }
 
     /**
-     * @return {number} morale
+     * @return {number|null}
      */
     getMorale() {
-        if (this.gameDoc.getElementById('attack_moral')) {
-            var moraleString = this.gameDoc.getElementById('attack_moral').getElementsByTagName('h4')[0].innerHTML;
-            return new Number(moraleString.substring(moraleString.indexOf(' ') + 1, moraleString.indexOf('%')));
+        let moraleContainer = this.gameDoc.getElementById('attack_moral');
+        if (!moraleContainer) {
+            return null;            
         }
+        var moraleString = moraleContainer.getElementsByTagName('h4')[0].innerHTML;
+        return new Number(moraleString.substring(moraleString.indexOf(' ') + 1, moraleString.indexOf('%')));
     }
 
     /**
-     * @return {{levelBefore:number, levelAfter:number} | false}
-     * if no ram damage was done, returns boolean false
+     * @return {{levelBefore:number, levelAfter:number} | null}
      */
     getRamDamage() {
-        if (this.resultsTable) {
-            var thElements = this.resultsTable.getElementsByTagName('th');
-            for (var i = 0; i < thElements.length; i++) {
-                if (thElements[i].innerHTML == language['report']['ramDamage']) {
-                    var damageCell = thElements[i].parentNode.cells[1];
-                    return {
-                        levelBefore: parseInt(damageCell.getElementsByTagName('b')[0].innerHTML),
-                        levelAfter: parseInt(damageCell.getElementsByTagName('b')[1].innerHTML)
-                    };
-                }
+        if (!this.resultsTable) {
+            return null;
+        }
+        var thElements = this.resultsTable.getElementsByTagName('th');
+        for (var i = 0; i < thElements.length; i++) {
+            if (thElements[i].innerHTML == language['report']['ramDamage']) {
+                var damageCell = thElements[i].parentNode.cells[1];
+                return {
+                    levelBefore: parseInt(damageCell.getElementsByTagName('b')[0].innerHTML),
+                    levelAfter: parseInt(damageCell.getElementsByTagName('b')[1].innerHTML)
+                };
             }
         }
-        return false;
     }
 
     /**
@@ -949,37 +959,36 @@ class BattleReportScraper {
     }
 
     /**
-     * @return {Resources}
+     * @return {Resources|null}
      */
     getResources() {
-        if (this.$gameDoc.find('#attack_spy_resources').length > 0)
-            return scrapeResources(this.$gameDoc.find('#attack_spy_resources').find('td')[0]);
-        else
-            return false;
+        let resContainer = this.$gameDoc.find('#attack_spy_resources').find('td')[0];
+        if (!resContainer) {
+            return null;
+        }
+        return scrapeResources(resContainer);
     }
 
     /**
      * @return	reinforcements:Array(reinforcement0:Reinforcements, reinforcement1:Reinforcements, reinforcement2:Reinforcements...)
-     * if no "Defender's troops in other villages" were killed, returns boolean false
+     * if no "Defender's troops in other villages" were killed, returns null
      */
     getSupportKilled() {
-        if (this.supportKilledTable) {
-            var reinforcements = new Array();
-            for (var i = 1; i < this.supportKilledTable.rows.length; i++) {
-                var currentReinforcement = new twcheese_Reinforcements();
-                currentReinforcement.troops = scrapeTroopCounts(twcheese_removeTroopsLabel(this.supportKilledTable.rows[i]));
-                currentReinforcement.village = scrapeVillage(this.supportKilledTable.rows[i].cells[0].firstChild);
-                reinforcements.push(currentReinforcement);
-            }
-            return reinforcements;
+        if (!this.supportKilledTable) {
+            return null;
         }
-        else
-            return false;
+        var reinforcements = new Array();
+        for (var i = 1; i < this.supportKilledTable.rows.length; i++) {
+            var currentReinforcement = new twcheese_Reinforcements();
+            currentReinforcement.troops = scrapeTroopCounts(twcheese_removeTroopsLabel(this.supportKilledTable.rows[i]));
+            currentReinforcement.village = scrapeVillage(this.supportKilledTable.rows[i].cells[0].firstChild);
+            reinforcements.push(currentReinforcement);
+        }
+        return reinforcements;
     }
 
     /**
-     * @return {TroopCounts|false}
-     * returns boolean false if no units In transit were detected
+     * @return {TroopCounts|null}
      */
     getUnitsInTransit() {
         var h4elements = this.gameDoc.getElementsByTagName('h4');
@@ -987,21 +996,17 @@ class BattleReportScraper {
             if (h4elements[i].innerHTML.search(language['report']['unitsInTransit']) != -1)
                 return scrapeTroopCounts(h4elements[i].nextSibling.nextSibling.rows[1]);
         }
-        return false;
+        return null;
     }
 
     /**
-     * @return {TroopCounts|false}
-     * returns boolean false if no units outside were detected
+     * @return {TroopCounts|null}
      */
     getUnitsOutside() {
-        try {
-            if (this.getEspionageLevel() == 3) {
-                return scrapeTroopCounts(this.$gameDoc.find('#attack_spy_away').find('table')[0].rows[1]);
-            }
-            else
-                return false;
-        } catch (e) { console.error(e); }
+        if (this.getEspionageLevel() < 3) {
+            return null;
+        }
+        return scrapeTroopCounts(this.$gameDoc.find('#attack_spy_away').find('table')[0].rows[1]);
     }
 
 }

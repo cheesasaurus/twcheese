@@ -1338,8 +1338,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
             demolitionUnitsTable.rows[0].cells[0].innerHTML = '<img src="' + imagePaths['catapult'] + '" alt="catapults" />';
             demolitionUnitsTable.rows[0].cells[1].innerHTML = '<img src="' + imagePaths['ram'] + '" alt="rams" />';
 
-            var buildingLanguage = new Array('hq', 'barracks', 'stable', 'workshop', 'church', 'church_f', 'academy', 'smithy', 'rally', 'statue', 'market', 'wood', 'stone', 'iron', 'farm', 'warehouse', 'hiding', 'wall');
-            var siege_weapon = 'catapult';
+            var siegeWeapon = 'catapult';
 
             for (let buildingType of buildingTypes) {
                 if (buildingType === 'watchtower') {
@@ -1352,13 +1351,14 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
                 let headerCell = demolitionUnitsTable.rows[1].insertCell(-1);
                 headerCell.width = "35px";
                 if (game_data.market == 'uk') {
-                    headerCell.innerHTML = '<img src="' + ImageSrc.buildingIcon(buildingType) + '" alt="' + buildingLanguage[i] + '" />';
+                    headerCell.innerHTML = '<img src="' + ImageSrc.buildingIcon(buildingType) + '" />';
                 } else {
-                    if (i == 17) {
-                        siege_weapon = 'ram';
+                    if (buildingType === 'wall') {
+                        siegeWeapon = 'ram';
                     }
-                    let rallyPointUrl = attackPrepUrl({[siege_weapon]: report.demolition.oneShotUpgraded[i]}, report.defenderVillage.id);
-                    headerCell.innerHTML = '<a href="' + rallyPointUrl + '"><img src="' + ImageSrc.buildingIcon(buildingType) + '" alt="' + buildingLanguage[i] + '" /></a>';
+                    let troopCounts = {[siegeWeapon]: report.demolition.oneShotUpgraded[buildingType]};
+                    let rallyPointUrl = attackPrepUrl(troopCounts, report.defenderVillage.id);
+                    headerCell.innerHTML = '<a href="' + rallyPointUrl + '"><img src="' + ImageSrc.buildingIcon(buildingType) + '" /></a>';
                 }
 
                 let scoutedCell = demolitionUnitsTable.rows[2].insertCell(-1);

@@ -1249,71 +1249,62 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
         }
 
         /*==== demolition table ====*/
-        if (report.demolition) {
-            var demolitionTable = document.createElement('table');
-            demolitionTable.id = 'twcheese_demolition_calculator';
+        if (report.buildingLevels) {
+            let catHeaders = [];
+            let ramHeaders = [];
+            let catRowOne = [];
+            let catRowTwo = [];
+            let ramRowOne = [];
+            let ramRowTwo = [];
 
-            demolitionTable.insertRow(-1);
-            demolitionTable.rows[0].insertCell(-1);
-            demolitionTable.rows[0].cells[0].innerHTML = '<span align="center"><h2>Demolition</h2></span>';
-
-            var demolitionUnitsTable = document.createElement('table');
-            demolitionUnitsTable.id = 'twcheese_demolition_units';
-
-            demolitionUnitsTable.className = 'vis overview_table';
-            demolitionUnitsTable.style.borderStyle = 'solid';
-            demolitionUnitsTable.style.borderWidth = '1px';
-
-            demolitionUnitsTable.insertRow(-1);
-            demolitionUnitsTable.rows[0].className = 'center'
-            demolitionUnitsTable.insertRow(-1);
-            demolitionUnitsTable.rows[1].className = 'center';
-            demolitionUnitsTable.insertRow(-1);
-            demolitionUnitsTable.rows[2].className = 'center';
-            demolitionUnitsTable.insertRow(-1);
-            demolitionUnitsTable.rows[3].className = 'center';
-
-            demolitionUnitsTable.rows[0].insertCell(-1);
-            demolitionUnitsTable.rows[0].insertCell(-1);
-            demolitionUnitsTable.rows[0].cells[0].colSpan = buildingTypes.length - 2; // use catapults for everything except the wall. and exclude the watchtower for now
-            demolitionUnitsTable.rows[0].cells[0].innerHTML = '<img src="' + imagePaths['catapult'] + '" alt="catapults" />';
-            demolitionUnitsTable.rows[0].cells[1].innerHTML = '<img src="' + imagePaths['ram'] + '" alt="rams" />';
-
-            var siegeWeapon = 'catapult';
+            let suggestedCounts = report.suggestSiegeUnits();
 
             for (let buildingType of buildingTypes) {
-                if (buildingType === 'watchtower') {
-                    continue;
-                    // todo: handle watchtower.
-                    // backwards compatible with old named reports, without the watchtower in the array of building levels.
-                    // and list the wall last
-                }
+                let siegeWeapon = (buildingType === 'wall') ? 'ram' : 'catapult';
 
-                let headerCell = demolitionUnitsTable.rows[1].insertCell(-1);
-                headerCell.width = "35px";
+                let headerInnerHtml;
                 if (game_data.market == 'uk') {
-                    headerCell.innerHTML = '<img src="' + ImageSrc.buildingIcon(buildingType) + '" />';
+                    headerInnerHtml = '<img src="' + ImageSrc.buildingIcon(buildingType) + '" />';
                 } else {
-                    if (buildingType === 'wall') {
-                        siegeWeapon = 'ram';
-                    }
-                    let troopCounts = {[siegeWeapon]: report.demolition.oneShotUpgraded[buildingType]};
+                    let troopCounts = {[siegeWeapon]: suggestedCounts.oneShotUpgraded[buildingType]};
                     let rallyPointUrl = attackPrepUrl(troopCounts, report.defenderVillage.id);
-                    headerCell.innerHTML = '<a href="' + rallyPointUrl + '"><img src="' + ImageSrc.buildingIcon(buildingType) + '" /></a>';
+                    headerInnerHtml = '<a href="' + rallyPointUrl + '"><img src="' + ImageSrc.buildingIcon(buildingType) + '" /></a>';
                 }
+                let headers = (siegeWeapon === 'ram') ? ramHeaders : catHeaders;
+                headers.push(`<td style="width: 35px;">${headerInnerHtml}</td>`);
 
-                let scoutedCell = demolitionUnitsTable.rows[2].insertCell(-1);
-                scoutedCell.innerHTML = report.demolition.oneShotScouted[buildingType];
-
-                let upgradedCell = demolitionUnitsTable.rows[3].insertCell(-1);
-                upgradedCell.innerHTML = report.demolition.oneShotUpgraded[buildingType];
+                let rowOne = (siegeWeapon === 'ram') ? ramRowOne : catRowOne;
+                let rowTwo = (siegeWeapon === 'ram') ? ramRowTwo : catRowTwo;
+                rowOne.push(`<td>${suggestedCounts.oneShotScouted[buildingType]}</td>`);
+                rowTwo.push(`<td>${suggestedCounts.oneShotUpgraded[buildingType]}</td>`);
             }
 
-            demolitionTable.insertRow(-1);
-            demolitionTable.rows[1].insertCell(-1);
-            demolitionTable.rows[1].cells[0].appendChild(demolitionUnitsTable);
+            let demolitionHtml = `
+                <table id="twcheese_demolition_calculator">
+                    <tr>
+                        <td><span align="center"><h2>Demolition</h2></span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table id="twcheese_demolition_units" class="vis overview_table" style="border: 1px solid;">
+                                <tr class="center">
+                                    <td colspan="${catHeaders.length}">
+                                        <img src="${ImageSrc.troopIcon('catapult')}" alt="catapults" />
+                                    </td>
+                                    <td colspan="${ramHeaders.length}">
+                                        <img src="${ImageSrc.troopIcon('ram')}" alt="rams" />
+                                    </td>
+                                </tr>
+                                <tr class="center">${catHeaders.join('') + ramHeaders.join('')}</tr>
+                                <tr class="center">${catRowOne.join('') + ramRowOne.join('')}</tr>
+                                <tr class="center">${catRowTwo.join('') + ramRowTwo.join('')}<tr/>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            `;
 
-            toolTable.rows[0].cells[1].appendChild(demolitionTable);
+            toolTable.rows[0].cells[1].appendChild($(demolitionHtml.trim())[0]);
         }
 
         /*==== renamer ====*/
@@ -3676,8 +3667,6 @@ function enhanceReport(gameConfig) {
     if (report.loyalty)
         report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty.after, report.battleTime, now, game_data.village, report.defenderVillage);
     report.timingInfo = report.calcTimingInfo(gameConfig.speed, gameConfig.unit_speed);
-    if (report.buildingLevels)
-        report.demolition = report.suggestSiegeUnits();
     if (report.espionageLevel >= 1) {
         report.raidScouted = report.calcRaidScouted();
     } if (report.espionageLevel >= 2) {

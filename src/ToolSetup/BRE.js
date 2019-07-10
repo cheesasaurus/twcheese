@@ -710,6 +710,7 @@ function twcheese_BattleReportScraper(gameDocument) {
     try {
         this.gameDocument = gameDocument;
         this.$gameDoc = $(gameDocument);
+        this.mainTable = this.$gameDoc.find('#attack_luck').parents('table')[0];
         this.attackerTable = gameDocument.getElementById('attack_info_att');
         this.attackerUnitsTable = gameDocument.getElementById('attack_info_att_units');
         this.defenderTable = gameDocument.getElementById('attack_info_def');
@@ -836,14 +837,13 @@ function twcheese_BattleReportScraper(gameDocument) {
         };
 
         /**
-         * @return	color:String - blue, green, yellow, or red
+         * @return {string} color: blue, green, yellow, or red
          */
         this.getDotColor = function () {
-            var images = gameDocument.getElementsByTagName('img');
-            for (var i = 0; i < images.length; i++) {
-                if (images[i].src.search('dots') != -1)
-                    return images[i].src.substring(images[i].src.indexOf('dots') + 5, images[i].src.indexOf('.png'));
-            }
+            return $(this.mainTable.rows[0].cells[1])
+                .find('img[src*="dots/"]')
+                .attr('src')
+                .match(/dots\/(.+).png/)[1];
         };
 
         /**
@@ -960,7 +960,7 @@ function twcheese_BattleReportScraper(gameDocument) {
          * @return {TwCheeseDate}
          */
         this.getSent = function () {
-            var text = $(this.$gameDoc.find('#attack_luck').parents('table')[0].rows[1].cells[1]).text(); //from the element with the battle time
+            var text = $(this.mainTable.rows[1].cells[1]).text(); //from the element with the battle time
             return parseArrival(text, window.game_data.market);
         };
 

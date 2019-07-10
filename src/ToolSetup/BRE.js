@@ -1613,14 +1613,14 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
             if (report.isForwarded) {
                 cell.innerHTML += '<img src="graphic/forwarded.png?1" />';
             }
-            cell.innerHTML += '<a href="' + game_data.link_base_pure + 'report&mode=' + game_data.mode + '&view=' + report.reportId + '"> view</a>';
-            if (report.defender) {
-                if (report.defender.name == game_data.player.name) {
-                    cell.innerHTML += ' <img title="manage troops" style="float:right; cursor:pointer;" src="' + imagePaths['rally'] + '" onclick="window.location=\'game.php?village=' + report.defenderVillage.id + '&screen=place&mode=units\'"></img>';
-                }
-                if (report.loyalty && report.loyalty.after <= 0) {
-                    cell.innerHTML += ' <img title="manage troops" style="float:right; cursor:pointer;" src="' + imagePaths['rally'] + '" onclick="window.location=\'game.php?village=' + report.defenderVillage.id + '&screen=place&mode=units\'"></img>';
-                }
+            cell.innerHTML += `<a href="${gameUrl('report', {mode:game_data.mode, view:report.reportId})}"> view</a>`;
+
+            let isDefenderMe = report.defender.name == game_data.player.name;
+            let wasVillageConquered = report.loyalty && report.loyalty.after <= 0;
+            if (isDefenderMe || wasVillageConquered) {
+                cell.innerHTML += `<a href="${gameUrl('place', {mode:'units', village:report.defenderVillage.id})}">
+                    <img title="manage troops" style="float:right; cursor:pointer;" src="${ImageSrc.buildingIcon('place')}" />
+                </a>`;
             }
 
             /*==== repeat attack cell ====*/

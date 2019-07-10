@@ -3532,14 +3532,14 @@ function twcheese_dateToString(time) {
 
 /**
  *	requests the xml from a page
- *	@param	targetUrl:String	the url of the page to get the document from
- *	@return	requestedXML:String
+ *	@param {string} url
+ *	@return	{XMLDocument}
  */
-function twcheese_requestXML(targetUrl) {
+function twcheese_requestXML(url) {
     var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("GET", targetUrl, false);
+    xmlhttp.open("GET", url, false);
     xmlhttp.send("");
-    return xmlhttp.responseText;
+    return $.parseXML(xmlhttp.responseText);
 }
 
 /*==== storage functions ====*/
@@ -3572,12 +3572,16 @@ function twcheese_getServerSettings() {
         return JSON.parse(cachedSettings);
     }
 
-    let configXML = twcheese_requestXML('https://' + document.domain + '/interface.php?func=get_config')
+    let xmlDoc = twcheese_requestXML('https://' + document.domain + '/interface.php?func=get_config');
+    let $cfg = $(xmlDoc);
+
+    let floatVal = selector => parseFloat($cfg.find(selector).html());
+
     let settings = {
-        speed: configXML.match(/\<SPEED>.*?\<\/SPEED>/gi)[0].toLowerCase().replace('<speed>', '').replace('</speed>', ''),
-        unit_speed: configXML.match(/\<UNIT_SPEED>.*?\<\/UNIT_SPEED>/gi)[0].toLowerCase().replace('<unit_speed>', '').replace('</unit_speed>', ''),
-        archer: configXML.match(/\<ARCHER>.*?\<\/ARCHER>/gi)[0].toLowerCase().replace('<archer>', '').replace('</archer>', ''),
-        paladin: configXML.match(/\<KNIGHT>.*?\<\/KNIGHT>/gi)[0].toLowerCase().replace('<knight>', '').replace('</knight>', '')
+        speed: floatVal('speed'),
+        unit_speed: floatVal('unit_speed'),
+        archer: floatVal('game > archer'),
+        knight: floatVal('game > knight'),
     };
     localStorage.setItem(cacheKey, JSON.stringify(settings));
     return settings;

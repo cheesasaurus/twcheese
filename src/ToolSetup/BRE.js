@@ -694,6 +694,48 @@ class BattleReportScraper {
         }
     }
 
+    scrapeReport() {
+        let report = new BattleReport();
+
+        report.attacker = this.getAttacker();
+        report.attackerLosses = this.getAttackerLosses();
+        report.attackerQuantity = this.getAttackerQuantity();
+        report.attackerVillage = this.getAttackerVillage();
+        report.battleTime = this.getBattleTime();
+        report.buildingLevels = this.getBuildingLevels();
+        report.catDamage = this.getCatDamage();
+        report.defender = this.getDefender();
+        report.defenderLosses = this.getDefenderLosses();
+        report.defenderQuantity = this.getDefenderQuantity();
+        report.defenderVillage = this.getDefenderVillage();
+        report.dot = this.getDotColor();
+        report.espionageLevel = this.getEspionageLevel();
+        report.haul = this.getHaul();
+        report.loyalty = this.getLoyalty();
+        report.luck = this.getLuck();
+        report.morale = this.getMorale();
+        report.ramDamage = this.getRamDamage();
+        report.reportID = this.getReportId();
+        report.resources = this.getResources();        
+        report.unitsOutside = this.getUnitsOutside();
+        report.unitsInTransit = this.getUnitsInTransit();
+
+        if (report.ramDamage) {
+            if (!report.buildingLevels) {
+                report.buildingLevels = new BuildingLevels('?');
+            }    
+            report.buildingLevels.wall = report.ramDamage.levelAfter;
+        }
+        if (report.catDamage) {
+            if (!report.buildingLevels) {
+                report.buildingLevels = new BuildingLevels('?');
+            }
+            report.buildingLevels[report.catDamage.buildingType] = report.catDamage.levelAfter;
+        }
+
+        return report;
+    }
+
     /**
      * @return {Player}
      */
@@ -963,58 +1005,6 @@ class BattleReportScraper {
         return scrapeTroopCounts(this.$gameDoc.find('#attack_spy_away').find('table')[0].rows[1]);
     }
 
-}
-
-
-/**
- *	scrapes a battle report for information and returns the information as an object representation of the report
- *	@param	{HTMLDocument} gameDoc
- *	@return {BattleReport}
- */
-function twcheese_scrapeBattleReport(gameDoc) {
-    try {
-
-        var reportScraper = new BattleReportScraper(gameDoc);
-
-        var report = new BattleReport();
-        report.attacker = reportScraper.getAttacker();
-        report.attackerLosses = reportScraper.getAttackerLosses();
-        report.attackerQuantity = reportScraper.getAttackerQuantity();
-        report.attackerVillage = reportScraper.getAttackerVillage();
-        report.battleTime = reportScraper.getBattleTime();
-        report.buildingLevels = reportScraper.getBuildingLevels();
-        report.catDamage = reportScraper.getCatDamage();
-        report.defender = reportScraper.getDefender();
-        report.defenderLosses = reportScraper.getDefenderLosses();
-        report.defenderQuantity = reportScraper.getDefenderQuantity();
-        report.defenderVillage = reportScraper.getDefenderVillage();
-        report.dot = reportScraper.getDotColor();
-        report.espionageLevel = reportScraper.getEspionageLevel();
-        report.haul = reportScraper.getHaul();
-        report.loyalty = reportScraper.getLoyalty();
-        report.luck = reportScraper.getLuck();
-        report.morale = reportScraper.getMorale();
-        report.ramDamage = reportScraper.getRamDamage();
-        report.reportID = reportScraper.getReportId();
-        report.resources = reportScraper.getResources();        
-        report.unitsOutside = reportScraper.getUnitsOutside();
-        report.unitsInTransit = reportScraper.getUnitsInTransit();
-
-        if (report.ramDamage) {
-            if (!report.buildingLevels) {
-                report.buildingLevels = new BuildingLevels('?');
-            }    
-            report.buildingLevels.wall = report.ramDamage.levelAfter;
-        }
-        if (report.catDamage) {
-            if (!report.buildingLevels) {
-                report.buildingLevels = new BuildingLevels('?');
-            }
-            report.buildingLevels[report.catDamage.buildingType] = report.catDamage.levelAfter;
-        }
-
-        return report;
-    } catch (e) { console.error(e) }
 }
 
 
@@ -2768,7 +2758,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
 
             try {
                 let now = TwCheeseDate.newServerDate();
-                var report = twcheese_scrapeBattleReport(reportDoc);
+                let scraper = new BattleReportScraper(reportDoc);
+                var report = scraper.scrapeReport();
 
                 report.killScores = {
                     attacker: null,
@@ -3608,11 +3599,11 @@ function twcheese_nameReport(report, note) {
 
 /**
  *	interprets a report named with twCheese format
- *	@param reportName:String
- *	@return report:twcheese_BattleReport
+ *	@param {string} reportName
+ *	@return {BattleReport}
  */
 function twcheese_interpretReportName(reportName) {
-    var report = new twcheese_BattleReport();
+    var report = new BattleReport();
     report.twcheeseLabel = false;
 
     /*=== remove the unnecessary whitespace at the beginning ====*/
@@ -3918,7 +3909,8 @@ function enhanceReport(gameConfig) {
 
     /*==== calculate additional information ===*/
     let now = TwCheeseDate.newServerDate();
-    let report = new twcheese_scrapeBattleReport(document);
+    let scraper = new BattleReportScraper(document);
+    var report = scraper.scrapeReport();
 
     report.killScores = {
         attacker: null,

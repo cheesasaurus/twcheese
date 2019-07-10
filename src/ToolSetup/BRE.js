@@ -3321,16 +3321,6 @@ function createFooterButton(text, address) {
 
 
 /**
- *	determines if an attack was likely just a distraction
- *	@param {TroopCounts} troops
- *	@return {boolean}
- */
-function twcheese_isFeint(troops) {
-    return troops.snob === 0 && troops.populationUsed() <= 130;
-}
-
-
-/**
  * @param {BuildingLevels} buildingLevels
  * @return {{oneShotScouted:object, oneShotUpgraded:object}} mappings of how many siege units to demolish buildings
  *     example: {
@@ -3421,7 +3411,7 @@ function twcheese_nameReport(report, note) {
         newName += '_b[' + report.buildingLevels.toArray() + '] ';
     if (report.resources)
         newName += '_r[' + report.resources.toArray() + '] ';
-    if (twcheese_isFeint(report.attackerQuantity))
+    if (report.wasAttackFeint())
         newName += '_f';
     if (note)
         newName += '_n:' + note;

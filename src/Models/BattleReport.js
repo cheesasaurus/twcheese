@@ -128,6 +128,15 @@ class BattleReport {
         return troopCounts;
     }
 
+    /**
+     * was the attack likely just a distraction?
+     * @return {boolean}
+     */
+    wasAttackFeint() {
+        let troops = this.attackerQuantity;
+        return troops.snob === 0 && troops.populationUsed() <= 130;
+    }
+
 }
 
 

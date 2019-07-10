@@ -644,21 +644,20 @@ function twcheese_ReportsFolderDisplaySettings() {
 /*==== report scraper functions ====*/
 
 /**
- * @param	playerCell:HTMLTableCellElement - a cell containing a link to a player profile
+ * @param {HTMLTableCellElement} playerCell a cell containing a link to a player profile
  * @return {Player}
  */
 function scrapePlayer(playerCell) {
-    if (playerCell.innerHTML.search(language['report']['deletedPlayer']) != -1) {
+    if (playerCell.innerHTML.includes(language['report']['deletedPlayer'])) {
         return new Player(-1, playerCell.innerHTML);
     }
-    else if (playerCell.innerHTML == '---') {
+    else if (playerCell.innerHTML === '---') {
         return new Player(0, '---');
     }
-    var playerLink = playerCell.firstChild;
-    var player = new Player();
-    player.id = Number(playerLink.href.match(/&id=[0-9]{1,}/)[0].substring(4));
-    player.name = playerLink.innerHTML;
-    return player;
+    let playerLink = playerCell.firstChild;
+    let id = parseInt(playerLink.href.match(/&id=(\d+)/)[1]);
+    let name = playerLink.innerHTML;
+    return new Player(id, name);
 }
 
 

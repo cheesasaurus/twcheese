@@ -715,7 +715,7 @@ class BattleReportScraper {
         report.luck = this.getLuck();
         report.morale = this.getMorale();
         report.ramDamage = this.getRamDamage();
-        report.reportID = this.getReportId();
+        report.reportId = this.getReportId();
         report.resources = this.getResources();        
         report.unitsOutside = this.getUnitsOutside();
         report.unitsInTransit = this.getUnitsInTransit();
@@ -1502,12 +1502,12 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
      */
     this.renameReport = function (newName) {
         console.info('renaming report:', report);
-        var url = window.TribalWars.buildURL('POST', 'report', { ajaxaction: 'edit_subject', report_id: report.reportID });
+        var url = window.TribalWars.buildURL('POST', 'report', { ajaxaction: 'edit_subject', report_id: report.reportId });
         window.TribalWars.post(url,
             {},
             { text: newName },
             function (data) {
-                var $container = $('.quickedit[data-id="' + report.reportID + '"]');
+                var $container = $('.quickedit[data-id="' + report.reportId + '"]');
                 $container.find('.quickedit-label').html(newName);
             },
             {}
@@ -1519,7 +1519,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
 
         /*==== rename report ====*/
         //gameDoc.getElementById('editInput').value = newName;
-        //var submitLink = 'game.php?ajaxaction=edit_subject&h='+hash+'&report_id='+report.reportID+'&screen=report';
+        //var submitLink = 'game.php?ajaxaction=edit_subject&h='+hash+'&report_id='+report.reportId+'&screen=report';
         //editSubmit('label', 'labelText', 'edit', 'editInput', submitLink);
     };
 
@@ -1610,7 +1610,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
 
             /*==== basic cell ====*/
             let cell = row.insertCell(-1);
-            cell.innerHTML = '<input name="id_' + report.reportID + '" type="checkbox">';
+            cell.innerHTML = '<input name="id_' + report.reportId + '" type="checkbox">';
             cell.innerHTML += ' <img src="' + report.dotIcon + '"> ';
             if (report.lootIcon) {
                 cell.innerHTML += '<img src="' + report.lootIcon + '"> ';
@@ -1618,7 +1618,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
             if (report.isForwarded) {
                 cell.innerHTML += '<img src="graphic/forwarded.png?1" />';
             }
-            cell.innerHTML += '<a href="' + game_data.link_base_pure + 'report&mode=' + game_data.mode + '&view=' + report.reportID + '"> view</a>';
+            cell.innerHTML += '<a href="' + game_data.link_base_pure + 'report&mode=' + game_data.mode + '&view=' + report.reportId + '"> view</a>';
             if (report.defender) {
                 if (report.defender.name == game_data.player.name) {
                     cell.innerHTML += ' <img title="manage troops" style="float:right; cursor:pointer;" src="' + imagePaths['rally'] + '" onclick="window.location=\'game.php?village=' + report.defenderVillage.id + '&screen=place&mode=units\'"></img>';
@@ -1631,10 +1631,10 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
             /*==== repeat attack cell ====*/
             cell = row.insertCell(-1);
             if (report.attacker && report.attacker.name === game_data.player.name) {
-                let url = gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportID});
+                let url = gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportId});
                 cell.innerHTML = '<a title="repeat attack, from current village" href="' + url + '"><img src="' + imagePaths['repeatFromCurrent'] + '" /></a>';
                 if (report.twcheeseLabel) {
-                    let url = gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportID, village: report.attackerVillage.id});
+                    let url = gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportId, village: report.attackerVillage.id});
                     cell.innerHTML += ' | <a title="repeat attack, from original village" href="' + url + '"><img src="' + imagePaths['repeatFromOriginal'] + '" /></a>';
                 }
             }
@@ -1940,7 +1940,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
     for (var i = 1; i < reportsTable.rows.length - 1; i++) {
         var report = twcheese_interpretReportName(reportsTable.rows[i].cells[1].getElementsByTagName('a')[0].getElementsByTagName('span')[0].innerHTML);
         report.timeReceived = reportsTable.rows[i].cells[1].innerHTML;
-        report.reportID = this.scrapeReportId(reportsTable.rows[i].cells[1].getElementsByTagName('a')[0]);
+        report.reportId = this.scrapeReportId(reportsTable.rows[i].cells[1].getElementsByTagName('a')[0]);
         var reportIcons = [...reportsTable.rows[i].cells[1].getElementsByTagName('img')];
 
         /*==== defender distance from current village ====*/
@@ -1976,7 +1976,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         let lootImg = reportIcons.find(img => img.src.includes('graphic/max_loot/'));
         if (lootImg) {
             if (lootImg.src.includes('max_loot/0.png')) {
-                partialHauls.push(report.reportID);
+                partialHauls.push(report.reportId);
                 report.isPartialHaul = true;
             } else {
                 report.isFullHaul = true;
@@ -2129,13 +2129,13 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
 
 
         function urlCurrentVillage(twcheeseReport) {
-            return gameUrl('place', {try: 'confirm', type: 'same', report_id: twcheeseReport.reportID});
+            return gameUrl('place', {try: 'confirm', type: 'same', report_id: twcheeseReport.reportId});
         }
 
         function buildEntryCurrentVillage(twcheeseReport) {
             switch (format) {
                 case 'bbcode':
-                    return '\n[url=' + urlCurrentVillage(twcheeseReport) + ']repeat attack ' + twcheeseReport.reportID + ' from (' + game_data.village.coord + ') to (' + twcheeseReport.defenderVillage.x + '|' + twcheeseReport.defenderVillage.y + ')[/url]';
+                    return '\n[url=' + urlCurrentVillage(twcheeseReport) + ']repeat attack ' + twcheeseReport.reportId + ' from (' + game_data.village.coord + ') to (' + twcheeseReport.defenderVillage.x + '|' + twcheeseReport.defenderVillage.y + ')[/url]';
 
                 case 'plainLink':
                     return '\n' + urlCurrentVillage(twcheeseReport);
@@ -2145,25 +2145,25 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                     if (twcheeseReport.defenderDistance < 10) {
                         leadingZero = '0';
                     }
-                    return '\n<DT><A HREF="' + urlCurrentVillage(twcheeseReport) + '" >' + leadingZero + twcheeseReport.defenderDistance + ' Repeat Attack ' + twcheeseReport.reportID + ' from (' + game_data.village.coord + ') to (' + twcheeseReport.defenderVillage.x + '|' + twcheeseReport.defenderVillage.y + ')</A></DT>';                
+                    return '\n<DT><A HREF="' + urlCurrentVillage(twcheeseReport) + '" >' + leadingZero + twcheeseReport.defenderDistance + ' Repeat Attack ' + twcheeseReport.reportId + ' from (' + game_data.village.coord + ') to (' + twcheeseReport.defenderVillage.x + '|' + twcheeseReport.defenderVillage.y + ')</A></DT>';                
             }
         }
 
 
         function urlOriginalVillage(twcheeseReport) {
-            return gameUrl('place', {try: 'confirm', type: 'same', report_id: twcheeseReport.reportID, village: twcheeseReport.attackerVillage.id});
+            return gameUrl('place', {try: 'confirm', type: 'same', report_id: twcheeseReport.reportId, village: twcheeseReport.attackerVillage.id});
         }
 
         function buildEntryOriginalVillage(twcheeseReport) {
             switch (format) {
                 case 'bbcode':
-                    return '\n[url=' + urlOriginalVillage(twcheeseReport) + ']repeat attack ' + twcheeseReport.reportID + ' from (' + twcheeseReport.attackerVillage.x + '|' + twcheeseReport.attackerVillage.y + ') to (' + twcheeseReport.defenderVillage.x + '|' + twcheeseReport.defenderVillage.y + ')[/url]';
+                    return '\n[url=' + urlOriginalVillage(twcheeseReport) + ']repeat attack ' + twcheeseReport.reportId + ' from (' + twcheeseReport.attackerVillage.x + '|' + twcheeseReport.attackerVillage.y + ') to (' + twcheeseReport.defenderVillage.x + '|' + twcheeseReport.defenderVillage.y + ')[/url]';
 
                 case 'plainLink':
                     return '\n' + urlOriginalVillage(twcheeseReport);
 
                 case 'html':
-                    return '\n<DT><A HREF="' + urlOriginalVillage(twcheeseReport) + '" >Repeat Attack ' + twcheeseReport.reportID + ' from (' + twcheeseReport.attackerVillage.x + '|' + twcheeseReport.attackerVillage.y + ') to (' + twcheeseReport.defenderVillage.x + '|' + twcheeseReport.defenderVillage.y + ')</A></DT>';
+                    return '\n<DT><A HREF="' + urlOriginalVillage(twcheeseReport) + '" >Repeat Attack ' + twcheeseReport.reportId + ' from (' + twcheeseReport.attackerVillage.x + '|' + twcheeseReport.attackerVillage.y + ') to (' + twcheeseReport.defenderVillage.x + '|' + twcheeseReport.defenderVillage.y + ')</A></DT>';
             }
         }
 
@@ -2781,25 +2781,25 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                     report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.battleTime, now, gameConfig.speed, gameConfig.unit_speed);
                     report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, 8, gameConfig.speed);
                 }
-                report.reportID = reportID;
+                report.reportId = reportID;
 
                 var name = twcheese_nameReport(report, '');
 
-                var url = window.TribalWars.buildURL('POST', 'report', { ajaxaction: 'edit_subject', report_id: report.reportID });
+                var url = window.TribalWars.buildURL('POST', 'report', { ajaxaction: 'edit_subject', report_id: report.reportId });
                 window.TribalWars.post(url,
                     {},
                     { text: name },
                     function (data) {
-                        var $container = $('.quickedit[data-id="' + report.reportID + '"]');
+                        var $container = $('.quickedit[data-id="' + report.reportId + '"]');
                         $container.find('.quickedit-label').html(name);
                     },
                     {}
                 );
 
                 /*==== update reports information so row can be redrawn with updated information====*/
-                var oldReport = reportsTable.rows[document.getElementsByName('id_' + report.reportID)[0].parentNode.parentNode.rowIndex].twcheeseReport;
+                var oldReport = reportsTable.rows[document.getElementsByName('id_' + report.reportId)[0].parentNode.parentNode.rowIndex].twcheeseReport;
                 report = twcheese_interpretReportName(name);
-                report.reportID = reportID;
+                report.reportId = reportID;
                 report.twcheeseLabel = true;
                 report.dotIcon = oldReport.dotIcon;
                 report.isFullHaul = oldReport.isFullHaul;
@@ -2807,8 +2807,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 report.lootIcon = oldReport.lootIcon;
                 report.isForwarded = oldReport.isForwarded;
                 report.timeReceived = oldReport.timeReceived;
-                //report.subjectHTML = reportsTable.rows[document.getElementsByName('id_'+report.reportID)[0].parentNode.parentNode.rowIndex].cells[3].innerHTML;
-                pageMod.reports[document.getElementsByName('id_' + report.reportID)[0].parentNode.parentNode.rowIndex - 1] = report;
+                //report.subjectHTML = reportsTable.rows[document.getElementsByName('id_'+report.reportId)[0].parentNode.parentNode.rowIndex].cells[3].innerHTML;
+                pageMod.reports[document.getElementsByName('id_' + report.reportId)[0].parentNode.parentNode.rowIndex - 1] = report;
 
                 /*==== update progress display ====*/
                 var millisElapsed = performance.now() - startTime;
@@ -2875,7 +2875,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if (reportsTable.rows[i].twcheeseReport.isNew)
-                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportID)[0].checked = true;
+                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
         }
     }
 
@@ -2883,21 +2883,21 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if (!reportsTable.rows[i].twcheeseReport.isNew)
-                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportID)[0].checked = true;
+                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
         }
     }
 
     reportsTable.selectAll = function () {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
-            document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportID)[0].checked = true;
+            document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
         }
     };
 
     reportsTable.selectNone = function () {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
-            document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportID)[0].checked = false;
+            document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = false;
         }
     };
 
@@ -2905,7 +2905,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if (reportsTable.rows[i].twcheeseReport.dotIcon.search(dotColor) != -1)
-                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportID)[0].checked = true;
+                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
         }
     };
 
@@ -2913,7 +2913,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if (reportsTable.rows[i].twcheeseReport.isForwarded)
-                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportID)[0].checked = true;
+                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
         }
     };
 
@@ -2924,7 +2924,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if ((reportsTable.rows[i].twcheeseReport.isFullHaul && type == 1) || (reportsTable.rows[i].twcheeseReport.isPartialHaul && type == 0))
-                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportID)[0].checked = true;
+                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
         }
     };
 
@@ -2932,7 +2932,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if (reportsTable.rows[i].twcheeseReport.isFeint)
-                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportID)[0].checked = true;
+                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
         }
     };
 
@@ -2940,7 +2940,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if (reportsTable.rows[i].twcheeseReport.deadNoble)
-                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportID)[0].checked = true;
+                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
         }
     };
 
@@ -2948,7 +2948,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if (reportsTable.rows[i].twcheeseReport.loyalty)
-                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportID)[0].checked = true;
+                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
         }
     };
 
@@ -2956,7 +2956,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if (reportsTable.rows[i].twcheeseReport.isCleared)
-                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportID)[0].checked = true;
+                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
         }
     };
 
@@ -2964,7 +2964,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if (reportsTable.rows[i].twcheeseReport.subject.toLowerCase().search(text) != -1)
-                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportID)[0].checked = true;
+                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
         }
     };
 
@@ -2972,7 +2972,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if (reportsTable.rows[i].twcheeseReport.attacker.name == attackerName)
-                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportID)[0].checked = true;
+                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
         }
     };
 
@@ -2980,7 +2980,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if (reportsTable.rows[i].twcheeseReport.defender.name == defender)
-                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportID)[0].checked = true;
+                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
         }
     };
 
@@ -2989,7 +2989,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
 
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if (reportsTable.rows[i].twcheeseReport.attackerVillage.x == coordinates.split('|')[0] && reportsTable.rows[i].twcheeseReport.attackerVillage.y == coordinates.split('|')[1])
-                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportID)[0].checked = true;
+                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
         }
     };
 
@@ -2998,7 +2998,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
 
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if (reportsTable.rows[i].twcheeseReport.defenderVillage.x == coordinates.split('|')[0] && reportsTable.rows[i].twcheeseReport.defenderVillage.y == coordinates.split('|')[1])
-                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportID)[0].checked = true;
+                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
         }
     };
 

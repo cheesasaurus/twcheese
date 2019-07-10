@@ -18,7 +18,7 @@ class BattleReport {
         this.luck = null;
         this.morale = null;
         this.ramDamage = null;
-        this.reportID = null;
+        this.reportId = null;
         this.resources = null;
         this.battleTime = null;
         this.unitsInTransit = null;

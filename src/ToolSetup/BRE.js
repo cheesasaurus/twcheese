@@ -3332,26 +3332,6 @@ function twcheese_isFeint(troops) {
     return troops.snob === 0 && troops.populationUsed() <= 130;
 }
 
-/**
- *	calculates some population information based on a scout report
- *	@param {BuildingLevels} buildingLevels
- *  @param {TroopCounts} troopsDefending
- *	@param {TroopCounts|null} troopsOutside
- *	@return	{{buildings:number, troops:number, idle:number}} population
- */
-function twcheese_calculatePopulation(buildingLevels, troopsDefending, troopsOutside) {
-    let buildingPop = buildingLevels.populationUsed();
-    let troopPop = troopsDefending.populationUsed();
-    if (troopsOutside) {
-        troopPop += troopsOutside.populationUsed();
-    }
-    return {
-        buildings: buildingPop,
-        troops: troopPop,
-        idle: buildingLevels.populationCap() - buildingPop - troopPop
-    };
-}
-
 
 /**
  * @param {BuildingLevels} buildingLevels
@@ -3901,7 +3881,7 @@ function enhanceReport(gameConfig) {
     if (report.espionageLevel >= 1) {
         report.raidScouted = twcheese_calculateRaidScouted(report.resources);
     } if (report.espionageLevel >= 2) {
-        report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
+        report.populationSummary = report.calcPopulation();
         report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.battleTime, now, gameConfig.speed, gameConfig.unit_speed);
         report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, 8, gameConfig.speed);
     }

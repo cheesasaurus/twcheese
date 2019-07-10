@@ -41,6 +41,25 @@ class BattleReport {
         };
     }
 
+    /**
+     * @return {{buildings:number, troops:number, idle:number}}
+     */
+    calcPopulation() {
+        if (this.espionageLevel < 2) {
+            throw Error('not enough information to determine population');
+        }
+        let buildingPop = this.buildingLevels.populationUsed();
+        let troopPop = this.defenderQuantity.populationUsed();
+        if (this.unitsOutside) {
+            troopPop += this.unitsOutside.populationUsed();
+        }
+        return {
+            buildings: buildingPop,
+            troops: troopPop,
+            idle: this.buildingLevels.populationCap() - buildingPop - troopPop
+        };
+    }
+
 }
 
 

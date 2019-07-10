@@ -1,7 +1,7 @@
 import { Resource } from '/twcheese/src/Models/Resource.js';
 
 class Resources {
-    constructor(woodAmount, stoneAmount, ironAmount) {
+    constructor(woodAmount = 0, stoneAmount = 0, ironAmount = 0) {
         this.wood = new Resource(Resource.TYPE_TIMBER, woodAmount);
         this.stone = new Resource(Resource.TYPE_CLAY, stoneAmount);
         this.iron = new Resource(Resource.TYPE_IRON, ironAmount);
@@ -16,6 +16,14 @@ class Resources {
             this.wood + other.wood,
             this.stone + other.stone,
             this.iron + other.iron
+        );
+    }
+
+    capEach(maxAmount) {
+        return new Resources(
+            Math.min(this.wood, maxAmount),
+            Math.min(this.stone, maxAmount),
+            Math.min(this.iron, maxAmount)
         );
     }
 

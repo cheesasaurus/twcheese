@@ -86,7 +86,6 @@ class BattleReport {
         }
 
         var maxLoot = this.buildingLevels.resourceCap() - this.buildingLevels.hideableResources();
-
         function capRes(amount) {
             return Math.min(amount, maxLoot);
         }
@@ -134,29 +133,19 @@ class BattleReport {
     }
 
     /**
-     * @param {number} period the number of hours that resources have been accumulating
+     * @param {number} periodHours the number of hours that resources have been accumulating
      * @param {number} gameSpeed
      * @param {number} haulBonus the extra % bonus haul from flags, events, etc. Example: 30 for 30%, NOT 0.3
      * @return {TroopCounts} how many of each type of troop should be sent to take all resources, provided only one type of troop is sent
      */
-    calcRaidPeriodic(period, gameSpeed, haulBonus = 0) {
-        /*==== calculate maximum of each resource hauled ====*/
-        var maxHaul = this.buildingLevels.resourceCap() - this.buildingLevels.hideableResources();
-
-        /*==== calculate production rates ====*/
-        var production = new Array(0, 0, 0);
-        for (let [i, resType] of [[0, 'wood'], [1, 'stone'], [2, 'iron']]) {
-            production[i] = this.buildingLevels.resourceProductionHourly(resType, gameSpeed);
+    calcRaidPeriodic(periodHours, gameSpeed, haulBonus = 0) {
+        let resourcesProduced = new Resources();
+        for (let resType of Resources.TYPES) {
+            let hourlyProduction = this.buildingLevels.resourceProductionHourly(resType, gameSpeed);
+            resourcesProduced[resType] = periodHours * hourlyProduction;
         }
-
-        /*==== calculate resources produced */
-        var resources = new Array(0, 0, 0);
-        for (let i = 0; i < 3; i++) {
-            resources[i] = period * production[i];
-            if (resources[i] > maxHaul)
-                resources[i] = maxHaul;
-        }
-        var totalResources = resources[0] + resources[1] + resources[2];
+        let maxLoot = this.buildingLevels.resourceCap() - this.buildingLevels.hideableResources();
+        var totalResources = resourcesProduced.capEach(maxLoot).sum();
         return this.calcRaidUnits(totalResources, haulBonus);
     }
 

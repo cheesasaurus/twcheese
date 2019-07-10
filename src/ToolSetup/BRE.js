@@ -720,18 +720,15 @@ class BattleReportScraper {
         report.unitsOutside = this.getUnitsOutside();
         report.unitsInTransit = this.getUnitsInTransit();
 
-        if (report.ramDamage) {
-            if (!report.buildingLevels) {
-                report.buildingLevels = new BuildingLevels('?');
-            }    
-            report.buildingLevels.wall = report.ramDamage.levelAfter;
-        }
-        if (report.catDamage) {
-            if (!report.buildingLevels) {
-                report.buildingLevels = new BuildingLevels('?');
+        if (!report.buildingLevels && (report.ramDamage || report.catDamage)) {
+            report.buildingLevels = new BuildingLevels('?');
+            if (report.ramDamage) {
+                report.buildingLevels.wall = report.ramDamage.levelAfter;
             }
-            report.buildingLevels[report.catDamage.buildingType] = report.catDamage.levelAfter;
-        }
+            if (report.catDamage) {
+                report.buildingLevels[report.catDamage.buildingType] = report.catDamage.levelAfter;
+            }
+        }        
 
         return report;
     }

@@ -3347,12 +3347,15 @@ function twcheese_isFeint(troops) {
  *	calculates some population information based on a scout report
  *	@param {BuildingLevels} buildingLevels
  *  @param {TroopCounts} troopsDefending
- *	@param {TroopCounts} troopsOutside
+ *	@param {TroopCounts|null} troopsOutside
  *	@return	{{buildings:number, troops:number, idle:number}} population
  */
 function twcheese_calculatePopulation(buildingLevels, troopsDefending, troopsOutside) {
     let buildingPop = buildingLevels.populationUsed();
-    let troopPop = troopsDefending.populationUsed() + troopsOutside.populationUsed();
+    let troopPop = troopsDefending.populationUsed();
+    if (troopsOutside) {
+        troopPop += troopsOutside.populationUsed();
+    }
     return {
         buildings: buildingPop,
         troops: troopPop,

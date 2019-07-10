@@ -1006,7 +1006,7 @@ function twcheese_BattleReportScraper(gameDoc) {
         };
     }
     catch (err) {
-        console.err('Report Scraper initialization error:', err);
+        console.error('Report Scraper initialization error:', err);
     }
 }
 

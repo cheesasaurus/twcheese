@@ -8,6 +8,7 @@ fetch = function() {
     return originalFetch.apply(this, arguments);
 };
 
+
 /**
  *	requests the document from a url
  *	@param	{string} url the url of the page to get the document from
@@ -18,7 +19,13 @@ async function requestDocument(url) {
     await throttle.sleepIfNeeded();
     let response = await fetch(url);
     let responseText = await response.text();
-    return (new DOMParser()).parseFromString(responseText, 'text/html');
+    let doc = (new DOMParser()).parseFromString(responseText, 'text/html');
+
+    Object.defineProperty(doc, 'URL', {
+        get: () => url
+    });
+    
+    return doc;
 };
 
 

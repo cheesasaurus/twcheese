@@ -8,7 +8,7 @@ import { Resources } from '/twcheese/src/Models/Resources.js';
 import { calcAttackerScore, calcDefenderScore } from '/twcheese/src/Models/KillScores.js';
 import { calcLoyalty } from '/twcheese/src/Models/Loyalty.js';
 import { StationedTroops } from '/twcheese/src/Models/StationedTroops.js';
-import { TroopCounts, calcTravelDurations, TroopCalculator, troopTypes } from '/twcheese/src/Models/Troops.js';
+import { TroopCounts, calcTravelDurations, troopTypes } from '/twcheese/src/Models/Troops.js';
 import { BuildingLevels, buildingTypes } from '/twcheese/src/Models/Buildings.js';
 import { TwCheeseDate } from '/twcheese/src/Models/TwCheeseDate.js';
 import { parseArrival } from '/twcheese/src/Scrape/time.js';
@@ -1136,7 +1136,8 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
             periodInput.maxLength = 4;
             periodInput.value = 8;
             periodInput.addEventListener('input', function() {
-                report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, Number(this.value), gameConfig.speed, Number(document.getElementById('twcheese_raider_haulBonus')));
+                let haulBonus = Number(document.getElementById('twcheese_raider_haulBonus').value);
+                report.raidPeriodic = report.calcRaidPeriodic(Number(this.value), gameConfig.speed, haulBonus);
                 twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), report.raidPeriodic, report);
             });
             periodicDiv.appendChild(periodInput);
@@ -1538,19 +1539,19 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
 
         if (mode == 'scouted') {
             gameDoc.getElementById('twcheese_raider_selection').value = 'scouted';
-            report.raidScouted = twcheese_calculateRaidScouted(report.resources, haulBonus);
+            report.raidScouted = report.calcRaidScouted(haulBonus);
             twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), report.raidScouted, report);
             gameDoc.getElementById('twcheese_periodic_options').style.display = 'none';
         }
         else if (mode == 'predicted') {
             gameDoc.getElementById('twcheese_raider_selection').value = 'predicted';
-            report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.battleTime, TwCheeseDate.newServerDate(), gameConfig.speed, gameConfig.unit_speed, haulBonus);
+            report.raidPredicted = report.calcRaidPredicted(game_data.village, TwCheeseDate.newServerDate(), gameConfig.speed, gameConfig.unit_speed, haulBonus);
             twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), report.raidPredicted, report);
             gameDoc.getElementById('twcheese_periodic_options').style.display = 'none';
         }
         else if (mode == 'periodic') {
             gameDoc.getElementById('twcheese_raider_selection').value = 'periodic';
-            report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, Number(gameDoc.getElementById('twcheese_period').value), gameConfig.speed, haulBonus);
+            report.raidPeriodic = report.calcRaidPeriodic(Number(gameDoc.getElementById('twcheese_period').value), gameConfig.speed, haulBonus);
             twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), report.raidPeriodic, report);
             gameDoc.getElementById('twcheese_periodic_options').style.display = '';
         }
@@ -3394,118 +3395,6 @@ function twcheese_calculateDemolition(buildingLevels) {
 }
 
 
-let raidTroopTypes = ['spear', 'sword', 'axe', 'archer', 'light', 'marcher', 'heavy'];
-
-/**
- * @param {Resources} resourcesScouted
- * @param {Number} haulBonus the extra % bonus haul from flags, events, etc.  Example: 30 for 30%, NOT 0.3
- * @return {TroopCounts} how many of each type of troop should be sent to take all resources, provided only one type of troop is sent
- */
-function twcheese_calculateRaidScouted(resourcesScouted, haulBonus = 0) {
-    return twcheese_calculateRaidUnits(resourcesScouted.sum(), haulBonus);
-}
-
-/**
- * @param {Resources} resourcesScouted
- * @param {BuildingLevels} buildingLevels
- * @param {Village|{x:number, y:number}} home
- * @param {Village} target
- * @param {TwCheeseDate} timeSent the time the player received the report
- * @param {TwCheeseDate} timeNow the current time
- * @param {number} haulBonus the extra % bonus haul from flags, events, etc. Example: 30 for 30%, NOT 0.3
- * @return {TroopCounts} how many of each type of troop should be sent to take all resources, provided only one type of troop is sent
- */
-function twcheese_calculateRaidPredicted(resourcesScouted, buildingLevels, home, target, timeSent, timeNow, gameSpeed, unitSpeed, haulBonus = 0) {
-    var maxLoot = buildingLevels.resourceCap() - buildingLevels.hideableResources();
-
-    function capRes(amount) {
-        return Math.min(amount, maxLoot);
-    }
-
-    /*==== calculate production rates ====*/
-    let hourlyProduction = {};
-    for (let resType of Resources.TYPES) {
-        hourlyProduction[resType] = buildingLevels.resourceProductionHourly(resType, gameSpeed);
-    }
-
-    /*==== add resources produced between the current time and the time of the report*/
-    var hoursElapsed = (timeNow - timeSent) / 3600000;
-    let resourcesProducedSinceReport = new Resources(
-        hourlyProduction.wood * hoursElapsed,
-        hourlyProduction.stone * hoursElapsed,
-        hourlyProduction.iron * hoursElapsed,
-    );
-    let resourcesNow = resourcesScouted.add(resourcesProducedSinceReport);
-
-    /*==== calculate travel times (in hours) ====*/
-    var travelHours = {};
-    for (let troopType of raidTroopTypes) {
-        let travelDuration = TroopCalculator.travelDuration(troopType, target.distanceTo(home), gameSpeed, unitSpeed);
-        travelHours[troopType] = travelDuration / 3600;
-    }
-
-    /*==== add resources produced during travel ====*/
-    var totalResources = {};
-    for (let troopType of raidTroopTypes) {
-        let resourcesProducedDuringTravel = new Resources(
-            hourlyProduction.wood * travelHours[troopType],
-            hourlyProduction.stone * travelHours[troopType],
-            hourlyProduction.iron * travelHours[troopType],
-        );
-        let totalRes = resourcesNow.add(resourcesProducedDuringTravel);
-        totalResources[troopType] = capRes(totalRes.wood) + capRes(totalRes.stone) + capRes(totalRes.iron);
-    }
-
-    /*==== calculate units to take resources ====*/
-    let troopCounts = new TroopCounts();
-    for (let troopType of raidTroopTypes) {
-        troopCounts[troopType] = TroopCalculator.countToCarry(troopType, totalResources[troopType], haulBonus);
-    }
-    return troopCounts;
-}
-
-/**
- * @param {BuildingLevels} buildingLevels
- * @param {number} period the number of hours that resources have been accumulating
- * @param {number} gameSpeed
- * @param {number} haulBonus the extra % bonus haul from flags, events, etc. Example: 30 for 30%, NOT 0.3
- * @return {TroopCounts} how many of each type of troop should be sent to take all resources, provided only one type of troop is sent
- */
-function twcheese_calculateRaidPeriodic(buildingLevels, period, gameSpeed, haulBonus = 0) {
-
-    /*==== calculate maximum of each resource hauled ====*/
-    var maxHaul = buildingLevels.resourceCap() - buildingLevels.hideableResources();
-
-    /*==== calculate production rates ====*/
-    var production = new Array(0, 0, 0);
-    for (let [i, resType] of [[0, 'wood'], [1, 'stone'], [2, 'iron']]) {
-        production[i] = buildingLevels.resourceProductionHourly(resType, gameSpeed);
-    }
-
-    /*==== calculate resources produced */
-    var resources = new Array(0, 0, 0);
-    for (let i = 0; i < 3; i++) {
-        resources[i] = period * production[i];
-        if (resources[i] > maxHaul)
-            resources[i] = maxHaul;
-    }
-    var totalResources = resources[0] + resources[1] + resources[2];
-    return twcheese_calculateRaidUnits(totalResources, haulBonus);
-}
-
-/**
- * @param {number} resources the total resources to be raided
- * @param {number} haulBonus the extra % bonus haul from flags, events, etc. Example: 30 for 30%, NOT 0.3
- * @return {TroopCounts} how many of each type of troop should be sent to take all resources, provided only one type of troop is sent
- */
-function twcheese_calculateRaidUnits(resources, haulBonus = 0) {
-    let troopCounts = new TroopCounts();
-    for (let troopType of raidTroopTypes) {
-        troopCounts[troopType] = TroopCalculator.countToCarry(troopType, resources, haulBonus);
-    }
-    return troopCounts;
-}
-
 /*==== other functions ====*/
 
 /**
@@ -3868,11 +3757,11 @@ function enhanceReport(gameConfig) {
     if (report.buildingLevels)
         report.demolition = twcheese_calculateDemolition(report.buildingLevels);
     if (report.espionageLevel >= 1) {
-        report.raidScouted = twcheese_calculateRaidScouted(report.resources);
+        report.raidScouted = report.calcRaidScouted();
     } if (report.espionageLevel >= 2) {
         report.populationSummary = report.calcPopulation();
-        report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.battleTime, now, gameConfig.speed, gameConfig.unit_speed);
-        report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, 8, gameConfig.speed);
+        report.raidPredicted = report.calcRaidPredicted(game_data.village, now, gameConfig.speed, gameConfig.unit_speed);
+        report.raidPeriodic = report.calcRaidPeriodic(8, gameConfig.speed);
     }
 
     /*==== add stuff to the page ====*/

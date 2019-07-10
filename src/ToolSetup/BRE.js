@@ -717,46 +717,44 @@ class BattleReportScraper {
         this.defenderUnitsTable = gameDoc.getElementById('attack_info_def_units');
         this.resultsTable = gameDoc.getElementById('attack_results');
         this.supportKilledTable = gameDoc.getElementById('attack_away_units');
+        this._validate();
+    }
+
+    _validate() {
+        let shouldAlwaysBeThere = ['mainTable', 'attackerTable', 'attackerUnitsTable', 'defenderTable'];
+        for (let propName of shouldAlwaysBeThere) {
+            if (!this[propName]) {
+                throw Error(`BattleReportScraper failed: couldn't locate the ${propName}`);
+            }
+        }
     }
 
     /**
-     * @return {Player|null}
+     * @return {Player}
      */
     getAttacker() {
-        if (!this.attackerTable) {
-            return null;
-        }
         var playerCell = this.attackerTable.rows[0].cells[1];
         return scrapePlayer(playerCell);
     }
 
     /**
-     * @return {TroopCounts|null}
+     * @return {TroopCounts}
      */
     getAttackerLosses() {
-        if (!this.attackerUnitsTable) {
-            return null;
-        }
         return scrapeTroopCounts(twcheese_removeTroopsLabel(this.attackerUnitsTable.rows[2]));
     }
 
     /**
-     * @return {TroopCounts|null}
+     * @return {TroopCounts}
      */
     getAttackerQuantity() {
-        if (!this.attackerUnitsTable) {
-            return null;
-        }
         return scrapeTroopCounts(twcheese_removeTroopsLabel(this.attackerUnitsTable.rows[1]));
     }
 
     /**
-     * @return {Village|null}
+     * @return {Village}
      */
     getAttackerVillage() {
-        if (!this.attackerTable) {
-            return null;
-        }
         return scrapeVillage(this.attackerTable.rows[1].cells[1].firstChild.firstChild);
     }
 
@@ -810,12 +808,9 @@ class BattleReportScraper {
     }
 
     /**
-     * @return {Player|null}
+     * @return {Player}
      */
     getDefender() {
-        if (!this.defenderTable) {
-            return null;   
-        }
         var playerCell = this.defenderTable.rows[0].cells[1];
         return scrapePlayer(playerCell);
     }
@@ -841,12 +836,9 @@ class BattleReportScraper {
     }
 
     /**
-     * @return {Village|null}
+     * @return {Village}
      */
     getDefenderVillage() {
-        if (!this.defenderTable) {
-            return null;
-        }
         return scrapeVillage(this.defenderTable.rows[1].cells[1].firstChild.firstChild);
     }
 
@@ -970,6 +962,7 @@ class BattleReportScraper {
     }
 
     /**
+     * only visible if the village was conquered
      * @return	reinforcements:Array(reinforcement0:Reinforcements, reinforcement1:Reinforcements, reinforcement2:Reinforcements...)
      * if no "Defender's troops in other villages" were killed, returns null
      */
@@ -988,6 +981,7 @@ class BattleReportScraper {
     }
 
     /**
+     * only visible if the village was conquered
      * @return {TroopCounts|null}
      */
     getUnitsInTransit() {
@@ -2811,9 +2805,10 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
             try {
                 let now = TwCheeseDate.newServerDate();
                 var report = twcheese_scrapeBattleReport(reportDoc);
-                if (report.defenderQuantity)
+                if (report.defenderQuantity) {
                     report.defenderSurvivors = report.defenderQuantity.subtract(report.defenderLosses);                    
-                report.killScores = calcKillScores(report.attackerLosses, report.defenderLosses);
+                    report.killScores = calcKillScores(report.attackerLosses, report.defenderLosses); // todo: split this up
+                }
                 if (report.loyalty)
                     report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.battleTime, now, game_data.village, report.defenderVillage);
                 report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.battleTime, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
@@ -3957,9 +3952,10 @@ function enhanceReport(gameConfig) {
     let report = new twcheese_scrapeBattleReport(document);
     if (report.attackerQuantity)
         report.attackerSurvivors = report.attackerQuantity.subtract(report.attackerLosses);
-    if (report.defenderQuantity)
-        report.defenderSurvivors = report.defenderQuantity.subtract(report.defenderLosses);        
-    report.killScores = calcKillScores(report.attackerLosses, report.defenderLosses);
+    if (report.defenderQuantity) {
+        report.defenderSurvivors = report.defenderQuantity.subtract(report.defenderLosses);
+        report.killScores = calcKillScores(report.attackerLosses, report.defenderLosses); // todo: split this up
+    }
     if (report.loyalty)
         report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.battleTime, now, game_data.village, report.defenderVillage);
     report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.battleTime, report.attackerQuantity, report.attackerVillage, report.defenderVillage);

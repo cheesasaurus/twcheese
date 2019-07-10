@@ -578,14 +578,16 @@ try {
 
 /*==== templates ====*/
 
-/**
- * Reinforcements template
- * @attribute {TroopCounts} troops
- * @attribute {Village} village	- the information about the village being supported.
- */
-function twcheese_Reinforcements() {
-    this.troops = new TroopCounts();
-    this.village = new Village(0, 0, 0);
+class StationedTroops {
+    
+    /**
+     * @param TroopCounts troopCounts
+     * @param Village village
+     */
+    constructor(troopCounts, village) {
+        this.troopCounts = troopCounts;
+        this.village = village;
+    }
 }
 
 
@@ -959,22 +961,21 @@ class BattleReportScraper {
     }
 
     /**
-     * only visible if the village was conquered
-     * @return	reinforcements:Array(reinforcement0:Reinforcements, reinforcement1:Reinforcements, reinforcement2:Reinforcements...)
-     * if no "Defender's troops in other villages" were killed, returns null
+     * "Defender's troops in other villages"
+     * Only visible if the village was conquered.
+     * @return {StationedTroops[]}
      */
     getSupportKilled() {
         if (!this.supportKilledTable) {
-            return null;
+            return [];
         }
-        var reinforcements = new Array();
-        for (var i = 1; i < this.supportKilledTable.rows.length; i++) {
-            var currentReinforcement = new twcheese_Reinforcements();
-            currentReinforcement.troops = scrapeTroopCounts(twcheese_removeTroopsLabel(this.supportKilledTable.rows[i]));
-            currentReinforcement.village = scrapeVillage(this.supportKilledTable.rows[i].cells[0].firstChild);
-            reinforcements.push(currentReinforcement);
+        let supportKilled = [];
+        for (let row of this.supportKilledTable.rows) {
+            let troopCounts = scrapeTroopCounts(twcheese_removeTroopsLabel(row));
+            let village = scrapeVillage(row.cells[0].firstChild);
+            supportKilled.push(new StationedTroops(troopCounts, village));
         }
-        return reinforcements;
+        return supportKilled;
     }
 
     /**

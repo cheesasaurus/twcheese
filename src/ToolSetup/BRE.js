@@ -588,32 +588,32 @@ function twcheese_Reinforcements() {
     this.village = new Village(0, 0, 0);
 }
 
-/**
- *	object representation of a battle report
- */
-function twcheese_BattleReport() {
-    this.attacker;
-    this.attackerLosses;
-    this.attackerQuantity;
-    this.attackerVillage;
-    this.buildingLevels;
-    this.catDamage;
-    this.defender;
-    this.defenderLosses;
-    this.defenderQuantity;
-    this.defenderVillage;
-    this.dot;
-    this.espionageLevel;
-    this.haul;
-    this.loyalty;
-    this.luck;
-    this.morale;
-    this.ramDamage;
-    this.reportID;
-    this.resources;
-    this.battleTime;
-    this.unitsInTransit;
-    this.unitsOutside;
+
+class BattleReport {
+    constructor() {
+        this.attacker = null;
+        this.attackerLosses = null;
+        this.attackerQuantity = null;
+        this.attackerVillage = null;
+        this.buildingLevels = null;
+        this.catDamage = null;
+        this.defender = null;
+        this.defenderLosses = null;
+        this.defenderQuantity = null;
+        this.defenderVillage = null;
+        this.dot = null;
+        this.espionageLevel = null;
+        this.haul = null;
+        this.loyalty = null;
+        this.luck = null;
+        this.morale = null;
+        this.ramDamage = null;
+        this.reportID = null;
+        this.resources = null;
+        this.battleTime = null;
+        this.unitsInTransit = null;
+        this.unitsOutside = null;
+    }
 }
 
 /**
@@ -1010,14 +1010,14 @@ class BattleReportScraper {
 /**
  *	scrapes a battle report for information and returns the information as an object representation of the report
  *	@param	{HTMLDocument} gameDoc
- *	@return report:twcheese_BattleReport
+ *	@return {BattleReport}
  */
 function twcheese_scrapeBattleReport(gameDoc) {
     try {
 
         var reportScraper = new BattleReportScraper(gameDoc);
 
-        var report = new twcheese_BattleReport;
+        var report = new BattleReport();
         report.attacker = reportScraper.getAttacker();
         report.attackerLosses = reportScraper.getAttackerLosses();
         report.attackerQuantity = reportScraper.getAttackerQuantity();

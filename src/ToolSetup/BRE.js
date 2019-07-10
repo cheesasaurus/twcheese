@@ -943,14 +943,10 @@ function twcheese_BattleReportScraper(gameDocument) {
         };
 
         /**
-         * @return	reportID:Number
+         * @return {number}
          */
         this.getReportId = function () {
-            //var id = Number(this.gameDocument.URL.match(/&id=[0-9]{1,}/)[0].substring(4))
-            //var text = this.gameDocument.URL.substring(this.gameDocument.URL.indexOf('view=') + 5);
-            //alert(text.match());
-            //alert(Number(this.gameDocument.URL.substring(this.gameDocument.URL.indexOf('view=') + 5).match('[1-9]{1,}')));
-            return new Number(this.gameDocument.URL.substring(this.gameDocument.URL.indexOf('view=') + 5).match('[0-9]{1,}'));
+            return parseInt(this.gameDocument.URL.match(/view=(\d+)/)[1]);
         };
 
         /**

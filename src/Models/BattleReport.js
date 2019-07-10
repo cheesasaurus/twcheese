@@ -1,5 +1,4 @@
 import { TroopCounts, TroopCalculator, troopTypes } from '/twcheese/src/Models/Troops.js';
-import { Resources } from '/twcheese/src/Models/Resources.js';
 
 
 class BattleReport {
@@ -84,14 +83,9 @@ class BattleReport {
         if (this.espionageLevel < 2) {
             throw Error('not enough information');
         }
-
-        var maxLoot = this.buildingLevels.resourceCap() - this.buildingLevels.hideableResources();
-
-        /*==== calculate production rates ====*/
-        let hourlyProduction = new Resources();
-        for (let resType of Resources.TYPES) {
-            hourlyProduction[resType] = this.buildingLevels.resourceProductionHourly(resType, gameSpeed);
-        }
+        let distance = this.defenderVillage.distanceTo(home);
+        let maxLoot = this.buildingLevels.resourceCap() - this.buildingLevels.hideableResources();
+        let hourlyProduction = this.buildingLevels.resourceProductionHourly(gameSpeed);
 
         let hoursSinceReport = (timeNow - this.battleTime) / 3600000;
         let resourcesProducedSinceReport = hourlyProduction.multiply(hoursSinceReport);
@@ -99,7 +93,7 @@ class BattleReport {
 
         let troopCounts = new TroopCounts();
         for (let troopType of troopTypes) {
-            let travelDuration = TroopCalculator.travelDuration(troopType, this.defenderVillage.distanceTo(home), gameSpeed, unitSpeed);
+            let travelDuration = TroopCalculator.travelDuration(troopType, distance, gameSpeed, unitSpeed);
             let travelHours = travelDuration / 3600;
             let resourcesProducedDuringTravel = hourlyProduction.multiply(travelHours);
             let resourcesAtArrival = resourcesNow.add(resourcesProducedDuringTravel).cap(maxLoot);
@@ -115,13 +109,9 @@ class BattleReport {
      * @return {TroopCounts} how many of each type of troop should be sent to take all resources, provided only one type of troop is sent
      */
     calcRaidPeriodic(periodHours, gameSpeed, haulBonus = 0) {
-        let resourcesProduced = new Resources();
-        for (let resType of Resources.TYPES) {
-            let hourlyProduction = this.buildingLevels.resourceProductionHourly(resType, gameSpeed);
-            resourcesProduced[resType] = periodHours * hourlyProduction;
-        }
+        let resourcesProduced = this.buildingLevels.resourceProductionHourly(gameSpeed).multiply(periodHours);
         let maxLoot = this.buildingLevels.resourceCap() - this.buildingLevels.hideableResources();
-        var totalResources = resourcesProduced.cap(maxLoot).sum();
+        let totalResources = resourcesProduced.cap(maxLoot).sum();
         return this.calcRaidUnits(totalResources, haulBonus);
     }
 

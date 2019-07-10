@@ -1,3 +1,4 @@
+import { Resources } from '/twcheese/src/Models/Resources.js';
 
 import { cfg } from '/twcheese/conf/Buildings.js';
 // todo: model a single Building
@@ -47,6 +48,14 @@ let buildingTypes = [
 ];
 
 
+function resProductionHourly(level, gameSpeed) {
+    if (level === 0) {
+        return gameSpeed * 5;
+    }
+    return gameSpeed * 30 * (1.163118 ** (level - 1));
+}
+
+
 class BuildingLevels {
     constructor(fill = 0) {
         for (let type of buildingTypes) {
@@ -73,15 +82,12 @@ class BuildingLevels {
         return Math.round(1000 * 1.2294934 ** (this.storage - 1));
     }
     
-    resourceProductionHourly(resourceType, gameSpeed = 1) {
-        if (typeof this[resourceType] === 'undefined') {
-            throw Error(`there's no building that makes "${resourceType}"`);
-        }
-        let level = this[resourceType];
-        if (level === 0) {
-            return gameSpeed * 5;
-        }
-        return gameSpeed * 30 * (1.163118 ** (level - 1));
+    resourceProductionHourly(gameSpeed = 1) {
+        return new Resources(
+            resProductionHourly(this.wood, gameSpeed),
+            resProductionHourly(this.stone, gameSpeed),
+            resProductionHourly(this.iron, gameSpeed)
+        );
     }
 
     hideableResources() {

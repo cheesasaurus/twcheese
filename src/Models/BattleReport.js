@@ -4,12 +4,14 @@ class BattleReport {
         this.attacker = null;
         this.attackerLosses = null;
         this.attackerQuantity = null;
+        this.attackerSurvivors = null;
         this.attackerVillage = null;
         this.buildingLevels = null;
         this.catDamage = null;
         this.defender = null;
         this.defenderLosses = null;
         this.defenderQuantity = null;
+        this.defenderSurvivors = null;
         this.defenderVillage = null;
         this.dot = null;
         this.espionageLevel = null;

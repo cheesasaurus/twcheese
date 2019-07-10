@@ -720,6 +720,12 @@ class BattleReportScraper {
         report.unitsOutside = this.getUnitsOutside();
         report.unitsInTransit = this.getUnitsInTransit();
 
+        report.attackerSurvivors = report.attackerQuantity.subtract(report.attackerLosses);
+
+        if (report.defenderQuantity) {
+            report.defenderSurvivors = report.defenderQuantity.subtract(report.defenderLosses);
+        }
+
         if (!report.buildingLevels && (report.ramDamage || report.catDamage)) {
             report.buildingLevels = new BuildingLevels('?');
             if (report.ramDamage) {
@@ -728,7 +734,9 @@ class BattleReportScraper {
             if (report.catDamage) {
                 report.buildingLevels[report.catDamage.buildingType] = report.catDamage.levelAfter;
             }
-        }        
+        }
+
+
 
         return report;
     }
@@ -1457,8 +1465,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
         launchRow.cells[1].innerHTML = twcheese_dateToString(report.timingInfo.launchTime);
 
         /*==== determine whether return time should be displayed. ====*/
-        var attackerSurvivors = report.attackerQuantity.subtract(report.attackerLosses);
-        let showReturnTime = !attackerSurvivors.isZero();
+        let showReturnTime = !report.attackerSurvivors.isZero();
 
         var returnRow = reportTable.insertRow(3);
         returnRow.insertCell(-1);
@@ -2760,11 +2767,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 let scraper = new BattleReportScraper(reportDoc);
                 var report = scraper.scrapeReport();
               
-                if (report.defenderQuantity) {
-                    report.defenderSurvivors = report.defenderQuantity.subtract(report.defenderLosses);
-                }
                 report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.battleTime, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
-                report.reportId = reportID;
 
                 var name = twcheese_nameReport(report, '');
 
@@ -3680,8 +3683,8 @@ function twcheese_interpretReportName(reportName) {
                 }
 
                 /*==== set defense ====*/
-                report.defenderSurvivors = false;
-                report.isCleared = false;
+                report.defenderSurvivors = null;
+                report.isCleared = false; // todo: is this used for anything?
                 if (reportName.search('_d') != -1) {
                     let text = reportName.substring(reportName.indexOf('_d') + 2);
                     text = text.substring(0, text.indexOf(']') + 1);
@@ -3902,10 +3905,7 @@ function enhanceReport(gameConfig) {
         attacker: null,
         defender: calcDefenderScore(report.attackerLosses)
     };
-    if (report.attackerQuantity)
-        report.attackerSurvivors = report.attackerQuantity.subtract(report.attackerLosses);
     if (report.defenderQuantity) {
-        report.defenderSurvivors = report.defenderQuantity.subtract(report.defenderLosses);
         report.killScores.attacker = calcAttackerScore(report.defenderLosses);
     }
     if (report.loyalty)

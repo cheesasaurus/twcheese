@@ -6,6 +6,7 @@ import { Village } from '/twcheese/src/Models/Village.js';
 import { Resources } from '/twcheese/src/Models/Resources.js';
 import { calcAttackerScore, calcDefenderScore } from '/twcheese/src/Models/KillScores.js';
 import { calcLoyalty } from '/twcheese/src/Models/Loyalty.js';
+import { StationedTroops } from '/twcheese/src/Models/StationedTroops.js';
 import { TroopCounts, calcTravelDurations, troopTypes } from '/twcheese/src/Models/Troops.js';
 import { BuildingLevels, buildingTypes } from '/twcheese/src/Models/Buildings.js';
 import { TwCheeseDate } from '/twcheese/src/Models/TwCheeseDate.js';
@@ -577,18 +578,6 @@ try {
 } catch (e) { console.error(e) }
 
 /*==== templates ====*/
-
-class StationedTroops {
-    
-    /**
-     * @param TroopCounts troopCounts
-     * @param Village village
-     */
-    constructor(troopCounts, village) {
-        this.troopCounts = troopCounts;
-        this.village = village;
-    }
-}
 
 
 class BattleReport {

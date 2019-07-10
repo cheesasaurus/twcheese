@@ -1,7 +1,5 @@
-import { TroopCounts, TroopCalculator } from '/twcheese/src/Models/Troops.js';
+import { TroopCounts, TroopCalculator, troopTypes } from '/twcheese/src/Models/Troops.js';
 import { Resources } from '/twcheese/src/Models/Resources.js';
-
-let raidTroopTypes = ['spear', 'sword', 'axe', 'archer', 'light', 'marcher', 'heavy'];
 
 
 class BattleReport {
@@ -110,14 +108,14 @@ class BattleReport {
 
         /*==== calculate travel times (in hours) ====*/
         var travelHours = {};
-        for (let troopType of raidTroopTypes) {
+        for (let troopType of troopTypes) {
             let travelDuration = TroopCalculator.travelDuration(troopType, this.defenderVillage.distanceTo(home), gameSpeed, unitSpeed);
             travelHours[troopType] = travelDuration / 3600;
         }
 
         /*==== add resources produced during travel ====*/
         var totalResources = {};
-        for (let troopType of raidTroopTypes) {
+        for (let troopType of troopTypes) {
             let resourcesProducedDuringTravel = new Resources(
                 hourlyProduction.wood * travelHours[troopType],
                 hourlyProduction.stone * travelHours[troopType],
@@ -129,7 +127,7 @@ class BattleReport {
 
         /*==== calculate units to take resources ====*/
         let troopCounts = new TroopCounts();
-        for (let troopType of raidTroopTypes) {
+        for (let troopType of troopTypes) {
             troopCounts[troopType] = TroopCalculator.countToCarry(troopType, totalResources[troopType], haulBonus);
         }
         return troopCounts;
@@ -169,7 +167,7 @@ class BattleReport {
      */
     calcRaidUnits(resources, haulBonus = 0) {
         let troopCounts = new TroopCounts();
-        for (let troopType of raidTroopTypes) {
+        for (let troopType of troopTypes) {
             troopCounts[troopType] = TroopCalculator.countToCarry(troopType, resources, haulBonus);
         }
         return troopCounts;

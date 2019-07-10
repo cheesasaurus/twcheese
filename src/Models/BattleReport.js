@@ -75,7 +75,7 @@ class BattleReport {
     }
 
     /**
-     * @param {Village|{x:number, y:number}} home
+     * @param {{x:number, y:number}} home
      * @param {TwCheeseDate} timeNow the current time
      * @param {number} haulBonus the extra % bonus haul from flags, events, etc. Example: 30 for 30%, NOT 0.3
      * @return {TroopCounts} how many of each type of troop should be sent to take all resources, provided only one type of troop is sent
@@ -86,48 +86,24 @@ class BattleReport {
         }
 
         var maxLoot = this.buildingLevels.resourceCap() - this.buildingLevels.hideableResources();
-        function capRes(amount) {
-            return Math.min(amount, maxLoot);
-        }
 
         /*==== calculate production rates ====*/
-        let hourlyProduction = {};
+        let hourlyProduction = new Resources();
         for (let resType of Resources.TYPES) {
             hourlyProduction[resType] = this.buildingLevels.resourceProductionHourly(resType, gameSpeed);
         }
 
-        /*==== add resources produced between the current time and the time of the report*/
-        var hoursElapsed = (timeNow - this.battleTime) / 3600000;
-        let resourcesProducedSinceReport = new Resources(
-            hourlyProduction.wood * hoursElapsed,
-            hourlyProduction.stone * hoursElapsed,
-            hourlyProduction.iron * hoursElapsed,
-        );
+        let hoursSinceReport = (timeNow - this.battleTime) / 3600000;
+        let resourcesProducedSinceReport = hourlyProduction.multiply(hoursSinceReport);
         let resourcesNow = this.resources.add(resourcesProducedSinceReport);
 
-        /*==== calculate travel times (in hours) ====*/
-        var travelHours = {};
-        for (let troopType of troopTypes) {
-            let travelDuration = TroopCalculator.travelDuration(troopType, this.defenderVillage.distanceTo(home), gameSpeed, unitSpeed);
-            travelHours[troopType] = travelDuration / 3600;
-        }
-
-        /*==== add resources produced during travel ====*/
-        var totalResources = {};
-        for (let troopType of troopTypes) {
-            let resourcesProducedDuringTravel = new Resources(
-                hourlyProduction.wood * travelHours[troopType],
-                hourlyProduction.stone * travelHours[troopType],
-                hourlyProduction.iron * travelHours[troopType],
-            );
-            let totalRes = resourcesNow.add(resourcesProducedDuringTravel);
-            totalResources[troopType] = capRes(totalRes.wood) + capRes(totalRes.stone) + capRes(totalRes.iron);
-        }
-
-        /*==== calculate units to take resources ====*/
         let troopCounts = new TroopCounts();
         for (let troopType of troopTypes) {
-            troopCounts[troopType] = TroopCalculator.countToCarry(troopType, totalResources[troopType], haulBonus);
+            let travelDuration = TroopCalculator.travelDuration(troopType, this.defenderVillage.distanceTo(home), gameSpeed, unitSpeed);
+            let travelHours = travelDuration / 3600;
+            let resourcesProducedDuringTravel = hourlyProduction.multiply(travelHours);
+            let resourcesAtArrival = resourcesNow.add(resourcesProducedDuringTravel).cap(maxLoot);
+            troopCounts[troopType] = TroopCalculator.countToCarry(troopType, resourcesAtArrival.sum(), haulBonus);
         }
         return troopCounts;
     }
@@ -145,7 +121,7 @@ class BattleReport {
             resourcesProduced[resType] = periodHours * hourlyProduction;
         }
         let maxLoot = this.buildingLevels.resourceCap() - this.buildingLevels.hideableResources();
-        var totalResources = resourcesProduced.capEach(maxLoot).sum();
+        var totalResources = resourcesProduced.cap(maxLoot).sum();
         return this.calcRaidUnits(totalResources, haulBonus);
     }
 

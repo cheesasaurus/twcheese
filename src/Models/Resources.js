@@ -19,7 +19,15 @@ class Resources {
         );
     }
 
-    capEach(maxAmount) {
+    multiply(factor) {
+        return new Resources(
+            this.wood * factor,
+            this.stone * factor,
+            this.iron * factor
+        );
+    }
+
+    cap(maxAmount) {
         return new Resources(
             Math.min(this.wood, maxAmount),
             Math.min(this.stone, maxAmount),

@@ -3317,74 +3317,6 @@ function createFooterButton(text, address) {
 };
 
 
-/*==== calculator functions ====*/
-
-
-/**
- * @param {BuildingLevels} buildingLevels
- * @return {{oneShotScouted:object, oneShotUpgraded:object}} mappings of how many siege units to demolish buildings
- *     example: {
- *         oneShotScouted: {
- *             barracks: 23, // 23 catapults to demolish the scouted barracks level in one shot
- *             wall: 42 // 42 rams to demolish the scouted wall level in one shot
- *         },
- *         oneShotUpgraded: {
- *             barracks: 69, // 69 catapults to demolish the scouted barracks level, +1 upgrade, in one shot
- *             wall: 1337 // 1337 rams to demolish the scouted wall level, +1 upgrade, in one shot
- *         }
- *     }
- *  
- */
-function twcheese_calculateDemolition(buildingLevels) {
-    var catAmounts = new Array(0, 2, 6, 10, 15, 21, 28, 36, 45, 56, 68, 82, 98, 115, 136, 159, 185, 215, 248, 286, 328, 376, 430, 490, 558, 634, 720, 815, 922, 1041, 1175, 1175);
-    var catAmountsChurch = new Array(0, 400, 500, 600, 600);
-    var ramAmounts = new Array(0, 2, 4, 7, 10, 14, 19, 24, 30, 37, 45, 55, 65, 77, 91, 106, 124, 143, 166, 191, 219);
-    let invulnerable = ['church_f', 'hide'];
-
-    function whichSiegeLookup(buildingType) {
-        switch (buildingType) {
-            case 'wall':    return ramAmounts;
-            case 'church':  return catAmountsChurch;
-            // todo: check if watchtower uses something special
-            default:        return catAmounts;
-        }
-    }
-
-    let demoScouted = {};
-    let demoBuffer = {};
-
-    function assignDemolition(buildingType) {
-        if (invulnerable.includes(buildingType)) {
-            demoScouted[buildingType] = 'NA';
-            demoBuffer[buildingType] = 'NA';
-            return;
-        }
-
-        let level = buildingLevels[buildingType];
-        if (level === '?') {
-            demoScouted[buildingType] = '?';
-            demoBuffer[buildingType] = '?';
-            return;
-        }
-
-        let siegeAmounts = whichSiegeLookup(buildingType);
-
-        demoScouted[buildingType] = siegeAmounts[level];
-        let bufferLevel = buildingLevels.canUpgrade(buildingType) ? level + 1 : level;
-        demoBuffer[buildingType] = siegeAmounts[bufferLevel];
-    }
-
-    for (let buildingType of buildingTypes) {
-        assignDemolition(buildingType);
-    }
-
-    return {
-        oneShotScouted: demoScouted,
-        oneShotUpgraded: demoBuffer
-    };
-}
-
-
 /*==== other functions ====*/
 
 /**
@@ -3745,7 +3677,7 @@ function enhanceReport(gameConfig) {
         report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty.after, report.battleTime, now, game_data.village, report.defenderVillage);
     report.timingInfo = report.calcTimingInfo(gameConfig.speed, gameConfig.unit_speed);
     if (report.buildingLevels)
-        report.demolition = twcheese_calculateDemolition(report.buildingLevels);
+        report.demolition = report.suggestSiegeUnits();
     if (report.espionageLevel >= 1) {
         report.raidScouted = report.calcRaidScouted();
     } if (report.espionageLevel >= 2) {

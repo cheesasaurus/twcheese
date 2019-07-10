@@ -1,4 +1,5 @@
 import { TroopCounts, TroopCalculator, troopTypes } from '/twcheese/src/Models/Troops.js';
+import { DemolitionCalculator } from '/twcheese/src/Models/DemolitionCalculator.js';
 
 
 class BattleReport {
@@ -135,6 +136,16 @@ class BattleReport {
     wasAttackFeint() {
         let troops = this.attackerQuantity;
         return troops.snob === 0 && troops.populationUsed() <= 130;
+    }
+
+    /**
+     * @return {{oneShotScouted:object, oneShotUpgraded:object}} mappings of how many siege units to demolish buildings
+     */
+    suggestSiegeUnits() {
+        if (this.espionageLevel < 2) {
+            throw Error('not enough information');
+        }
+        return (new DemolitionCalculator()).suggestSiegeUnits(this.buildingLevels);
     }
 
 }

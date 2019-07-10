@@ -702,21 +702,21 @@ function twcheese_removeTroopsLabel(troopRow) {
 }
 
 /**
- *	Report Scraper Template
- *	scrapes a battle report for information
- *	@param	gameDocument:HTMLDocument
+ * Report Scraper Template
+ * scrapes a battle report for information
+ * @param {HTMLDocument} gameDoc
  */
-function twcheese_BattleReportScraper(gameDocument) {
+function twcheese_BattleReportScraper(gameDoc) {
     try {
-        this.gameDocument = gameDocument;
-        this.$gameDoc = $(gameDocument);
+        this.gameDoc = gameDoc;
+        this.$gameDoc = $(gameDoc);
         this.mainTable = this.$gameDoc.find('#attack_luck').parents('table')[0];
-        this.attackerTable = gameDocument.getElementById('attack_info_att');
-        this.attackerUnitsTable = gameDocument.getElementById('attack_info_att_units');
-        this.defenderTable = gameDocument.getElementById('attack_info_def');
-        this.defenderUnitsTable = gameDocument.getElementById('attack_info_def_units');
-        this.resultsTable = gameDocument.getElementById('attack_results');
-        this.supportKilledTable = gameDocument.getElementById('attack_away_units');
+        this.attackerTable = gameDoc.getElementById('attack_info_att');
+        this.attackerUnitsTable = gameDoc.getElementById('attack_info_att_units');
+        this.defenderTable = gameDoc.getElementById('attack_info_def');
+        this.defenderUnitsTable = gameDoc.getElementById('attack_info_def_units');
+        this.resultsTable = gameDoc.getElementById('attack_results');
+        this.supportKilledTable = gameDoc.getElementById('attack_away_units');
 
         /* functions */
 
@@ -889,8 +889,8 @@ function twcheese_BattleReportScraper(gameDocument) {
          * @return	luck:Number
          */
         this.getLuck = function () {
-            if (gameDocument.getElementById('attack_luck')) {
-                var luckString = this.gameDocument.getElementById('attack_luck').getElementsByTagName('b')[0].innerHTML;
+            if (this.gameDoc.getElementById('attack_luck')) {
+                var luckString = this.gameDoc.getElementById('attack_luck').getElementsByTagName('b')[0].innerHTML;
                 return new Number(luckString.substring(0, luckString.indexOf('%')));
             }
         };
@@ -916,8 +916,8 @@ function twcheese_BattleReportScraper(gameDocument) {
          * @return	morale:Number
          */
         this.getMorale = function () {
-            if (gameDocument.getElementById('attack_moral')) {
-                var moraleString = this.gameDocument.getElementById('attack_moral').getElementsByTagName('h4')[0].innerHTML;
+            if (this.gameDoc.getElementById('attack_moral')) {
+                var moraleString = this.gameDoc.getElementById('attack_moral').getElementsByTagName('h4')[0].innerHTML;
                 return new Number(moraleString.substring(moraleString.indexOf(' ') + 1, moraleString.indexOf('%')));
             }
         };
@@ -946,7 +946,7 @@ function twcheese_BattleReportScraper(gameDocument) {
          * @return {number}
          */
         this.getReportId = function () {
-            return parseInt(this.gameDocument.URL.match(/view=(\d+)/)[1]);
+            return parseInt(this.gameDoc.URL.match(/view=(\d+)/)[1]);
         };
 
         /**
@@ -983,7 +983,7 @@ function twcheese_BattleReportScraper(gameDocument) {
          * returns boolean false if no units In transit were detected
          */
         this.getUnitsInTransit = function () {
-            var h4elements = gameDocument.getElementsByTagName('h4');
+            var h4elements = this.gameDoc.getElementsByTagName('h4');
             for (var i = 0; i < h4elements.length; i++) {
                 if (h4elements[i].innerHTML.search(language['report']['unitsInTransit']) != -1)
                     return scrapeTroopCounts(h4elements[i].nextSibling.nextSibling.rows[1]);
@@ -1012,7 +1012,7 @@ function twcheese_BattleReportScraper(gameDocument) {
 
 /**
  *	scrapes a battle report for information and returns the information as an object representation of the report
- *	@param	gameDocument:HTMLDocument
+ *	@param	{HTMLDocument} gameDoc
  *	@return report:twcheese_BattleReport
  */
 function twcheese_scrapeBattleReport(gameDoc) {

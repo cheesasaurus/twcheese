@@ -1769,7 +1769,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
 
                 /*==== timeLaunched cell ====*/
                 cell = row.insertCell(-1);
-                if (report.timeLaunched) {
+                if (report.timeLaunched) { // todo: consistent with enhanced report
                     cell.innerHTML = twcheese_dateToString(report.timeLaunched);
                 }
 
@@ -2757,30 +2757,13 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
             let reportDoc = await requestDocument(gameUrl('report', {mode: game_data.mode, view: reportID}));
 
             try {
-                let now = TwCheeseDate.newServerDate();
                 let scraper = new BattleReportScraper(reportDoc);
                 var report = scraper.scrapeReport();
-
-                report.killScores = {
-                    attacker: null,
-                    defender: calcDefenderScore(report.attackerLosses)
-                };                
+              
                 if (report.defenderQuantity) {
-                    report.defenderSurvivors = report.defenderQuantity.subtract(report.defenderLosses);                    
-                    report.killScores.attacker = calcAttackerScore(report.defenderLosses);
+                    report.defenderSurvivors = report.defenderQuantity.subtract(report.defenderLosses);
                 }
-                if (report.loyalty)
-                    report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty.after, report.battleTime, now, game_data.village, report.defenderVillage);
                 report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.battleTime, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
-                if (report.buildingLevels)
-                    report.demolition = twcheese_calculateDemolition(report.buildingLevels);
-                if (report.espionageLevel >= 1)
-                    report.raidScouted = twcheese_calculateRaidScouted(report.resources);
-                if (report.espionageLevel >= 2) {
-                    report.populationSummary = twcheese_calculatePopulation(report.buildingLevels, report.defenderQuantity, report.unitsOutside);
-                    report.raidPredicted = twcheese_calculateRaidPredicted(report.resources, report.buildingLevels, game_data.village, report.defenderVillage, report.battleTime, now, gameConfig.speed, gameConfig.unit_speed);
-                    report.raidPeriodic = twcheese_calculateRaidPeriodic(report.buildingLevels, 8, gameConfig.speed);
-                }
                 report.reportId = reportID;
 
                 var name = twcheese_nameReport(report, '');

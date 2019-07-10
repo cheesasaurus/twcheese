@@ -4,7 +4,7 @@ import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { Player } from '/twcheese/src/Models/Player.js';
 import { Village } from '/twcheese/src/Models/Village.js';
 import { Resources } from '/twcheese/src/Models/Resources.js';
-import { calcKillScores } from '/twcheese/src/Models/KillScores.js';
+import { calcAttackerScore, calcDefenderScore } from '/twcheese/src/Models/KillScores.js';
 import { calcLoyalty } from '/twcheese/src/Models/Loyalty.js';
 import { TroopCounts, calcTravelDurations, troopTypes } from '/twcheese/src/Models/Troops.js';
 import { BuildingLevels, buildingTypes } from '/twcheese/src/Models/Buildings.js';
@@ -1490,9 +1490,11 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
         odaHeader.innerHTML = 'ODA:';
         odaRow.appendChild(odaHeader);
         odaRow.insertCell(-1);
-        if (report.killScores.attacker) {
+        if (report.killScores.attacker === null) {
+            odaRow.cells[1].innerHTML = 'Not enough information.'
+        } else {
             odaRow.cells[1].innerHTML = `The attacker gained ${report.killScores.attacker} points.`;
-        }        
+        }
 
         /*==== timing info ====*/
         if (!reportTable.rows) //6.5 graphics
@@ -2807,9 +2809,14 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
             try {
                 let now = TwCheeseDate.newServerDate();
                 var report = twcheese_scrapeBattleReport(reportDoc);
+
+                report.killScores = {
+                    attacker: null,
+                    defender: calcDefenderScore(report.attackerLosses)
+                };                
                 if (report.defenderQuantity) {
                     report.defenderSurvivors = report.defenderQuantity.subtract(report.defenderLosses);                    
-                    report.killScores = calcKillScores(report.attackerLosses, report.defenderLosses); // todo: split this up
+                    report.killScores.attacker = calcAttackerScore(report.defenderLosses);
                 }
                 if (report.loyalty)
                     report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.battleTime, now, game_data.village, report.defenderVillage);
@@ -3952,11 +3959,16 @@ function enhanceReport(gameConfig) {
     /*==== calculate additional information ===*/
     let now = TwCheeseDate.newServerDate();
     let report = new twcheese_scrapeBattleReport(document);
+
+    report.killScores = {
+        attacker: null,
+        defender: calcDefenderScore(report.attackerLosses)
+    };
     if (report.attackerQuantity)
         report.attackerSurvivors = report.attackerQuantity.subtract(report.attackerLosses);
     if (report.defenderQuantity) {
         report.defenderSurvivors = report.defenderQuantity.subtract(report.defenderLosses);
-        report.killScores = calcKillScores(report.attackerLosses, report.defenderLosses); // todo: split this up
+        report.killScores.attacker = calcAttackerScore(report.defenderLosses);
     }
     if (report.loyalty)
         report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.battleTime, now, game_data.village, report.defenderVillage);

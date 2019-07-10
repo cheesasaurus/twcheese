@@ -32,21 +32,9 @@ let scoreAttackerDied = {
 
 
 /**
- *	@param {TroopCounts} attackerLosses
- *	@param {TroopCounts} defenderLosses
- *	@return {{attacker:int, defender:int}}
+ * @param {TroopCounts} defenderLosses
  */
-function calcKillScores(attackerLosses, defenderLosses) {
-
-    let defenderScore = 0;
-    for (let [unitType, count] of Object.entries(attackerLosses)) {
-        if (typeof scoreAttackerDied[unitType] === 'undefined') {
-            console.warn(`Couldn't determine ODD score for ${unitType}`);
-            continue;
-        }
-        defenderScore += scoreAttackerDied[unitType] * count;
-    }
-
+function calcAttackerScore(defenderLosses) {
     let attackerScore = 0;
     for (let [unitType, count] of Object.entries(defenderLosses)) {
         if (typeof scoreDefenderDied[unitType] === 'undefined') {
@@ -55,12 +43,24 @@ function calcKillScores(attackerLosses, defenderLosses) {
         }
         attackerScore += scoreDefenderDied[unitType] * count;
     }
+    return attackerScore;
+}    
 
-    return {
-        attacker: attackerScore,
-        defender: defenderScore
-    };
+
+/**
+ * @param {TroopCounts} attackerLosses
+ */
+function calcDefenderScore(attackerLosses) {
+    let defenderScore = 0;
+    for (let [unitType, count] of Object.entries(attackerLosses)) {
+        if (typeof scoreAttackerDied[unitType] === 'undefined') {
+            console.warn(`Couldn't determine ODD score for ${unitType}`);
+            continue;
+        }
+        defenderScore += scoreAttackerDied[unitType] * count;
+    }
+    return defenderScore;
 }
 
 
-export { calcKillScores };
+export { calcAttackerScore, calcDefenderScore };

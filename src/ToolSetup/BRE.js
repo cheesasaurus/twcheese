@@ -2767,7 +2767,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 let scraper = new BattleReportScraper(reportDoc);
                 var report = scraper.scrapeReport();
               
-                report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.battleTime, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
+                report.timingInfo = report.calcTimingInfo(gameConfig.speed, gameConfig.unit_speed);
 
                 var name = twcheese_nameReport(report, '');
 
@@ -3352,21 +3352,6 @@ function twcheese_calculatePopulation(buildingLevels, troopsDefending, troopsOut
     };
 }
 
-/**
- *	@param {TwCheeseDate} timeOfArrival
- *	@param {TroopCounts} attackerTroops
- *	@param {Village} attackerVillage
- *	@param {Village} defenderVillage
- *	@return	{{launchTime:TwCheeseDate, returnTime:TwCheeseDate}}
- */
-function twcheese_calculateTimingInfo(worldSpeed, unitSpeed, timeOfArrival, attackerTroops, attackerVillage, defenderVillage) {
-    var distance = attackerVillage.distanceTo(defenderVillage);
-    let travelDuration = attackerTroops.travelDuration(distance, 'attack', worldSpeed, unitSpeed);
-    return {
-        launchTime: new TwCheeseDate(timeOfArrival.getTime() - travelDuration),
-        returnTime: new TwCheeseDate(timeOfArrival.getTime() + travelDuration)
-    };
-}
 
 /**
  * @param {BuildingLevels} buildingLevels
@@ -3910,7 +3895,7 @@ function enhanceReport(gameConfig) {
     }
     if (report.loyalty)
         report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty.after, report.battleTime, now, game_data.village, report.defenderVillage);
-    report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.battleTime, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
+    report.timingInfo = report.calcTimingInfo(gameConfig.speed, gameConfig.unit_speed);
     if (report.buildingLevels)
         report.demolition = twcheese_calculateDemolition(report.buildingLevels);
     if (report.espionageLevel >= 1) {

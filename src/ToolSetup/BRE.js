@@ -916,7 +916,7 @@ class BattleReportScraper {
      * @return {number|null}
      */
     getMorale() {
-        let moraleContainer = this.gameDoc.getElementById('attack_moral');
+        let moraleContainer = this.gameDoc.getElementById('attack_moral'); // todo: there's no such thing
         if (!moraleContainer) {
             return null;            
         }
@@ -1490,7 +1490,9 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
         odaHeader.innerHTML = 'ODA:';
         odaRow.appendChild(odaHeader);
         odaRow.insertCell(-1);
-        odaRow.cells[1].innerHTML = `The attacker gained ${report.killScores.attacker} points.`;
+        if (report.killScores.attacker) {
+            odaRow.cells[1].innerHTML = `The attacker gained ${report.killScores.attacker} points.`;
+        }        
 
         /*==== timing info ====*/
         if (!reportTable.rows) //6.5 graphics

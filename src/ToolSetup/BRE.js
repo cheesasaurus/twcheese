@@ -1468,24 +1468,16 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
         }
 
         /*==== rally point Manage Troops link ====*/
-        var displayManageTroopsLink = false;
-        if (report.defender.name == game_data.player.name)
-            displayManageTroopsLink = true;
-        if (report.loyalty) {
-            if (report.attacker.name == game_data.player.name && report.loyalty.after <= 0)
-                displayManageTroopsLink = false;
+        let isDefenderMe = report.defender.name == game_data.player.name;
+        let wasVillageConquered = report.loyalty && report.loyalty.after <= 0;
+        if (isDefenderMe || wasVillageConquered) {
+            let url = gameUrl('place', {mode:'units', village:report.defenderVillage.id});
+            let linkHtml = `<a href="${url}" style="float: right;">
+                <img title="manage troops" style="float:right; cursor:pointer;" src="${ImageSrc.buildingIcon('place')}" />
+            </a>`;
+            let defenderVillageCell = document.getElementById('attack_info_def').rows[1].cells[1];
+            defenderVillageCell.appendChild($(linkHtml)[0]);
         }
-        if (displayManageTroopsLink) {
-            var defenderVillageCell = document.getElementById('attack_info_def').rows[1].cells[1];
-            var manageTroopsButton = document.createElement('img');
-            manageTroopsButton.src = imagePaths['rally'];
-            manageTroopsButton.title = 'manage this village\'s troops';
-            manageTroopsButton.style.cssFloat = 'right';
-            manageTroopsButton.style.cursor = 'pointer';
-            manageTroopsButton.onclick = function () { window.location = 'game.php?village=' + report.defenderVillage[0] + '&screen=place&mode=units' };
-            defenderVillageCell.appendChild(manageTroopsButton);
-        }
-
 
         /*==== json representation ====*/
         var jsonRow = reportTable.insertRow(5);

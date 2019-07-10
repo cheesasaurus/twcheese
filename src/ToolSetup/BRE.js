@@ -896,8 +896,7 @@ class BattleReportScraper {
     }
 
     /**
-     * @return	loyalty:Array(from:Number,to:Number)
-     * if no change was detected, returns null
+     * @return {{before:number, after:number} | null}
      */
     getLoyalty() {
         if (!this.resultsTable) {
@@ -907,9 +906,13 @@ class BattleReportScraper {
         for (var i = 0; i < thElements.length; i++) {
             if (thElements[i].innerHTML == language['report']['loyalty']) {
                 var bElements = thElements[i].parentNode.getElementsByTagName('b');
-                return new Array(bElements[0].innerHTML, bElements[1].innerHTML);
+                return {
+                    before: parseInt(bElements[0].innerHTML),
+                    after: parseInt(bElements[1].innerHTML)
+                };
             }
         }
+        return null;
     }
 
     /**
@@ -1470,7 +1473,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
         if (report.defender.name == game_data.player.name)
             displayManageTroopsLink = true;
         if (report.loyalty) {
-            if (report.attacker.name == game_data.player.name && report.loyalty[1] <= 0)
+            if (report.attacker.name == game_data.player.name && report.loyalty.after <= 0)
                 displayManageTroopsLink = false;
         }
         if (displayManageTroopsLink) {
@@ -1620,7 +1623,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 if (report.defender.name == game_data.player.name) {
                     cell.innerHTML += ' <img title="manage troops" style="float:right; cursor:pointer;" src="' + imagePaths['rally'] + '" onclick="window.location=\'game.php?village=' + report.defenderVillage.id + '&screen=place&mode=units\'"></img>';
                 }
-                if (report.loyalty && report.loyalty <= 0) {
+                if (report.loyalty && report.loyalty.after <= 0) {
                     cell.innerHTML += ' <img title="manage troops" style="float:right; cursor:pointer;" src="' + imagePaths['rally'] + '" onclick="window.location=\'game.php?village=' + report.defenderVillage.id + '&screen=place&mode=units\'"></img>';
                 }
             }
@@ -1700,7 +1703,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 /*==== loyalty cell ====*/
                 cell = row.insertCell(-1);
                 if (report.loyalty) {
-                    cell.innerHTML = '<span class="icon ally lead" title="Loyalty change"></span> ' + report.loyalty[1];
+                    cell.innerHTML = '<span class="icon ally lead" title="Loyalty change"></span> ' + report.loyalty.after;
                 }
 
                 /*==== defender survivors ====*/
@@ -2767,7 +2770,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                     report.killScores.attacker = calcAttackerScore(report.defenderLosses);
                 }
                 if (report.loyalty)
-                    report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.battleTime, now, game_data.village, report.defenderVillage);
+                    report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty.after, report.battleTime, now, game_data.village, report.defenderVillage);
                 report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.battleTime, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
                 if (report.buildingLevels)
                     report.demolition = twcheese_calculateDemolition(report.buildingLevels);
@@ -3582,7 +3585,7 @@ function twcheese_nameReport(report, note) {
     if (report.attackerLosses.snob > 0) //dead noble
         newName += '_x';
     if (report.loyalty)
-        newName += '_l:' + report.loyalty[1] + '.';
+        newName += '_l:' + report.loyalty.after + '.';
     if (report.defenderSurvivors)
         newName += '_d[' + report.defenderSurvivors.toArray() + '] ';
     if (report.buildingLevels)
@@ -3708,7 +3711,7 @@ function twcheese_interpretReportName(reportName) {
                 if (reportName.search('_l:') != -1) {
                     let text = reportName.substring(reportName.indexOf('_l:') + 3);
                     text = text.substring(0, text.indexOf('.'));
-                    report.loyalty = [-1, Number(text)];
+                    report.loyalty = {before: -1, after: parseInt(text)};
                 }
 
                 /*==== set deadNoble ====*/
@@ -3923,7 +3926,7 @@ function enhanceReport(gameConfig) {
         report.killScores.attacker = calcAttackerScore(report.defenderLosses);
     }
     if (report.loyalty)
-        report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty[1], report.battleTime, now, game_data.village, report.defenderVillage);
+        report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty.after, report.battleTime, now, game_data.village, report.defenderVillage);
     report.timingInfo = twcheese_calculateTimingInfo(gameConfig.speed, gameConfig.unit_speed, report.battleTime, report.attackerQuantity, report.attackerVillage, report.defenderVillage);
     if (report.buildingLevels)
         report.demolition = twcheese_calculateDemolition(report.buildingLevels);

@@ -7,6 +7,7 @@ let ImageSrc = {
     wood: game + 'holz.png',
     stone: game + 'lehm.png',
     iron: game + 'eisen.png',
+    attack: game + 'command/attack.png',
     popupBackground: game + 'popup/content_background.png',
     popupBorder: game + 'popup/border.png',
     servant: game + 'paladin_new.png',

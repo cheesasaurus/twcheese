@@ -20,14 +20,6 @@ import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.
 import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/BRE/Default.js';
 
 
-/*==== imagePaths ====*/
-{
-    var imagePaths = new Array();
-
-    imagePaths['repeatFromCurrent'] = 'https://' + document.domain + '/graphic/command/attack.png?1';
-    imagePaths['repeatFromOriginal'] = 'https://' + document.domain + '/graphic/command/attack.png?1';
-}
-
 /*==== styles ====*/
 
 // jquery-ui
@@ -1548,10 +1540,10 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
             cell = row.insertCell(-1);
             if (report.attacker && report.attacker.name === game_data.player.name) {
                 let url = gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportId});
-                cell.innerHTML = '<a title="repeat attack, from current village" href="' + url + '"><img src="' + imagePaths['repeatFromCurrent'] + '" /></a>';
+                cell.innerHTML = '<a title="repeat attack, from current village" href="' + url + '"><img src="' + ImageSrc.attack + '" /></a>';
                 if (report.twcheeseLabel) {
                     let url = gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportId, village: report.attackerVillage.id});
-                    cell.innerHTML += ' | <a title="repeat attack, from original village" href="' + url + '"><img src="' + imagePaths['repeatFromOriginal'] + '" /></a>';
+                    cell.innerHTML += ' | <a title="repeat attack, from original village" href="' + url + '"><img src="' + ImageSrc.attack + '" /></a>';
                 }
             }
 

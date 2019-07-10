@@ -3395,15 +3395,6 @@ function twcheese_calculateDemolition(buildingLevels) {
 
 
 let raidTroopTypes = ['spear', 'sword', 'axe', 'archer', 'light', 'marcher', 'heavy'];
-let raidTroopSpeeds = {
-    spear: 18,
-    sword: 22,
-    axe: 18,
-    archer: 18,
-    light: 10,
-    marcher: 10,
-    heavy: 11
-};
 
 /**
  * @param {Resources} resourcesScouted
@@ -3449,7 +3440,8 @@ function twcheese_calculateRaidPredicted(resourcesScouted, buildingLevels, home,
     /*==== calculate travel times (in hours) ====*/
     var travelHours = {};
     for (let troopType of raidTroopTypes) {
-        travelHours[troopType] = raidTroopSpeeds[troopType] / gameSpeed / unitSpeed * target.distanceTo(home) / 60; // todo: extract
+        let travelDuration = TroopCalculator.travelDuration(troopType, target.distanceTo(home), gameSpeed, unitSpeed);
+        travelHours[troopType] = travelDuration / 3600;
     }
 
     /*==== add resources produced during travel ====*/

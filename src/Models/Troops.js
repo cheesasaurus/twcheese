@@ -156,6 +156,18 @@ let TroopCalculator = {
         let haulPerUnit = troopCarry[troopType] * (100 + haulBonus) / 100;
         let troopCount = resourceAmount / haulPerUnit;
         return Math.round(10 * troopCount) / 10;
+    },
+
+    /**
+     * @param {string} troopType 
+     * @param {number} distance 
+     * @param {number} worldSpeed 
+     * @param {number} unitSpeed 
+     * @return {number} milliseconds to travel
+     */
+    travelDuration(troopType, distance, worldSpeed = 1, unitSpeed = 1) {
+        let t = 1 / worldSpeed / unitSpeed;
+        return calcTravelDuration(t * travelMinutes[troopType], distance);
     }
 
 };

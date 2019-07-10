@@ -24,79 +24,8 @@ import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/BRE
 {
     var imagePaths = new Array();
 
-    /*==== specific ====*/
-    imagePaths['spear'] = 'https://' + document.domain + '/graphic/unit/unit_spear.png?1';
-    imagePaths['sword'] = 'https://' + document.domain + '/graphic/unit/unit_sword.png?1';
-    imagePaths['axe'] = 'https://' + document.domain + '/graphic/unit/unit_axe.png?1';
-    imagePaths['archer'] = 'https://' + document.domain + '/graphic/unit/unit_archer.png?1';
-    imagePaths['scout'] = '/graphic/unit/unit_spy.png?1';
-    imagePaths['lcav'] = 'https://' + document.domain + '/graphic/unit/unit_light.png?1';
-    imagePaths['acav'] = 'https://' + document.domain + '/graphic/unit/unit_marcher.png?1';
-    imagePaths['hcav'] = 'https://' + document.domain + '/graphic/unit/unit_heavy.png?1';
-    imagePaths['ram'] = 'https://' + document.domain + '/graphic/unit/unit_ram.png?1';
-    imagePaths['catapult'] = 'https://' + document.domain + '/graphic/unit/unit_catapult.png?1';
-
-    imagePaths['hq'] = 'https://' + document.domain + '/graphic/buildings/main.png?1';
-    imagePaths['barracks'] = 'https://' + document.domain + '/graphic/buildings/barracks.png?1';
-    imagePaths['stable'] = 'https://' + document.domain + '/graphic/buildings/stable.png?1';
-    imagePaths['workshop'] = 'https://' + document.domain + '/graphic/buildings/garage.png?1';
-    imagePaths['church'] = 'https://' + document.domain + '/graphic/buildings/church.png?1';
-    imagePaths['church_f'] = 'https://' + document.domain + '/graphic/buildings/church.png?1';
-    imagePaths['academy'] = 'https://' + document.domain + '/graphic/buildings/snob.png?1';
-    imagePaths['smithy'] = 'https://' + document.domain + '/graphic/buildings/smith.png?1';
-    imagePaths['rally'] = 'https://' + document.domain + '/graphic/buildings/place.png?1';
-    imagePaths['statue'] = 'https://' + document.domain + '/graphic/buildings/statue.png?1';
-    imagePaths['market'] = 'https://' + document.domain + '/graphic/buildings/market.png?1';
-    imagePaths['wood'] = 'https://' + document.domain + '/graphic/buildings/wood.png?1';
-    imagePaths['stone'] = 'https://' + document.domain + '/graphic/buildings/stone.png?1';
-    imagePaths['iron'] = 'https://' + document.domain + '/graphic/buildings/iron.png?1';
-    imagePaths['warehouse'] = 'https://' + document.domain + '/graphic/buildings/storage.png?1';
-    imagePaths['farm'] = 'https://' + document.domain + '/graphic/buildings/farm.png?1';
-    imagePaths['hiding'] = 'https://' + document.domain + '/graphic/buildings/hide.png?1';
-    imagePaths['wall'] = 'https://' + document.domain + '/graphic/buildings/wall.png?1';
-
     imagePaths['repeatFromCurrent'] = 'https://' + document.domain + '/graphic/command/attack.png?1';
     imagePaths['repeatFromOriginal'] = 'https://' + document.domain + '/graphic/command/attack.png?1';
-
-    /*==== for looping ====*/
-    imagePaths['units'] = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    imagePaths['units'][0] = 'https://' + document.domain + '/graphic/unit/unit_spear.png?1';
-    imagePaths['units'][1] = 'https://' + document.domain + '/graphic/unit/unit_sword.png?1';
-    imagePaths['units'][2] = 'https://' + document.domain + '/graphic/unit/unit_axe.png?1';
-    imagePaths['units'][3] = 'https://' + document.domain + '/graphic/unit/unit_archer.png?1';
-    imagePaths['units'][4] = 'https://' + document.domain + '/graphic/unit/unit_spy.png?1';
-    imagePaths['units'][5] = 'https://' + document.domain + '/graphic/unit/unit_light.png?1';
-    imagePaths['units'][6] = 'https://' + document.domain + '/graphic/unit/unit_marcher.png?1';
-    imagePaths['units'][7] = 'https://' + document.domain + '/graphic/unit/unit_heavy.png?1';
-    imagePaths['units'][8] = 'https://' + document.domain + '/graphic/unit/unit_ram.png?1';
-    imagePaths['units'][9] = 'https://' + document.domain + '/graphic/unit/unit_catapult.png?1';
-    imagePaths['units'][10] = 'https://' + document.domain + '/graphic/unit/unit_knight.png?1';
-    imagePaths['units'][11] = 'https://' + document.domain + '/graphic/unit/unit_snob.png?1';
-
-    imagePaths['buildings'] = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    imagePaths['buildings'][0] = 'https://' + document.domain + '/graphic/buildings/main.png?1';
-    imagePaths['buildings'][1] = 'https://' + document.domain + '/graphic/buildings/barracks.png?1';
-    imagePaths['buildings'][2] = 'https://' + document.domain + '/graphic/buildings/stable.png?1';
-    imagePaths['buildings'][3] = 'https://' + document.domain + '/graphic/buildings/garage.png?1';
-    imagePaths['buildings'][4] = 'https://' + document.domain + '/graphic/buildings/church.png?1';
-    imagePaths['buildings'][5] = 'https://' + document.domain + '/graphic/buildings/church.png?1';
-    imagePaths['buildings'][6] = 'https://' + document.domain + '/graphic/buildings/snob.png?1';
-    imagePaths['buildings'][7] = 'https://' + document.domain + '/graphic/buildings/smith.png?1';
-    imagePaths['buildings'][8] = 'https://' + document.domain + '/graphic/buildings/place.png?1';
-    imagePaths['buildings'][9] = 'https://' + document.domain + '/graphic/buildings/statue.png?1';
-    imagePaths['buildings'][10] = 'https://' + document.domain + '/graphic/buildings/market.png?1';
-    imagePaths['buildings'][11] = 'https://' + document.domain + '/graphic/buildings/wood.png?1';
-    imagePaths['buildings'][12] = 'https://' + document.domain + '/graphic/buildings/stone.png?1';
-    imagePaths['buildings'][13] = 'https://' + document.domain + '/graphic/buildings/iron.png?1';
-    imagePaths['buildings'][14] = 'https://' + document.domain + '/graphic/buildings/farm.png?1';
-    imagePaths['buildings'][15] = 'https://' + document.domain + '/graphic/buildings/storage.png?1';
-    imagePaths['buildings'][16] = 'https://' + document.domain + '/graphic/buildings/hide.png?1';
-    imagePaths['buildings'][17] = 'https://' + document.domain + '/graphic/buildings/wall.png?1';
-
-    imagePaths['priest'] = '/graphic/unit/unit_priest.png?1';
-    imagePaths['plus'] = 'graphic/plus.png';
-    imagePaths['minus'] = 'graphic/minus.png';
-    imagePaths['rename'] = 'graphic/rename.png';
 }
 
 /*==== styles ====*/
@@ -1169,11 +1098,11 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
             raiderUnitsTable.rows[0].className = 'center';
 
             //==== icons ====
-            var unitLanguage = new Array('spear', 'sword', 'axe', 'archer', 'lcav', 'acav', 'hcav');
-            for (var i = 0; i < 7; i++) {
-                raiderUnitsTable.rows[0].insertCell(-1);
-                raiderUnitsTable.rows[0].cells[i].width = "35px";
-                raiderUnitsTable.rows[0].cells[i].innerHTML = '<img src="' + imagePaths[unitLanguage[i]] + '" alt="' + unitLanguage[i] + '" />';
+            let raiderTroopTypes = ['spear', 'sword', 'axe', 'archer', 'light', 'marcher', 'heavy'];
+            for (let troopType of raiderTroopTypes) {
+                let cell = raiderUnitsTable.rows[0].insertCell(-1);
+                cell.width = "35px";
+                cell.innerHTML = `<img src="${ImageSrc.troopIcon(troopType)}" />`;
             }
 
             //==== looting suggestions ====
@@ -1219,7 +1148,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
                 raiderScoutTable.rows[0].className = 'center';
                 raiderScoutTable.rows[0].insertCell(-1);
                 raiderScoutTable.rows[0].cells[0].width = "35px";
-                raiderScoutTable.rows[0].cells[0].innerHTML = '<img src="' + imagePaths['scout'] + '" title="Number of scouts to send when a unit icon to the left is clicked" />';
+                raiderScoutTable.rows[0].cells[0].innerHTML = '<img src="' + ImageSrc.troopIcon('spy') + '" title="Number of scouts to send when a unit icon to the left is clicked" />';
                 raiderScoutTable.insertRow(-1);
                 raiderScoutTable.rows[1].className = 'center';
                 raiderScoutTable.rows[1].insertCell(-1);
@@ -1680,10 +1609,10 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
                 cell = row.insertCell(-1);
                 if (report.deadNoble) {
                     if (report.attacker.name == game_data.player.name) {
-                        cell.innerHTML = '<a href="/game.php?village=' + report.attackerVillage.id + '&screen=snob"><img src="' + imagePaths['priest'] + '" style="display:block; margin-left:auto; margin-right:auto" title="An attacking nobleman died."/></a>';
+                        cell.innerHTML = '<a href="/game.php?village=' + report.attackerVillage.id + '&screen=snob"><img src="' + ImageSrc.troopIcon('priest') + '" style="display:block; margin-left:auto; margin-right:auto" title="An attacking nobleman died."/></a>';
                     }
                     else {
-                        cell.innerHTML = '<img src="' + imagePaths['priest'] + '" style="display:block; margin-left:auto; margin-right:auto" title="An attacking nobleman died."/>';
+                        cell.innerHTML = '<img src="' + ImageSrc.troopIcon('priest') + '" style="display:block; margin-left:auto; margin-right:auto" title="An attacking nobleman died."/>';
                     }
                 }
 
@@ -2415,9 +2344,10 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
     /*==== defense remaining ====*/
     var widthSum = 0;
     for (let i = 0; i < 12; i++) {
+        let troopType = troopTypes[i];
         reportsTableHeader.rows[1].appendChild(document.createElement('th'));
         reportsTableHeader.rows[1].cells[cellIndex].style.width = '20px';
-        reportsTableHeader.rows[1].cells[cellIndex].innerHTML = '<img style="display:block; margin-left:auto; margin-right:auto" src="' + imagePaths['units'][i] + '" />';
+        reportsTableHeader.rows[1].cells[cellIndex].innerHTML = '<img style="display:block; margin-left:auto; margin-right:auto" src="' + ImageSrc.troopIcon(troopType) + '" />';
 
         widthSum = widthSum + 20;
         cellIndex++;
@@ -2427,8 +2357,9 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
 
     /*==== building levels ====*/
     for (let i = 0; i < 18; i++) {
+        let buildingType = buildingTypes[i];
         reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-        reportsTableHeader.rows[1].cells[cellIndex].innerHTML = '<img style="display:block; margin-left:auto; margin-right:auto" src="' + imagePaths['buildings'][i] + '" />';
+        reportsTableHeader.rows[1].cells[cellIndex].innerHTML = '<img style="display:block; margin-left:auto; margin-right:auto" src="' + ImageSrc.buildingIcon(buildingType) + '" />';
         reportsTableHeader.rows[1].cells[cellIndex].style.width = '20px';
         reportsTableHeader.rows[0].cells[cellIndex - 11].style.width = '20px';
         cellIndex++;
@@ -3119,7 +3050,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
         }],
         ['deadNoble', {
             click: () => reportsFolderDisplay.selectDeadNoble(),
-            html: imgHtml(imagePaths['priest']),
+            html: imgHtml(ImageSrc.troopIcon('priest')),
             tooltip: 'dead noble'
         }],
         ['loyalty', {

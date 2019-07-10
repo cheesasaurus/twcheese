@@ -31,7 +31,23 @@ let travelMinutes = {
     knight: 10,
     snob: 35,
     militia: 0
-}
+};
+
+let troopCarry = {
+    spear: 25,
+    sword: 15,
+    axe: 10,
+    archer: 10,
+    spy: 0,
+    light: 80,
+    marcher: 50,
+    heavy: 50,
+    ram: 0,
+    catapult: 0,
+    knight: 100,
+    snob: 0,
+    militia: 0
+};
 
 
 class TroopCounts {
@@ -128,4 +144,21 @@ function calcTravelDuration(minutesPerField, distance) {
 }
 
 
-export { TroopCounts, calcTravelDurations, troopTypes };
+let TroopCalculator = {
+
+    /** 
+     * @param {string} troopType
+     * @param {number} resourceAmount     
+     * @param {number} haulBonus the extra % bonus haul from flags, events, etc. Example: 30 for 30%, NOT 0.3
+     * @return {number} how many troops does it take to carry all the resources
+     */
+    countToCarry(troopType, resourceAmount, haulBonus = 0) {
+        let haulPerUnit = troopCarry[troopType] * (100 + haulBonus) / 100;
+        let troopCount = resourceAmount / haulPerUnit;
+        return Math.round(10 * troopCount) / 10;
+    }
+
+};
+
+
+export { TroopCounts, calcTravelDurations, TroopCalculator, troopTypes };

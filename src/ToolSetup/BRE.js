@@ -8,7 +8,7 @@ import { Resources } from '/twcheese/src/Models/Resources.js';
 import { calcAttackerScore, calcDefenderScore } from '/twcheese/src/Models/KillScores.js';
 import { calcLoyalty } from '/twcheese/src/Models/Loyalty.js';
 import { StationedTroops } from '/twcheese/src/Models/StationedTroops.js';
-import { TroopCounts, calcTravelDurations, troopTypes } from '/twcheese/src/Models/Troops.js';
+import { TroopCounts, calcTravelDurations, TroopCalculator, troopTypes } from '/twcheese/src/Models/Troops.js';
 import { BuildingLevels, buildingTypes } from '/twcheese/src/Models/Buildings.js';
 import { TwCheeseDate } from '/twcheese/src/Models/TwCheeseDate.js';
 import { parseArrival } from '/twcheese/src/Scrape/time.js';
@@ -3404,15 +3404,6 @@ let raidTroopSpeeds = {
     marcher: 10,
     heavy: 11
 };
-let raidTroopHauls = {
-    spear: 25,
-    sword: 15,
-    axe: 10,
-    archer: 10,
-    light: 80,
-    marcher: 50,
-    heavy: 50
-};
 
 /**
  * @param {Resources} resourcesScouted
@@ -3458,7 +3449,7 @@ function twcheese_calculateRaidPredicted(resourcesScouted, buildingLevels, home,
     /*==== calculate travel times (in hours) ====*/
     var travelHours = {};
     for (let troopType of raidTroopTypes) {
-        travelHours[troopType] = raidTroopSpeeds[troopType] / gameSpeed / unitSpeed * target.distanceTo(home) / 60;
+        travelHours[troopType] = raidTroopSpeeds[troopType] / gameSpeed / unitSpeed * target.distanceTo(home) / 60; // todo: extract
     }
 
     /*==== add resources produced during travel ====*/
@@ -3476,9 +3467,7 @@ function twcheese_calculateRaidPredicted(resourcesScouted, buildingLevels, home,
     /*==== calculate units to take resources ====*/
     let troopCounts = new TroopCounts();
     for (let troopType of raidTroopTypes) {
-        let haulPerUnit = raidTroopHauls[troopType] * (100 + haulBonus) / 100;
-        let troopCount = totalResources[troopType] / haulPerUnit;
-        troopCounts[troopType] = Math.round(10 * troopCount) / 10;
+        troopCounts[troopType] = TroopCalculator.countToCarry(troopType, totalResources[troopType], haulBonus);
     }
     return troopCounts;
 }
@@ -3520,9 +3509,7 @@ function twcheese_calculateRaidPeriodic(buildingLevels, period, gameSpeed, haulB
 function twcheese_calculateRaidUnits(resources, haulBonus = 0) {
     let troopCounts = new TroopCounts();
     for (let troopType of raidTroopTypes) {
-        let haulPerUnit = raidTroopHauls[troopType] * (100 + haulBonus) / 100;
-        let troopCount = resources / haulPerUnit;
-        troopCounts[troopType] = Math.round(10 * troopCount) / 10;
+        troopCounts[troopType] = TroopCalculator.countToCarry(troopType, resources, haulBonus);
     }
     return troopCounts;
 }

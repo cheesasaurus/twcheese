@@ -216,9 +216,18 @@ class TextScraper {
         this.gameTexts = gameTexts;
     }
 
-    t(id) {
+    t(textId) {
         // todo: not eval. there's something similar in src/Models/Config.js that could be extracted and used here
-        return eval(`this.gameTexts.${id}`);
+        return eval(`this.gameTexts.${textId}`);
+    }
+
+    /**
+     * @param {HTMLElement|jQuery} el
+     * @param {string} textId
+     * @return {boolean}
+     */
+    includes(el, textId) {
+        return $(el).html().includes(this.t(textId));
     }
 }
 

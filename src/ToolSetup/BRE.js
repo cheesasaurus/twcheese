@@ -232,8 +232,8 @@ function twcheese_ReportsFolderDisplaySettings() {
  * @return {Player}
  */
 function scrapePlayer(playerCell) {
-    if (playerCell.innerHTML.includes(textScraper.t('report.deletedPlayer'))) {
-        return new Player(-1, playerCell.innerHTML);
+    if (textScraper.includes(playerCell, 'report.deletedPlayer')) {
+        return new Player(-1, $(playerCell).text());
     }
     else if (playerCell.innerHTML === '---') {
         return new Player(0, '---');
@@ -423,10 +423,10 @@ class BattleReportScraper {
         }
         var thElements = this.resultsTable.getElementsByTagName('th');
         for (var i = 0; i < thElements.length; i++) {
-            if (thElements[i].innerHTML == textScraper.t('report.catDamage')) {
+            if (textScraper.includes(thElements[i], 'report.catDamage')) {
                 var damageCell = thElements[i].parentNode.cells[1];
                 for (var buildingType of buildingTypes) {
-                    if (damageCell.innerHTML.includes(textScraper.t(`buildings.${buildingType}`))) {
+                    if (textScraper.includes(damageCell, `buildings.${buildingType}`)) {
                         break;
                     }
                 }
@@ -509,7 +509,7 @@ class BattleReportScraper {
         }
         var thElements = this.resultsTable.getElementsByTagName('th');
         for (var i = 0; i < thElements.length; i++) {
-            if (thElements[i].innerHTML == textScraper.t('report.haul')) {
+            if (textScraper.includes(thElements[i], 'report.haul')) {
                 return scrapeResources(thElements[i].parentNode.cells[1]);
             }
         }
@@ -528,11 +528,11 @@ class BattleReportScraper {
      */
     getLoyalty() {
         if (!this.resultsTable) {
-            return null;            
+            return null;
         }
         var thElements = this.resultsTable.getElementsByTagName('th');
         for (var i = 0; i < thElements.length; i++) {
-            if (thElements[i].innerHTML == textScraper.t('report.loyalty')) {
+            if (textScraper.includes(thElements[i], 'report.loyalty')) {
                 var bElements = thElements[i].parentNode.getElementsByTagName('b');
                 return {
                     before: parseInt(bElements[0].innerHTML),
@@ -564,7 +564,7 @@ class BattleReportScraper {
         }
         var thElements = this.resultsTable.getElementsByTagName('th');
         for (var i = 0; i < thElements.length; i++) {
-            if (thElements[i].innerHTML == textScraper.t('report.ramDamage')) {
+            if (textScraper.includes(thElements[i], 'report.ramDamage')) {
                 var damageCell = thElements[i].parentNode.cells[1];
                 return {
                     levelBefore: parseInt(damageCell.getElementsByTagName('b')[0].innerHTML),
@@ -617,7 +617,7 @@ class BattleReportScraper {
     getUnitsInTransit() {
         var h4elements = this.gameDoc.getElementsByTagName('h4');
         for (var i = 0; i < h4elements.length; i++) {
-            if (h4elements[i].innerHTML.search(textScraper.t('report.unitsInTransit')) != -1)
+            if (textScraper.includes(h4elements[i], 'report.unitsInTransit'))
                 return scrapeTroopCounts(h4elements[i].nextSibling.nextSibling.rows[1]);
         }
         return null;
@@ -1034,7 +1034,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
             var resultsHeaders = gameDoc.getElementById('attack_results').getElementsByTagName('th');
             var loyaltyRow;
             for (let i = 0; i < resultsHeaders.length; i++) {
-                if (resultsHeaders[i].innerHTML == textScraper.t('report.loyalty')) {
+                if (textScraper.includes(resultsHeaders[i], 'report.loyalty')) {
                     loyaltyRow = resultsHeaders[i].parentNode;
                 }
             }        

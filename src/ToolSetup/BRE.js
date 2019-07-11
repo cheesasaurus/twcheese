@@ -361,8 +361,8 @@ class BattleReportEnhancer {
             periodInput.value = 8;
             periodInput.addEventListener('input', function() {
                 let haulBonus = Number(document.getElementById('twcheese_raider_haulBonus').value);
-                report.raidPeriodic = report.calcRaidPeriodic(Number(this.value), gameConfig.speed, haulBonus);
-                this.setRaiders(report.raidPeriodic);
+                let raiders = report.calcRaidPeriodic(Number(this.value), gameConfig.speed, haulBonus);
+                _this.setRaiders(raiders);
             });
             periodicDiv.appendChild(periodInput);
 
@@ -595,20 +595,20 @@ class BattleReportEnhancer {
 
         if (mode == 'scouted') {
             gameDoc.getElementById('twcheese_raider_selection').value = 'scouted';
-            report.raidScouted = report.calcRaidScouted(haulBonus);
-            this.setRaiders(report.raidScouted);
+            let raiders = report.calcRaidScouted(haulBonus);
+            this.setRaiders(raiders);
             gameDoc.getElementById('twcheese_periodic_options').style.display = 'none';
         }
         else if (mode == 'predicted') {
             gameDoc.getElementById('twcheese_raider_selection').value = 'predicted';
-            report.raidPredicted = report.calcRaidPredicted(window.game_data.village, TwCheeseDate.newServerDate(), gameConfig.speed, gameConfig.unit_speed, haulBonus);
-            this.setRaiders(report.raidPredicted);
+            let raiders = report.calcRaidPredicted(window.game_data.village, TwCheeseDate.newServerDate(), gameConfig.speed, gameConfig.unit_speed, haulBonus);
+            this.setRaiders(raiders);
             gameDoc.getElementById('twcheese_periodic_options').style.display = 'none';
         }
         else if (mode == 'periodic') {
             gameDoc.getElementById('twcheese_raider_selection').value = 'periodic';
-            report.raidPeriodic = report.calcRaidPeriodic(Number(gameDoc.getElementById('twcheese_period').value), gameConfig.speed, haulBonus);
-            this.setRaiders(report.raidPeriodic);
+            let raiders = report.calcRaidPeriodic(Number(gameDoc.getElementById('twcheese_period').value), gameConfig.speed, haulBonus);
+            this.setRaiders(raiders);
             gameDoc.getElementById('twcheese_periodic_options').style.display = '';
         }
     }
@@ -2713,12 +2713,6 @@ function enhanceReport(gameConfig) {
     if (report.loyalty)
         report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty.after, report.battleTime, now, game_data.village, report.defenderVillage);
     report.timingInfo = report.calcTimingInfo(gameConfig.speed, gameConfig.unit_speed);
-    if (report.espionageLevel >= 1) {
-        report.raidScouted = report.calcRaidScouted();
-    } if (report.espionageLevel >= 2) {
-        report.raidPredicted = report.calcRaidPredicted(game_data.village, now, gameConfig.speed, gameConfig.unit_speed);
-        report.raidPeriodic = report.calcRaidPeriodic(8, gameConfig.speed);
-    }
 
     /*==== add stuff to the page ====*/
     enhanceBattleReport(document, report);

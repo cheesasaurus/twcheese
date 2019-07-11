@@ -236,8 +236,14 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
     var contentValueElement = gameDoc.getElementById('content_value');
     var pageMod = this;
 
+    this.gameDoc = gameDoc;
+    this.report = report;
+    this.gameConfig = gameConfig;
+
 
     this.includeReportTools = function () {
+        let _this = this;
+        let gameDoc = this.gameDoc;
 
         function toggleCollapse() {
             $widgetContent.toggle({
@@ -316,7 +322,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
             raidModeSelect.id = 'twcheese_raider_selection';
             raidModeSelect.innerHTML = raidModeOptions.join('');
             raidModeSelect.addEventListener('change', function() {
-                twcheese_changeRaidMode(this.value);
+                _this.changeRaidMode(this.value);
             });
             raiderTable.rows[1].cells[0].appendChild(raidModeSelect);
 
@@ -329,7 +335,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
             /*==== haul Bonus ====*/
             let $haulBonus = $(`<div>Haul Bonus: <input id="twcheese_raider_haulBonus" type="text" size=5 value=0></input>%</div>`.trim());
             $haulBonus.find('#twcheese_raider_haulBonus').on('input', function() {
-                twcheese_changeRaidMode(document.getElementById('twcheese_raider_selection').value);
+                _this.changeRaidMode(gameDoc.getElementById('twcheese_raider_selection').value);
             });
             raiderTable.rows[1].cells[0].appendChild($haulBonus[0]);
 
@@ -346,7 +352,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
             periodInput.addEventListener('input', function() {
                 let haulBonus = Number(document.getElementById('twcheese_raider_haulBonus').value);
                 report.raidPeriodic = report.calcRaidPeriodic(Number(this.value), gameConfig.speed, haulBonus);
-                twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), report.raidPeriodic, report);
+                this.setRaiders(report.raidPeriodic);
             });
             periodicDiv.appendChild(periodInput);
 
@@ -445,7 +451,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
                 raiderScoutTable.rows[1].cells[0].appendChild(raiderScoutInput);
 
                 raiderScoutInput.onchange = function () {
-                    twcheese_changeRaidMode(gameDoc.getElementById('twcheese_raider_selection').value)
+                    _this.changeRaidMode(gameDoc.getElementById('twcheese_raider_selection').value)
                     localStorage.setItem('twcheese_report_raiderScouts', this.value);
                 };
 
@@ -719,53 +725,51 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
     /**
      *	@param	mode:String	represents which mode to use
      */
-    function twcheese_changeRaidMode(mode) {
-        var haulBonus = Number(document.getElementById('twcheese_raider_haulBonus').value);
+    this.changeRaidMode = function(mode) {
+        var haulBonus = Number(this.gameDoc.getElementById('twcheese_raider_haulBonus').value);
+        let gameDoc = this.gameDoc;
+        let report = this.report;
+        let gameConfig = this.gameConfig;
 
         if (mode == 'scouted') {
             gameDoc.getElementById('twcheese_raider_selection').value = 'scouted';
             report.raidScouted = report.calcRaidScouted(haulBonus);
-            twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), report.raidScouted, report);
+            this.setRaiders(report.raidScouted);
             gameDoc.getElementById('twcheese_periodic_options').style.display = 'none';
         }
         else if (mode == 'predicted') {
             gameDoc.getElementById('twcheese_raider_selection').value = 'predicted';
-            report.raidPredicted = report.calcRaidPredicted(game_data.village, TwCheeseDate.newServerDate(), gameConfig.speed, gameConfig.unit_speed, haulBonus);
-            twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), report.raidPredicted, report);
+            report.raidPredicted = report.calcRaidPredicted(window.game_data.village, TwCheeseDate.newServerDate(), gameConfig.speed, gameConfig.unit_speed, haulBonus);
+            this.setRaiders(report.raidPredicted);
             gameDoc.getElementById('twcheese_periodic_options').style.display = 'none';
         }
         else if (mode == 'periodic') {
             gameDoc.getElementById('twcheese_raider_selection').value = 'periodic';
             report.raidPeriodic = report.calcRaidPeriodic(Number(gameDoc.getElementById('twcheese_period').value), gameConfig.speed, haulBonus);
-            twcheese_setRaiders(gameDoc.getElementById('twcheese_raider_units'), report.raidPeriodic, report);
+            this.setRaiders(report.raidPeriodic);
             gameDoc.getElementById('twcheese_periodic_options').style.display = '';
         }
     }
-    this.changeRaidMode = twcheese_changeRaidMode;
 
     /**
-     * sets raiders displayed in the raider calculator
-     * @param {HTMLTableElement} raiderTable
-     * @param {TroopCounts} units
-     * @param {BattleReport} report the report being viewed
+     * @param {TroopCounts} troopCounts
      */
-    function twcheese_setRaiders(raiderTable, units, report) {
-        let troopTypes = ['spear', 'sword', 'axe', 'archer', 'light', 'marcher', 'heavy'];
-
-        var scouts = document.getElementById('twcheese_raider_scouts').value;
-
-        function attackUrl(unitCounts) {
-            unitCounts = Object.assign({spy: scouts}, unitCounts);
-            return attackPrepUrl(unitCounts, report.defenderVillage.id);
+    this.setRaiders = function(troopCounts) {
+        let spyCount = this.gameDoc.getElementById('twcheese_raider_scouts').value;
+        let attackUrl = (troopType, count) => {
+            return attackPrepUrl({spy: spyCount, [troopType]: count}, this.report.defenderVillage.id);
         }
+
+        let raiderTable = this.gameDoc.getElementById('twcheese_raider_units');
+        let troopTypes = ['spear', 'sword', 'axe', 'archer', 'light', 'marcher', 'heavy'];
 
         for (var i = 0; i < troopTypes.length; i++) {
             let troopType = troopTypes[i];
-            raiderTable.rows[1].cells[i].innerHTML = units[troopType];
-            if (game_data.market === 'uk') {
+            raiderTable.rows[1].cells[i].innerHTML = troopCounts[troopType];
+            if (window.game_data.market === 'uk') {
                 continue;
             }
-            let url = attackUrl({spear: Math.round(units[troopType])});
+            let url = attackUrl(troopType, Math.round(troopCounts[troopType]));
             raiderTable.rows[0].cells[i].innerHTML = '<a href="' + url + '"><img src="' + ImageSrc.troopIcon(troopType) + '"/></a>';
         }
     }

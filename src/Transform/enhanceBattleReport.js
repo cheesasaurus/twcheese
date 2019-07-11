@@ -1,4 +1,6 @@
+import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { escapeHtml } from '/twcheese/src/Util/UI.js';
+import { gameUrl } from '/twcheese/src/Util/Network.js';
 
 /**
  * @param {HTMLDocument} gameDoc 
@@ -56,22 +58,22 @@ function enhanceBattleReport(gameDoc, report) {
 
     /*==== population summary ====*/
     if (report.espionageLevel >= 2) {
-        var building_table = gameDoc.getElementById('attack_spy_buildings_right');
+        let population = report.calcPopulation();
+        let idleLabel = (report.espionageLevel === 3) ? 'Idle' : 'Unknown';
 
-        var population_summary = $('<table></table>')[0];
-        var populationRow = population_summary.insertRow(-1);
-        var populationHeader = document.createElement('th');
-        populationHeader.innerHTML = 'Population:';
-        populationRow.appendChild(populationHeader);
-        populationRow.insertCell(-1);
-        populationRow.cells[1].innerHTML = 'Buildings <b>(' + report.populationSummary.buildings + ')</b><br/>Military <b>(' + report.populationSummary.troops + ')</b><br/>';
-        if (report.espionageLevel == 3)
-            populationRow.cells[1].innerHTML += 'Idle';
-        else
-            populationRow.cells[1].innerHTML += 'Unknown';
-        populationRow.cells[1].innerHTML += ' <b>(' + report.populationSummary.idle + ')</b>';
-
-        $(building_table).after(population_summary);
+        $(gameDoc).find('#attack_spy_buildings_right')
+            .after(`
+                <table>
+                    <tr>
+                        <th>Population:</th>
+                        <td>
+                            Buildings <b>(${population.buildings})</b>
+                            <br/>Military <b>(${population.troops})</b>
+                            <br/>${idleLabel} <b>(${population.idle}))</b>
+                        </td>
+                    </tr>
+                </table>
+            `);
     }
 
     /*==== loyalty ====*/

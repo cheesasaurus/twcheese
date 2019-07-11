@@ -2716,7 +2716,6 @@ function enhanceReport(gameConfig) {
     if (report.espionageLevel >= 1) {
         report.raidScouted = report.calcRaidScouted();
     } if (report.espionageLevel >= 2) {
-        report.populationSummary = report.calcPopulation();
         report.raidPredicted = report.calcRaidPredicted(game_data.village, now, gameConfig.speed, gameConfig.unit_speed);
         report.raidPeriodic = report.calcRaidPeriodic(8, gameConfig.speed);
     }

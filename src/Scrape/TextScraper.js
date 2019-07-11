@@ -244,6 +244,18 @@ class TextScraper {
         return $(elements).filter(`:contains('${escapeSingleQuotes(searchFor)}')`)[0];
     }
 
+    /**
+     * @param {HTMLElment|jQuery} el
+     * @return {string}
+     */
+    buildingType(el) {
+        let text = $(el).text();
+        for (let [buildingType, buildingName] of Object.entries(this.gameTexts.buildings)) {
+            if (text.includes(buildingName)) {
+                return buildingType;
+            }
+        }
+    }
 
 }
 

@@ -427,15 +427,12 @@ class BattleReportScraper {
             return null;
         }
         let damageCell = catHeader.parentNode.cells[1];
-        for (var buildingType of buildingTypes) {
-            if (textScraper.includes(damageCell, `buildings.${buildingType}`)) {
-                break;
-            }
-        }
+        let buildingType = textScraper.buildingType(damageCell);
+        let bElements = damageCell.getElementsByTagName('b');
         return {
             buildingType,
-            levelBefore: parseInt(damageCell.getElementsByTagName('b')[0].innerHTML),
-            levelAfter: parseInt(damageCell.getElementsByTagName('b')[1].innerHTML)
+            levelBefore: parseInt(bElements[0].innerHTML),
+            levelAfter: parseInt(bElements[1].innerHTML)
         };
     }
 

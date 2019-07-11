@@ -155,7 +155,7 @@ initCss(`
 // language /////////////////////////////////////////////////////////////////////
 
 try {
-    var language = { "buildings": [], "months": [], "report": [], "twcheese": [] };
+    var language = { "buildings": {}, "report": {}, "twcheese": {} };
     switch (game_data.market) {
         default:
             /*==== tribalwars.net, tribalwars.us, tribalwars.co.uk, beta.tribalwars.net ====*/
@@ -178,25 +178,10 @@ try {
             language['buildings']['hide'] = 'Hiding place';
             language['buildings']['wall'] = 'Wall';
 
-            language['months'][0] = 'Jan';
-            language['months'][1] = 'Feb';
-            language['months'][2] = 'Mar';
-            language['months'][3] = 'Apr';
-            language['months'][4] = 'May';
-            language['months'][5] = 'Jun';
-            language['months'][6] = 'Jul';
-            language['months'][7] = 'Aug';
-            language['months'][8] = 'Sep';
-            language['months'][9] = 'Oct';
-            language['months'][10] = 'Nov';
-            language['months'][11] = 'Dec';
-
             language['report']['catDamage'] = 'Damage by catapults:';
             language['report']['ramDamage'] = 'Damage by rams:';
-            language['report']['farmAssistant'] = 'Possible resources:';
             language['report']['haul'] = 'Haul:';
             language['report']['loyalty'] = 'Loyalty:';
-            language['report']['timeSent'] = 'Battle time';
             language['report']['unitsInTransit'] = 'Defender\'s troops, that were in transit';
             language['report']['deletedPlayer'] = '(deleted)';
             language['report']['unread'] = '(new)';
@@ -227,25 +212,10 @@ try {
             language['buildings']['hide'] = 'Skrýš';
             language['buildings']['wall'] = 'Hradby';
 
-            language['months'][0] = 'Jan';
-            language['months'][1] = 'Feb';
-            language['months'][2] = 'Mar';
-            language['months'][3] = 'Apr';
-            language['months'][4] = 'May';
-            language['months'][5] = 'Jun';
-            language['months'][6] = 'Jul';
-            language['months'][7] = 'Aug';
-            language['months'][8] = 'Sep';
-            language['months'][9] = 'Oct';
-            language['months'][10] = 'Nov';
-            language['months'][11] = 'Dec';
-
             language['report']['catDamage'] = 'Škoda vzniklá střelbou z katapultu:';
             language['report']['ramDamage'] = 'Škoda vzniklá beranidlem:';
-            language['report']['farmAssistant'] = 'Vyšpehované suroviny:';
             language['report']['haul'] = 'Kořist:';
             language['report']['loyalty'] = 'Oddanost:';
-            language['report']['timeSent'] = 'Odesláno';
             language['report']['unitsInTransit'] = 'Vojsko obránce, které bylo na cestě';
             language['report']['deletedPlayer'] = '(deleted)'; //todo: translate
             language['report']['unread'] = '(new)'; //todo: translate
@@ -275,25 +245,10 @@ try {
             language['buildings']['hide'] = 'Gömställe';
             language['buildings']['wall'] = 'Mur';
 
-            language['months'][0] = 'Jan';
-            language['months'][1] = 'Feb';
-            language['months'][2] = 'Mar';
-            language['months'][3] = 'Apr';
-            language['months'][4] = 'Maj';
-            language['months'][5] = 'Jun';
-            language['months'][6] = 'Jul';
-            language['months'][7] = 'Aug';
-            language['months'][8] = 'Sep';
-            language['months'][9] = 'Okt';
-            language['months'][10] = 'Nov';
-            language['months'][11] = 'Dec';
-
             language['report']['catDamage'] = 'Skada gjord av katapulter:';
             language['report']['ramDamage'] = 'Skada gjorda av Murbräckan:';
-            language['report']['farmAssistant'] = 'Resurser spejade:';
             language['report']['haul'] = 'Byte:';
             language['report']['loyalty'] = 'Lojalitet:';
-            language['report']['timeSent'] = 'Skickat';
             language['report']['unitsInTransit'] = 'Enheter utanför byn';
             language['report']['deletedPlayer'] = '(borttaget)';
             language['report']['unread'] = '(new)'; //todo: translate
@@ -324,25 +279,10 @@ try {
             language['buildings']['hide'] = 'Κρυψώνα';
             language['buildings']['wall'] = 'Τείχος';
 
-            language['months'][0] = 'Ιαν';
-            language['months'][1] = 'Φεβ';
-            language['months'][2] = 'Μαρ';
-            language['months'][3] = 'Απρ';
-            language['months'][4] = 'Μαι';
-            language['months'][5] = 'Ιον';
-            language['months'][6] = 'Ιολ';
-            language['months'][7] = 'Αυγ';
-            language['months'][8] = 'Σεπ';
-            language['months'][9] = 'Οκτ';
-            language['months'][10] = 'Νοε';
-            language['months'][11] = 'Δεκ';
-
             language['report']['catDamage'] = 'Ζημία που έκαναν οι καταπέλτες:';
             language['report']['ramDamage'] = 'Ζημιά που προκλήθηκε από τον πολιορκητικό κριό:';
-            language['report']['farmAssistant'] = 'Πιθανοί πόροι:';
             language['report']['haul'] = 'Αλλαγή:';
             language['report']['loyalty'] = 'Πίστη:';
-            language['report']['timeSent'] = 'Απεσταλμένο';
             language['report']['unitsInTransit'] = 'Στρατεύματα αμυνόμενου που ήταν σε μεταφορά';
             language['report']['deletedPlayer'] = '(διεγραμμένο)';
             language['report']['unread'] = '(νέο)';
@@ -373,25 +313,10 @@ try {
             language['buildings']['hide'] = 'Skrovište';
             language['buildings']['wall'] = 'Zid';
 
-            language['months'][0] = 'Sij';
-            language['months'][1] = 'Vel';
-            language['months'][2] = 'Ožu';
-            language['months'][3] = 'Tra';
-            language['months'][4] = 'Svi';
-            language['months'][5] = 'Lip';
-            language['months'][6] = 'Srp';
-            language['months'][7] = 'Kol';
-            language['months'][8] = 'Ruj';
-            language['months'][9] = 'Lis';
-            language['months'][10] = 'Stu';
-            language['months'][11] = 'Pro';
-
             language['report']['catDamage'] = 'Šteta nanešena katapultima:	';
             language['report']['ramDamage'] = 'Šteta nanešena ovnovima:';
-            language['report']['farmAssistant'] = 'Moguće sirovine:';
             language['report']['haul'] = 'Nosivost:';
             language['report']['loyalty'] = 'Odanost:';
-            language['report']['timeSent'] = 'Poslano';
             language['report']['unitsInTransit'] = 'Obrambene postrojbe koje su bile na putu';
             language['report']['deletedPlayer'] = '(obrisano)';
             break;
@@ -417,27 +342,11 @@ try {
             language['buildings']['hide'] = 'Skjulested';
             language['buildings']['wall'] = 'Mur';
 
-            language['months'][0] = 'Jan';
-            language['months'][1] = 'Feb';
-            language['months'][2] = 'Mar';
-            language['months'][3] = 'Apr';
-            language['months'][4] = 'Mai';
-            language['months'][5] = 'Jun';
-            language['months'][6] = 'Jul';
-            language['months'][7] = 'Aug';
-            language['months'][8] = 'Sep';
-            language['months'][9] = 'Okt';
-            language['months'][10] = 'Nov';
-            language['months'][11] = 'Des';
-
             language['report']['catDamage'] = 'Skade forårsaket av katapulter:';
             language['report']['ramDamage'] = 'Skade forårsaket av rambukker:';
-            language['report']['farmAssistant'] = 'Speidede ressurser:';
             language['report']['haul'] = 'Bytte';
             language['report']['loyalty'] = 'Lojalitet:';
-            language['report']['timeSent'] = 'Sendt';
             language['report']['unitsInTransit'] = 'Forsvarer';
-            language['report']['timeSent'] = 'Kamptid';
             language['report']['unitsInTransit'] = 'Antall';
             language['report']['deletedPlayer'] = '(slettet)';
             language['report']['unread'] = '(ny)';
@@ -468,26 +377,11 @@ try {
             language['buildings']['storage'] = 'Armazém';
             language['buildings']['hide'] = 'Esconderijo';
             language['buildings']['wall'] = 'Muralha';
-                    
-            language['months'][0] = 'jan';
-            language['months'][1] = 'fev';
-            language['months'][2] = 'mar';
-            language['months'][3] = 'abr';
-            language['months'][4] = 'mai';
-            language['months'][5] = 'jun';
-            language['months'][6] = 'jul';
-            language['months'][7] = 'ago';
-            language['months'][8] = 'set';
-            language['months'][9] = 'out';
-            language['months'][10] = 'nov';
-            language['months'][11] = 'dez';
         
             language['report']['catDamage'] = 'Dano provocado por catapultas:';
             language['report']['ramDamage'] = 'Dano provocado por aríetes:';
-            language['report']['farmAssistant'] = 'Possíveis recursos:';
             language['report']['haul'] = 'Busca minuciosa:';
             language['report']['loyalty'] = 'Lealdade:';
-            language['report']['timeSent'] = 'Tempo de batalha';
             language['report']['unitsInTransit'] = 'Unidades fora da aldeia';
             language['report']['deletedPlayer'] = '(eliminado)';
             language['report']['unread'] = '(novo)';

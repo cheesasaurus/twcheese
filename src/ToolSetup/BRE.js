@@ -422,21 +422,21 @@ class BattleReportScraper {
             return null;
         }
         var thElements = this.resultsTable.getElementsByTagName('th');
-        for (var i = 0; i < thElements.length; i++) {
-            if (textScraper.includes(thElements[i], 'report.catDamage')) {
-                var damageCell = thElements[i].parentNode.cells[1];
-                for (var buildingType of buildingTypes) {
-                    if (textScraper.includes(damageCell, `buildings.${buildingType}`)) {
-                        break;
-                    }
-                }
-                return {
-                    buildingType,
-                    levelBefore: parseInt(damageCell.getElementsByTagName('b')[0].innerHTML),
-                    levelAfter: parseInt(damageCell.getElementsByTagName('b')[1].innerHTML)
-                };
+        let catHeader = textScraper.first(thElements, 'report.catDamage');
+        if (!catHeader) {
+            return null;
+        }
+        let damageCell = catHeader.parentNode.cells[1];
+        for (var buildingType of buildingTypes) {
+            if (textScraper.includes(damageCell, `buildings.${buildingType}`)) {
+                break;
             }
         }
+        return {
+            buildingType,
+            levelBefore: parseInt(damageCell.getElementsByTagName('b')[0].innerHTML),
+            levelAfter: parseInt(damageCell.getElementsByTagName('b')[1].innerHTML)
+        };
     }
 
     /**
@@ -508,11 +508,11 @@ class BattleReportScraper {
             return null;
         }
         var thElements = this.resultsTable.getElementsByTagName('th');
-        for (var i = 0; i < thElements.length; i++) {
-            if (textScraper.includes(thElements[i], 'report.haul')) {
-                return scrapeResources(thElements[i].parentNode.cells[1]);
-            }
+        let haulHeader = textScraper.first(thElements, 'report.haul');
+        if (!haulHeader) {
+            return null;
         }
+        return scrapeResources(haulHeader.parentNode.cells[1]);
     }
 
     /**
@@ -531,16 +531,15 @@ class BattleReportScraper {
             return null;
         }
         var thElements = this.resultsTable.getElementsByTagName('th');
-        for (var i = 0; i < thElements.length; i++) {
-            if (textScraper.includes(thElements[i], 'report.loyalty')) {
-                var bElements = thElements[i].parentNode.getElementsByTagName('b');
-                return {
-                    before: parseInt(bElements[0].innerHTML),
-                    after: parseInt(bElements[1].innerHTML)
-                };
-            }
+        let loyaltyHeader = textScraper.first(thElements, 'report.loyalty');
+        if (!loyaltyHeader) {
+            return null;
         }
-        return null;
+        var bElements = loyaltyHeader.parentNode.getElementsByTagName('b');
+        return {
+            before: parseInt(bElements[0].innerHTML),
+            after: parseInt(bElements[1].innerHTML)
+        };
     }
 
     /**
@@ -563,15 +562,15 @@ class BattleReportScraper {
             return null;
         }
         var thElements = this.resultsTable.getElementsByTagName('th');
-        for (var i = 0; i < thElements.length; i++) {
-            if (textScraper.includes(thElements[i], 'report.ramDamage')) {
-                var damageCell = thElements[i].parentNode.cells[1];
-                return {
-                    levelBefore: parseInt(damageCell.getElementsByTagName('b')[0].innerHTML),
-                    levelAfter: parseInt(damageCell.getElementsByTagName('b')[1].innerHTML)
-                };
-            }
+        let ramHeader = textScraper.first(thElements, 'report.ramDamage');
+        if (!ramHeader) {
+            return null;
         }
+        var bElements = ramHeader.parentNode.getElementsByTagName('b');
+        return {
+            levelBefore: parseInt(bElements[0].innerHTML),
+            levelAfter: parseInt(bElements[1].innerHTML)
+        };
     }
 
     /**
@@ -616,11 +615,11 @@ class BattleReportScraper {
      */
     getUnitsInTransit() {
         var h4elements = this.gameDoc.getElementsByTagName('h4');
-        for (var i = 0; i < h4elements.length; i++) {
-            if (textScraper.includes(h4elements[i], 'report.unitsInTransit'))
-                return scrapeTroopCounts(h4elements[i].nextSibling.nextSibling.rows[1]);
+        let transitHeader = textScraper.first(h4elements, 'report.unitsInTransit');
+        if (!transitHeader) {
+            return null;
         }
-        return null;
+        return scrapeTroopCounts(transitHeader.nextSibling.nextSibling.rows[1]);
     }
 
     /**
@@ -1032,13 +1031,7 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
         /*==== loyalty ====*/
         if (report.loyalty) {
             var resultsHeaders = gameDoc.getElementById('attack_results').getElementsByTagName('th');
-            var loyaltyRow;
-            for (let i = 0; i < resultsHeaders.length; i++) {
-                if (textScraper.includes(resultsHeaders[i], 'report.loyalty')) {
-                    loyaltyRow = resultsHeaders[i].parentNode;
-                }
-            }        
-
+            var loyaltyRow = textScraper.first(resultsHeaders, 'report.loyalty').parentNode;
             var loyaltyHTML = loyaltyRow.cells[1].innerHTML;
             loyaltyRow.removeChild(loyaltyRow.cells[1]);
             loyaltyRow.insertCell(-1);

@@ -211,6 +211,10 @@ switch (game_data.market) {
 
 }
 
+function escapeSingleQuotes(str) {
+    return str.replace(/'/g, "\\'");
+}
+
 class TextScraper {
     constructor(gameTexts) {
         this.gameTexts = gameTexts;
@@ -229,6 +233,18 @@ class TextScraper {
     includes(el, textId) {
         return $(el).html().includes(this.t(textId));
     }
+
+    /**
+     * @param {HTMLElement[] | jQuery} elements
+     * @param {string} textId 
+     * @return {HTMLElement|undefined}
+     */
+    first(elements, textId) {
+        let searchFor = this.t(textId);
+        return $(elements).filter(`:contains('${escapeSingleQuotes(searchFor)}')`)[0];
+    }
+
+
 }
 
 

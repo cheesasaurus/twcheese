@@ -1561,9 +1561,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
             return this.nodeType == 3;
         }).text();
 
-        report.isNew = false;
-        if (cellText.search(textScraper.t('report.unread')) != -1)
-            report.isNew = true;
+        report.isNew = textScraper.includes(cellText, 'report.unread');
 
         /*==== partial hauls ====*/
         report.isFullHaul = false;

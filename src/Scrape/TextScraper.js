@@ -226,12 +226,16 @@ class TextScraper {
     }
 
     /**
-     * @param {HTMLElement|jQuery} el
+     * @param {HTMLElement|jQuery|string} haystack
      * @param {string} textId
      * @return {boolean}
      */
-    includes(el, textId) {
-        return $(el).html().includes(this.t(textId));
+    includes(haystack, textId) {
+        let needle = this.t(textId);
+        if (typeof haystack === 'string') {
+            return haystack.includes(needle);
+        }
+        return $(haystack).html().includes(needle);
     }
 
     /**

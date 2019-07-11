@@ -1217,12 +1217,14 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
             }
             cell.innerHTML += `<a href="${gameUrl('report', {mode:game_data.mode, view:report.reportId})}"> view</a>`;
 
-            let isDefenderMe = report.defender.name == game_data.player.name;
-            let wasVillageConquered = report.loyalty && report.loyalty.after <= 0;
-            if (isDefenderMe || wasVillageConquered) {
-                cell.innerHTML += `<a href="${gameUrl('place', {mode:'units', village:report.defenderVillage.id})}">
-                    <img title="manage troops" style="float:right; cursor:pointer;" src="${ImageSrc.buildingIcon('place')}" />
-                </a>`;
+            if (report.defender) {
+                let isDefenderMe = report.defender.name == game_data.player.name;
+                let wasVillageConquered = report.loyalty && report.loyalty.after <= 0;
+                if (isDefenderMe || wasVillageConquered) {
+                    cell.innerHTML += `<a href="${gameUrl('place', {mode:'units', village:report.defenderVillage.id})}">
+                        <img title="manage troops" style="float:right; cursor:pointer;" src="${ImageSrc.buildingIcon('place')}" />
+                    </a>`;
+                }
             }
 
             /*==== repeat attack cell ====*/

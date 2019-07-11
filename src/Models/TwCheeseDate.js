@@ -138,6 +138,12 @@ class TwCheeseDate extends Date {
         return ret;
     }
 
+    startOfSecond() {
+        let ret = this.clone();
+        ret.setUTCMilliseconds(0);
+        return ret;
+    }
+
     equals(date) {
         return this.getTime() === date.getTime();
     }

@@ -40,7 +40,7 @@ class BattleReport {
         let travelDuration = this.attackerQuantity.travelDuration(distance, 'attack', worldSpeed, unitSpeed);
         return {
             launchTime: this.battleTime.subMilliseconds(travelDuration),
-            returnTime: this.battleTime.addMilliseconds(travelDuration)
+            returnTime: this.battleTime.addMilliseconds(travelDuration).startOfSecond()
         };
     }
 

@@ -829,8 +829,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
 
                 /*==== timeLaunched cell ====*/
                 cell = row.insertCell(-1);
-                if (report.timeLaunched) { // todo: consistent with enhanced report
-                    cell.innerHTML = twcheese_dateToString(report.timeLaunched);
+                if (report.timeLaunched) { // todo: consistent with enhanced report (report name needs more precise timestamp)
+                    cell.innerHTML = report.timeLaunched.toHtml(false);
                 }
 
                 /*==== timeReceived cell ====*/
@@ -2571,29 +2571,6 @@ function twcheese_interpretReportName(reportName) {
     return report;
 }
 
-/**
- *	@param {TwCheeseDate} time
- *	@return time:String	formatted TW style
- */
-function twcheese_dateToString(time) {
-    var monthText = new Array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
-    var timeString = '';
-    timeString += monthText[time.getServerMonth()] + ' ';
-    if (time.getServerDate() < 10)
-        timeString += '0';
-    timeString += time.getServerDate() + ', ';
-    timeString += time.getServerYear() + '  ';
-    if (time.getServerHours() < 10)
-        timeString += '0';
-    timeString += time.getServerHours() + ':';
-    if (time.getServerMinutes() < 10)
-        timeString += '0';
-    timeString += time.getServerMinutes() + ':';
-    if (time.getServerSeconds() < 10)
-        timeString += '0';
-    timeString += time.getServerSeconds();
-    return timeString;
-}
 
 /**
  *	requests the xml from a page

@@ -113,7 +113,7 @@ function enhanceBattleReport(gameDoc, report) {
     launchRow.insertCell(-1);
     launchRow.cells[0].innerHTML = '<span title="the time the attacker sent the attack">Launched</span>';
     launchRow.insertCell(-1);
-    launchRow.cells[1].innerHTML = twcheese_dateToString(report.timingInfo.launchTime);
+    launchRow.cells[1].innerHTML = report.timingInfo.launchTime.toHtml();
 
     /*==== determine whether return time should be displayed. ====*/
     let showReturnTime = !report.attackerSurvivors.isZero();
@@ -123,7 +123,7 @@ function enhanceBattleReport(gameDoc, report) {
     if (showReturnTime) {
         returnRow.cells[0].innerHTML = '<span title="the time the attacking troops return to the attacker\'s village">Returns</span>';
         returnRow.insertCell(-1);
-        returnRow.cells[1].innerHTML = twcheese_dateToString(report.timingInfo.returnTime);
+        returnRow.cells[1].innerHTML = report.timingInfo.returnTime.toHtml();
     }
 
     /*==== rally point Manage Troops link ====*/
@@ -143,32 +143,6 @@ function enhanceBattleReport(gameDoc, report) {
     jsonRow.insertCell(-1);
     jsonRow.cells[0].colSpan = 2;
     jsonRow.cells[0].innerHTML = '<b>JSON</b><br/><textarea cols=50 readonly=true>' + escapeHtml(JSON.stringify(report, null, 2)) + '</textarea>';
-}
-
-
-// todo: refactor date formatting
-/**
- *	@param {TwCheeseDate} time
- *	@return time:String	formatted TW style
- */
-function twcheese_dateToString(time) {
-    var monthText = new Array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
-    var timeString = '';
-    timeString += monthText[time.getServerMonth()] + ' ';
-    if (time.getServerDate() < 10)
-        timeString += '0';
-    timeString += time.getServerDate() + ', ';
-    timeString += time.getServerYear() + '  ';
-    if (time.getServerHours() < 10)
-        timeString += '0';
-    timeString += time.getServerHours() + ':';
-    if (time.getServerMinutes() < 10)
-        timeString += '0';
-    timeString += time.getServerMinutes() + ':';
-    if (time.getServerSeconds() < 10)
-        timeString += '0';
-    timeString += time.getServerSeconds();
-    return timeString;
 }
 
 

@@ -142,6 +142,23 @@ class TwCheeseDate extends Date {
         return this.getTime() === date.getTime();
     }
 
+    toHtml(includeMillis = true) {
+        let d = pretendServerIsUTC(this);
+        let year = d.getUTCFullYear();
+        let monthName = d.toLocaleString('default', {month: 'short'});
+        let day = d.getUTCDate().toString().padStart(2, '0');
+        let hours = d.getUTCHours().toString().padStart(2, '0');
+        let minutes = d.getUTCMinutes().toString().padStart(2, '0');
+        let seconds = d.getUTCSeconds().toString().padStart(2, '0');
+        let ms = d.getUTCMilliseconds().toString().padStart(3, '0');
+
+        let html = `${monthName} ${day}, ${year} ${hours}:${minutes}:${seconds}`;
+        if (includeMillis) {
+            html += `<span class="small grey">:${ms}</span>`;
+        }
+        return html;
+    }
+
     toDebugString() {
         let d = pretendServerIsUTC(this);
         let year = d.getUTCFullYear();

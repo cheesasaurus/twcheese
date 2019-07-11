@@ -228,22 +228,31 @@ function twcheese_ReportsFolderDisplaySettings() {
 
 
 /**
- *	modifies report page
- *	@param	gameDoc:HTMLDocument	the document from game.php?screen=report&mode=attack
- *	@param	report:twcheese_BattleReport	the report data to use
+ * modifies report page, when viewing a single report.
  */
-function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRESettings) {
-    var contentValueElement = gameDoc.getElementById('content_value');
-    var pageMod = this;
+class BattleReportEnhancer {
 
-    this.gameDoc = gameDoc;
-    this.report = report;
-    this.gameConfig = gameConfig;
+    /**
+    * @param {HTMLDocument} gameDoc the document from game.php?screen=report&mode=attack
+    * @param {BattleReport} report
+    * @param {object} gameConfig
+    * @param {object} twcheese_BRESettings
+    */
+    constructor(gameDoc, report, gameConfig, twcheese_BRESettings) {
+        this.gameDoc = gameDoc;
+        this.report = report;
+        this.gameConfig = gameConfig;
+        this.settings = twcheese_BRESettings;
+    }
 
 
-    this.includeReportTools = function () {
+    includeReportTools() {
         let _this = this;
         let gameDoc = this.gameDoc;
+        let report = this.report;
+        let gameConfig = this.gameConfig;
+        let settings = this.settings;
+        var contentValueElement = gameDoc.getElementById('content_value');
 
         function toggleCollapse() {
             $widgetContent.toggle({
@@ -362,10 +371,10 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
             var setDefaultButton = document.createElement('button');
             setDefaultButton.innerHTML = 'Use current selection as default';
             setDefaultButton.onclick = function () {
-                twcheese_BRESettings.haulBonus = document.getElementById('twcheese_raider_haulBonus').value;
-                twcheese_BRESettings.period = gameDoc.getElementById('twcheese_period').value;
-                twcheese_BRESettings.raid = gameDoc.getElementById('twcheese_raider_selection').value;
-                twcheese_setBRESettings(twcheese_BRESettings);
+                settings.haulBonus = document.getElementById('twcheese_raider_haulBonus').value;
+                settings.period = gameDoc.getElementById('twcheese_period').value;
+                settings.raid = gameDoc.getElementById('twcheese_raider_selection').value;
+                twcheese_setBRESettings(settings);
                 window.UI.InfoMessage('Settings Saved', 2000, 'success');
             };
             raiderTable.rows[1].cells[0].appendChild(setDefaultButton);
@@ -544,17 +553,21 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
         });
 
         $renamer.find('button').on('click', function() {
-            pageMod.renameReport(twcheese_nameReport(report, document.getElementById('twcheese_note').value));
+            _this.renameReport(twcheese_nameReport(report, document.getElementById('twcheese_note').value));
         });
 
         $('#twcheese_auto_rename').on('click', function() {
-            twcheese_BRESettings.autoRename = gameDoc.getElementById('twcheese_auto_rename').checked;
-            twcheese_setBRESettings(twcheese_BRESettings)
+            settings.autoRename = gameDoc.getElementById('twcheese_auto_rename').checked;
+            twcheese_setBRESettings(settings)
         });
         
-    };
+    }
 
-    this.includeExtraInformation = function () {
+
+    includeExtraInformation() {
+        let gameDoc = this.gameDoc;
+        let report = this.report;
+
         var reportTable = gameDoc.getElementById('attack_luck').parentNode.parentNode.parentNode.parentNode.parentNode.parentNode;
 
         /*==== surviving defenders ====*/
@@ -692,14 +705,14 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
         jsonRow.insertCell(-1);
         jsonRow.cells[0].colSpan = 2;
         jsonRow.cells[0].innerHTML = '<b>JSON</b><br/><textarea cols=50 readonly=true>' + escapeHtml(JSON.stringify(report, null, 2)) + '</textarea>';
+    }
 
-    };
 
     /**
-     *	renames the report
-     *	@param newName:String
+     * @param {string} newName
      */
-    this.renameReport = function (newName) {
+    renameReport(newName) {
+        let report = this.report;
         console.info('renaming report:', report);
         var url = window.TribalWars.buildURL('POST', 'report', { ajaxaction: 'edit_subject', report_id: report.reportId });
         window.TribalWars.post(url,
@@ -711,21 +724,13 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
             },
             {}
         );
+    }
 
-        /*==== retrieve key required for certain events ====*/
-        //var text = String(gameDoc.getElementById('edit').getElementsByTagName('input')[1].onclick);
-        //var hash = text.substring(text.indexOf('&h=')+3,text.indexOf('&report_id'));
-
-        /*==== rename report ====*/
-        //gameDoc.getElementById('editInput').value = newName;
-        //var submitLink = 'game.php?ajaxaction=edit_subject&h='+hash+'&report_id='+report.reportId+'&screen=report';
-        //editSubmit('label', 'labelText', 'edit', 'editInput', submitLink);
-    };
 
     /**
-     *	@param	mode:String	represents which mode to use
+     * @param {string} mode - (scouted|predicted|periodic)
      */
-    this.changeRaidMode = function(mode) {
+    changeRaidMode(mode) {
         var haulBonus = Number(this.gameDoc.getElementById('twcheese_raider_haulBonus').value);
         let gameDoc = this.gameDoc;
         let report = this.report;
@@ -751,10 +756,11 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
         }
     }
 
+
     /**
      * @param {TroopCounts} troopCounts
      */
-    this.setRaiders = function(troopCounts) {
+    setRaiders(troopCounts) {
         let spyCount = this.gameDoc.getElementById('twcheese_raider_scouts').value;
         let attackUrl = (troopType, count) => {
             return attackPrepUrl({spy: spyCount, [troopType]: count}, this.report.defenderVillage.id);
@@ -775,6 +781,8 @@ function twcheese_BattleReportEnhancer(gameDoc, report, gameConfig, twcheese_BRE
     }
 
 }
+
+
 
 
 /**
@@ -2880,7 +2888,7 @@ function enhanceReport(gameConfig) {
     }
 
     /*==== add stuff to the page ====*/
-    let pageMod = new twcheese_BattleReportEnhancer(document, report, gameConfig, twcheese_BRESettings);
+    let pageMod = new BattleReportEnhancer(document, report, gameConfig, twcheese_BRESettings);
     pageMod.includeExtraInformation();
     pageMod.includeReportTools();
     /*==== auto rename ====*/

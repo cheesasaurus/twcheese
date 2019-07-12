@@ -8,6 +8,8 @@ let ImageSrc = {
     stone: game + 'lehm.png',
     iron: game + 'eisen.png',
     attack: game + 'command/attack.png',
+    haulPartial: game + 'max_loot/0.png',
+    haulFull: game + 'max_loot/1.png',
     popupBackground: game + 'popup/content_background.png',
     popupBorder: game + 'popup/border.png',
     servant: game + 'paladin_new.png',

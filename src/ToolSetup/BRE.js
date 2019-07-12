@@ -1,7 +1,7 @@
 /* global $, game_data */
 import { initCss } from '/twcheese/src/Util/UI.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
-import { BattleReport } from '/twcheese/src/Models/BattleReport.js';
+import { BattleReport, BattleReportCondensed } from '/twcheese/src/Models/BattleReport.js';
 import { Resources } from '/twcheese/src/Models/Resources.js';
 import { TroopCounts, calcTravelDurations, troopTypes } from '/twcheese/src/Models/Troops.js';
 import { buildingTypes } from '/twcheese/src/Models/Buildings.js';
@@ -648,14 +648,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
     this.reports = new Array();
 
     /**
-     *	mark checkboxes for reports with partial hauls
-     */
-    this.markPartialHauls = function () {
-        for (var i = 0; i < partialHauls.length; i++)
-            gameDoc.getElementsByName('id_' + partialHauls[i])[0].checked = true;
-    };
-
-    /**
      *	fills reportsTableBody with information
      */
     this.populateReportsTable = function () {
@@ -667,8 +659,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
             let cell = row.insertCell(-1);
             cell.innerHTML = '<input name="id_' + report.reportId + '" type="checkbox">';
             cell.innerHTML += ' <img src="' + ImageSrc.dotIcon(report.dotColor) + '"> ';
-            if (report.lootIcon) {
-                cell.innerHTML += '<img src="' + report.lootIcon + '"> ';
+            if (report.haulStatus !== BattleReportCondensed.HAUL_STATUS_UNKNOWN) {
+                cell.innerHTML += '<img src="' + report.haulStatusIconSrc() + '"> ';
             }
             if (report.isForwarded) {
                 cell.innerHTML += '<img src="graphic/forwarded.png?1" />';
@@ -992,7 +984,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
 
     /*==== scrape reports information ====*/
     this.reports = new Array();
-    var partialHauls = new Array();
 
     for (var i = 1; i < reportsTable.rows.length - 1; i++) {
         var report = renamer.parseName(reportsTable.rows[i].cells[1].getElementsByTagName('a')[0].getElementsByTagName('span')[0].innerHTML);
@@ -1023,19 +1014,15 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
         report.isNew = textScraper.includes(cellText, 'report.unread');
 
         /*==== partial hauls ====*/
-        report.isFullHaul = false;
-        report.isPartialHaul = false;
 
         // note: non-premium users don't get an icon showing partial/full haul
         let lootImg = reportIcons.find(img => img.src.includes('graphic/max_loot/'));
         if (lootImg) {
             if (lootImg.src.includes('max_loot/0.png')) {
-                partialHauls.push(report.reportId);
-                report.isPartialHaul = true;
+                report.haulStatus = BattleReportCondensed.HAUL_STATUS_PARTIAL;
             } else {
-                report.isFullHaul = true;
+                report.haulStatus = BattleReportCondensed.HAUL_STATUS_FULL;
             }
-            report.lootIcon = lootImg.src;
         }
 
         /*==== forwarded ====*/
@@ -1828,15 +1815,13 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
                 report.reportId = reportId;
                 report.twcheeseLabel = true;
                 report.dotColor = oldReport.dotColor;
-                report.isFullHaul = oldReport.isFullHaul;
-                report.isPartialHaul = oldReport.isPartialHaul;
-                report.lootIcon = oldReport.lootIcon;
+                report.haulStatus = oldReport.haulStatus;
                 report.isForwarded = oldReport.isForwarded;
                 report.strTimeReceived = oldReport.strTimeReceived;
 
                 row.twcheeseReport = report;
                 pageMod.reports[row.rowIndex - 1] = report;
-                
+
 
                 /*==== update progress display ====*/
                 var millisElapsed = performance.now() - startTime;
@@ -1946,13 +1931,19 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
     };
 
     /**
-     *	@param type:Number - 0 for non full haul, 1 for full haul
+     * @param {number} haulStatus 0 for non full haul, 1 for full haul
      */
-    reportsTable.selectLoot = function (type) {
+    reportsTable.selectLoot = function (haulStatus) {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
-        for (var i = 1; i < reportsTable.rows.length; i++) {
-            if ((reportsTable.rows[i].twcheeseReport.isFullHaul && type == 1) || (reportsTable.rows[i].twcheeseReport.isPartialHaul && type == 0))
-                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
+        
+        for (let row of reportsTable.rows) {
+            if (typeof row.twcheeseReport === 'undefined') {
+                continue; // e.g. header row
+            }
+            let report = row.twcheeseReport;
+            if (report.haulStatus === haulStatus) {
+                document.getElementsByName('id_' + report.reportId)[0].checked = true;
+            }
         }
     };
 
@@ -2167,11 +2158,11 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
             html: imgHtml('graphic/forwarded.png')
         }],
         ['haulPartial', {
-            click: () => reportsFolderDisplay.selectLoot(0),
+            click: () => reportsFolderDisplay.selectLoot(BattleReportCondensed.HAUL_STATUS_PARTIAL),
             html: imgHtml('graphic/max_loot/0.png')
         }],
         ['haulFull', {
-            click: () => reportsFolderDisplay.selectLoot(1),
+            click: () => reportsFolderDisplay.selectLoot(BattleReportCondensed.HAUL_STATUS_FULL),
             html: imgHtml('graphic/max_loot/1.png')
         }],
         ['feint', {

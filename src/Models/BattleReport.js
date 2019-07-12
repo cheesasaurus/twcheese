@@ -139,6 +139,14 @@ class BattleReport {
     }
 
     /**
+     * were the defender's troops all killed?
+     * @return {boolean}
+     */
+    wasDefenderCleared() {
+        return this.defenderSurvivors && this.defenderSurvivors.isZero();
+    }
+
+    /**
      * @return {{oneShotScouted:object, oneShotUpgraded:object}} mappings of how many siege units to demolish buildings
      */
     suggestSiegeUnits() {

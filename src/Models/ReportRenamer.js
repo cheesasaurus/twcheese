@@ -151,12 +151,10 @@ class ReportRenamer {
     
                     /*==== set defense ====*/
                     report.defenderSurvivors = null;
-                    report.isCleared = false; // todo: is this used for anything?
                     if (reportName.search('_d') != -1) {
                         let text = reportName.substring(reportName.indexOf('_d') + 2);
                         text = text.substring(0, text.indexOf(']') + 1);
                         report.defenderSurvivors = TroopCounts.fromArray(JSON.parse(text));
-                        report.isCleared = report.defenderSurvivors.isZero();
                     }
     
                     /*==== set loyalty ====*/

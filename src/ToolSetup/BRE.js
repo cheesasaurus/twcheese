@@ -653,7 +653,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
     this.populateReportsTable = function () {
         for (let report of this.reports) {
             let row = reportsTableBody.insertRow(-1);
-            row.twcheeseLabel = report.attacker && report.defender && report.attackerVillage && report.defenderVillage; // todo: dont care if the report has a twcheeseLabel
+            row.twcheeseShowDetails = report.attacker && report.defender && report.attackerVillage && report.defenderVillage; // todo: dont care if the report has a twcheeseLabel
 
             /*==== basic cell ====*/
             let cell = row.insertCell(-1);
@@ -697,11 +697,11 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
             /*==== full subject cell ====*/
             cell = row.insertCell(-1);
             cell.innerHTML = report.subjectHTML;
-            if (!row.twcheeseLabel) {
+            if (!row.twcheeseShowDetails) {
                 cell.colSpan = 44;
             }
 
-            if (row.twcheeseLabel) {
+            if (row.twcheeseShowDetails) {
                 /*==== note cell ====*/
                 let cell = row.insertCell(-1);
                 if (report.note) {
@@ -1557,7 +1557,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
         reportsTableBody.rows[0].insertCell(-1);
         reportsTableBody.rows[0].cells[i].style.width = reportsTableHeader.rows[1].cells[i].style.width;
     }
-    reportsTableBody.rows[0].twcheeseLabel = true;
+    reportsTableBody.rows[0].twcheeseShowDetails = true;
 
     /*==== y scroll panel====*/
     var yScrollPanel = document.createElement('div');
@@ -1635,7 +1635,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
             for (var j = 12; j < 24; j++) {
                 reportsTableHeader.rows[1].cells[j].style.display = "table-cell";
                 for (var i = 0; i < reportsTableBody.rows.length; i++) {
-                    if (!reportsTableBody.rows[i].twcheeseLabel)
+                    if (!reportsTableBody.rows[i].twcheeseShowDetails)
                         reportsTableBody.rows[i].cells[3].colSpan += 1;
                     else
                         reportsTableBody.rows[i].cells[j].style.display = "table-cell";
@@ -1681,7 +1681,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
             /*==== body ====*/
             reportsTableBody.style.width = tableWidth + 'px';
             for (var i = 0; i < reportsTableBody.rows.length; i++) {
-                if (!reportsTableBody.rows[i].twcheeseLabel && column > 2) {
+                if (!reportsTableBody.rows[i].twcheeseShowDetails && column > 2) {
                     if (column == 47) //timeReceived column
                         reportsTableBody.rows[i].cells[4].style.display = 'table-cell';
                     else
@@ -1709,7 +1709,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
         for (var j = 12; j < 24; j++) {
             reportsTableHeader.rows[1].cells[j].style.display = "none";
             for (var i = 0; i < reportsTableBody.rows.length; i++) {
-                if (!reportsTableBody.rows[i].twcheeseLabel)
+                if (!reportsTableBody.rows[i].twcheeseShowDetails)
                     reportsTableBody.rows[i].cells[3].colSpan -= 1;
                 else
                     reportsTableBody.rows[i].cells[j].style.display = "none";
@@ -1750,7 +1750,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
         /*==== body ====*/
         reportsTableBody.style.width = tableWidth + 'px';
         for (var i = 0; i < reportsTableBody.rows.length; i++) {
-            if (!reportsTableBody.rows[i].twcheeseLabel && column > 2) {
+            if (!reportsTableBody.rows[i].twcheeseShowDetails && column > 2) {
                 if (column == 47) // timeReceived column
                     reportsTableBody.rows[i].cells[4].style.display = 'none';
                 else

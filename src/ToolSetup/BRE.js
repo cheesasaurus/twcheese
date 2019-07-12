@@ -559,8 +559,7 @@ class BattleReportEnhancer {
         });
 
         $renamer.find('button').on('click', function() {
-            let name = renamer.createName(report, noteInput.value);
-            _this.renameReport(name);
+            _this.renameReport(noteInput.value);
         });
 
         $('#twcheese_auto_rename').on('click', function() {
@@ -572,11 +571,13 @@ class BattleReportEnhancer {
 
 
     /**
-     * @param {string} newName
+     * @param {string} note
      */
-    renameReport(newName) {
+    renameReport(note) {
         let report = this.report;
         console.info('renaming report:', report);
+        let newName = this.renamer.createName(report, note);
+
         var url = window.TribalWars.buildURL('POST', 'report', { ajaxaction: 'edit_subject', report_id: report.reportId });
         window.TribalWars.post(url,
             {},
@@ -2533,7 +2534,7 @@ function enhanceReport(gameConfig) {
 
     /*==== auto rename ====*/
     if (twcheese_BRESettings.autoRename) {
-        pageMod.renameReport(renamer.createName(report, ''));
+        pageMod.renameReport('');
     }    
 
     /*==== set to user defaults ====*/

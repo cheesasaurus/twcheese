@@ -810,11 +810,12 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
                 /*==== resources total cell ====*/
                 cell = row.insertCell(-1);
                 cell.style.textAlign = 'center';
-                if (report.resourcesTotal) {
-                    cell.innerHTML = report.resourcesTotal;
-                }
-                if (report.resourcesTotal == 0) {
-                    cell.className = 'hidden';
+                if (report.resources) {
+                    let sum = report.resources.sum();
+                    cell.innerHTML = sum;
+                    if (sum === 0) {
+                        cell.className = 'hidden'
+                    }
                 }
 
                 /*==== timeLaunched cell ====*/
@@ -2081,7 +2082,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
                     if (digits > maxDigits[i])
                         maxDigits[i] = digits;
                 }
-                let digits = new String(report.resourcesTotal).length;
+                let digits = new String(report.resources.sum()).length;
                 if (digits > maxDigits[3])
                     maxDigits[3] = digits;
             }

@@ -144,13 +144,11 @@ class ReportRenamer {
     
                     /*==== set resources ====*/
                     report.resources = false;
-                    report.resourcesTotal = false;
                     if (reportName.search('_r') != -1) {
                         let text = reportName.substring(reportName.indexOf('_r') + 2);
                         text = text.substring(0, text.indexOf(']') + 1);
                         let res = eval(text); // todo: no eval
                         report.resources = new Resources(res[0], res[1], res[2]);
-                        report.resourcesTotal = report.resources.sum(); // todo: this probably isn't needed
                     }
     
                     /*==== set defense ====*/

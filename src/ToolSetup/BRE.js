@@ -3,8 +3,6 @@ import { initCss } from '/twcheese/src/Util/UI.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { BattleReport } from '/twcheese/src/Models/BattleReport.js';
 import { Resources } from '/twcheese/src/Models/Resources.js';
-import { calcAttackerScore, calcDefenderScore } from '/twcheese/src/Models/KillScores.js';
-import { calcLoyalty } from '/twcheese/src/Models/Loyalty.js';
 import { TroopCounts, calcTravelDurations, troopTypes } from '/twcheese/src/Models/Troops.js';
 import { buildingTypes } from '/twcheese/src/Models/Buildings.js';
 import { TwCheeseDate } from '/twcheese/src/Models/TwCheeseDate.js';
@@ -2494,14 +2492,6 @@ function enhanceReport(gameConfig) {
     /*==== calculate additional information ===*/
     let scraper = new BattleReportScraper(document);
     var report = scraper.scrapeReport();
-
-    report.killScores = {
-        attacker: null,
-        defender: calcDefenderScore(report.attackerLosses)
-    };
-    if (report.defenderQuantity) {
-        report.killScores.attacker = calcAttackerScore(report.defenderLosses);
-    }
 
     /*==== add stuff to the page ====*/
     enhanceBattleReport(document, report, gameConfig);

@@ -1,3 +1,5 @@
+import { calcAttackerScore, calcDefenderScore } from '/twcheese/src/Models/KillScores.js';
+import { calcLoyalty } from '/twcheese/src/Models/Loyalty.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { escapeHtml } from '/twcheese/src/Util/UI.js';
 import { gameUrl } from '/twcheese/src/Util/Network.js';
@@ -98,17 +100,17 @@ function enhanceBattleReport(gameDoc, report, gameConfig) {
     oddHeader.innerHTML = 'ODD:';
     oddRow.appendChild(oddHeader);
     oddRow.insertCell(-1);
-    oddRow.cells[1].innerHTML = `The defender gained ${report.killScores.defender} points.`;
+    oddRow.cells[1].innerHTML = `The defender gained ${calcDefenderScore(report.attackerLosses)} points.`;
 
     var odaRow = gameDoc.getElementById('attack_info_def').insertRow(-1);
     var odaHeader = document.createElement('th');
     odaHeader.innerHTML = 'ODA:';
     odaRow.appendChild(odaHeader);
     odaRow.insertCell(-1);
-    if (report.killScores.attacker === null) {
+    if (!report.defenderQuantity) {
         odaRow.cells[1].innerHTML = 'Not enough information.'
     } else {
-        odaRow.cells[1].innerHTML = `The attacker gained ${report.killScores.attacker} points.`;
+        odaRow.cells[1].innerHTML = `The attacker gained ${calcAttackerScore(report.defenderLosses)} points.`;
     }
 
     /*==== timing info ====*/

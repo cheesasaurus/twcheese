@@ -133,12 +133,10 @@ class ReportRenamer {
                         report.resources = new Resources(r[0], r[1], r[2]);
                     }
     
-                    /*==== set defense ====*/
-                    report.defenderSurvivors = null;
-                    if (reportName.search('_d') != -1) {
-                        let text = reportName.substring(reportName.indexOf('_d') + 2);
-                        text = text.substring(0, text.indexOf(']') + 1);
-                        report.defenderSurvivors = TroopCounts.fromArray(JSON.parse(text));
+                    // set defenderSurvivors
+                    matches = reportName.match(/_d(\[\S+\])/);
+                    if (matches) {
+                        report.defenderSurvivors = TroopCounts.fromArray(JSON.parse(matches[1]));
                     }
     
                     /*==== set loyalty ====*/

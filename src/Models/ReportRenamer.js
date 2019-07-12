@@ -144,6 +144,12 @@ class ReportRenamer {
                     if (matches) {
                         report.loyalty = { after: parseInt(matches[1]) };
                     }
+
+                    // set timeLaunched
+                    matches = reportName.match(/_t:(\d+)/);
+                    if (matches) {
+                        report.timeLaunched = TwCheeseDate.newServerDate(parseInt(matches[1]) * 1000);
+                    }
     
                     /*==== set attackerNobleDied ====*/
                     report.attackerNobleDied = false;
@@ -154,14 +160,6 @@ class ReportRenamer {
                     report.wasAttackFeint = false;
                     if (reportName.search('_f') != -1)
                         report.wasAttackFeint = true;
-    
-                    /*==== set timeLaunched ====*/
-                    report.timeLaunched = false;
-                    if (reportName.search('_t:') != -1) {
-                        let text = reportName.substring(reportName.indexOf('_t:') + 3);
-                        text = text.substring(0, text.indexOf('.'));
-                        report.timeLaunched = TwCheeseDate.newServerDate(parseInt(text) * 1000);
-                    }
     
                     /*==== set defender ====*/
                     report.defender = false;

@@ -744,7 +744,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
 
                 /*==== feint cell ====*/
                 cell = row.insertCell(-1);
-                if (report.isFeint) {
+                if (report.wasAttackFeint) {
                     cell.innerHTML = '<img title="The attack contained only a small amount of units" style="display:block; margin-left:auto; margin-right:auto" src="graphic/dots/grey.png?1">';
                 }
 
@@ -1963,7 +1963,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
     reportsTable.selectFeint = function () {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
-            if (reportsTable.rows[i].twcheeseReport.isFeint)
+            if (reportsTable.rows[i].twcheeseReport.wasAttackFeint)
                 document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
         }
     };

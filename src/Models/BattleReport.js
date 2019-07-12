@@ -1,6 +1,5 @@
 import { TroopCounts, TroopCalculator, troopTypes } from '/twcheese/src/Models/Troops.js';
 import { DemolitionCalculator } from '/twcheese/src/Models/DemolitionCalculator.js';
-import { threadId } from 'worker_threads';
 
 
 class BattleReport {
@@ -173,9 +172,7 @@ class BattleReportCondensed {
         this.loyalty = null; // {after:number}
         this.note = null; // string
         this.resources = null; // Resources
-        
-        // todo: rename to "wasAttackFeint"
-        this.isFeint = false; // boolean
+        this.wasAttackFeint = false; // boolean
 
         this.timeLaunched = null; // TwCheeseDate
 

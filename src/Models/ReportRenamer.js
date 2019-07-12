@@ -171,9 +171,9 @@ class ReportRenamer {
                         report.attackerNobleDied = true;
     
                     /*==== set feint ====*/
-                    report.isFeint = false;
+                    report.wasAttackFeint = false;
                     if (reportName.search('_f') != -1)
-                        report.isFeint = true;
+                        report.wasAttackFeint = true;
     
                     /*==== set timeLaunched ====*/
                     report.timeLaunched = false;

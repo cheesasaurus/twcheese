@@ -151,15 +151,8 @@ class ReportRenamer {
                         report.timeLaunched = TwCheeseDate.newServerDate(parseInt(matches[1]) * 1000);
                     }
     
-                    /*==== set attackerNobleDied ====*/
-                    report.attackerNobleDied = false;
-                    if (reportName.search('_x') != -1)
-                        report.attackerNobleDied = true;
-    
-                    /*==== set feint ====*/
-                    report.wasAttackFeint = false;
-                    if (reportName.search('_f') != -1)
-                        report.wasAttackFeint = true;
+                    report.attackerNobleDied = reportName.includes('_x');
+                    report.wasAttackFeint = reportName.includes('_f');
     
                     /*==== set defender ====*/
                     report.defender = false;

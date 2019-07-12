@@ -653,7 +653,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
     this.populateReportsTable = function () {
         for (let report of this.reports) {
             let row = reportsTableBody.insertRow(-1);
-            row.twcheeseLabel = report.twcheeseLabel; // todo: dont care if the report has a twcheeseLabel
+            row.twcheeseLabel = report.attacker && report.defender && report.attackerVillage && report.defenderVillage; // todo: dont care if the report has a twcheeseLabel
 
             /*==== basic cell ====*/
             let cell = row.insertCell(-1);

@@ -180,10 +180,6 @@ class BattleReportCondensed {
         this.strTimeReceived = null; // string
         this.timeLaunched = null; // TwCheeseDate
         this.wasAttackFeint = false; // boolean
-
-        // todo: not sure if these are needed
-        
-        this.twcheeseLabel = false;
     }
 
     /**

@@ -65,7 +65,6 @@ class ReportRenamer {
      */
     parseName(reportName) {
         var report = new BattleReportCondensed();
-        report.twcheeseLabel = false;
     
         /*=== remove the unnecessary whitespace at the beginning ====*/
         while (reportName.search('	') != -1) {
@@ -79,8 +78,9 @@ class ReportRenamer {
         var pattern = /\(.*?\)/gi;
         var data = reportName.match(pattern);
         if (data) {
+            var twcheeseLabel = false;
             if (reportName.split(' ')[0] == 'twCheese:') {
-                report.twcheeseLabel = true;
+                twcheeseLabel = true;
                 reportName = reportName.replace('twCheese: ', '');
             }
     
@@ -95,7 +95,7 @@ class ReportRenamer {
                 report.attacker = null;
             }
     
-            if (report.twcheeseLabel) /* report named with twCheese format */ {
+            if (twcheeseLabel) /* report named with twCheese format */ {
                 /*==== set attacker village ====*/
                 try {
                     data[0] = data[0].substring(data[0].lastIndexOf('(') + 1, data[0].lastIndexOf(')'));

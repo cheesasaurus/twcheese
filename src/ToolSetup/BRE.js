@@ -1818,10 +1818,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
             try {
                 let scraper = new BattleReportScraper(reportDoc);
                 var report = scraper.scrapeReport();
-              
-                // todo: what's this for? should maybe move to BattleReportScraper?
-                report.timingInfo = report.calcTimingInfo(gameConfig.speed, gameConfig.unit_speed);
-
                 let name = await renamer.rename(report, '');
 
                 $('.quickedit[data-id="' + report.reportId + '"]')
@@ -2513,7 +2509,7 @@ function enhanceReport(gameConfig) {
 
     /*==== add stuff to the page ====*/
     enhanceBattleReport(document, report);
-    let renamer = new ReportRenamer();
+    let renamer = new ReportRenamer(gameConfig);
     let pageMod = new BattleReportEnhancer(document, report, renamer, gameConfig, twcheese_BRESettings);
     pageMod.includeReportTools();
 
@@ -2547,7 +2543,7 @@ function enhanceReport(gameConfig) {
 function enhanceReportsFolder(gameConfig) {
     let twcheese_reportsFolderDisplaySettings = twcheese_loadReportsFolderDisplaySettings();
     twcheese_saveReportsFolderDisplaySettings(twcheese_reportsFolderDisplaySettings);
-    let renamer = new ReportRenamer();
+    let renamer = new ReportRenamer(gameConfig);
     let pageMod = new twcheese_BattleReportsFolderEnhancer(document, renamer, twcheese_reportsFolderDisplaySettings, gameConfig);
     pageMod.applySettings(twcheese_reportsFolderDisplaySettings);
 }

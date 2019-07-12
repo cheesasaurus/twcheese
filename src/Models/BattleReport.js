@@ -172,13 +172,11 @@ class BattleReportCondensed {
         this.loyalty = null; // {after:number}
         this.note = null; // string
         this.resources = null; // Resources
-        this.wasAttackFeint = false; // boolean
-
         this.timeLaunched = null; // TwCheeseDate
+        this.wasAttackFeint = false; // boolean        
 
 
         // todo: not sure if these are needed
-        this.timingInfo = null; // {launchTime:TwCheeseDate, returnTime:TwCheeseDate}
         this.reportId = null; // int
         this.twcheeseLabel = false;
         this.dotIcon = null; // todo: what is this?
@@ -186,7 +184,7 @@ class BattleReportCondensed {
         this.isPartialHaul = null;
         this.lootIcon = null; // todo: what is this?
         this.isForwared = false;
-        this.timeReceived = null; // todo: TwCheeseDate?
+        this.timeReceived = null; // todo: TwCheeseDate? rename to battleTime?
 
     }
 

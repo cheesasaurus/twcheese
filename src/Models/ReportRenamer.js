@@ -9,6 +9,9 @@ import { TwCheeseDate } from '/twcheese/src/Models/TwCheeseDate.js';
 import { postToGame } from '/twcheese/src/Util/Network.js';
 
 class ReportRenamer {
+    constructor(gameConfig) {
+        this.gameConfig = gameConfig;
+    }
 
     /**
      * @param {BattleReport} report 
@@ -34,7 +37,9 @@ class ReportRenamer {
         newName += report.defender.name.replace(textScraper.t('report.deletedPlayer'), '');
         newName += '(' + report.defenderVillage.x + '|' + report.defenderVillage.y + ',' + report.defenderVillage.id + ')';
     
-        newName += '_t:' + Math.floor(report.timingInfo.launchTime.getTime() / 1000) + '. ';
+        let timingInfo = report.calcTimingInfo(this.gameConfig.speed, this.gameConfig.unit_speed);
+        newName += '_t:' + Math.floor(timingInfo.launchTime.getTime() / 1000) + '. ';
+        
         if (report.attackerLosses.snob > 0) //dead noble
             newName += '_x';
         if (report.loyalty)

@@ -64,15 +64,8 @@ class ReportRenamer {
      * @return {BattleReportCondensed}
      */
     parseName(reportName) {
-        var report = new BattleReportCondensed();
-    
-        /*=== remove the unnecessary whitespace at the beginning ====*/
-        while (reportName.search('	') != -1) {
-            reportName = reportName.replace('	', '');
-        }
-        while (reportName.search('\n') != -1) {
-            reportName = reportName.replace('\n', '');
-        }
+        var report = new BattleReportCondensed();    
+        reportName = reportName.trim();
         report.subject = reportName;
     
         var pattern = /\(.*?\)/gi;

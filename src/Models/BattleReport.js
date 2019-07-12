@@ -179,13 +179,15 @@ class BattleReportCondensed {
         this.timeLaunched = null; // TwCheeseDate
         this.wasAttackFeint = false; // boolean        
 
+        // todo: refactor to haulStatus: (full|partial|unknown)
+        // and use ImageSrc to create the icon src for the proper status
+        this.isFullHaul = null;
+        this.isPartialHaul = null;
+        this.lootIcon = null; // string, loot icon src
 
         // todo: not sure if these are needed
         
         this.twcheeseLabel = false;
-        this.isFullHaul = null;
-        this.isPartialHaul = null;
-        this.lootIcon = null; // todo: what is this?
     }
 
 }

@@ -170,6 +170,7 @@ class BattleReportCondensed {
         this.defenderVillage = null; // Village
         this.defenderSurvivors = null; // TroopCounts
         this.dotColor = null; // string
+        this.isForwarded = false; // string
         this.loyalty = null; // {after:number}
         this.note = null; // string
         this.reportId = null; // int
@@ -184,7 +185,6 @@ class BattleReportCondensed {
         this.isFullHaul = null;
         this.isPartialHaul = null;
         this.lootIcon = null; // todo: what is this?
-        this.isForwared = false;
         this.timeReceived = null; // todo: TwCheeseDate? rename to battleTime?
 
     }

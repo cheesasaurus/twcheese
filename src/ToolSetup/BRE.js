@@ -1807,24 +1807,25 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
             window.UI.ErrorMessage(language['twcheese']['noReportsSelected'], 3000);
         }
         else {
-            var reportID = reports.shift();
+            var reportId = reports.shift();
             var startTime = performance.now();
 
-            let reportDoc = await requestDocument(gameUrl('report', {mode: game_data.mode, view: reportID}));
+            let reportDoc = await requestDocument(gameUrl('report', {mode: game_data.mode, view: reportId}));
 
             try {
                 let scraper = new BattleReportScraper(reportDoc);
                 let fullReport = scraper.scrapeReport();
                 let name = await renamer.rename(fullReport, '');
 
-                $('.quickedit[data-id="' + fullReport.reportId + '"]')
+                $('.quickedit[data-id="' + reportId + '"]')
                     .find('.quickedit-label').html(name);
 
                 /*==== update reports information so row can be redrawn with updated information====*/
-                var oldReport = reportsTable.rows[document.getElementsByName('id_' + fullReport.reportId)[0].parentNode.parentNode.rowIndex].twcheeseReport;
-                console.log('oldReport:', oldReport);
+                let row = document.getElementsByName('id_' + reportId)[0].parentNode.parentNode;
+                let oldReport = row.twcheeseReport;
+
                 let report = renamer.parseName(name);
-                report.reportId = reportID;
+                report.reportId = reportId;
                 report.twcheeseLabel = true;
                 report.dotColor = oldReport.dotColor;
                 report.isFullHaul = oldReport.isFullHaul;
@@ -1832,8 +1833,10 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
                 report.lootIcon = oldReport.lootIcon;
                 report.isForwarded = oldReport.isForwarded;
                 report.strTimeReceived = oldReport.strTimeReceived;
-                //report.subjectHTML = reportsTable.rows[document.getElementsByName('id_'+report.reportId)[0].parentNode.parentNode.rowIndex].cells[3].innerHTML;
-                pageMod.reports[document.getElementsByName('id_' + report.reportId)[0].parentNode.parentNode.rowIndex - 1] = report; // todo: shouldn't this replace oldReport? seems inconsistent, maybe a bug
+
+                row.twcheeseReport = report;
+                pageMod.reports[row.rowIndex - 1] = report;
+                
 
                 /*==== update progress display ====*/
                 var millisElapsed = performance.now() - startTime;

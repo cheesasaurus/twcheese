@@ -205,6 +205,10 @@ class ReportRenamer {
         return report;
     }
 
+    availableChars(name) {
+        return 255 - name.length;
+    }
+
 }
 
 export { ReportRenamer };

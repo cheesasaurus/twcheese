@@ -235,12 +235,14 @@ class BattleReportEnhancer {
     /**
     * @param {HTMLDocument} gameDoc the document from game.php?screen=report&mode=attack
     * @param {BattleReport} report
+    * @param {ReportRenamer} renamer
     * @param {object} gameConfig
     * @param {object} twcheese_BRESettings
     */
-    constructor(gameDoc, report, gameConfig, twcheese_BRESettings) {
+    constructor(gameDoc, report, renamer, gameConfig, twcheese_BRESettings) {
         this.gameDoc = gameDoc;
         this.report = report;
+        this.renamer = renamer;
         this.gameConfig = gameConfig;
         this.settings = twcheese_BRESettings;
     }
@@ -531,6 +533,10 @@ class BattleReportEnhancer {
         }
 
         /*==== renamer ====*/
+
+        let renamer = this.renamer;
+        let name = renamer.createName(report, '');
+
         let $renamer = $(`
             <div id="twcheese_renamer" align="center">
                 <span align="center"><h2>Renamer</h2></span>
@@ -538,22 +544,23 @@ class BattleReportEnhancer {
                 <button>rename</button>
                 <input id="twcheese_auto_rename" type="checkbox" />auto rename
                 <img id="twcheese_autoRenameInfo" src="/graphic/questionmark.png?1" width="13" height="13" title="automatically rename reports when the BRE is used" />
-                <br/> characters available: <span id="twcheese_availableCharacters">${Number(255 - twcheese_nameReport(report, '').length)}</span>
-                <br/><b>Preview: </b><span id="twcheese_rename_preview">'${twcheese_nameReport(report, '')}'</span>
+                <br/> characters available: <span id="twcheese_availableCharacters">${renamer.availableChars(name)}</span>
+                <br/><b>Preview: </b><span id="twcheese_rename_preview">${escapeHtml(name)}</span>
             </div>
         `.trim());
 
         toolTable.rows[1].cells[0].appendChild($renamer[0]);
+        let noteInput = document.getElementById('twcheese_note');
 
         $('#twcheese_note').on('input', function() {
-            // preview name
-            var newName = twcheese_nameReport(report, document.getElementById('twcheese_note').value);
-            document.getElementById('twcheese_rename_preview').innerHTML = newName;
-            document.getElementById('twcheese_availableCharacters').innerHTML = Number(255 - newName.length);
+            let name = renamer.createName(report, noteInput.value);
+            document.getElementById('twcheese_rename_preview').innerHTML = escapeHtml(name);
+            document.getElementById('twcheese_availableCharacters').innerHTML = renamer.availableChars(name);
         });
 
         $renamer.find('button').on('click', function() {
-            _this.renameReport(twcheese_nameReport(report, document.getElementById('twcheese_note').value));
+            let name = renamer.createName(report, noteInput.value);
+            _this.renameReport(name);
         });
 
         $('#twcheese_auto_rename').on('click', function() {
@@ -1780,6 +1787,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
 
     };
 
+    let renamer = new ReportRenamer();
+
     /**
      *	note: changed from a loop to recursive method in 2.2 to allow redrawing of progress in IE via setTimeout method
      *	@param reports:Array(reportID:String)	an array of reportIDs for reports that still need to be renamed
@@ -1821,7 +1830,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
               
                 report.timingInfo = report.calcTimingInfo(gameConfig.speed, gameConfig.unit_speed);
 
-                var name = twcheese_nameReport(report, '');
+                var name = renamer.createName(report, '');
 
                 var url = window.TribalWars.buildURL('POST', 'report', { ajaxaction: 'edit_subject', report_id: report.reportId });
                 window.TribalWars.post(url,
@@ -2374,17 +2383,6 @@ function createFooterButton(text, address) {
 
 /*==== other functions ====*/
 
-
-/**
- *	names a report in twCheese format
- *	@param report:twcheese_BattleReport
- *	@param note:String
- *	@return	newName:String
- */
-function twcheese_nameReport(report, note) {
-    return (new ReportRenamer()).createName(report, note);
-}
-
 /**
  *	interprets a report named with twCheese format
  *	@param {string} reportName
@@ -2539,12 +2537,14 @@ function enhanceReport(gameConfig) {
 
     /*==== add stuff to the page ====*/
     enhanceBattleReport(document, report);
-    let pageMod = new BattleReportEnhancer(document, report, gameConfig, twcheese_BRESettings);
+    let renamer = new ReportRenamer();
+    let pageMod = new BattleReportEnhancer(document, report, renamer, gameConfig, twcheese_BRESettings);
     pageMod.includeReportTools();
 
     /*==== auto rename ====*/
-    if (twcheese_BRESettings.autoRename)
-        pageMod.renameReport(twcheese_nameReport(report, ''));
+    if (twcheese_BRESettings.autoRename) {
+        pageMod.renameReport(renamer.createName(report, ''));
+    }    
 
     /*==== set to user defaults ====*/
     if (report.espionageLevel >= 1) {

@@ -171,13 +171,14 @@ class BattleReportCondensed {
         this.defenderSurvivors = null; // TroopCounts
         this.loyalty = null; // {after:number}
         this.note = null; // string
+        this.reportId = null; // int
         this.resources = null; // Resources
         this.timeLaunched = null; // TwCheeseDate
         this.wasAttackFeint = false; // boolean        
 
 
         // todo: not sure if these are needed
-        this.reportId = null; // int
+        
         this.twcheeseLabel = false;
         this.dotIcon = null; // todo: what is this?
         this.isFullHaul = null;

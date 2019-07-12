@@ -190,6 +190,14 @@ class BattleReportCondensed {
         this.twcheeseLabel = false;
     }
 
+    /**
+     * were the defender's troops all killed?
+     * @return {boolean}
+     */
+    wasDefenderCleared() {
+        return this.defenderSurvivors && this.defenderSurvivors.isZero();
+    }
+
 }
 
 

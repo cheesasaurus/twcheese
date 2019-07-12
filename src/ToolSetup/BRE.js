@@ -1814,16 +1814,16 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
 
             try {
                 let scraper = new BattleReportScraper(reportDoc);
-                var report = scraper.scrapeReport();
-                let name = await renamer.rename(report, '');
+                let fullReport = scraper.scrapeReport();
+                let name = await renamer.rename(fullReport, '');
 
-                $('.quickedit[data-id="' + report.reportId + '"]')
+                $('.quickedit[data-id="' + fullReport.reportId + '"]')
                     .find('.quickedit-label').html(name);
 
                 /*==== update reports information so row can be redrawn with updated information====*/
-                // todo: a lot of this is probably unnecessary
-                var oldReport = reportsTable.rows[document.getElementsByName('id_' + report.reportId)[0].parentNode.parentNode.rowIndex].twcheeseReport;
-                report = renamer.parseName(name);
+                var oldReport = reportsTable.rows[document.getElementsByName('id_' + fullReport.reportId)[0].parentNode.parentNode.rowIndex].twcheeseReport;
+                console.log('oldReport:', oldReport);
+                let report = renamer.parseName(name);
                 report.reportId = reportID;
                 report.twcheeseLabel = true;
                 report.dotColor = oldReport.dotColor;
@@ -1833,7 +1833,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
                 report.isForwarded = oldReport.isForwarded;
                 report.strTimeReceived = oldReport.strTimeReceived;
                 //report.subjectHTML = reportsTable.rows[document.getElementsByName('id_'+report.reportId)[0].parentNode.parentNode.rowIndex].cells[3].innerHTML;
-                pageMod.reports[document.getElementsByName('id_' + report.reportId)[0].parentNode.parentNode.rowIndex - 1] = report;
+                pageMod.reports[document.getElementsByName('id_' + report.reportId)[0].parentNode.parentNode.rowIndex - 1] = report; // todo: shouldn't this replace oldReport? seems inconsistent, maybe a bug
 
                 /*==== update progress display ====*/
                 var millisElapsed = performance.now() - startTime;

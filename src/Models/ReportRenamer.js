@@ -1,5 +1,5 @@
 import { textScraper } from '/twcheese/src/Scrape/TextScraper.js';
-import { BattleReport } from '/twcheese/src/Models/BattleReport.js';
+import { BattleReportCondensed } from '/twcheese/src/Models/BattleReport.js';
 import { Player } from '/twcheese/src/Models/Player.js';
 import { Village } from '/twcheese/src/Models/Village.js';
 import { Resources } from '/twcheese/src/Models/Resources.js';
@@ -61,10 +61,10 @@ class ReportRenamer {
 
     /**
      * @param {string} reportName 
-     * @return {BattleReport}
+     * @return {BattleReportCondensed}
      */
     parseName(reportName) {
-        var report = new BattleReport();
+        var report = new BattleReportCondensed();
         report.twcheeseLabel = false;
     
         /*=== remove the unnecessary whitespace at the beginning ====*/

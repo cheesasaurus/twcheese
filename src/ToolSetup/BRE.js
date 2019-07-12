@@ -1,7 +1,8 @@
 /* global $, game_data */
 import { initCss } from '/twcheese/src/Util/UI.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
-import { BattleReport, BattleReportCondensed } from '/twcheese/src/Models/BattleReport.js';
+import { BattleReport } from '/twcheese/src/Models/BattleReport.js';
+import { BattleReportCondensed } from '/twcheese/src/Models/BattleReportCondensed.js';
 import { Resources } from '/twcheese/src/Models/Resources.js';
 import { TroopCounts, calcTravelDurations, troopTypes } from '/twcheese/src/Models/Troops.js';
 import { buildingTypes } from '/twcheese/src/Models/Buildings.js';

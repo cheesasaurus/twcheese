@@ -1,5 +1,5 @@
 import { textScraper } from '/twcheese/src/Scrape/TextScraper.js';
-import { BattleReportCondensed } from '/twcheese/src/Models/BattleReport.js';
+import { BattleReportCondensed } from '/twcheese/src/Models/BattleReportCondensed.js';
 import { Player } from '/twcheese/src/Models/Player.js';
 import { Village } from '/twcheese/src/Models/Village.js';
 import { Resources } from '/twcheese/src/Models/Resources.js';

@@ -95,16 +95,14 @@ class ReportRenamer {
                 report.attacker = null;
             }
     
-    
-            report.attackerVillage = new Village(0, 0, 0);
-            report.defenderVillage = new Village(0, 0, 0);
             if (report.twcheeseLabel) /* report named with twCheese format */ {
                 /*==== set attacker village ====*/
                 try {
                     data[0] = data[0].substring(data[0].lastIndexOf('(') + 1, data[0].lastIndexOf(')'));
-                    report.attackerVillage.x = data[0].split(',')[0].split('|')[0];
-                    report.attackerVillage.y = data[0].split(',')[0].split('|')[1];
-                    report.attackerVillage.id = data[0].split(',')[1];
+                    let x = data[0].split(',')[0].split('|')[0];
+                    let y = data[0].split(',')[0].split('|')[1];
+                    let id = data[0].split(',')[1];
+                    report.attackerVillage = new Village(id, x, y);
                 }
                 catch (err) {
                     console.warn('swallowed:', err);
@@ -113,12 +111,13 @@ class ReportRenamer {
                 /*==== set defender village ====*/
                 try {
                     data[1] = data[1].substring(data[1].lastIndexOf('(') + 1, data[1].lastIndexOf(')'));
-                    report.defenderVillage.x = data[1].split(',')[0].split('|')[0];
-                    report.defenderVillage.y = data[1].split(',')[0].split('|')[1];
-                    report.defenderVillage.id = data[1].split(',')[1];
+                    let x = data[1].split(',')[0].split('|')[0];
+                    let y = data[1].split(',')[0].split('|')[1];
+                    let id = data[1].split(',')[1];
+                    report.defenderVillage = new Village(id, x, y);
                 }
                 catch (err) {
-                    report.defenderVillage = null;
+                    console.warn('swallowed:', err);
                 }
     
                 try {
@@ -209,11 +208,13 @@ class ReportRenamer {
                         defIndex = data.length - 1
     
                     data[defIndex] = data[defIndex].substring(data[defIndex].lastIndexOf('(') + 1, data[defIndex].lastIndexOf(')'));
-                    report.defenderVillage.x = data[defIndex].split(',')[0].split('|')[0];
-                    report.defenderVillage.y = data[defIndex].split(',')[0].split('|')[1];
+                    let x = data[defIndex].split(',')[0].split('|')[0];
+                    let y = data[defIndex].split(',')[0].split('|')[1];
+                    report.defenderVillage = new Village(0, x, y);
                 }
                 catch (err) {
-                    report.defenderVillage = null;
+                    // The player could have renamed the report to something unrecognized, or the game changed the name format.
+                    // Don't whine about it.
                 }
             }
         }

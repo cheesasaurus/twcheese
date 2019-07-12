@@ -667,7 +667,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
             }
             cell.innerHTML += `<a href="${gameUrl('report', {mode:game_data.mode, view:report.reportId})}"> view</a>`;
 
-            if (report.defender) {
+            if (report.defender && report.defenderVillage) {
                 let isDefenderMe = report.defender.name == game_data.player.name;
                 let wasVillageConquered = report.loyalty && report.loyalty.after <= 0;
                 if (isDefenderMe || wasVillageConquered) {
@@ -741,7 +741,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
                 /*==== deadNoble cell ====*/
                 cell = row.insertCell(-1);
                 if (report.attackerNobleDied) {
-                    if (report.attacker.name == game_data.player.name) {
+                    if (report.attackerVillage && report.attacker && report.attacker.name == game_data.player.name) {
                         cell.innerHTML = '<a href="/game.php?village=' + report.attackerVillage.id + '&screen=snob"><img src="' + ImageSrc.troopIcon('priest') + '" style="display:block; margin-left:auto; margin-right:auto" title="An attacking nobleman died."/></a>';
                     }
                     else {
@@ -1212,13 +1212,16 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
 
         for (let i = 1; i < reportsTable.rows.length; i++) {
             let twcheeseReport = reportsTable.rows[i].twcheeseReport;
+            if (!twcheeseReport.defenderVillage) {
+                continue; // not enough information
+            }
             if (twcheeseReport.attacker.name !== game_data.player.name) {
                 continue; // can't repeat somebody else's attack
             }
             if (attackingVillage == 'current') {
                 exportString += buildEntryCurrentVillage(twcheeseReport);
             }
-            else if (attackingVillage == 'original' && reportsTable.rows[i].twcheeseLabel) {
+            else if (attackingVillage == 'original' && twcheeseReport.attackerVillage) {
                 exportString += buildEntryOriginalVillage(twcheeseReport);
             } 
         }
@@ -2006,6 +2009,9 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
 
         for (var i = 1; i < reportsTable.rows.length; i++) {
+            if (!twcheeseReport.attackerVillage) {
+                continue;
+            }
             if (reportsTable.rows[i].twcheeseReport.attackerVillage.x == coordinates.split('|')[0] && reportsTable.rows[i].twcheeseReport.attackerVillage.y == coordinates.split('|')[1])
                 document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
         }
@@ -2015,6 +2021,9 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
 
         for (var i = 1; i < reportsTable.rows.length; i++) {
+            if (!twcheeseReport.defenderVillage) {
+                continue;
+            }
             if (reportsTable.rows[i].twcheeseReport.defenderVillage.x == coordinates.split('|')[0] && reportsTable.rows[i].twcheeseReport.defenderVillage.y == coordinates.split('|')[1])
                 document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
         }

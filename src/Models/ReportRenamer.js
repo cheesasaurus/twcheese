@@ -139,12 +139,10 @@ class ReportRenamer {
                         report.defenderSurvivors = TroopCounts.fromArray(JSON.parse(matches[1]));
                     }
     
-                    /*==== set loyalty ====*/
-                    report.loyalty = null;
-                    if (reportName.search('_l:') != -1) {
-                        let text = reportName.substring(reportName.indexOf('_l:') + 3);
-                        text = text.substring(0, text.indexOf('.'));
-                        report.loyalty = { after: parseInt(text) };
+                    // set loyalty
+                    matches = reportName.match(/_l:(\d+)/);
+                    if (matches) {
+                        report.loyalty = { after: parseInt(matches[1]) };
                     }
     
                     /*==== set attackerNobleDied ====*/

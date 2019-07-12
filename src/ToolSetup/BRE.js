@@ -649,10 +649,11 @@ class BattleReportEnhancer {
 
 
 /**
- *	modifies page on the reports folder view
- *	@param gameDoc:HTMLDocument	the document from game.php?screen=report&mode=attack
+ * modifies page on the reports folder view
+ * @param {HTMLDocument} gameDoc the document from game.php?screen=report&mode=attack
+ * @param {ReportRenamer} renamer
  */
-function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDisplaySettings, gameConfig) {
+function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reportsFolderDisplaySettings, gameConfig) {
     var pageMod = this;
     this.reports = new Array();
 
@@ -1004,7 +1005,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
     var partialHauls = new Array();
 
     for (var i = 1; i < reportsTable.rows.length - 1; i++) {
-        var report = twcheese_interpretReportName(reportsTable.rows[i].cells[1].getElementsByTagName('a')[0].getElementsByTagName('span')[0].innerHTML);
+        var report = renamer.parseName(reportsTable.rows[i].cells[1].getElementsByTagName('a')[0].getElementsByTagName('span')[0].innerHTML);
         report.timeReceived = reportsTable.rows[i].cells[1].innerHTML;
         report.reportId = this.scrapeReportId(reportsTable.rows[i].cells[1].getElementsByTagName('a')[0]);
         var reportIcons = [...reportsTable.rows[i].cells[1].getElementsByTagName('img')];
@@ -1787,8 +1788,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
 
     };
 
-    let renamer = new ReportRenamer();
-
     /**
      *	note: changed from a loop to recursive method in 2.2 to allow redrawing of progress in IE via setTimeout method
      *	@param reports:Array(reportID:String)	an array of reportIDs for reports that still need to be renamed
@@ -1845,7 +1844,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, twcheese_reportsFolderDis
 
                 /*==== update reports information so row can be redrawn with updated information====*/
                 var oldReport = reportsTable.rows[document.getElementsByName('id_' + report.reportId)[0].parentNode.parentNode.rowIndex].twcheeseReport;
-                report = twcheese_interpretReportName(name);
+                report = renamer.parseName(name);
                 report.reportId = reportID;
                 report.twcheeseLabel = true;
                 report.dotIcon = oldReport.dotIcon;
@@ -2383,15 +2382,6 @@ function createFooterButton(text, address) {
 
 /*==== other functions ====*/
 
-/**
- *	interprets a report named with twCheese format
- *	@param {string} reportName
- *	@return {BattleReport}
- */
-function twcheese_interpretReportName(reportName) {
-    return (new ReportRenamer()).parseName(reportName);
-}
-
 
 /**
  *	requests the xml from a page
@@ -2571,7 +2561,8 @@ function enhanceReport(gameConfig) {
 function enhanceReportsFolder(gameConfig) {
     let twcheese_reportsFolderDisplaySettings = twcheese_loadReportsFolderDisplaySettings();
     twcheese_saveReportsFolderDisplaySettings(twcheese_reportsFolderDisplaySettings);
-    let pageMod = new twcheese_BattleReportsFolderEnhancer(document, twcheese_reportsFolderDisplaySettings, gameConfig);
+    let renamer = new ReportRenamer();
+    let pageMod = new twcheese_BattleReportsFolderEnhancer(document, renamer, twcheese_reportsFolderDisplaySettings, gameConfig);
     pageMod.applySettings(twcheese_reportsFolderDisplaySettings);
 }
 

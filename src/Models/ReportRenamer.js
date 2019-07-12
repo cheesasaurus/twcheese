@@ -165,10 +165,10 @@ class ReportRenamer {
                         report.loyalty = {before: -1, after: parseInt(text)};
                     }
     
-                    /*==== set deadNoble ====*/
-                    report.deadNoble = false;
+                    /*==== set attackerNobleDied ====*/
+                    report.attackerNobleDied = false;
                     if (reportName.search('_x') != -1)
-                        report.deadNoble = true;
+                        report.attackerNobleDied = true;
     
                     /*==== set feint ====*/
                     report.isFeint = false;

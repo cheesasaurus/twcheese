@@ -750,7 +750,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
 
                 /*==== deadNoble cell ====*/
                 cell = row.insertCell(-1);
-                if (report.deadNoble) {
+                if (report.attackerNobleDied) {
                     if (report.attacker.name == game_data.player.name) {
                         cell.innerHTML = '<a href="/game.php?village=' + report.attackerVillage.id + '&screen=snob"><img src="' + ImageSrc.troopIcon('priest') + '" style="display:block; margin-left:auto; margin-right:auto" title="An attacking nobleman died."/></a>';
                     }
@@ -1971,7 +1971,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
     reportsTable.selectDeadNoble = function () {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
-            if (reportsTable.rows[i].twcheeseReport.deadNoble)
+            if (reportsTable.rows[i].twcheeseReport.attackerNobleDied)
                 document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
         }
     };

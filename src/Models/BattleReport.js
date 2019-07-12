@@ -164,19 +164,15 @@ class BattleReportCondensed {
     constructor() {
         this.subject = null; // string
         this.attacker = null; // Player
+        this.attackerNobleDied = false; // boolean
         this.attackerVillage = null; // Village
         this.buildingLevels = null; // BuildingLevels
         this.defender = null; // Player
         this.defenderVillage = null; // Village
         this.defenderSurvivors = null; // TroopCounts
+        this.loyalty = null; // {after:number}
         this.note = null; // string
         this.resources = null; // Resources
-
-        // todo: only loyalty after
-        this.loyalty = null; // {before:-1, after:number}
-
-        // todo: better name. this is only the attacker's noble
-        this.deadNoble = false; // boolean
         
         // todo: rename to "wasAttackFeint"
         this.isFeint = false; // boolean

@@ -666,7 +666,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
             /*==== basic cell ====*/
             let cell = row.insertCell(-1);
             cell.innerHTML = '<input name="id_' + report.reportId + '" type="checkbox">';
-            cell.innerHTML += ' <img src="' + report.dotIcon + '"> ';
+            cell.innerHTML += ' <img src="' + ImageSrc.dotIcon(report.dotColor) + '"> ';
             if (report.lootIcon) {
                 cell.innerHTML += '<img src="' + report.lootIcon + '"> ';
             }
@@ -1014,7 +1014,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
             report.defenderDistance = '?';
 
         /*==== dot color ====*/
-        report.dotIcon = reportIcons.find(img => img.src.includes('graphic/dots/')).src;
+        report.dotColor = reportIcons.find(img => img.src.includes('graphic/dots/')).src.match(/dots\/(.+).png/)[1];
 
         /*==== has it already been read? ====*/
         var cellText = $(reportsTable.rows[i].cells[0]).contents().filter(function () {
@@ -1827,7 +1827,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
                 report = renamer.parseName(name);
                 report.reportId = reportID;
                 report.twcheeseLabel = true;
-                report.dotIcon = oldReport.dotIcon;
+                report.dotColor = oldReport.dotColor;
                 report.isFullHaul = oldReport.isFullHaul;
                 report.isPartialHaul = oldReport.isPartialHaul;
                 report.lootIcon = oldReport.lootIcon;
@@ -1930,7 +1930,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
     reportsTable.selectDotColor = function (dotColor) {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
-            if (reportsTable.rows[i].twcheeseReport.dotIcon.search(dotColor) != -1)
+            if (reportsTable.rows[i].twcheeseReport.dotColor === dotColor)
                 document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
         }
     };

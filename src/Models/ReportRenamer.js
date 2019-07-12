@@ -20,7 +20,7 @@ class ReportRenamer {
      * @resolve {string} new name
      */
     async rename(report, note) {
-        let newName = this.createName(report, note);        
+        let newName = this.createName(report, note);
         await postToGame('report', { ajaxaction: 'edit_subject', report_id: report.reportId }, { text: newName });
         return newName;
     }
@@ -39,7 +39,7 @@ class ReportRenamer {
     
         let timingInfo = report.calcTimingInfo(this.gameConfig.speed, this.gameConfig.unit_speed);
         newName += '_t:' + Math.floor(timingInfo.launchTime.getTime() / 1000) + '. ';
-        
+
         if (report.attackerLosses.snob > 0) //dead noble
             newName += '_x';
         if (report.loyalty)

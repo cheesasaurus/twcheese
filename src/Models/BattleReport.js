@@ -169,6 +169,7 @@ class BattleReportCondensed {
         this.defender = null; // Player
         this.defenderVillage = null; // Village
         this.defenderSurvivors = null; // TroopCounts
+        this.dotColor = null; // string
         this.loyalty = null; // {after:number}
         this.note = null; // string
         this.reportId = null; // int
@@ -180,7 +181,6 @@ class BattleReportCondensed {
         // todo: not sure if these are needed
         
         this.twcheeseLabel = false;
-        this.dotIcon = null; // todo: what is this?
         this.isFullHaul = null;
         this.isPartialHaul = null;
         this.lootIcon = null; // todo: what is this?

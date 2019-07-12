@@ -28,7 +28,8 @@ let ImageSrc = {
         helpBackgroundBright: self + 'legacy/help_background_highlight.png'
     },    
     buildingIcon: buildingType => game + `buildings/${buildingType}.png`,
-    troopIcon: troopType => game + `unit/unit_${troopType}.png`
+    troopIcon: troopType => game + `unit/unit_${troopType}.png`,
+    dotIcon: color => game + `dots/${color}.png`
 };
 
 export { ImageSrc };

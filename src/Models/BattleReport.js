@@ -175,6 +175,7 @@ class BattleReportCondensed {
         this.note = null; // string
         this.reportId = null; // int
         this.resources = null; // Resources
+        this.strTimeReceived = null; // string
         this.timeLaunched = null; // TwCheeseDate
         this.wasAttackFeint = false; // boolean        
 
@@ -185,8 +186,6 @@ class BattleReportCondensed {
         this.isFullHaul = null;
         this.isPartialHaul = null;
         this.lootIcon = null; // todo: what is this?
-        this.timeReceived = null; // todo: TwCheeseDate? rename to battleTime?
-
     }
 
 }

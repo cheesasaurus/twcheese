@@ -832,15 +832,15 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
 
                 /*==== timeReceived cell ====*/
                 cell = row.insertCell(-1);
-                if (report.timeReceived) {
-                    cell.innerHTML = report.timeReceived;
+                if (report.strTimeReceived) {
+                    cell.innerHTML = report.strTimeReceived;
                 }
             }
             else {
                 /*==== timeReceived cell ====*/
                 let cell = row.insertCell(-1);
-                if (report.timeReceived) {
-                    cell.innerHTML = report.timeReceived;
+                if (report.strTimeReceived) {
+                    cell.innerHTML = report.strTimeReceived;
                 }
             }
 
@@ -996,7 +996,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
 
     for (var i = 1; i < reportsTable.rows.length - 1; i++) {
         var report = renamer.parseName(reportsTable.rows[i].cells[1].getElementsByTagName('a')[0].getElementsByTagName('span')[0].innerHTML);
-        report.timeReceived = reportsTable.rows[i].cells[1].innerHTML;
         report.reportId = this.scrapeReportId(reportsTable.rows[i].cells[1].getElementsByTagName('a')[0]);
         var reportIcons = [...reportsTable.rows[i].cells[1].getElementsByTagName('img')];
 
@@ -1048,7 +1047,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
         report.subjectHTML = $subjectNode.html();
 
         /*==== timeReceived ====*/
-        report.timeReceived = reportsTable.rows[i].cells[2].innerHTML;
+        report.strTimeReceived = reportsTable.rows[i].cells[2].innerHTML;
 
         this.reports.push(report);
     }
@@ -1832,7 +1831,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
                 report.isPartialHaul = oldReport.isPartialHaul;
                 report.lootIcon = oldReport.lootIcon;
                 report.isForwarded = oldReport.isForwarded;
-                report.timeReceived = oldReport.timeReceived;
+                report.strTimeReceived = oldReport.strTimeReceived;
                 //report.subjectHTML = reportsTable.rows[document.getElementsByName('id_'+report.reportId)[0].parentNode.parentNode.rowIndex].cells[3].innerHTML;
                 pageMod.reports[document.getElementsByName('id_' + report.reportId)[0].parentNode.parentNode.rowIndex - 1] = report;
 

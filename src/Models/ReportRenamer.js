@@ -126,13 +126,11 @@ class ReportRenamer {
                         report.buildingLevels = BuildingLevels.fromArray(JSON.parse(matches[1]));
                     }
     
-                    /*==== set resources ====*/
-                    report.resources = false;
-                    if (reportName.search('_r') != -1) {
-                        let text = reportName.substring(reportName.indexOf('_r') + 2);
-                        text = text.substring(0, text.indexOf(']') + 1);
-                        let res = eval(text); // todo: no eval
-                        report.resources = new Resources(res[0], res[1], res[2]);
+                    // set resources
+                    matches = reportName.match(/_r(\[\S+\])/);
+                    if (matches) {
+                        let r = JSON.parse(matches[1]);
+                        report.resources = new Resources(r[0], r[1], r[2]);
                     }
     
                     /*==== set defense ====*/

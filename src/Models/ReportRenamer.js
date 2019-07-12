@@ -121,18 +121,10 @@ class ReportRenamer {
                         reportName = reportName.substring(0, reportName.indexOf('_n:'));
                     }
     
-                    /*==== set buildings ====*/
-                    report.buildingLevels = false;
-                    if (reportName.search('_b') != -1) {
-                        let text = reportName.substring(reportName.indexOf('_b') + 2);
-                        text = text.substring(0, text.indexOf(']') + 1);
-                        //if(text.search('\\?') != -1)
-                        //{
-                        text = text.substring(1, text.length - 1);
-                        report.buildingLevels = BuildingLevels.fromArray(text.split(','));
-                        //}
-                        //else
-                        //report.buildingLevels = eval(text);
+                    // set buildingLevels
+                    let matches = reportName.match(/_b(\[\S+\])/);
+                    if (matches) {
+                        report.buildingLevels = BuildingLevels.fromArray(JSON.parse(matches[1]));
                     }
     
                     /*==== set resources ====*/

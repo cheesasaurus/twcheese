@@ -69,7 +69,7 @@ function enhanceBattleReport(gameDoc, report) {
                         <td>
                             Buildings <b>(${population.buildings})</b>
                             <br/>Military <b>(${population.troops})</b>
-                            <br/>${idleLabel} <b>(${population.idle}))</b>
+                            <br/>${idleLabel} <b>(${population.idle})</b>
                         </td>
                     </tr>
                 </table>

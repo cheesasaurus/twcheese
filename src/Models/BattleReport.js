@@ -17,7 +17,7 @@ class BattleReport {
         this.defenderQuantity = null;
         this.defenderSurvivors = null;
         this.defenderVillage = null;
-        this.dot = null;
+        this.dotColor = null;
         this.espionageLevel = null;
         this.haul = null;
         this.loyalty = null; // {before:number, after:number}

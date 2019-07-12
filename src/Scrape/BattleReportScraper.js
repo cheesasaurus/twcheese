@@ -111,7 +111,7 @@ class BattleReportScraper {
         report.defenderLosses = this.getDefenderLosses();
         report.defenderQuantity = this.getDefenderQuantity();
         report.defenderVillage = this.getDefenderVillage();
-        report.dot = this.getDotColor();
+        report.dotColor = this.getDotColor();
         report.espionageLevel = this.getEspionageLevel();
         report.haul = this.getHaul();
         report.loyalty = this.getLoyalty();

@@ -6,7 +6,7 @@ import { Resources } from '/twcheese/src/Models/Resources.js';
 import { BuildingLevels } from '/twcheese/src/Models/Buildings.js';
 import { TroopCounts } from '/twcheese/src/Models/Troops.js';
 import { TwCheeseDate } from '/twcheese/src/Models/TwCheeseDate.js';
-
+import { postToGame } from '/twcheese/src/Util/Network.js';
 
 class ReportRenamer {
 
@@ -17,18 +17,9 @@ class ReportRenamer {
      * @resolve {string} new name
      */
     async rename(report, note) {
-        let newName = this.createName(report, note);
-        var url = window.TribalWars.buildURL('POST', 'report', { ajaxaction: 'edit_subject', report_id: report.reportId });
-
-        // todo: throttle
-        return new Promise(function(resolve, reject) {
-            window.TribalWars.post(url,
-                {},
-                { text: newName },
-                () => resolve(newName),
-                reject
-            );
-        });
+        let newName = this.createName(report, note);        
+        await postToGame('report', { ajaxaction: 'edit_subject', report_id: report.reportId }, { text: newName });
+        return newName;
     }
 
     /**

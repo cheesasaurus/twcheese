@@ -29,6 +29,22 @@ async function requestDocument(url) {
 };
 
 
+/**
+ * make a POST request to the game
+ * @param {string} screen 
+ * @param {object} uriParams 
+ * @param {object} data
+ * @return {Promise}
+ * @resolve {object} response data from the game
+ */
+async function postToGame(screen, uriParams, data) {
+    await throttle.sleepIfNeeded();
+    return new Promise(function(resolve, reject) {
+        window.TribalWars.post(screen, uriParams, data, resolve, reject);
+    });
+}
+
+
 function gameUrl(screen, uriParams, method = 'GET') {
     return 'https://' + document.domain + window.TribalWars.buildURL(method, screen, uriParams);
 }
@@ -47,4 +63,4 @@ function attackPrepUrl(unitCounts, targetVillageId, originVillageId = window.gam
 }
 
 
-export { requestDocument, gameUrl, attackPrepUrl };
+export { requestDocument, postToGame, gameUrl, attackPrepUrl };

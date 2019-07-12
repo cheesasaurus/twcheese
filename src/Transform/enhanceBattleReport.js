@@ -79,14 +79,17 @@ function enhanceBattleReport(gameDoc, report, gameConfig) {
 
     /*==== loyalty ====*/
     if (report.loyalty) {
+        let now = TwCheeseDate.newServerDate();
+        let loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty.after, report.battleTime, now, game_data.village, report.defenderVillage);
+
         var resultsHeaders = gameDoc.getElementById('attack_results').getElementsByTagName('th');
         var loyaltyRow = textScraper.first(resultsHeaders, 'report.loyalty').parentNode;
         var loyaltyHTML = loyaltyRow.cells[1].innerHTML;
         loyaltyRow.removeChild(loyaltyRow.cells[1]);
         loyaltyRow.insertCell(-1);
         loyaltyRow.cells[1].innerHTML = loyaltyHTML;
-        loyaltyRow.cells[1].innerHTML += '<br/><span title="the current predicted loyalty, based on time passed since this report">@Current Time: ' + report.loyaltyExtra.loyaltyNow + '</span>';
-        loyaltyRow.cells[1].innerHTML += '<br/><span title="the predicted loyalty at time of arrival, should you send a nobleman from your current village right now">@Arrival: ' + report.loyaltyExtra.loyaltyAtArrival + '</span>';
+        loyaltyRow.cells[1].innerHTML += '<br/><span title="the current predicted loyalty, based on time passed since this report">@Current Time: ' + loyaltyExtra.loyaltyNow + '</span>';
+        loyaltyRow.cells[1].innerHTML += '<br/><span title="the predicted loyalty at time of arrival, should you send a nobleman from your current village right now">@Arrival: ' + loyaltyExtra.loyaltyAtArrival + '</span>';
     }
 
     /*==== opponents defeated ====*/

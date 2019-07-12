@@ -2492,7 +2492,6 @@ function enhanceReport(gameConfig) {
     let twcheese_BRESettings = twcheese_getBRESettings();
 
     /*==== calculate additional information ===*/
-    let now = TwCheeseDate.newServerDate();
     let scraper = new BattleReportScraper(document);
     var report = scraper.scrapeReport();
 
@@ -2503,9 +2502,6 @@ function enhanceReport(gameConfig) {
     if (report.defenderQuantity) {
         report.killScores.attacker = calcAttackerScore(report.defenderLosses);
     }
-    if (report.loyalty)
-        report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty.after, report.battleTime, now, game_data.village, report.defenderVillage);
-
 
     /*==== add stuff to the page ====*/
     enhanceBattleReport(document, report, gameConfig);

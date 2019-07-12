@@ -24,10 +24,6 @@ effects:
         - extended report information (information displayed can be customized to the user's preferences)
         - links to "attack again with the same troops"
         - text that can be copied to create "attack again with the same troops" links that can be saved in notebook or bookmarked in browser;
-todo:
-    -fix layout problem with "defense remaining" headers
-    -account for militia when scraping defending troops
-    -add "new" and "not new" options for report selectors in folder view
  
 ==== license ====
 Copyright (C) 2011  Nick Toby

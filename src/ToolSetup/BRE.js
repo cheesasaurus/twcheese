@@ -819,7 +819,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
 
                 /*==== timeLaunched cell ====*/
                 cell = row.insertCell(-1);
-                if (report.timeLaunched) { // todo: consistent with enhanced report (report name needs more precise timestamp)
+                if (report.timeLaunched) {
                     cell.innerHTML = report.timeLaunched.toHtml(false);
                 }
 

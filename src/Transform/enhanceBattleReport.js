@@ -4,9 +4,10 @@ import { gameUrl } from '/twcheese/src/Util/Network.js';
 
 /**
  * @param {HTMLDocument} gameDoc 
- * @param {BattleReport} report 
+ * @param {BattleReport} report
+ * @param {object} gameConfig
  */
-function enhanceBattleReport(gameDoc, report) {
+function enhanceBattleReport(gameDoc, report, gameConfig) {
 
     var reportTable = gameDoc.getElementById('attack_luck').parentNode.parentNode.parentNode.parentNode.parentNode.parentNode;
 
@@ -108,6 +109,8 @@ function enhanceBattleReport(gameDoc, report) {
     }
 
     /*==== timing info ====*/
+    let timingInfo = report.calcTimingInfo(gameConfig.speed, gameConfig.unit_speed);
+
     if (!reportTable.rows) //6.5 graphics
         reportTable = reportTable.getElementsByTagName('table')[1];
     var launchRow = reportTable.insertRow(2);
@@ -115,7 +118,7 @@ function enhanceBattleReport(gameDoc, report) {
     launchRow.insertCell(-1);
     launchRow.cells[0].innerHTML = '<span title="the time the attacker sent the attack">Launched</span>';
     launchRow.insertCell(-1);
-    launchRow.cells[1].innerHTML = report.timingInfo.launchTime.toHtml();
+    launchRow.cells[1].innerHTML = timingInfo.launchTime.toHtml();
 
     /*==== determine whether return time should be displayed. ====*/
     let showReturnTime = !report.attackerSurvivors.isZero();
@@ -125,7 +128,7 @@ function enhanceBattleReport(gameDoc, report) {
     if (showReturnTime) {
         returnRow.cells[0].innerHTML = '<span title="the time the attacking troops return to the attacker\'s village">Returns</span>';
         returnRow.insertCell(-1);
-        returnRow.cells[1].innerHTML = report.timingInfo.returnTime.toHtml();
+        returnRow.cells[1].innerHTML = timingInfo.returnTime.toHtml();
     }
 
     /*==== rally point Manage Troops link ====*/

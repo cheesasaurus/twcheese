@@ -2505,10 +2505,10 @@ function enhanceReport(gameConfig) {
     }
     if (report.loyalty)
         report.loyaltyExtra = calcLoyalty(gameConfig.speed, gameConfig.unit_speed, report.loyalty.after, report.battleTime, now, game_data.village, report.defenderVillage);
-    report.timingInfo = report.calcTimingInfo(gameConfig.speed, gameConfig.unit_speed);
+
 
     /*==== add stuff to the page ====*/
-    enhanceBattleReport(document, report);
+    enhanceBattleReport(document, report, gameConfig);
     let renamer = new ReportRenamer(gameConfig);
     let pageMod = new BattleReportEnhancer(document, report, renamer, gameConfig, twcheese_BRESettings);
     pageMod.includeReportTools();

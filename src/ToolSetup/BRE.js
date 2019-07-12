@@ -653,7 +653,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
     this.populateReportsTable = function () {
         for (let report of this.reports) {
             let row = reportsTableBody.insertRow(-1);
-            row.twcheeseLabel = report.twcheeseLabel;
+            row.twcheeseLabel = report.twcheeseLabel; // todo: dont care if the report has a twcheeseLabel
 
             /*==== basic cell ====*/
             let cell = row.insertCell(-1);
@@ -682,7 +682,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
             if (report.attacker && report.attacker.name === game_data.player.name) {
                 let url = gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportId});
                 cell.innerHTML = '<a title="repeat attack, from current village" href="' + url + '"><img src="' + ImageSrc.attack + '" /></a>';
-                if (report.twcheeseLabel) {
+                if (report.attackerVillage && report.attackerVillage.id) {
                     let url = gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportId, village: report.attackerVillage.id});
                     cell.innerHTML += ' | <a title="repeat attack, from original village" href="' + url + '"><img src="' + ImageSrc.attack + '" /></a>';
                 }
@@ -697,11 +697,11 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
             /*==== full subject cell ====*/
             cell = row.insertCell(-1);
             cell.innerHTML = report.subjectHTML;
-            if (!report.twcheeseLabel) {
+            if (!row.twcheeseLabel) {
                 cell.colSpan = 44;
             }
 
-            if (report.twcheeseLabel) {
+            if (row.twcheeseLabel) {
                 /*==== note cell ====*/
                 let cell = row.insertCell(-1);
                 if (report.note) {
@@ -1813,7 +1813,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
 
                 let report = renamer.parseName(name);
                 report.reportId = reportId;
-                report.twcheeseLabel = true;
                 report.dotColor = oldReport.dotColor;
                 report.haulStatus = oldReport.haulStatus;
                 report.isForwarded = oldReport.isForwarded;
@@ -2028,8 +2027,9 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
     this.alignForTroops = function () {
         var maxDigits = new Array(2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2);
         for (var row = 1; row < reportsTableBody.rows.length; row++) {
-            if (reportsTableBody.rows[row].twcheeseLabel && reportsTableBody.rows[row].twcheeseReport.defenderSurvivors) {
-                let survivors = reportsTableBody.rows[row].twcheeseReport.defenderSurvivors.toArray();
+            let report = reportsTableBody.rows[row].twcheeseReport;
+            if (report.defenderSurvivors) {
+                let survivors = report.defenderSurvivors.toArray();
                 for (var i = 0; i < 12; i++) {
                     var digits = new String(survivors[i]).length;
                     if (digits > maxDigits[i])
@@ -2063,14 +2063,15 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
     this.alignForResources = function () {
         var maxDigits = new Array(2, 2, 2, 5);
         for (var row = 1; row < reportsTableBody.rows.length; row++) {
-            if (reportsTableBody.rows[row].twcheeseLabel && reportsTableBody.rows[row].twcheeseReport.resources) {
-                let res = reportsTableBody.rows[row].twcheeseReport.resources.toArray();
+            let report = reportsTableBody.rows[row].twcheeseReport;
+            if (report.resources) {
+                let res = report.resources.toArray();
                 for (var i = 0; i < 3; i++) {
                     let digits = new String(res[i]).length;
                     if (digits > maxDigits[i])
                         maxDigits[i] = digits;
                 }
-                let digits = new String(reportsTableBody.rows[row].twcheeseReport.resourcesTotal).length;
+                let digits = new String(report.resourcesTotal).length;
                 if (digits > maxDigits[3])
                     maxDigits[3] = digits;
             }

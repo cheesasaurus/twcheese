@@ -158,11 +158,11 @@ class ReportRenamer {
                     }
     
                     /*==== set loyalty ====*/
-                    report.loyalty = false;
+                    report.loyalty = null;
                     if (reportName.search('_l:') != -1) {
                         let text = reportName.substring(reportName.indexOf('_l:') + 3);
                         text = text.substring(0, text.indexOf('.'));
-                        report.loyalty = {before: -1, after: parseInt(text)};
+                        report.loyalty = { after: parseInt(text) };
                     }
     
                     /*==== set attackerNobleDied ====*/

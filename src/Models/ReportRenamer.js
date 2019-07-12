@@ -114,11 +114,10 @@ class ReportRenamer {
                 }
     
                 try {
-                    /*==== set note ====*/
-                    report.note = false;
-                    if (reportName.search('_n:') != -1) {
-                        report.note = reportName.substring(reportName.indexOf('_n:') + 3);
-                        reportName = reportName.substring(0, reportName.indexOf('_n:'));
+                    // set note, and remove from reportName
+                    if (reportName.includes('_n:')) {
+                        report.note = reportName.match(/_n:(.+)/)[1];
+                        reportName = reportName.replace(/_n:.+/, '');
                     }
     
                     // set buildingLevels

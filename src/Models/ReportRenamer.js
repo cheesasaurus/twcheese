@@ -13,6 +13,27 @@ class ReportRenamer {
     /**
      * @param {BattleReport} report 
      * @param {string} note
+     * @return {Promise}
+     * @resolve {string} new name
+     */
+    async rename(report, note) {
+        let newName = this.createName(report, note);
+        var url = window.TribalWars.buildURL('POST', 'report', { ajaxaction: 'edit_subject', report_id: report.reportId });
+
+        // todo: throttle
+        return new Promise(function(resolve, reject) {
+            window.TribalWars.post(url,
+                {},
+                { text: newName },
+                () => resolve(newName),
+                reject
+            );
+        });
+    }
+
+    /**
+     * @param {BattleReport} report 
+     * @param {string} note
      * @return {string}
      */
     createName(report, note = '') {

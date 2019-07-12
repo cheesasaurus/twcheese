@@ -573,21 +573,12 @@ class BattleReportEnhancer {
     /**
      * @param {string} note
      */
-    renameReport(note) {
+    async renameReport(note) {
         let report = this.report;
-        console.info('renaming report:', report);
-        let newName = this.renamer.createName(report, note);
+        let name = await this.renamer.rename(report, note);
 
-        var url = window.TribalWars.buildURL('POST', 'report', { ajaxaction: 'edit_subject', report_id: report.reportId });
-        window.TribalWars.post(url,
-            {},
-            { text: newName },
-            function (data) {
-                var $container = $('.quickedit[data-id="' + report.reportId + '"]');
-                $container.find('.quickedit-label').html(newName);
-            },
-            {}
-        );
+        $('.quickedit[data-id="' + report.reportId + '"]')
+            .find('.quickedit-label').html(name);
     }
 
 
@@ -1828,22 +1819,16 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
                 let scraper = new BattleReportScraper(reportDoc);
                 var report = scraper.scrapeReport();
               
+                // todo: what's this for? should maybe move to BattleReportScraper?
                 report.timingInfo = report.calcTimingInfo(gameConfig.speed, gameConfig.unit_speed);
 
-                var name = renamer.createName(report, '');
+                let name = await renamer.rename(report, '');
 
-                var url = window.TribalWars.buildURL('POST', 'report', { ajaxaction: 'edit_subject', report_id: report.reportId });
-                window.TribalWars.post(url,
-                    {},
-                    { text: name },
-                    function (data) {
-                        var $container = $('.quickedit[data-id="' + report.reportId + '"]');
-                        $container.find('.quickedit-label').html(name);
-                    },
-                    {}
-                );
+                $('.quickedit[data-id="' + report.reportId + '"]')
+                    .find('.quickedit-label').html(name);
 
                 /*==== update reports information so row can be redrawn with updated information====*/
+                // todo: a lot of this is probably unnecessary
                 var oldReport = reportsTable.rows[document.getElementsByName('id_' + report.reportId)[0].parentNode.parentNode.rowIndex].twcheeseReport;
                 report = renamer.parseName(name);
                 report.reportId = reportID;

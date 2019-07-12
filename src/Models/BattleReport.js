@@ -1,5 +1,6 @@
 import { TroopCounts, TroopCalculator, troopTypes } from '/twcheese/src/Models/Troops.js';
 import { DemolitionCalculator } from '/twcheese/src/Models/DemolitionCalculator.js';
+import { threadId } from 'worker_threads';
 
 
 class BattleReport {
@@ -20,7 +21,7 @@ class BattleReport {
         this.dot = null;
         this.espionageLevel = null;
         this.haul = null;
-        this.loyalty = null;
+        this.loyalty = null; // {before:number, after:number}
         this.luck = null;
         this.morale = null;
         this.ramDamage = null;
@@ -159,4 +160,44 @@ class BattleReport {
 }
 
 
-export { BattleReport };
+class BattleReportCondensed {        
+    constructor() {
+        this.subject = null; // string
+        this.attacker = null; // Player
+        this.attackerVillage = null; // Village
+        this.buildingLevels = null; // BuildingLevels
+        this.defender = null; // Player
+        this.defenderVillage = null; // Village
+        this.defenderSurvivors = null; // TroopCounts
+        this.note = null; // string
+        this.resources = null; // Resources
+
+        // todo: only loyalty after
+        this.loyalty = null; // {before:-1, after:number}
+
+        // todo: better name. this is only the attacker's noble
+        this.deadNoble = false; // boolean
+        
+        // todo: rename to "wasAttackFeint"
+        this.isFeint = false; // boolean
+
+        this.timeLaunched = null; // TwCheeseDate
+
+
+        // todo: not sure if these are needed
+        this.timingInfo = null; // {launchTime:TwCheeseDate, returnTime:TwCheeseDate}
+        this.reportId = null; // int
+        this.twcheeseLabel = false;
+        this.dotIcon = null; // todo: what is this?
+        this.isFullHaul = null;
+        this.isPartialHaul = null;
+        this.lootIcon = null; // todo: what is this?
+        this.isForwared = false;
+        this.timeReceived = null; // todo: TwCheeseDate?
+
+    }
+
+}
+
+
+export { BattleReport, BattleReportCondensed };

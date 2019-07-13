@@ -654,7 +654,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
     this.populateReportsTable = function () {
         for (let report of this.reports) {
             let row = reportsTableBody.insertRow(-1);
-            row.twcheeseShowDetails = report.attackerName && report.defender && report.attackerVillage && report.defenderVillage;
+            row.twcheeseShowDetails = report.attackerName && report.defenderName && report.attackerVillage && report.defenderVillage;
 
             /*==== basic cell ====*/
             let cell = row.insertCell(-1);
@@ -668,8 +668,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
             }
             cell.innerHTML += `<a href="${gameUrl('report', {mode:game_data.mode, view:report.reportId})}"> view</a>`;
 
-            if (report.defender && report.defenderVillage) {
-                let isDefenderMe = report.defender.name == game_data.player.name;
+            if (report.defenderName && report.defenderVillage) {
+                let isDefenderMe = report.defenderName == game_data.player.name;
                 let wasVillageConquered = report.loyalty && report.loyalty.after <= 0;
                 if (isDefenderMe || wasVillageConquered) {
                     cell.innerHTML += `<a href="${gameUrl('place', {mode:'units', village:report.defenderVillage.id})}">
@@ -717,8 +717,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
 
                 /*==== defender cell ====*/
                 cell = row.insertCell(-1);
-                if (report.defender) {
-                    cell.innerHTML = report.defender.name;
+                if (report.defenderName) {
+                    cell.innerHTML = report.defenderName;
                 }
 
                 /*==== origin cell ====*/
@@ -1999,10 +1999,10 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
         }
     };
 
-    reportsTable.selectDefender = function (defender) {
+    reportsTable.selectDefender = function (defenderName) {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
-            if (reportsTable.rows[i].twcheeseReport.defender.name == defender)
+            if (reportsTable.rows[i].twcheeseReport.defenderName === defenderName)
                 document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
         }
     };

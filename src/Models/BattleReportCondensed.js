@@ -8,7 +8,7 @@ class BattleReportCondensed {
         this.attackerNobleDied = false; // boolean
         this.attackerVillage = null; // Village
         this.buildingLevels = null; // BuildingLevels
-        this.defender = null; // Player
+        this.defenderName = null; // string
         this.defenderVillage = null; // Village
         this.defenderSurvivors = null; // TroopCounts
         this.dotColor = null; // string

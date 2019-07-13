@@ -154,10 +154,8 @@ class ReportRenamer {
                     report.wasAttackFeint = reportName.includes('_f');
     
                     /*==== set defender ====*/
-                    report.defender = false;
                     let text = reportName.substring(reportName.indexOf(')') + 1);
-                    text = text.substring(0, text.indexOf('('));
-                    report.defender = new Player(0, text);
+                    report.defenderName = text.substring(0, text.indexOf('('));
                 }
                 catch (err) {
                     console.warn('swallowed', err);

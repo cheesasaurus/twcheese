@@ -1,3 +1,6 @@
+import { getProp, setProp} from '/twcheese/src/Util/Object.js';
+
+
 class Config {
     constructor(id) {
         this.id = id;
@@ -17,29 +20,11 @@ class Config {
     }
 
     get(prop, defaultValue) {
-        let obj = this.props;
-        let tokens = prop.split('.');
-        for (let i = 0; i < tokens.length - 1; i++) {
-            let token = tokens[i];
-            if (typeof obj[token] !== 'object' || token === null) {
-                return defaultValue;
-            }
-            obj = obj[token];
-        }
-        return obj[tokens[tokens.length - 1]];
+        return getProp(this.props, prop, defaultValue);
     }
 
     set(prop, value) {
-        let obj = this.props;
-        let tokens = prop.split('.');
-        for (let i = 0; i < tokens.length - 1; i++) {
-            let token = tokens[i];
-            if (typeof obj[token] !== 'object' || token === null) {
-                obj[token] = {};
-            }
-            obj = obj[token];
-        }
-        obj[tokens[tokens.length - 1]] = value;
+        setProp(this.props, prop, value);
         this.save();
     }
 }

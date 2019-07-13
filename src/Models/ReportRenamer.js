@@ -1,6 +1,5 @@
 import { textScraper } from '/twcheese/src/Scrape/TextScraper.js';
 import { BattleReportCondensed } from '/twcheese/src/Models/BattleReportCondensed.js';
-import { Player } from '/twcheese/src/Models/Player.js';
 import { Village } from '/twcheese/src/Models/Village.js';
 import { Resources } from '/twcheese/src/Models/Resources.js';
 import { BuildingLevels } from '/twcheese/src/Models/Buildings.js';
@@ -28,7 +27,7 @@ class ReportRenamer {
     /**
      * @param {BattleReport} report 
      * @param {string} note
-     * @return {string}
+     * @return {string} new name
      */
     createName(report, note = '') {
         var newName = 'twCheese: ';
@@ -77,17 +76,15 @@ class ReportRenamer {
                 reportName = reportName.replace('twCheese: ', '');
             }
     
-            /*==== set attacker ====*/
-            try {
+            if (twcheeseLabel) /* report named with twCheese format */ {
+                /*==== set attacker ====*/
                 var attackerString = reportName.split('(')[0];
                 report.attackerName = attackerString.substring(0, attackerString.lastIndexOf(' '));
-            }
-            catch (err) {
-                // The player could have renamed the report to something unrecognized, or the game changed the name format.
-                // Don't whine about it.
-            }
-    
-            if (twcheeseLabel) /* report named with twCheese format */ {
+
+                /*==== set defender ====*/
+                let text = reportName.substring(reportName.indexOf(')') + 1);
+                report.defenderName = text.substring(0, text.indexOf('('));
+
                 /*==== set attacker village ====*/
                 try {
                     data[0] = data[0].substring(data[0].lastIndexOf('(') + 1, data[0].lastIndexOf(')'));
@@ -152,19 +149,19 @@ class ReportRenamer {
     
                     report.attackerNobleDied = reportName.includes('_x');
                     report.wasAttackFeint = reportName.includes('_f');
-    
-                    /*==== set defender ====*/
-                    let text = reportName.substring(reportName.indexOf(')') + 1);
-                    report.defenderName = text.substring(0, text.indexOf('('));
                 }
                 catch (err) {
                     console.warn('swallowed', err);
                 }
             }
             else {
-                /*==== set defender village ====*/
                 try {
-    
+
+                    /*==== set attacker ====*/
+                    var attackerString = reportName.split('(')[0];
+                    report.attackerName = attackerString.substring(0, attackerString.lastIndexOf(' '));
+
+                    /*==== set defender village ====*/
                     var defIndex;
                     if (reportName.charAt(reportName.length - 1) == ')') /* report was renamed by the game based on the command name */
                         defIndex = data.length - 2

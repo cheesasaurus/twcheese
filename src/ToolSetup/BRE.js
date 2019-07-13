@@ -13,6 +13,7 @@ import { BattleReportCondensedScraper } from '/twcheese/src/Scrape/BattleReportC
 import { textScraper } from '/twcheese/src/Scrape/TextScraper.js';
 import { enhanceBattleReport } from '/twcheese/src/Transform/enhanceBattleReport.js';
 import { userConfig } from '/twcheese/src/Util/UserConfig.js';
+import { gameConfig } from '/twcheese/src/Util/GameConfig.js';
 import { requestDocument, gameUrl, attackPrepUrl } from '/twcheese/src/Util/Network.js';
 import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.js';
 
@@ -233,7 +234,7 @@ class BattleReportTools {
     * @param {HTMLDocument} gameDoc the document from game.php?screen=report&mode=attack
     * @param {BattleReport} report
     * @param {ReportRenamer} renamer
-    * @param {object} gameConfig
+    * @param {Config} gameConfig
     */
     constructor(gameDoc, report, renamer, gameConfig) {
         this.gameDoc = gameDoc;
@@ -356,7 +357,7 @@ class BattleReportTools {
             periodInput.value = 8;
             periodInput.addEventListener('input', function() {
                 let haulBonus = Number(document.getElementById('twcheese_raider_haulBonus').value);
-                let raiders = report.calcRaidPeriodic(Number(this.value), gameConfig.speed, haulBonus);
+                let raiders = report.calcRaidPeriodic(Number(this.value), gameConfig.get('speed'), haulBonus);
                 _this.setRaiders(raiders);
             });
             periodicDiv.appendChild(periodInput);
@@ -411,7 +412,7 @@ class BattleReportTools {
             raiderUnitsTable.insertRow(-1);
             raiderUnitsTable.rows[2].className = 'center';
 
-            var travelTimes = calcTravelDurations(report.attackerVillage.distanceTo(report.defenderVillage), gameConfig.speed, gameConfig.unit_speed);
+            var travelTimes = calcTravelDurations(report.attackerVillage.distanceTo(report.defenderVillage), gameConfig.get('speed'), gameConfig.get('unit_speed'));
 
             for (let i = 0; i < 7; i++) {
                 raiderUnitsTable.rows[2].insertCell(-1);
@@ -597,13 +598,13 @@ class BattleReportTools {
         }
         else if (mode == 'predicted') {
             gameDoc.getElementById('twcheese_raider_selection').value = 'predicted';
-            let raiders = report.calcRaidPredicted(window.game_data.village, TwCheeseDate.newServerDate(), gameConfig.speed, gameConfig.unit_speed, haulBonus);
+            let raiders = report.calcRaidPredicted(window.game_data.village, TwCheeseDate.newServerDate(), gameConfig.get('speed'), gameConfig.get('unit_speed'), haulBonus);
             this.setRaiders(raiders);
             gameDoc.getElementById('twcheese_periodic_options').style.display = 'none';
         }
         else if (mode == 'periodic') {
             gameDoc.getElementById('twcheese_raider_selection').value = 'periodic';
-            let raiders = report.calcRaidPeriodic(Number(gameDoc.getElementById('twcheese_period').value), gameConfig.speed, haulBonus);
+            let raiders = report.calcRaidPeriodic(Number(gameDoc.getElementById('twcheese_period').value), gameConfig.get('speed'), haulBonus);
             this.setRaiders(raiders);
             gameDoc.getElementById('twcheese_periodic_options').style.display = '';
         }
@@ -643,7 +644,7 @@ class BattleReportTools {
  * @param {HTMLDocument} gameDoc the document from game.php?screen=report&mode=attack
  * @param {ReportRenamer} renamer
  */
-function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reportsFolderDisplaySettings, gameConfig) {
+function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reportsFolderDisplaySettings) {
     var pageMod = this;
     this.reports = new Array();
 
@@ -2334,55 +2335,31 @@ function twcheese_loadReportsFolderDisplaySettings() {
 }
 
 
-function twcheese_getServerSettings() {
-    let cacheKey = 'twcheese_game_config_bre';
-
-    let cachedSettings = localStorage.getItem(cacheKey);
-    if (cachedSettings) {
-        return JSON.parse(cachedSettings);
-    }
-
-    let xmlDoc = twcheese_requestXML('https://' + document.domain + '/interface.php?func=get_config');
-    let $cfg = $(xmlDoc);
-
-    let floatVal = selector => parseFloat($cfg.find(selector).html());
-
-    let settings = {
-        speed: floatVal('speed'),
-        unit_speed: floatVal('unit_speed'),
-        archer: floatVal('game > archer'),
-        knight: floatVal('game > knight'),
-    };
-    localStorage.setItem(cacheKey, JSON.stringify(settings));
-    return settings;
-}
-
-
 /*==== main ====*/
 
 let initialized = false;
 let reportEnhanced = false;
 let reportsFolderEnhanced = false;
 
-function useTool() {
+async function useTool() {
+    await gameConfig.ensureUpdated();
+
     if (!initialized) {
         initBRE();
         initialized = true;
     }
 
-    let gameConfig = twcheese_getServerSettings();
-
     if (game_data.screen == 'report' && document.URL.includes('&view=')) {
         // user is viewing single report
         if (!reportEnhanced) {
-            enhanceReport(gameConfig);
+            enhanceReport();
             reportEnhanced = true;
         }
     }
     else if (game_data.screen == 'report' && (game_data.mode == 'attack' || game_data.mode == 'defense')) {
         // user is viewing reports folder with 'Attacks' or "Defenses" filter on
         if (!reportsFolderEnhanced) {
-            enhanceReportsFolder(gameConfig);
+            enhanceReportsFolder();
             reportsFolderEnhanced = true;
         }
     }
@@ -2405,7 +2382,7 @@ function initBRE() {
 }
 
 
-function enhanceReport(gameConfig) {
+function enhanceReport() {
     /*==== calculate additional information ===*/
     let scraper = new BattleReportScraper(document);
     var report = scraper.scrapeReport();
@@ -2442,7 +2419,7 @@ function enhanceReport(gameConfig) {
 }
 
 
-function enhanceReportsFolder(gameConfig) {
+function enhanceReportsFolder() {
     let twcheese_reportsFolderDisplaySettings = twcheese_loadReportsFolderDisplaySettings();
     twcheese_saveReportsFolderDisplaySettings(twcheese_reportsFolderDisplaySettings);
     let renamer = new ReportRenamer(gameConfig);

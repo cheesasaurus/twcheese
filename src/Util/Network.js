@@ -39,7 +39,7 @@ async function requestXml(url) {
     await throttle.sleepIfNeeded();
     let response = await fetch(url);
     let responseText = await response.text();
-    return $.parseXml(responseText);
+    return $.parseXML(responseText);
 };
 
 

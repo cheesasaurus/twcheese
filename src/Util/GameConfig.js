@@ -16,7 +16,7 @@ class GameConfig extends RemoteConfig {
 }
 
 
-let gameConfig = (new GameConfig())
+let gameConfig = (new GameConfig('twcheese.gameConfig'))
     .setUrl(`https://${document.domain}/interface.php?func=get_config`)
     .setTtl(8 * 3600);
 

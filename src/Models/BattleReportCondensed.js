@@ -41,6 +41,17 @@ class BattleReportCondensed {
         return ImageSrc.haulPartial;
     }
 
+    /**
+     * @param {{x:number, y:number}} village
+     * @return number
+     */
+    defenderDistance(village) {
+        if (!this.defenderVillage) {
+            return '?';
+        }
+        return Math.round(this.defenderVillage.distanceTo(village) * 100) / 100;
+    }
+
 }
 BattleReportCondensed.HAUL_STATUS_UNKNOWN = -1;
 BattleReportCondensed.HAUL_STATUS_PARTIAL = 0;

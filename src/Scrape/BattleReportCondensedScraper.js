@@ -47,19 +47,6 @@ class BattleReportCondensedScraper {
         report.strTimeReceived = row.cells[2].innerHTML;
         report.haulStatus = this.determineHaulStatus(reportIcons);
 
-        /*==== defender distance from current village ====*/
-        if (report.defenderVillage)
-            try {
-                report.defenderDistance = Math.round(report.defenderVillage.distanceTo(game_data.village) * 100) / 100;
-            }
-            catch (err) {
-                console.error(err);
-                report.defenderDistance = '?';
-            }
-
-        else
-            report.defenderDistance = '?';
-
         /*==== subject html ====*/
         var $subjectNode = $(row.cells[1]).clone();
         $subjectNode.find(`img[src*='graphic/max_loot/'], img[src*='graphic/dots/']`).remove();

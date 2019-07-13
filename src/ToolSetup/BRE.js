@@ -692,9 +692,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
 
             /*==== distance cell ====*/
             cell = row.insertCell(-1);
-            if (report.defenderDistance) {
-                cell.innerHTML = report.defenderDistance;
-            }
+            cell.innerHTML = report.defenderDistance(game_data.village);
 
             /*==== full subject cell ====*/
             cell = row.insertCell(-1);
@@ -1124,10 +1122,11 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
 
                 case 'html':
                     let leadingZero = '';
-                    if (twcheeseReport.defenderDistance < 10) {
+                    let distance = twcheeseReport.defenderDistance(game_data.village);
+                    if (distance < 10) {
                         leadingZero = '0';
                     }
-                    return '\n<DT><A HREF="' + urlCurrentVillage(twcheeseReport) + '" >' + leadingZero + twcheeseReport.defenderDistance + ' Repeat Attack ' + twcheeseReport.reportId + ' from (' + game_data.village.coord + ') to (' + twcheeseReport.defenderVillage.x + '|' + twcheeseReport.defenderVillage.y + ')</A></DT>';                
+                    return '\n<DT><A HREF="' + urlCurrentVillage(twcheeseReport) + '" >' + leadingZero + distance + ' Repeat Attack ' + twcheeseReport.reportId + ' from (' + game_data.village.coord + ') to (' + twcheeseReport.defenderVillage.x + '|' + twcheeseReport.defenderVillage.y + ')</A></DT>';                
             }
         }
 

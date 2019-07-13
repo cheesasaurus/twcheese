@@ -39,6 +39,11 @@ class BattleReportCondensedScraper {
         report.reportId = this.scrapeReportId(row.cells[1].getElementsByTagName('a')[0]);
         var reportIcons = [...row.cells[1].getElementsByTagName('img')];
 
+        report.dotColor = reportIcons.find(img => img.src.includes('graphic/dots/')).src.match(/dots\/(.+).png/)[1];
+        report.isForwarded = !!reportIcons.find(img => img.src.includes('graphic/forwarded.png'));
+        report.isNew = $(row.cells[1]).text().trim().endsWith(textScraper.t('report.unread'));
+        report.strTimeReceived = row.cells[2].innerHTML;
+
         /*==== defender distance from current village ====*/
         if (report.defenderVillage)
             try {
@@ -51,16 +56,7 @@ class BattleReportCondensedScraper {
 
         else
             report.defenderDistance = '?';
-
-        /*==== dot color ====*/
-        report.dotColor = reportIcons.find(img => img.src.includes('graphic/dots/')).src.match(/dots\/(.+).png/)[1];
-
-        /*==== has it already been read? ====*/
-        var cellText = $(row.cells[0]).contents().filter(function () {
-            return this.nodeType == 3;
-        }).text();
-
-        report.isNew = textScraper.includes(cellText, 'report.unread');
+                    
 
         /*==== partial hauls ====*/
 
@@ -74,16 +70,10 @@ class BattleReportCondensedScraper {
             }
         }
 
-        /*==== forwarded ====*/
-        report.isForwarded = !!reportIcons.find(img => img.src.includes('graphic/forwarded.png'));
-
         /*==== subject html ====*/
         var $subjectNode = $(row.cells[1]).clone();
         $subjectNode.find(`img[src*='graphic/max_loot/'], img[src*='graphic/dots/']`).remove();
-        report.subjectHTML = $subjectNode.html();
-
-        /*==== timeReceived ====*/
-        report.strTimeReceived = row.cells[2].innerHTML;
+        report.subjectHTML = $subjectNode.html();        
 
         return report;
     }

@@ -9,6 +9,7 @@ import { buildingTypes } from '/twcheese/src/Models/Buildings.js';
 import { TwCheeseDate } from '/twcheese/src/Models/TwCheeseDate.js';
 import { ReportRenamer } from '/twcheese/src/Models/ReportRenamer.js';
 import { BattleReportScraper } from '/twcheese/src/Scrape/BattleReportScraper.js';
+import { BattleReportCondensedScraper } from '/twcheese/src/Scrape/BattleReportCondensedScraper.js';
 import { textScraper } from '/twcheese/src/Scrape/TextScraper.js';
 import { enhanceBattleReport } from '/twcheese/src/Transform/enhanceBattleReport.js';
 import { userConfig } from '/twcheese/src/Util/UserConfig.js';
@@ -847,15 +848,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
     };
 
     /**
-     *	@param	link:HTMLAnchor	a link to a report
-     *	@return	reportId:Number the reportId of the linked report
-     */
-    this.scrapeReportId = function (link) {
-        var address = link.href;
-        return new Number(address.substring(address.indexOf('view=') + 5).match('[0-9]{1,}'));
-    }
-
-    /**
      *	marks checkboxes and hides certain displays in accordance with the user's Folder Display settings
      *	@param settings:twcheese_ReportsFolderDisplaySettings()
      */
@@ -984,62 +976,9 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
 
     var reportsForm = reportsTable.parentNode;
 
-    /*==== scrape reports information ====*/
-    this.reports = new Array();
-
-    for (var i = 1; i < reportsTable.rows.length - 1; i++) {
-        var report = renamer.parseName(reportsTable.rows[i].cells[1].getElementsByTagName('a')[0].getElementsByTagName('span')[0].innerHTML);
-        report.reportId = this.scrapeReportId(reportsTable.rows[i].cells[1].getElementsByTagName('a')[0]);
-        var reportIcons = [...reportsTable.rows[i].cells[1].getElementsByTagName('img')];
-
-        /*==== defender distance from current village ====*/
-        if (report.defenderVillage)
-            try {
-                report.defenderDistance = Math.round(report.defenderVillage.distanceTo(game_data.village) * 100) / 100;
-            }
-            catch (err) {
-                console.error(err);
-                report.defenderDistance = '?';
-            }
-
-        else
-            report.defenderDistance = '?';
-
-        /*==== dot color ====*/
-        report.dotColor = reportIcons.find(img => img.src.includes('graphic/dots/')).src.match(/dots\/(.+).png/)[1];
-
-        /*==== has it already been read? ====*/
-        var cellText = $(reportsTable.rows[i].cells[0]).contents().filter(function () {
-            return this.nodeType == 3;
-        }).text();
-
-        report.isNew = textScraper.includes(cellText, 'report.unread');
-
-        /*==== partial hauls ====*/
-
-        // note: non-premium users don't get an icon showing partial/full haul
-        let lootImg = reportIcons.find(img => img.src.includes('graphic/max_loot/'));
-        if (lootImg) {
-            if (lootImg.src.includes('max_loot/0.png')) {
-                report.haulStatus = BattleReportCondensed.HAUL_STATUS_PARTIAL;
-            } else {
-                report.haulStatus = BattleReportCondensed.HAUL_STATUS_FULL;
-            }
-        }
-
-        /*==== forwarded ====*/
-        report.isForwarded = !!reportIcons.find(img => img.src.includes('graphic/forwarded.png'));
-
-        /*==== subject html ====*/
-        var $subjectNode = $(reportsTable.rows[i].cells[1]).clone();
-        $subjectNode.find(`img[src*='graphic/max_loot/'], img[src*='graphic/dots/']`).remove();
-        report.subjectHTML = $subjectNode.html();
-
-        /*==== timeReceived ====*/
-        report.strTimeReceived = reportsTable.rows[i].cells[2].innerHTML;
-
-        this.reports.push(report);
-    }
+    /*==== scrape reports information ====*/    
+    let reportScraper = new BattleReportCondensedScraper(renamer);
+    this.reports = reportScraper.scrapeReports(reportsTable);
 
     /*==== remove old table ====*/
     reportsTable.parentNode.removeChild(reportsTable);

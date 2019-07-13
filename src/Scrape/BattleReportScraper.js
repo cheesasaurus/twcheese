@@ -68,7 +68,9 @@ function removeTroopsLabel(troopRow) {
     return troopRowCopy;
 }
 
-
+/**
+ * scrapes the page from game.php?screen=report&view={reportId}
+ */
 class BattleReportScraper {
 
     /**

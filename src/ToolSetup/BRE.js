@@ -696,7 +696,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
 
             /*==== full subject cell ====*/
             cell = row.insertCell(-1);
-            cell.innerHTML = report.subjectHTML;
+            cell.innerHTML = report.subject;
             if (!row.twcheeseShowDetails) {
                 cell.colSpan = 44;
             }
@@ -1786,11 +1786,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
             if (reports.length > 0)
                 setTimeout(function () { document.getElementById('twcheese_reportsFolderDisplay').massRename(reports, total) }, 1);
             else {
-                /*==== update subject html ====*/
-                for (let i = 1; i < reportsTable.rows.length; i++) {
-                    pageMod.reports[i - 1].subjectHTML = reportsTable.rows[i].cells[3].innerHTML;
-                }
-
                 document.getElementById('twcheese_reportsFolderDisplay').refreshContents();
             }
         }

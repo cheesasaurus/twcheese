@@ -46,12 +46,6 @@ class BattleReportCondensedScraper {
         report.isNew = $(row.cells[1]).text().trim().endsWith(textScraper.t('report.unread'));
         report.strTimeReceived = row.cells[2].innerHTML;
         report.haulStatus = this.determineHaulStatus(reportIcons);
-
-        /*==== subject html ====*/
-        var $subjectNode = $(row.cells[1]).clone();
-        $subjectNode.find(`img[src*='graphic/max_loot/'], img[src*='graphic/dots/']`).remove();
-        report.subjectHTML = $subjectNode.html();        
-
         return report;
     }
 

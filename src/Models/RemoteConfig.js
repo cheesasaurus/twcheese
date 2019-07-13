@@ -2,6 +2,18 @@ import { Config } from '/twcheese/src/Models/Config.js';
 import { requestXml } from '/twcheese/src/Util/Network.js';
 
 
+function parseXmlNode(node) {
+    if (node.children.length === 0) {
+        return parseFloat(node.innerHTML) || null;
+    }
+    let object = {};
+    for (let childNode of node.children) {
+        object[childNode.tagName] = parseXmlNode(childNode);
+    }
+    return object;
+}
+
+
 class RemoteConfig extends Config {
 
     /**
@@ -12,6 +24,9 @@ class RemoteConfig extends Config {
         return this;
     }
 
+    /**
+     * @param {number} seconds 
+     */
     setTtl(seconds) {
         this.ttl = seconds * 1000;
         return this;
@@ -31,12 +46,16 @@ class RemoteConfig extends Config {
 
     async update() {
         let xmlDoc = await requestXml(this.url);
-        this.processXml(xmlDoc);
+        this._processXml(xmlDoc);
         this._save();
     }
 
-    processXml(xmlDoc) {
-        throw Error('not implemented');
+    /**
+     * @protected
+     * @param {XMLDocument} xmlDoc 
+     */
+    _processXml(xmlDoc) {
+        this.props = parseXmlNode(xmlDoc).config;
     }
 
     /**
@@ -62,12 +81,10 @@ class RemoteConfig extends Config {
      * @return {object}
      */
     _getCacheableData() {
-        return {
-            props: this.props,
+        return Object.assign({}, super._getCacheableData(), {
             timeUpdated: this.timeUpdated
-        };
+        });
     }
-
 
 }
 

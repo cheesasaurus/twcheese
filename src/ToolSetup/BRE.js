@@ -654,7 +654,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
     this.populateReportsTable = function () {
         for (let report of this.reports) {
             let row = reportsTableBody.insertRow(-1);
-            row.twcheeseShowDetails = report.attacker && report.defender && report.attackerVillage && report.defenderVillage;
+            row.twcheeseShowDetails = report.attackerName && report.defender && report.attackerVillage && report.defenderVillage;
 
             /*==== basic cell ====*/
             let cell = row.insertCell(-1);
@@ -680,7 +680,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
 
             /*==== repeat attack cell ====*/
             cell = row.insertCell(-1);
-            if (report.attacker && report.attacker.name === game_data.player.name) {
+            if (report.attackerName === game_data.player.name) {
                 let url = gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportId});
                 cell.innerHTML = '<a title="repeat attack, from current village" href="' + url + '"><img src="' + ImageSrc.attack + '" /></a>';
                 if (report.attackerVillage && report.attackerVillage.id) {
@@ -711,8 +711,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
 
                 /*==== attacker cell ====*/
                 cell = row.insertCell(-1);
-                if (report.attacker) {
-                    cell.innerHTML = report.attacker.name;
+                if (report.attackerName) {
+                    cell.innerHTML = report.attackerName;
                 }
 
                 /*==== defender cell ====*/
@@ -742,7 +742,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
                 /*==== deadNoble cell ====*/
                 cell = row.insertCell(-1);
                 if (report.attackerNobleDied) {
-                    if (report.attackerVillage && report.attacker && report.attacker.name == game_data.player.name) {
+                    if (report.attackerVillage && report.attackerName === game_data.player.name) {
                         cell.innerHTML = '<a href="/game.php?village=' + report.attackerVillage.id + '&screen=snob"><img src="' + ImageSrc.troopIcon('priest') + '" style="display:block; margin-left:auto; margin-right:auto" title="An attacking nobleman died."/></a>';
                     }
                     else {
@@ -1217,7 +1217,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
             if (!twcheeseReport.defenderVillage) {
                 continue; // not enough information
             }
-            if (twcheeseReport.attacker.name !== game_data.player.name) {
+            if (twcheeseReport.attackerName !== game_data.player.name) {
                 continue; // can't repeat somebody else's attack
             }
             if (attackingVillage == 'current') {
@@ -1994,7 +1994,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
     reportsTable.selectAttacker = function (attackerName) {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
-            if (reportsTable.rows[i].twcheeseReport.attacker.name == attackerName)
+            if (reportsTable.rows[i].twcheeseReport.attackerName === attackerName)
                 document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
         }
     };

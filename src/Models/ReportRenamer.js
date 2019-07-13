@@ -79,13 +79,12 @@ class ReportRenamer {
     
             /*==== set attacker ====*/
             try {
-                report.attacker = new Player(0, 0);
                 var attackerString = reportName.split('(')[0];
-                attackerString = attackerString.substring(0, attackerString.lastIndexOf(' '));
-                report.attacker.name = attackerString;
+                report.attackerName = attackerString.substring(0, attackerString.lastIndexOf(' '));
             }
             catch (err) {
-                report.attacker = null;
+                // The player could have renamed the report to something unrecognized, or the game changed the name format.
+                // Don't whine about it.
             }
     
             if (twcheeseLabel) /* report named with twCheese format */ {

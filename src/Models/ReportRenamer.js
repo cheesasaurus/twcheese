@@ -133,22 +133,11 @@ class ReportRenamer {
             }
             else {
                 try {
-
-                    /*==== set attacker ====*/
-                    var attackerString = reportName.split('(')[0];
-                    report.attackerName = attackerString.substring(0, attackerString.lastIndexOf(' '));
-
-                    /*==== set defender village ====*/
-                    var defIndex;
-                    if (reportName.charAt(reportName.length - 1) == ')') /* report was renamed by the game based on the command name */
-                        defIndex = data.length - 2
-                    else
-                        defIndex = data.length - 1
-    
-                    data[defIndex] = data[defIndex].substring(data[defIndex].lastIndexOf('(') + 1, data[defIndex].lastIndexOf(')'));
-                    let x = data[defIndex].split(',')[0].split('|')[0];
-                    let y = data[defIndex].split(',')[0].split('|')[1];
-                    report.defenderVillage = new Village(0, x, y);
+                    // e.g. "Pazuzu (Squanch) scouts cheesasauruss village (600|410) K46 - (spy)"
+                    let expr = /(.*?) \(.+\((\d+)\|(\d+)/;
+                    let [, aName, dvX, dvY] = reportName.match(expr);
+                    report.attackerName = aName;
+                    report.defenderVillage = new Village(0, dvX, dvY);
                 }
                 catch (err) {
                     // The player could have renamed the report to something unrecognized, or the game changed the name format.

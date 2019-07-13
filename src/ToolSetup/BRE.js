@@ -227,24 +227,19 @@ function twcheese_ReportsFolderDisplaySettings() {
 /*==== page modifier functions ====*/
 
 
-/**
- * modifies report page, when viewing a single report.
- */
-class BattleReportEnhancer {
+class BattleReportTools {
 
     /**
     * @param {HTMLDocument} gameDoc the document from game.php?screen=report&mode=attack
     * @param {BattleReport} report
     * @param {ReportRenamer} renamer
     * @param {object} gameConfig
-    * @param {object} twcheese_BRESettings
     */
-    constructor(gameDoc, report, renamer, gameConfig, twcheese_BRESettings) {
+    constructor(gameDoc, report, renamer, gameConfig) {
         this.gameDoc = gameDoc;
         this.report = report;
         this.renamer = renamer;
         this.gameConfig = gameConfig;
-        this.settings = twcheese_BRESettings;
     }
 
 
@@ -253,7 +248,6 @@ class BattleReportEnhancer {
         let gameDoc = this.gameDoc;
         let report = this.report;
         let gameConfig = this.gameConfig;
-        let settings = this.settings;
         var contentValueElement = gameDoc.getElementById('content_value');
 
         function toggleCollapse() {
@@ -373,11 +367,16 @@ class BattleReportEnhancer {
             var setDefaultButton = document.createElement('button');
             setDefaultButton.innerHTML = 'Use current selection as default';
             setDefaultButton.onclick = function () {
-                settings.haulBonus = document.getElementById('twcheese_raider_haulBonus').value;
-                settings.period = gameDoc.getElementById('twcheese_period').value;
-                settings.raid = gameDoc.getElementById('twcheese_raider_selection').value;
-                twcheese_setBRESettings(settings);
-                window.UI.InfoMessage('Settings Saved', 2000, 'success');
+                let raidMode = gameDoc.getElementById('twcheese_raider_selection').value;
+                userConfig.set('ReportToolsWidget.raidMode', raidMode);
+
+                let haulBonus = gameDoc.getElementById('twcheese_raider_haulBonus').value;
+                userConfig.set('ReportToolsWidget.haulBonus', parseFloat(haulBonus));
+
+                let period = gameDoc.getElementById('twcheese_period').value;
+                userConfig.set('ReportToolsWidget.raidPeriodHours', parseFloat(period));
+
+                window.UI.SuccessMessage('Settings Saved', 2000);
             };
             raiderTable.rows[1].cells[0].appendChild(setDefaultButton);
 
@@ -463,7 +462,7 @@ class BattleReportEnhancer {
 
                 raiderScoutInput.onchange = function () {
                     _this.changeRaidMode(gameDoc.getElementById('twcheese_raider_selection').value)
-                    localStorage.setItem('twcheese_report_raiderScouts', this.value);
+                    userConfig.set('ReportToolsWidget.raidScouts', parseInt(this.value));
                 };
 
                 raiderTable.rows[2].insertCell(-1);
@@ -563,10 +562,9 @@ class BattleReportEnhancer {
         });
 
         $('#twcheese_auto_rename').on('click', function() {
-            settings.autoRename = gameDoc.getElementById('twcheese_auto_rename').checked;
-            twcheese_setBRESettings(settings)
+            userConfig.set('ReportToolsWidget.autoRename', gameDoc.getElementById('twcheese_auto_rename').checked);
         });
-        
+
     }
 
 
@@ -2359,24 +2357,6 @@ function twcheese_getServerSettings() {
 }
 
 
-function twcheese_getBRESettings() {
-    let cachedSettings = localStorage.getItem('twcheese_bresettings');
-    if (cachedSettings) {
-        return JSON.parse(cachedSettings);
-    }
-
-    return {
-        autoRename: false,
-        period: 8,
-        haulBonus: 0,
-        raid: 'scouted'
-    };
-}
-
-function twcheese_setBRESettings(breSettings) {
-    localStorage.setItem('twcheese_bresettings', JSON.stringify(breSettings));
-}
-
 /*==== main ====*/
 
 let initialized = false;
@@ -2425,8 +2405,6 @@ function initBRE() {
 
 
 function enhanceReport(gameConfig) {
-    let twcheese_BRESettings = twcheese_getBRESettings();
-
     /*==== calculate additional information ===*/
     let scraper = new BattleReportScraper(document);
     var report = scraper.scrapeReport();
@@ -2434,28 +2412,27 @@ function enhanceReport(gameConfig) {
     /*==== add stuff to the page ====*/
     enhanceBattleReport(document, report, gameConfig);
     let renamer = new ReportRenamer(gameConfig);
-    let pageMod = new BattleReportEnhancer(document, report, renamer, gameConfig, twcheese_BRESettings);
+    let pageMod = new BattleReportTools(document, report, renamer, gameConfig);
     pageMod.includeReportTools();
 
     /*==== auto rename ====*/
-    if (twcheese_BRESettings.autoRename) {
+    if (userConfig.get('ReportToolsWidget.autoRename', false)) {
         pageMod.renameReport('');
+        document.getElementById('twcheese_auto_rename').checked = true;
     }    
 
     /*==== set to user defaults ====*/
     if (report.espionageLevel >= 1) {
-        document.getElementById('twcheese_period').value = twcheese_BRESettings.period;
-        document.getElementById('twcheese_raider_haulBonus').value = twcheese_BRESettings.haulBonus;
+        document.getElementById('twcheese_period').value = userConfig.get('ReportToolsWidget.raidPeriodHours', 8);
+        document.getElementById('twcheese_raider_haulBonus').value = userConfig.get('ReportToolsWidget.haulBonus', 0);
 
         if (game_data.market != 'uk') {
-            if (localStorage.getItem('twcheese_report_raiderScouts'))
-                document.getElementById('twcheese_raider_scouts').value = localStorage.getItem('twcheese_report_raiderScouts');
+            let raiderScouts = userConfig.get('ReportToolsWidget.raidScouts', 0);
+            document.getElementById('twcheese_raider_scouts').value = raiderScouts;
         }
-
-        pageMod.changeRaidMode(twcheese_BRESettings.raid);
+        
+        pageMod.changeRaidMode(userConfig.get('ReportToolsWidget.raidMode', 'scouted'));
     }
-
-    document.getElementById('twcheese_auto_rename').checked = twcheese_BRESettings.autoRename;
 
     if (!userConfig.get('ReportToolsWidget.collapse', false)) {
         pageMod.toggleReportTools();

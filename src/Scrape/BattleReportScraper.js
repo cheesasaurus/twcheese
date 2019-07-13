@@ -43,14 +43,13 @@ function scrapeTroopCounts(troopRow) {
 
 
 /**
- * @param {HTMLAnchorElement} villageLink - a link to a village with the name and coordinates
+ * @param {HTMLAnchorElement} link - a link to a village with the name and coordinates
  * @return {Village}
  */
-function scrapeVillage(villageLink) {
-    var x = Number(villageLink.innerHTML.substring(villageLink.innerHTML.lastIndexOf('(') + 1, villageLink.innerHTML.lastIndexOf('|')));
-    var y = Number(villageLink.innerHTML.substring(villageLink.innerHTML.lastIndexOf('|') + 1, villageLink.innerHTML.lastIndexOf(')')));
-    var id = Number(villageLink.href.match(/&id=[0-9]{1,}/)[0].substring(4))
-    return new Village(id, x, y);
+function scrapeVillage(link) {
+    let [, id] = link.href.match(/&id=(\d+)/);
+    let [, x, y] = link.innerHTML.match(/\((\d+)\|(\d+)\)(?!.*\(.*?\))/);
+    return new Village(parseInt(id), parseInt(x), parseInt(y));
 }
 
 

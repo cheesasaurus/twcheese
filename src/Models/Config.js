@@ -35,7 +35,8 @@ class Config {
     }
 
     /**
-     * @private
+     * @final
+     * @protected
      */
     _save() {
         this._beforeSave();

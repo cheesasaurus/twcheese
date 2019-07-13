@@ -10,10 +10,10 @@ fetch = function() {
 
 
 /**
- *	requests the document from a url
- *	@param	{string} url the url of the page to get the document from
- *  @return {Promise}
- *	@resolve {HTMLDocment}
+ * requests the document from a url
+ * @param {string} url the url of the page to get the document from
+ * @return {Promise}
+ * @resolve {HTMLDocment}
  */
 async function requestDocument(url) {
     await throttle.sleepIfNeeded();
@@ -26,6 +26,20 @@ async function requestDocument(url) {
     });
     
     return doc;
+};
+
+
+/**
+ * requests xml document from a url
+ * @param {string} url the url of the page to get the cml document from
+ * @return {Promise}
+ * @resolve {XMLDocument}
+ */
+async function requestXml(url) {
+    await throttle.sleepIfNeeded();
+    let response = await fetch(url);
+    let responseText = await response.text();
+    return $.parseXml(responseText);
 };
 
 
@@ -63,4 +77,4 @@ function attackPrepUrl(unitCounts, targetVillageId, originVillageId = window.gam
 }
 
 
-export { requestDocument, postToGame, gameUrl, attackPrepUrl };
+export { requestDocument, requestXml, postToGame, gameUrl, attackPrepUrl };

@@ -2333,6 +2333,7 @@ function twcheese_loadReportsFolderDisplaySettings() {
     }
 }
 
+
 function twcheese_getServerSettings() {
     let cacheKey = 'twcheese_game_config_bre';
 

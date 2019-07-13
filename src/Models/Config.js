@@ -5,18 +5,7 @@ class Config {
     constructor(id) {
         this.id = id;
         this.props = {};
-        this.load();
-    }
-
-    load() {
-        let saved = localStorage.getItem(this.id);
-        if (saved) {
-            this.props = JSON.parse(saved);
-        }
-    }
-
-    save() {
-        localStorage.setItem(this.id, JSON.stringify(this.props));
+        this._loadCachedData();
     }
 
     get(prop, defaultValue) {
@@ -25,8 +14,51 @@ class Config {
 
     set(prop, value) {
         setProp(this.props, prop, value);
-        this.save();
+        this._save();
     }
+
+    /**
+     * @protected
+     * @return {object|null}
+     */
+    _loadCachedData() {
+        let saved = localStorage.getItem(this.id);
+        if (saved) {
+            let data = JSON.parse(saved);
+
+            // should ideally be data.props
+            // But for backwards compatibility, the data could be the props too.
+            this.props = data.props || data;
+            return data;
+        }
+        return null;
+    }
+
+    /**
+     * @private
+     */
+    _save() {
+        this._beforeSave();
+        localStorage.setItem(this.id, JSON.stringify(this._getCacheableData()));
+    }
+
+    /**
+     * @protected
+     */
+    _beforeSave() {
+        
+    }
+
+    /**
+     * @protected
+     * @return {object}
+     */
+    _getCacheableData() {
+        return {
+            props: this.props
+        };
+    }
+
 }
 
 export { Config };

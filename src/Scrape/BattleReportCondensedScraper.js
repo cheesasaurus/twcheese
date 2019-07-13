@@ -45,6 +45,7 @@ class BattleReportCondensedScraper {
         report.isForwarded = !!reportIcons.find(img => img.src.includes('graphic/forwarded.png'));
         report.isNew = $(row.cells[1]).text().trim().endsWith(textScraper.t('report.unread'));
         report.strTimeReceived = row.cells[2].innerHTML;
+        report.haulStatus = this.determineHaulStatus(reportIcons);
 
         /*==== defender distance from current village ====*/
         if (report.defenderVillage)
@@ -58,19 +59,6 @@ class BattleReportCondensedScraper {
 
         else
             report.defenderDistance = '?';
-                    
-
-        /*==== partial hauls ====*/
-
-        // note: non-premium users don't get an icon showing partial/full haul
-        let lootImg = reportIcons.find(img => img.src.includes('graphic/max_loot/'));
-        if (lootImg) {
-            if (lootImg.src.includes('max_loot/0.png')) {
-                report.haulStatus = BattleReportCondensed.HAUL_STATUS_PARTIAL;
-            } else {
-                report.haulStatus = BattleReportCondensed.HAUL_STATUS_FULL;
-            }
-        }
 
         /*==== subject html ====*/
         var $subjectNode = $(row.cells[1]).clone();
@@ -78,6 +66,23 @@ class BattleReportCondensedScraper {
         report.subjectHTML = $subjectNode.html();        
 
         return report;
+    }
+
+    /**
+     * @param {HTMLImageElement[]} reportIcons
+     * @return int
+     */
+    determineHaulStatus(reportIcons) {
+        let lootImg = reportIcons.find(img => img.src.includes('graphic/max_loot/'));
+        if (!lootImg) {
+            // Note: non-premium users don't get an icon showing partial/full haul.
+            // Scout reports don't have this icon either.
+            return BattleReportCondensed.HAUL_STATUS_UNKNOWN
+        }
+        if (lootImg.src.includes('max_loot/0.png')) {
+            return BattleReportCondensed.HAUL_STATUS_PARTIAL;
+        }
+        return BattleReportCondensed.HAUL_STATUS_FULL;        
     }
 
 }

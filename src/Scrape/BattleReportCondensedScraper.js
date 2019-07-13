@@ -35,10 +35,12 @@ class BattleReportCondensedScraper {
      * @return {BattleReportCondensed}
      */
     scrapeReport(row) {
-        var report = this.reportRenamer.parseName(row.cells[1].getElementsByTagName('a')[0].getElementsByTagName('span')[0].innerHTML);
-        report.reportId = this.scrapeReportId(row.cells[1].getElementsByTagName('a')[0]);
-        var reportIcons = [...row.cells[1].getElementsByTagName('img')];
+        let reportLink = row.cells[1].getElementsByTagName('a')[0];
+        let reportName = reportLink.getElementsByTagName('span')[0].innerHTML;
+        let reportIcons = [...row.cells[1].getElementsByTagName('img')];
 
+        let report = this.reportRenamer.parseName(reportName);
+        report.reportId = reportLink.href.match(/view=(\d+)/)[1];
         report.dotColor = reportIcons.find(img => img.src.includes('graphic/dots/')).src.match(/dots\/(.+).png/)[1];
         report.isForwarded = !!reportIcons.find(img => img.src.includes('graphic/forwarded.png'));
         report.isNew = $(row.cells[1]).text().trim().endsWith(textScraper.t('report.unread'));
@@ -77,16 +79,6 @@ class BattleReportCondensedScraper {
 
         return report;
     }
-
-    /**
-     *	@param	link:HTMLAnchor	a link to a report
-     *	@return	reportId:Number the reportId of the linked report
-     */
-    scrapeReportId(link) {
-        var address = link.href;
-        return new Number(address.substring(address.indexOf('view=') + 5).match('[0-9]{1,}'));
-    }
-
 
 }
 

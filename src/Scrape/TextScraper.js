@@ -1,3 +1,5 @@
+import { getProp } from '/twcheese/src/Util/Object.js';
+
 var language = { "buildings": {}, "report": {}, "twcheese": {} };
 switch (game_data.market) {
     default:
@@ -221,8 +223,7 @@ class TextScraper {
     }
 
     t(textId) {
-        // todo: not eval. there's something similar in src/Models/Config.js that could be extracted and used here
-        return eval(`this.gameTexts.${textId}`);
+        return getProp(this.gameTexts, textId);
     }
 
     /**

@@ -63,78 +63,101 @@ class ReportRenamer {
      * @return {BattleReportCondensed}
      */
     parseName(reportName) {
-        var report = new BattleReportCondensed();    
         reportName = reportName.trim();
-        report.subject = reportName;
     
-        if (reportName.startsWith('twCheese:')) /* report named with twCheese format */ {
-
+        if (reportName.startsWith('twCheese:')) {
             try {
-                // e.g. "twCheese: Pazuzu (598|419,17068)cheesasaurus(600|410,20373)"
-                let expr = /twCheese: (.*?) \((\d+)\|(\d+),(\d+)\)(.*?)\((\d+)\|(\d+),(\d+)\)/
-                let [, aName, avX, avY, avId, dName, dvX, dvY, dvId] = reportName.match(expr);
-                report.attackerName = aName;
-                report.attackerVillage = new Village(avId, avX, avY);
-                report.defenderName = dName;
-                report.defenderVillage = new Village(dvId, dvX, dvY);
-
-                // set note, and remove from reportName
-                if (reportName.includes('_n:')) {
-                    report.note = reportName.match(/_n:(.+)/)[1];
-                    reportName = reportName.replace(/_n:.+/, '');
-                }
-
-                // set buildingLevels
-                let matches = reportName.match(/_b(\[\S+\])/);
-                if (matches) {
-                    report.buildingLevels = BuildingLevels.fromArray(JSON.parse(matches[1]));
-                }
-
-                // set resources
-                matches = reportName.match(/_r(\[\S+\])/);
-                if (matches) {
-                    let r = JSON.parse(matches[1]);
-                    report.resources = new Resources(r[0], r[1], r[2]);
-                }
-
-                // set defenderSurvivors
-                matches = reportName.match(/_d(\[\S+\])/);
-                if (matches) {
-                    report.defenderSurvivors = TroopCounts.fromArray(JSON.parse(matches[1]));
-                }
-
-                // set loyalty
-                matches = reportName.match(/_l:(\d+)/);
-                if (matches) {
-                    report.loyalty = { after: parseInt(matches[1]) };
-                }
-
-                // set timeLaunched
-                matches = reportName.match(/_t:(\d+)/);
-                if (matches) {
-                    report.timeLaunched = TwCheeseDate.newServerDate(parseInt(matches[1]) * 1000);
-                }
-
-                report.attackerNobleDied = reportName.includes('_x');
-                report.wasAttackFeint = reportName.includes('_f');
+                return this.parseTwCheeseName(reportName);
             }
             catch (err) {
-                console.warn('swallowed', err);
+                console.error('parseTwCheeseName failed:', reportName, err);
             }
         }
         else {
             try {
-                // e.g. "Pazuzu (Squanch) scouts cheesasauruss village (600|410) K46 - (spy)"
-                let expr = /(.*?) \(.+\((\d+)\|(\d+)/;
-                let [, aName, dvX, dvY] = reportName.match(expr);
-                report.attackerName = aName;
-                report.defenderVillage = new Village(0, dvX, dvY);
+                return this.parseDefaultName(reportName);
             }
             catch (err) {
                 // The player could have renamed the report to something unrecognized, or the game changed the name format.
-                // Don't whine about it.
+                console.info('parseDefaultName failed:', reportName);
             }
         }
+        let fallbackReport = new BattleReportCondensed();        
+        fallbackReport.subject = reportName;
+        return fallbackReport;        
+    }
+
+    /**
+     * @param {string} reportName 
+     * @return {BattleReportCondensed}
+     */
+    parseDefaultName(reportName) {
+        let report = new BattleReportCondensed();
+        report.subject = reportName;
+
+        // e.g. "Pazuzu (Squanch) scouts cheesasauruss village (600|410) K46 - (spy)"
+        let expr = /(.*?) \(.+\((\d+)\|(\d+)/;
+        let [, aName, dvX, dvY] = reportName.match(expr);
+        report.attackerName = aName;
+        report.defenderVillage = new Village(0, dvX, dvY);
+        return report;
+    }
+
+    /**
+     * @param {string} reportName 
+     * @return {BattleReportCondensed}
+     */
+    parseTwCheeseName(reportName) {
+        let report = new BattleReportCondensed();
+        report.subject = reportName;
+
+        // e.g. "twCheese: Pazuzu (598|419,17068)cheesasaurus(600|410,20373)"
+        let expr = /twCheese: (.*?) \((\d+)\|(\d+),(\d+)\)(.*?)\((\d+)\|(\d+),(\d+)\)/
+        let [, aName, avX, avY, avId, dName, dvX, dvY, dvId] = reportName.match(expr);
+        report.attackerName = aName;
+        report.attackerVillage = new Village(avId, avX, avY);
+        report.defenderName = dName;
+        report.defenderVillage = new Village(dvId, dvX, dvY);
+
+        // set note, and remove from reportName
+        if (reportName.includes('_n:')) {
+            report.note = reportName.match(/_n:(.+)/)[1];
+            reportName = reportName.replace(/_n:.+/, '');
+        }
+
+        // set buildingLevels
+        let matches = reportName.match(/_b(\[\S+\])/);
+        if (matches) {
+            report.buildingLevels = BuildingLevels.fromArray(JSON.parse(matches[1]));
+        }
+
+        // set resources
+        matches = reportName.match(/_r(\[\S+\])/);
+        if (matches) {
+            let r = JSON.parse(matches[1]);
+            report.resources = new Resources(r[0], r[1], r[2]);
+        }
+
+        // set defenderSurvivors
+        matches = reportName.match(/_d(\[\S+\])/);
+        if (matches) {
+            report.defenderSurvivors = TroopCounts.fromArray(JSON.parse(matches[1]));
+        }
+
+        // set loyalty
+        matches = reportName.match(/_l:(\d+)/);
+        if (matches) {
+            report.loyalty = { after: parseInt(matches[1]) };
+        }
+
+        // set timeLaunched
+        matches = reportName.match(/_t:(\d+)/);
+        if (matches) {
+            report.timeLaunched = TwCheeseDate.newServerDate(parseInt(matches[1]) * 1000);
+        }
+
+        report.attackerNobleDied = reportName.includes('_x');
+        report.wasAttackFeint = reportName.includes('_f');
         return report;
     }
 

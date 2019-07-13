@@ -77,39 +77,16 @@ class ReportRenamer {
             }
     
             if (twcheeseLabel) /* report named with twCheese format */ {
-                /*==== set attacker ====*/
-                var attackerString = reportName.split('(')[0];
-                report.attackerName = attackerString.substring(0, attackerString.lastIndexOf(' '));
-
-                /*==== set defender ====*/
-                let text = reportName.substring(reportName.indexOf(')') + 1);
-                report.defenderName = text.substring(0, text.indexOf('('));
-
-                /*==== set attacker village ====*/
-                try {
-                    data[0] = data[0].substring(data[0].lastIndexOf('(') + 1, data[0].lastIndexOf(')'));
-                    let x = data[0].split(',')[0].split('|')[0];
-                    let y = data[0].split(',')[0].split('|')[1];
-                    let id = data[0].split(',')[1];
-                    report.attackerVillage = new Village(id, x, y);
-                }
-                catch (err) {
-                    console.warn('swallowed:', err);
-                }
-    
-                /*==== set defender village ====*/
-                try {
-                    data[1] = data[1].substring(data[1].lastIndexOf('(') + 1, data[1].lastIndexOf(')'));
-                    let x = data[1].split(',')[0].split('|')[0];
-                    let y = data[1].split(',')[0].split('|')[1];
-                    let id = data[1].split(',')[1];
-                    report.defenderVillage = new Village(id, x, y);
-                }
-                catch (err) {
-                    console.warn('swallowed:', err);
-                }
     
                 try {
+                    // e.g. "Pazuzu (598|419,17068)cheesasaurus(600|410,20373)"
+                    let expr = /(.*?) \((\d+)\|(\d+),(\d+)\)(.*?)\((\d+)\|(\d+),(\d+)\)/
+                    let [, aName, avX, avY, avId, dName, dvX, dvY, dvId] = reportName.match(expr);
+                    report.attackerName = aName;
+                    report.attackerVillage = new Village(avId, avX, avY);
+                    report.defenderName = dName;
+                    report.defenderVillage = new Village(dvId, dvX, dvY);
+
                     // set note, and remove from reportName
                     if (reportName.includes('_n:')) {
                         report.note = reportName.match(/_n:(.+)/)[1];

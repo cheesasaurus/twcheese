@@ -36,7 +36,7 @@ class ReportRaiderWidget extends AbstractWidget {
         this.$periodContainer = this.$el.find('#twcheese_periodic_options');
         this.$scouts = this.$el.find('#twcheese_raider_scouts');
         this.$scoutsContainer = this.$el.find('#twcheese_raider_scout');
-        this.$buttonSetDefault = $('.twcheese-button-set-default');
+        this.$buttonSetDefault = this.$el.find('.twcheese-button-set-default');
         this.raiderUnitsTable = this.$el.find('#twcheese_raider_units')[0]; // todo
         this.$raiderLinks = $(this.raiderUnitsTable.rows[0]).find('a');
     }

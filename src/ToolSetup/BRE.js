@@ -248,7 +248,6 @@ class BattleReportTools {
 
 
     includeReportTools() {
-        let _this = this;
         let gameDoc = this.gameDoc;
         let report = this.report;
         var contentValueElement = gameDoc.getElementById('content_value');
@@ -367,14 +366,6 @@ class BattleReportTools {
 
             return demolitionHtml.trim();
         }
-    }
-
-
-    /**
-     * @param {string} note
-     */
-    async renameReport(note) {
-        this.renamerWidget.renameReport(note);
     }
 
 }
@@ -2110,25 +2101,28 @@ function initBRE() {
 
 
 function enhanceReport() {
-    /*==== calculate additional information ===*/
     let scraper = new BattleReportScraper(document);
-    var report = scraper.scrapeReport();
+    let report = scraper.scrapeReport();
 
-    /*==== add stuff to the page ====*/
-    enhanceBattleReport(document, report);
     let renamer = new ReportRenamer();
+
+    $(renamer).on('report-renamed', function(e) {
+        $('.quickedit[data-id="' + e.reportId + '"]')
+            .find('.quickedit-label')
+            .html(e.newName);
+    });
+
+    if (userConfig.get('BattleReportEnhancer.autoRename', false)) {
+        renamer.rename(report, '');
+    }
+
+    enhanceBattleReport(document, report);
     let pageMod = new BattleReportTools(document, report, renamer);
     pageMod.includeReportTools();
-
-    /*==== auto rename ====*/
-    if (userConfig.get('ReportRenamerWidget.autoRename', false)) {
-        pageMod.renameReport('');
-    }
 
     if (!userConfig.get('ReportToolsWidget.collapse', false)) {
         pageMod.toggleReportTools();
     }
-        
 }
 
 

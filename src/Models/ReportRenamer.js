@@ -18,6 +18,13 @@ class ReportRenamer {
     async rename(report, note) {
         let newName = this.createName(report, note);
         await postToGame('report', { ajaxaction: 'edit_subject', report_id: report.reportId }, { text: newName });
+
+        $(this).trigger({
+            type: 'report-renamed',
+            reportId: report.reportId,
+            newName
+        });
+
         return newName;
     }
 

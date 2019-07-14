@@ -56,28 +56,17 @@ class ReportRenamerWidget extends AbstractWidget {
         });
 
         this.$renameButton.on('click', () => {
-            this.renameReport(this.$note.val());
+            this.renamer.rename(this.report, this.$note.val());
         });
 
         this.$autoRename.on('click', function() {
-            userConfig.set('ReportRenamerWidget.autoRename', this.checked);
+            userConfig.set('BattleReportEnhancer.autoRename', this.checked);
         });
     }
 
     applyUserConfig() {
-        let autoRename = userConfig.get('ReportRenamerWidget.autoRename', false);
+        let autoRename = userConfig.get('BattleReportEnhancer.autoRename', false);
         this.$autoRename.prop('checked', autoRename);
-    }
-
-    /**
-     * @param {string} note
-     */
-    async renameReport(note) {
-        let report = this.report;
-        let name = await this.renamer.rename(report, note);
-
-        $('.quickedit[data-id="' + report.reportId + '"]')
-            .find('.quickedit-label').html(name);
     }
 
 }

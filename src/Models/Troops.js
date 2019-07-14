@@ -50,12 +50,12 @@ class TroopCounts {
         return troopTypes.reduce((sum, type) => sum + troopPop(type) * this[type], 0);
     }
 
-    travelDuration(distance, role = 'attack', worldSpeed = 1, unitSpeed = 1) {
-        let minutesPerField = this.travelMinutesPerField(role, worldSpeed, unitSpeed);
+    travelDuration(distance, role = 'attack') {
+        let minutesPerField = this.travelMinutesPerField(role);
         return calcTravelDuration(minutesPerField, distance);
     }
 
-    travelMinutesPerField(role = 'attack', worldSpeed = 1, unitSpeed = 1) {
+    travelMinutesPerField(role = 'attack') {
         if (role === 'support' && this.knight > 0) {
             return travelMinutes('knight');
         }
@@ -95,11 +95,9 @@ class TroopCounts {
 
 /**
  *	@param {number} distance
- *	@param {number} worldSpeed
- *	@param {number} unitSpeed
  *	@return	{{spear:number, sword:number, ...}} milliseconds
  */
-function calcTravelDurations(distance, worldSpeed, unitSpeed) {
+function calcTravelDurations(distance) {
     let travelTimes = {};
     for (let type of troopTypes) {
         travelTimes[type] = calcTravelDuration(travelMinutes(type), distance);
@@ -135,13 +133,11 @@ let TroopCalculator = {
     },
 
     /**
-     * @param {string} troopType 
-     * @param {number} distance 
-     * @param {number} worldSpeed 
-     * @param {number} unitSpeed 
+     * @param {string} troopType
+     * @param {number} distance
      * @return {number} milliseconds to travel
      */
-    travelDuration(troopType, distance, worldSpeed = 1, unitSpeed = 1) {
+    travelDuration(troopType, distance) {
         return calcTravelDuration(travelMinutes(troopType), distance);
     }
 

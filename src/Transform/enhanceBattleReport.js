@@ -82,7 +82,7 @@ function enhanceBattleReport(gameDoc, report, gameConfig) {
     /*==== loyalty ====*/
     if (report.loyalty) {
         let now = TwCheeseDate.newServerDate();
-        let loyaltyExtra = calcLoyalty(gameConfig.get('speed'), gameConfig.get('unit_speed'), report.loyalty.after, report.battleTime, now, game_data.village, report.defenderVillage);
+        let loyaltyExtra = calcLoyalty(gameConfig.get('speed'), report.loyalty.after, report.battleTime, now, game_data.village, report.defenderVillage);
 
         var resultsHeaders = gameDoc.getElementById('attack_results').getElementsByTagName('th');
         var loyaltyRow = textScraper.first(resultsHeaders, 'report.loyalty').parentNode;
@@ -114,7 +114,7 @@ function enhanceBattleReport(gameDoc, report, gameConfig) {
     }
 
     /*==== timing info ====*/
-    let timingInfo = report.calcTimingInfo(gameConfig.get('speed'), gameConfig.get('unit_speed'));
+    let timingInfo = report.calcTimingInfo();
 
     if (!reportTable.rows) //6.5 graphics
         reportTable = reportTable.getElementsByTagName('table')[1];

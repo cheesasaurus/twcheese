@@ -31,13 +31,11 @@ class BattleReport {
     }
 
     /**
-     * @param {number} worldSpeed
-     * @param {number} unitSpeed
      * @return {{launchTime:TwCheeseDate, returnTime:TwCheeseDate}}
      */
-    calcTimingInfo(worldSpeed, unitSpeed) {
+    calcTimingInfo() {
         let distance = this.attackerVillage.distanceTo(this.defenderVillage);
-        let travelDuration = this.attackerQuantity.travelDuration(distance, 'attack', worldSpeed, unitSpeed);
+        let travelDuration = this.attackerQuantity.travelDuration(distance, 'attack');
         return {
             launchTime: this.battleTime.subMilliseconds(travelDuration),
             returnTime: this.battleTime.addMilliseconds(travelDuration).startOfSecond()
@@ -80,7 +78,7 @@ class BattleReport {
      * @param {number} haulBonus the extra % bonus haul from flags, events, etc. Example: 30 for 30%, NOT 0.3
      * @return {TroopCounts} how many of each type of troop should be sent to take all resources, provided only one type of troop is sent
      */
-    calcRaidPredicted(home, timeNow, gameSpeed, unitSpeed, haulBonus = 0) {
+    calcRaidPredicted(home, timeNow, gameSpeed, haulBonus = 0) {
         if (this.espionageLevel < 2) {
             throw Error('not enough information');
         }
@@ -94,7 +92,7 @@ class BattleReport {
 
         let troopCounts = new TroopCounts();
         for (let troopType of troopTypes) {
-            let travelDuration = TroopCalculator.travelDuration(troopType, distance, gameSpeed, unitSpeed);
+            let travelDuration = TroopCalculator.travelDuration(troopType, distance);
             let travelHours = travelDuration / 3600;
             let resourcesProducedDuringTravel = hourlyProduction.multiply(travelHours);
             let resourcesAtArrival = resourcesNow.add(resourcesProducedDuringTravel).cap(maxLoot);

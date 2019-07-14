@@ -413,7 +413,7 @@ class BattleReportTools {
             raiderUnitsTable.insertRow(-1);
             raiderUnitsTable.rows[2].className = 'center';
 
-            var travelTimes = calcTravelDurations(report.attackerVillage.distanceTo(report.defenderVillage), gameConfig.get('speed'), gameConfig.get('unit_speed'));
+            var travelTimes = calcTravelDurations(report.attackerVillage.distanceTo(report.defenderVillage));
 
             for (let i = 0; i < 7; i++) {
                 raiderUnitsTable.rows[2].insertCell(-1);
@@ -599,7 +599,7 @@ class BattleReportTools {
         }
         else if (mode == 'predicted') {
             gameDoc.getElementById('twcheese_raider_selection').value = 'predicted';
-            let raiders = report.calcRaidPredicted(window.game_data.village, TwCheeseDate.newServerDate(), gameConfig.get('speed'), gameConfig.get('unit_speed'), haulBonus);
+            let raiders = report.calcRaidPredicted(window.game_data.village, TwCheeseDate.newServerDate(), gameConfig.get('speed'), haulBonus);
             this.setRaiders(raiders);
             gameDoc.getElementById('twcheese_periodic_options').style.display = 'none';
         }
@@ -2378,7 +2378,7 @@ function enhanceReport() {
 
     /*==== add stuff to the page ====*/
     enhanceBattleReport(document, report, gameConfig);
-    let renamer = new ReportRenamer(gameConfig);
+    let renamer = new ReportRenamer();
     let pageMod = new BattleReportTools(document, report, renamer, gameConfig);
     pageMod.includeReportTools();
 
@@ -2411,7 +2411,7 @@ function enhanceReport() {
 function enhanceReportsFolder() {
     let twcheese_reportsFolderDisplaySettings = twcheese_loadReportsFolderDisplaySettings();
     twcheese_saveReportsFolderDisplaySettings(twcheese_reportsFolderDisplaySettings);
-    let renamer = new ReportRenamer(gameConfig);
+    let renamer = new ReportRenamer();
     let pageMod = new twcheese_BattleReportsFolderEnhancer(document, renamer, twcheese_reportsFolderDisplaySettings, gameConfig);
     pageMod.applySettings(twcheese_reportsFolderDisplaySettings);
 }

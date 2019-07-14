@@ -9,7 +9,7 @@
     "gulp": "^4.0.2",
     "gulp-cli": "^2.2.0",
     "gulp-concat": "^2.6.1",
-    "gulp-header": "^2.0.7",
+    "gulp-header": "^2.0.9",
     "gulp-hub": "^4.2.0",
     "gulp-jsbeautifier": "^3.0.0",
     "gulp-rename": "^1.4.0",
@@ -19,7 +19,7 @@
     "jsdom": "^15.1.1",
     "mocha": "^6.1.4",
     "plugin-error": "^1.0.1",
-    "webpack": "^4.34.0",
+    "webpack": "^4.35.3",
     "yaml": "^1.6.0"
   },
   "devDependencies": {

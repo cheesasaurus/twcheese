@@ -1,5 +1,6 @@
 import { TroopCounts, TroopCalculator, troopTypes } from '/twcheese/src/Models/Troops.js';
 import { DemolitionCalculator } from '/twcheese/src/Models/DemolitionCalculator.js';
+import { gameConfig } from '/twcheese/src/Util/GameConfig.js';
 
 
 class BattleReport {
@@ -78,13 +79,13 @@ class BattleReport {
      * @param {number} haulBonus the extra % bonus haul from flags, events, etc. Example: 30 for 30%, NOT 0.3
      * @return {TroopCounts} how many of each type of troop should be sent to take all resources, provided only one type of troop is sent
      */
-    calcRaidPredicted(home, timeNow, gameSpeed, haulBonus = 0) {
+    calcRaidPredicted(home, timeNow, haulBonus = 0) {
         if (this.espionageLevel < 2) {
             throw Error('not enough information');
         }
         let distance = this.defenderVillage.distanceTo(home);
         let maxLoot = this.buildingLevels.resourceCap() - this.buildingLevels.hideableResources();
-        let hourlyProduction = this.buildingLevels.resourceProductionHourly(gameSpeed);
+        let hourlyProduction = this.buildingLevels.resourceProductionHourly(gameConfig.get('speed'));
 
         let hoursSinceReport = (timeNow - this.battleTime) / 3600000;
         let resourcesProducedSinceReport = hourlyProduction.multiply(hoursSinceReport);
@@ -103,12 +104,11 @@ class BattleReport {
 
     /**
      * @param {number} periodHours the number of hours that resources have been accumulating
-     * @param {number} gameSpeed
      * @param {number} haulBonus the extra % bonus haul from flags, events, etc. Example: 30 for 30%, NOT 0.3
      * @return {TroopCounts} how many of each type of troop should be sent to take all resources, provided only one type of troop is sent
      */
-    calcRaidPeriodic(periodHours, gameSpeed, haulBonus = 0) {
-        let resourcesProduced = this.buildingLevels.resourceProductionHourly(gameSpeed).multiply(periodHours);
+    calcRaidPeriodic(periodHours, haulBonus = 0) {
+        let resourcesProduced = this.buildingLevels.resourceProductionHourly(gameConfig.get('speed').multiply(periodHours));
         let maxLoot = this.buildingLevels.resourceCap() - this.buildingLevels.hideableResources();
         let totalResources = resourcesProduced.cap(maxLoot).sum();
         return this.calcRaidUnits(totalResources, haulBonus);

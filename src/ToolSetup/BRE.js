@@ -358,7 +358,7 @@ class BattleReportTools {
             periodInput.value = 8;
             periodInput.addEventListener('input', function() {
                 let haulBonus = Number(document.getElementById('twcheese_raider_haulBonus').value);
-                let raiders = report.calcRaidPeriodic(Number(this.value), gameConfig.get('speed'), haulBonus);
+                let raiders = report.calcRaidPeriodic(Number(this.value), haulBonus);
                 _this.setRaiders(raiders);
             });
             periodicDiv.appendChild(periodInput);
@@ -591,13 +591,13 @@ class BattleReportTools {
         }
         else if (mode == 'predicted') {
             gameDoc.getElementById('twcheese_raider_selection').value = 'predicted';
-            let raiders = report.calcRaidPredicted(window.game_data.village, TwCheeseDate.newServerDate(), gameConfig.get('speed'), haulBonus);
+            let raiders = report.calcRaidPredicted(window.game_data.village, TwCheeseDate.newServerDate(), haulBonus);
             this.setRaiders(raiders);
             gameDoc.getElementById('twcheese_periodic_options').style.display = 'none';
         }
         else if (mode == 'periodic') {
             gameDoc.getElementById('twcheese_raider_selection').value = 'periodic';
-            let raiders = report.calcRaidPeriodic(Number(gameDoc.getElementById('twcheese_period').value), gameConfig.get('speed'), haulBonus);
+            let raiders = report.calcRaidPeriodic(Number(gameDoc.getElementById('twcheese_period').value), haulBonus);
             this.setRaiders(raiders);
             gameDoc.getElementById('twcheese_periodic_options').style.display = '';
         }

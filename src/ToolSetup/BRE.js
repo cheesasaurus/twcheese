@@ -2371,7 +2371,7 @@ function enhanceReport() {
     var report = scraper.scrapeReport();
 
     /*==== add stuff to the page ====*/
-    enhanceBattleReport(document, report, gameConfig);
+    enhanceBattleReport(document, report);
     let renamer = new ReportRenamer();
     let pageMod = new BattleReportTools(document, report, renamer, gameConfig);
     pageMod.includeReportTools();

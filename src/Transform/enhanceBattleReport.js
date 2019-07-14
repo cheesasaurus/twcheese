@@ -3,13 +3,13 @@ import { calcLoyalty } from '/twcheese/src/Models/Loyalty.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { escapeHtml } from '/twcheese/src/Util/UI.js';
 import { gameUrl } from '/twcheese/src/Util/Network.js';
+import { gameConfig } from '/twcheese/src/Util/GameConfig.js';
 
 /**
  * @param {HTMLDocument} gameDoc 
  * @param {BattleReport} report
- * @param {Config} gameConfig
  */
-function enhanceBattleReport(gameDoc, report, gameConfig) {
+function enhanceBattleReport(gameDoc, report) {
 
     var reportTable = gameDoc.getElementById('attack_luck').parentNode.parentNode.parentNode.parentNode.parentNode.parentNode;
 

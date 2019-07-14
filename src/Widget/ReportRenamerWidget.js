@@ -50,7 +50,7 @@ class ReportRenamerWidget extends AbstractWidget {
         let renamer = this.renamer;
 
         this.$note.on('input', () => {
-            let name = renamer.createName(report, this.$note.val());
+            let name = renamer.createName(this.report, this.$note.val());
             this.$namePreview.text(name);
             this.$availableChars.text(renamer.availableChars(name));
         });

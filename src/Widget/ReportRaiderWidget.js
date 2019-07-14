@@ -181,35 +181,35 @@ class ReportRaiderWidget extends AbstractWidget {
 
         this.$scouts.on('input', () => {
             let scouts = parseInt(this.$scouts.val());
-            userConfig.set('ReportToolsWidget.raidScouts', scouts);
+            userConfig.set('ReportRaiderWidget.raidScouts', scouts);
             this.changeRaidMode(this.$raidMode.val());  // relying on side effect: recalcs + updates raiders displayed
         });
 
         this.$buttonSetDefault.on('click', () => {
             let raidMode = this.$raidMode.val();
-            userConfig.set('ReportToolsWidget.raidMode', raidMode); // todo: change config name from ReportToolsWidget to ReportRaiderWidget
+            userConfig.set('ReportRaiderWidget.raidMode', raidMode);
 
             let haulBonus = parseFloat(this.$haulBonus.val());
-            userConfig.set('ReportToolsWidget.haulBonus', parseFloat(haulBonus));
+            userConfig.set('ReportRaiderWidget.haulBonus', parseFloat(haulBonus));
 
             let period = parseFloat(this.$period.val());
-            userConfig.set('ReportToolsWidget.raidPeriodHours', parseFloat(period));
+            userConfig.set('ReportRaiderWidget.raidPeriodHours', parseFloat(period));
 
             window.UI.SuccessMessage('Settings Saved', 2000);
         });
     }
 
     applyUserConfig() {
-        let haulBonus = userConfig.get('ReportToolsWidget.haulBonus', 0);
+        let haulBonus = userConfig.get('ReportRaiderWidget.haulBonus', 0);
         this.$haulBonus.val(haulBonus);
 
-        let period = userConfig.get('ReportToolsWidget.raidPeriodHours', 8);
+        let period = userConfig.get('ReportRaiderWidget.raidPeriodHours', 8);
         this.$period.val(period);        
 
-        let scouts = userConfig.get('ReportToolsWidget.raidScouts', 0);
+        let scouts = userConfig.get('ReportRaiderWidget.raidScouts', 0);
         this.$scouts.val(scouts);
         
-        let raidMode = userConfig.get('ReportToolsWidget.raidMode', 'scouted');
+        let raidMode = userConfig.get('ReportRaiderWidget.raidMode', 'scouted');
         this.changeRaidMode(raidMode);
     }
 

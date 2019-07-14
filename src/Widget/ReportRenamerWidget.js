@@ -59,7 +59,7 @@ class ReportRenamerWidget extends AbstractWidget {
         });
 
         this.$autoRename.on('click', function() {
-            userConfig.set('ReportToolsWidget.autoRename', this.checked);
+            userConfig.set('ReportRenamerWidget.autoRename', this.checked);
         });
     }
 

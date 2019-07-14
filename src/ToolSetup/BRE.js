@@ -2122,7 +2122,7 @@ function enhanceReport() {
     pageMod.includeReportTools();
 
     /*==== auto rename ====*/
-    if (userConfig.get('ReportToolsWidget.autoRename', false)) {
+    if (userConfig.get('ReportRenamerWidget.autoRename', false)) {
         pageMod.renameReport('');
         document.getElementById('twcheese_auto_rename').checked = true;
     }

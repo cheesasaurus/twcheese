@@ -131,21 +131,14 @@ class ReportRaiderWidget extends AbstractWidget {
         });
 
         this.$scouts.on('input', () => {
-            let scouts = parseInt(this.$scouts.val()) || 0;
-            userConfig.set('ReportRaiderWidget.raidScouts', scouts);
+            userConfig.set('ReportRaiderWidget.raidScouts', this.getScouts());
             this.updateRaiders();
         });
 
         this.$buttonSetDefault.on('click', () => {
-            let raidMode = this.$raidMode.val();
-            userConfig.set('ReportRaiderWidget.raidMode', raidMode);
-
-            let haulBonus = parseFloat(this.$haulBonus.val());
-            userConfig.set('ReportRaiderWidget.haulBonus', parseFloat(haulBonus));
-
-            let period = parseFloat(this.$period.val());
-            userConfig.set('ReportRaiderWidget.raidPeriodHours', parseFloat(period));
-
+            userConfig.set('ReportRaiderWidget.raidMode', this.getRaidMode());
+            userConfig.set('ReportRaiderWidget.haulBonus', this.getHaulBonus());
+            userConfig.set('ReportRaiderWidget.raidPeriodHours', this.getPeriod());
             window.UI.SuccessMessage('Settings Saved', 2000);
         });
     }
@@ -167,9 +160,9 @@ class ReportRaiderWidget extends AbstractWidget {
     }
 
     updateRaiders() {
-        let mode = this.$raidMode.val();
-        let haulBonus = parseFloat(this.$haulBonus.val()) || 0;
-        let period = parseFloat(this.$period.val()) || 0;
+        let mode = this.getRaidMode();
+        let haulBonus = this.getHaulBonus();
+        let period = this.getPeriod();
         let report = this.report;
 
         if (mode === 'scouted') {            
@@ -193,7 +186,7 @@ class ReportRaiderWidget extends AbstractWidget {
      * @param {TroopCounts} troopCounts
      */
     setRaiders(troopCounts) {
-        let spyCount = parseInt(this.$scouts.val());
+        let spyCount = this.getScouts();
         let attackUrl = (troopType, count) => {
             return attackPrepUrl({spy: spyCount, [troopType]: count}, this.report.defenderVillage.id);
         }
@@ -207,6 +200,22 @@ class ReportRaiderWidget extends AbstractWidget {
             let url = attackUrl(troopType, Math.round(troopCount));
             this.$raiderLinks.eq(i).attr('href', url);
         }
+    }
+
+    getRaidMode() {
+        return this.$raidMode.val();
+    }
+
+    getHaulBonus() {
+        return parseFloat(this.$haulBonus.val()) || 0;
+    }
+
+    getPeriod() {
+        return parseFloat(this.$period.val()) || 0;
+    }
+
+    getScouts() {
+        return parseFloat(this.$scouts.val()) || 0;
     }
 
 }

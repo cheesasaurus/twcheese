@@ -1,9 +1,9 @@
 import { Resources } from '/twcheese/src/Models/Resources.js';
 import { gameConfig } from '/twcheese/src/Util/GameConfig.js';
+import { buildingConfig } from '/twcheese/src/Util/BuildingConfig.js';
 
+ // todo: request devs make additional info available via interface.php, so this won't be necessary
 import { cfg } from '/twcheese/conf/Buildings.js';
-// todo: model a single Building
-// todo: hotswap configs (e.g. after loading from interface.php?func=get_building_info)
 
 /**
  * Building		Index
@@ -48,12 +48,40 @@ let buildingTypes = [
     'watchtower'
 ];
 
+function maxLevel(buildingType) {
+    let building = buildingConfig.get(buildingType);
+    if (typeof building === 'undefined') {
+        return 0;
+    }
+    return building.max_level;
+}
+
 
 function resProductionHourly(level) {
     if (level === 0) {
         return gameConfig.get('speed') * 5;
     }
     return gameConfig.get('speed') * 30 * (1.163118 ** (level - 1));
+}
+
+
+function popUsed(buildingType, level) {
+    let building = buildingConfig.get(buildingType);
+    if (typeof building === 'undefined') {
+        return 0;
+    }
+    return Math.round(building.pop * building.pop_factor ** (level - 1));
+}
+
+
+function requiredBuildingLevels(buildingType) {
+    // The config from interface.php is missing building requirements.
+    // So use own config.
+    let building = cfg[buildingType];
+    if (typeof building === 'undefined') {
+        return [];
+    }
+    return building.req;
 }
 
 
@@ -66,11 +94,9 @@ class BuildingLevels {
 
     populationUsed() {
         let pop = 0;
-        for (let [buildingType, b] of Object.entries(cfg)) {
+        for (let buildingType of buildingTypes) {
             let level = this[buildingType];
-            if (level > 0) {
-                pop += Math.round(b.pop * b.popFactor ** (level - 1));
-            }            
+            pop += popUsed(buildingType, level);
         }
         return pop;
     }
@@ -99,12 +125,12 @@ class BuildingLevels {
     }
 
     canUpgrade(buildingType) {
-        let alreadyMaxed = this[buildingType] >= cfg[buildingType].maxLevel;        
+        let alreadyMaxed = this[buildingType] >= maxLevel(buildingType);
         return !alreadyMaxed && this.areRequirementsMet(buildingType);
     }
 
     areRequirementsMet(buildingType) {
-        let reqs = cfg[buildingType].req;
+        let reqs = requiredBuildingLevels(buildingType);
         for (let [reqType, reqLevel] of Object.entries(reqs)) {
             if (reqLevel > this[reqType]) {
                 return false;

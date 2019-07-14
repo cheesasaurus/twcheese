@@ -15,6 +15,7 @@ import { enhanceBattleReport } from '/twcheese/src/Transform/enhanceBattleReport
 import { userConfig } from '/twcheese/src/Util/UserConfig.js';
 import { gameConfig } from '/twcheese/src/Util/GameConfig.js';
 import { troopConfig } from '/twcheese/src/Util/TroopConfig.js';
+import { buildingConfig } from '/twcheese/src/Util/BuildingConfig.js';
 import { requestDocument, gameUrl, attackPrepUrl } from '/twcheese/src/Util/Network.js';
 import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.js';
 
@@ -2318,12 +2319,13 @@ let reportEnhanced = false;
 let reportsFolderEnhanced = false;
 
 async function useTool() {
-    await Promise.all([
-        gameConfig.ensureUpdated(),
-        troopConfig.ensureUpdated()
-    ]);
-
     if (!initialized) {
+        await Promise.all([
+            gameConfig.ensureUpdated(),
+            troopConfig.ensureUpdated(),
+            buildingConfig.ensureUpdated()
+        ]);
+
         initBRE();
         initialized = true;
     }

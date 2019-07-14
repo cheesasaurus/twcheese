@@ -278,25 +278,29 @@ class BattleReportTools {
         titleBar.appendChild(toggleButton);
         toolContainer.appendChild(titleBar);
 
-        var widgetContent = document.createElement('div');
-        widgetContent.className = 'widget_content';
-        widgetContent.style.display = 'none';
-        var $widgetContent = $(widgetContent);
+        let $widgetContent = $(`
+            <div class="widget_content" style="display: none">
+                <table id="twcheese_BRE_tools" border="1">
+                    <tr>
+                        <td valign="top">
+                            <!-- raid calculator goes here -->
+                        </td>
+                        <td valign="top">
+                            <!-- demolition info goes here -->
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" valign="top">
+                            <!-- renamer goes here -->
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        `.trim());
 
-        let toolTable = $(`
-            <table id="twcheese_BRE_tools" border="1">
-                <tr>
-                    <td valign="top"><!-- raid calculator goes here --></td>
-                    <td><!-- demolition info goes here --></td>
-                </tr>
-                <tr>
-                    <td colspan="2" align="top"><!-- renamer goes here --></td>
-                </tr>
-            </table>
-        `.trim())[0];
+        let toolTable = $widgetContent.find('#twcheese_BRE_tools')[0];
 
-        widgetContent.appendChild(toolTable);
-        toolContainer.appendChild(widgetContent);
+        toolContainer.appendChild($widgetContent[0]);
 
         contentValueElement.insertBefore(toolContainer, contentValueElement.getElementsByTagName('h2')[0]);
 

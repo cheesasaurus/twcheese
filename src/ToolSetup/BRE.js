@@ -1,20 +1,18 @@
 /* global $, game_data */
 import { initCss } from '/twcheese/src/Util/UI.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
-import { BattleReport } from '/twcheese/src/Models/BattleReport.js';
 import { BattleReportCondensed } from '/twcheese/src/Models/BattleReportCondensed.js';
 import { Resources } from '/twcheese/src/Models/Resources.js';
-import { troopTypes, TroopCalculator } from '/twcheese/src/Models/Troops.js';
+import { troopTypes } from '/twcheese/src/Models/Troops.js';
 import { buildingTypes } from '/twcheese/src/Models/Buildings.js';
 import { ReportRenamer } from '/twcheese/src/Models/ReportRenamer.js';
 import { BattleReportScraper } from '/twcheese/src/Scrape/BattleReportScraper.js';
 import { BattleReportCondensedScraper } from '/twcheese/src/Scrape/BattleReportCondensedScraper.js';
 import { textScraper } from '/twcheese/src/Scrape/TextScraper.js';
 import { enhanceBattleReport } from '/twcheese/src/Transform/enhanceBattleReport.js';
-import { ReportRaiderWidget } from '/twcheese/src/Widget/ReportRaiderWidget.js';
-import { ReportRenamerWidget } from '/twcheese/src/Widget/ReportRenamerWidget.js';
+import { ReportToolsWidget } from '/twcheese/src/Widget/ReportToolsWidget.js';
 import { userConfig, ensureRemoteConfigsUpdated } from '/twcheese/src/Util/Config.js';
-import { requestDocument, gameUrl, attackPrepUrl } from '/twcheese/src/Util/Network.js';
+import { requestDocument, gameUrl } from '/twcheese/src/Util/Network.js';
 import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.js';
 
 import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/BRE/Default.js';
@@ -226,151 +224,6 @@ function twcheese_ReportsFolderDisplaySettings() {
 
 
 /*==== page modifier functions ====*/
-
-
-class BattleReportTools {
-
-    /**
-    * @param {HTMLDocument} gameDoc the document from game.php?screen=report&mode=attack
-    * @param {BattleReport} report
-    * @param {ReportRenamer} renamer
-    */
-    constructor(gameDoc, report, renamer) {
-        this.gameDoc = gameDoc;
-        this.report = report;
-        this.renamer = renamer;
-
-        this.raiderTroopTypes = ['spear', 'sword', 'axe', 'archer', 'light', 'marcher', 'heavy']
-            .filter(troopType => TroopCalculator.existsOnWorld(troopType));
-
-        this.renamerWidget = new ReportRenamerWidget(this.renamer, this.report);
-    }
-
-
-    includeReportTools() {
-        let gameDoc = this.gameDoc;
-        let report = this.report;
-        var contentValueElement = gameDoc.getElementById('content_value');
-
-        let $toolContainer = $(`
-            <div id="twcheese_show_report_tools" class="vis widget">
-                <h4>
-                    Report Tools
-                    <img class="twcheese-toggle-icon" src="${ImageSrc.plus}" style="float:right; cursor:pointer;">
-                </h4>
-                <div class="widget_content" style="display: none">
-                    <table id="twcheese_BRE_tools" border="1">
-                        <tr>
-                            <td valign="top">
-                                <!-- raid calculator goes here -->
-                            </td>
-                            <td valign="top">
-                                ${this.createDemolitionTableHtml()}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" valign="top">
-                                <!-- renamer goes here -->
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        `.trim());
-
-        let $toggleIcon = $toolContainer.find('.twcheese-toggle-icon');
-        let $widgetContent = $toolContainer.find('.widget_content');
-        let toolTable = $widgetContent.find('#twcheese_BRE_tools')[0];
-
-        this.toggleReportTools = function() {
-            $widgetContent.toggle({
-                duration: 200,
-                start: function() {
-                    let willCollapse = $toggleIcon.attr('src').includes(ImageSrc.minus);
-                    $toggleIcon.attr('src', willCollapse ? ImageSrc.plus : ImageSrc.minus);
-                    userConfig.set('ReportToolsWidget.collapse', willCollapse);
-                }
-            });
-        };
-        $toggleIcon.on('click', () => this.toggleReportTools());
-
-        if (report.espionageLevel >= 1) {
-            let raiderWidget = new ReportRaiderWidget(this.report);
-            raiderWidget.appendTo($(toolTable.rows[0].cells[0]));
-        }
-        this.renamerWidget.appendTo($(toolTable.rows[1].cells[0]));
-
-        contentValueElement.insertBefore($toolContainer[0], contentValueElement.getElementsByTagName('h2')[0]);
-    }
-
-    createDemolitionTableHtml() {
-        let report = this.report;
-        if (!report.buildingLevels) {
-            return '';
-        }
-
-        if (report.buildingLevels) {
-            let catHeaders = [];
-            let ramHeaders = [];
-            let catRowOne = [];
-            let catRowTwo = [];
-            let ramRowOne = [];
-            let ramRowTwo = [];
-
-            let suggestedCounts = report.suggestSiegeUnits();
-
-            for (let buildingType of buildingTypes) {
-                let siegeWeapon = (buildingType === 'wall') ? 'ram' : 'catapult';
-
-                let headerInnerHtml;
-                if (game_data.market == 'uk') {
-                    headerInnerHtml = '<img src="' + ImageSrc.buildingIcon(buildingType) + '" />';
-                } else {
-                    let troopCounts = {[siegeWeapon]: suggestedCounts.oneShotUpgraded[buildingType]};
-                    let rallyPointUrl = attackPrepUrl(troopCounts, report.defenderVillage.id);
-                    headerInnerHtml = '<a href="' + rallyPointUrl + '"><img src="' + ImageSrc.buildingIcon(buildingType) + '" /></a>';
-                }
-                let headers = (siegeWeapon === 'ram') ? ramHeaders : catHeaders;
-                headers.push(`<td style="width: 35px;">${headerInnerHtml}</td>`);
-
-                let rowOne = (siegeWeapon === 'ram') ? ramRowOne : catRowOne;
-                let rowTwo = (siegeWeapon === 'ram') ? ramRowTwo : catRowTwo;
-                rowOne.push(`<td>${suggestedCounts.oneShotScouted[buildingType]}</td>`);
-                rowTwo.push(`<td>${suggestedCounts.oneShotUpgraded[buildingType]}</td>`);
-            }
-
-            let demolitionHtml = `
-                <table id="twcheese_demolition_calculator">
-                    <tr>
-                        <td><span align="center"><h2>Demolition</h2></span></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <table id="twcheese_demolition_units" class="vis overview_table" style="border: 1px solid;">
-                                <tr class="center">
-                                    <td colspan="${catHeaders.length}">
-                                        <img src="${ImageSrc.troopIcon('catapult')}" alt="catapults" />
-                                    </td>
-                                    <td colspan="${ramHeaders.length}">
-                                        <img src="${ImageSrc.troopIcon('ram')}" alt="rams" />
-                                    </td>
-                                </tr>
-                                <tr class="center">${catHeaders.join('') + ramHeaders.join('')}</tr>
-                                <tr class="center">${catRowOne.join('') + ramRowOne.join('')}</tr>
-                                <tr class="center">${catRowTwo.join('') + ramRowTwo.join('')}<tr/>
-                            </table>
-                        </td>
-                    </tr>
-                </table>
-            `;
-
-            return demolitionHtml.trim();
-        }
-    }
-
-}
-
-
 
 
 /**
@@ -2117,12 +1970,9 @@ function enhanceReport() {
     }
 
     enhanceBattleReport(document, report);
-    let pageMod = new BattleReportTools(document, report, renamer);
-    pageMod.includeReportTools();
 
-    if (!userConfig.get('ReportToolsWidget.collapse', false)) {
-        pageMod.toggleReportTools();
-    }
+    (new ReportToolsWidget(report, renamer))
+        .insertBefore($('#content_value').find('h2').eq(0));
 }
 
 

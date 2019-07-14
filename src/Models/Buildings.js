@@ -1,4 +1,5 @@
 import { Resources } from '/twcheese/src/Models/Resources.js';
+import { gameConfig } from '/twcheese/src/Util/GameConfig.js';
 
 import { cfg } from '/twcheese/conf/Buildings.js';
 // todo: model a single Building
@@ -48,11 +49,11 @@ let buildingTypes = [
 ];
 
 
-function resProductionHourly(level, gameSpeed) {
+function resProductionHourly(level) {
     if (level === 0) {
-        return gameSpeed * 5;
+        return gameConfig.get('speed') * 5;
     }
-    return gameSpeed * 30 * (1.163118 ** (level - 1));
+    return gameConfig.get('speed') * 30 * (1.163118 ** (level - 1));
 }
 
 
@@ -82,11 +83,11 @@ class BuildingLevels {
         return Math.round(1000 * 1.2294934 ** (this.storage - 1));
     }
     
-    resourceProductionHourly(gameSpeed = 1) {
+    resourceProductionHourly() {
         return new Resources(
-            resProductionHourly(this.wood, gameSpeed),
-            resProductionHourly(this.stone, gameSpeed),
-            resProductionHourly(this.iron, gameSpeed)
+            resProductionHourly(this.wood),
+            resProductionHourly(this.stone),
+            resProductionHourly(this.iron)
         );
     }
 

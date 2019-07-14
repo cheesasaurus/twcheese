@@ -1,6 +1,5 @@
 import { TroopCounts, TroopCalculator, troopTypes } from '/twcheese/src/Models/Troops.js';
 import { DemolitionCalculator } from '/twcheese/src/Models/DemolitionCalculator.js';
-import { gameConfig } from '/twcheese/src/Util/GameConfig.js';
 
 
 class BattleReport {
@@ -85,7 +84,7 @@ class BattleReport {
         }
         let distance = this.defenderVillage.distanceTo(home);
         let maxLoot = this.buildingLevels.resourceCap() - this.buildingLevels.hideableResources();
-        let hourlyProduction = this.buildingLevels.resourceProductionHourly(gameConfig.get('speed'));
+        let hourlyProduction = this.buildingLevels.resourceProductionHourly();
 
         let hoursSinceReport = (timeNow - this.battleTime) / 3600000;
         let resourcesProducedSinceReport = hourlyProduction.multiply(hoursSinceReport);
@@ -108,7 +107,7 @@ class BattleReport {
      * @return {TroopCounts} how many of each type of troop should be sent to take all resources, provided only one type of troop is sent
      */
     calcRaidPeriodic(periodHours, haulBonus = 0) {
-        let resourcesProduced = this.buildingLevels.resourceProductionHourly(gameConfig.get('speed').multiply(periodHours));
+        let resourcesProduced = this.buildingLevels.resourceProductionHourly().multiply(periodHours);
         let maxLoot = this.buildingLevels.resourceCap() - this.buildingLevels.hideableResources();
         let totalResources = resourcesProduced.cap(maxLoot).sum();
         return this.calcRaidUnits(totalResources, haulBonus);

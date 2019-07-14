@@ -1,5 +1,5 @@
 /* global $, game_data */
-import { initCss } from '/twcheese/src/Util/UI.js';
+import { initCss, escapeHtml } from '/twcheese/src/Util/UI.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { BattleReport } from '/twcheese/src/Models/BattleReport.js';
 import { BattleReportCondensed } from '/twcheese/src/Models/BattleReportCondensed.js';
@@ -12,7 +12,8 @@ import { BattleReportScraper } from '/twcheese/src/Scrape/BattleReportScraper.js
 import { BattleReportCondensedScraper } from '/twcheese/src/Scrape/BattleReportCondensedScraper.js';
 import { textScraper } from '/twcheese/src/Scrape/TextScraper.js';
 import { enhanceBattleReport } from '/twcheese/src/Transform/enhanceBattleReport.js';
-import { userConfig, gameConfig, buildingConfig, troopConfig, ensureRemoteConfigsUpdated } from '/twcheese/src/Util/Config.js';
+import { ReportRenamerWidget } from '/twcheese/src/Widget/ReportRenamerWidget.js';
+import { userConfig, ensureRemoteConfigsUpdated } from '/twcheese/src/Util/Config.js';
 import { requestDocument, gameUrl, attackPrepUrl } from '/twcheese/src/Util/Network.js';
 import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.js';
 
@@ -241,6 +242,8 @@ class BattleReportTools {
 
         this.raiderTroopTypes = ['spear', 'sword', 'axe', 'archer', 'light', 'marcher', 'heavy']
             .filter(troopType => TroopCalculator.existsOnWorld(troopType));
+
+        this.renamerWidget = new ReportRenamerWidget(this.renamer, this.report);
     }
 
 
@@ -291,6 +294,8 @@ class BattleReportTools {
             });
         };
         $toggleIcon.on('click', () => this.toggleReportTools());
+
+        this.renamerWidget.appendTo($(toolTable.rows[1].cells[0]));
 
         contentValueElement.insertBefore($toolContainer[0], contentValueElement.getElementsByTagName('h2')[0]);
 
@@ -457,41 +462,7 @@ class BattleReportTools {
             }
 
             toolTable.rows[0].cells[0].appendChild(raiderTable);
-        }        
-
-        /*==== renamer ====*/
-
-        let renamer = this.renamer;
-        let name = renamer.createName(report, '');
-
-        let $renamer = $(`
-            <div id="twcheese_renamer" align="center">
-                <span align="center"><h2>Renamer</h2></span>
-                note <input id="twcheese_note" type="text"/>
-                <button>rename</button>
-                <input id="twcheese_auto_rename" type="checkbox" />auto rename
-                <img id="twcheese_autoRenameInfo" src="/graphic/questionmark.png?1" width="13" height="13" title="automatically rename reports when the BRE is used" />
-                <br/> characters available: <span id="twcheese_availableCharacters">${renamer.availableChars(name)}</span>
-                <br/><b>Preview: </b><span id="twcheese_rename_preview">${escapeHtml(name)}</span>
-            </div>
-        `.trim());
-
-        toolTable.rows[1].cells[0].appendChild($renamer[0]);
-        let noteInput = document.getElementById('twcheese_note');
-
-        $('#twcheese_note').on('input', function() {
-            let name = renamer.createName(report, noteInput.value);
-            document.getElementById('twcheese_rename_preview').innerHTML = escapeHtml(name);
-            document.getElementById('twcheese_availableCharacters').innerHTML = renamer.availableChars(name);
-        });
-
-        $renamer.find('button').on('click', function() {
-            _this.renameReport(noteInput.value);
-        });
-
-        $('#twcheese_auto_rename').on('click', function() {
-            userConfig.set('ReportToolsWidget.autoRename', gameDoc.getElementById('twcheese_auto_rename').checked);
-        });
+        }
 
     }
 
@@ -565,11 +536,7 @@ class BattleReportTools {
      * @param {string} note
      */
     async renameReport(note) {
-        let report = this.report;
-        let name = await this.renamer.rename(report, note);
-
-        $('.quickedit[data-id="' + report.reportId + '"]')
-            .find('.quickedit-label').html(name);
+        this.renamerWidget.rename(note);
     }
 
 

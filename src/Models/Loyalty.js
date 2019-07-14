@@ -1,8 +1,8 @@
 import { TroopCalculator } from '/twcheese/src/Models/Troops.js';
+import { gameConfig } from '/twcheese/src/Util/GameConfig.js';
 
 
 /**
- * @param {number} worldSpeed
  * @param {number} reportedLoyalty
  * @param {Date} timeReported
  * @param {Date} timeNow
@@ -10,12 +10,12 @@ import { TroopCalculator } from '/twcheese/src/Models/Troops.js';
  * @param {Village} target
  * @return {{loyaltyNow:Number, loyatyAtArrival:Number}}
  */
-function calcLoyalty(worldSpeed, reportedLoyalty, timeReported, timeNow, home, target) {
+function calcLoyalty(reportedLoyalty, timeReported, timeNow, home, target) {
     if (reportedLoyalty <= 0) {
         reportedLoyalty = 25; // loyalty jumps to 25 after a village is conquered
     }
 
-    let hourlyGain = worldSpeed;
+    let hourlyGain = gameConfig.get('speed');
 
     let hoursPassed = (timeNow - timeReported) / 3600000;
     let loyaltyNow = Math.min(100, parseInt(reportedLoyalty) + parseInt(hoursPassed * hourlyGain));

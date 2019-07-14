@@ -3,7 +3,6 @@ import { calcLoyalty } from '/twcheese/src/Models/Loyalty.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { escapeHtml } from '/twcheese/src/Util/UI.js';
 import { gameUrl } from '/twcheese/src/Util/Network.js';
-import { gameConfig } from '/twcheese/src/Util/GameConfig.js';
 
 /**
  * @param {HTMLDocument} gameDoc 
@@ -82,7 +81,7 @@ function enhanceBattleReport(gameDoc, report) {
     /*==== loyalty ====*/
     if (report.loyalty) {
         let now = TwCheeseDate.newServerDate();
-        let loyaltyExtra = calcLoyalty(gameConfig.get('speed'), report.loyalty.after, report.battleTime, now, game_data.village, report.defenderVillage);
+        let loyaltyExtra = calcLoyalty(report.loyalty.after, report.battleTime, now, game_data.village, report.defenderVillage);
 
         var resultsHeaders = gameDoc.getElementById('attack_results').getElementsByTagName('th');
         var loyaltyRow = textScraper.first(resultsHeaders, 'report.loyalty').parentNode;

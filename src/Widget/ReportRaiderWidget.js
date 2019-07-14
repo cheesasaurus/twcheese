@@ -92,7 +92,11 @@ class ReportRaiderWidget extends AbstractWidget {
         for (let troopType of this.raiderTroopTypes) {
             let cell = raiderUnitsTable.rows[0].insertCell(-1);
             cell.width = "35px";
-            cell.innerHTML = `<img src="${ImageSrc.troopIcon(troopType)}" />`;
+            if (window.game_data.market === 'uk') {
+                cell.innerHTML = `<img src="${ImageSrc.troopIcon(troopType)}">`;
+            } else {
+                cell.innerHTML = `<a><img src="${ImageSrc.troopIcon(troopType)}"></a>`;
+            }            
         }
 
         //==== looting suggestions ====
@@ -161,6 +165,7 @@ class ReportRaiderWidget extends AbstractWidget {
         this.$scouts = this.$el.find('#twcheese_raider_scouts');
         this.$buttonSetDefault = $(setDefaultButton); // todo
         this.raiderUnitsTable = this.$el.find('#twcheese_raider_units')[0]; // todo
+        this.$raiderLinks = $(this.raiderUnitsTable.rows[0]).find('a');
     }
 
     watchSelf() {
@@ -258,7 +263,7 @@ class ReportRaiderWidget extends AbstractWidget {
                 continue;
             }
             let url = attackUrl(troopType, Math.round(troopCounts[troopType]));
-            raiderTable.rows[0].cells[i].innerHTML = '<a href="' + url + '"><img src="' + ImageSrc.troopIcon(troopType) + '"/></a>';
+            this.$raiderLinks.eq(i).attr('href', url);
         }
     }
 

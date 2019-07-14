@@ -37,8 +37,10 @@ class ReportRaiderWidget extends AbstractWidget {
         this.$scouts = this.$el.find('#twcheese_raider_scouts');
         this.$scoutsContainer = this.$el.find('#twcheese_raider_scout');
         this.$buttonSetDefault = this.$el.find('.twcheese-button-set-default');
-        this.raiderUnitsTable = this.$el.find('#twcheese_raider_units')[0]; // todo
-        this.$raiderLinks = $(this.raiderUnitsTable.rows[0]).find('a');
+
+        let raiderUnitsTable = this.$el.find('#twcheese_raider_units')[0];
+        this.$raiderLinks = $(raiderUnitsTable.rows[0]).find('a');
+        this.$raiderTroopCounts = $(raiderUnitsTable.rows[1].cells);
     }
 
     createHtml() {
@@ -196,14 +198,13 @@ class ReportRaiderWidget extends AbstractWidget {
             return attackPrepUrl({spy: spyCount, [troopType]: count}, this.report.defenderVillage.id);
         }
 
-        let raiderTable = this.raiderUnitsTable;
-
         for (let [i, troopType] of Object.entries(this.raiderTroopTypes)) {
-            raiderTable.rows[1].cells[i].innerHTML = troopCounts[troopType];
+            let troopCount = troopCounts[troopType];
+            this.$raiderTroopCounts.eq(i).text(troopCount);
             if (!this.mayFillRallyPoint()) {
                 continue;
             }
-            let url = attackUrl(troopType, Math.round(troopCounts[troopType]));
+            let url = attackUrl(troopType, Math.round(troopCount));
             this.$raiderLinks.eq(i).attr('href', url);
         }
     }

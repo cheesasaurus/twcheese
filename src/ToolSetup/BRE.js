@@ -4,7 +4,7 @@ import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { BattleReport } from '/twcheese/src/Models/BattleReport.js';
 import { BattleReportCondensed } from '/twcheese/src/Models/BattleReportCondensed.js';
 import { Resources } from '/twcheese/src/Models/Resources.js';
-import { TroopCounts, calcTravelDurations, troopTypes } from '/twcheese/src/Models/Troops.js';
+import { TroopCounts, calcTravelDurations, troopTypes, TroopCalculator } from '/twcheese/src/Models/Troops.js';
 import { buildingTypes } from '/twcheese/src/Models/Buildings.js';
 import { TwCheeseDate } from '/twcheese/src/Models/TwCheeseDate.js';
 import { ReportRenamer } from '/twcheese/src/Models/ReportRenamer.js';
@@ -242,6 +242,9 @@ class BattleReportTools {
         this.report = report;
         this.renamer = renamer;
         this.gameConfig = gameConfig;
+
+        this.raiderTroopTypes = ['spear', 'sword', 'axe', 'archer', 'light', 'marcher', 'heavy']
+            .filter(troopType => TroopCalculator.existsOnWorld(troopType));
     }
 
 
@@ -395,8 +398,7 @@ class BattleReportTools {
             raiderUnitsTable.rows[0].className = 'center';
 
             //==== icons ====
-            let raiderTroopTypes = ['spear', 'sword', 'axe', 'archer', 'light', 'marcher', 'heavy'];
-            for (let troopType of raiderTroopTypes) {
+            for (let troopType of this.raiderTroopTypes) {
                 let cell = raiderUnitsTable.rows[0].insertCell(-1);
                 cell.width = "35px";
                 cell.innerHTML = `<img src="${ImageSrc.troopIcon(troopType)}" />`;
@@ -415,16 +417,10 @@ class BattleReportTools {
 
             var travelTimes = calcTravelDurations(report.attackerVillage.distanceTo(report.defenderVillage));
 
-            for (let i = 0; i < 7; i++) {
-                raiderUnitsTable.rows[2].insertCell(-1);
+            for (let troopType of this.raiderTroopTypes) {
+                let cell = raiderUnitsTable.rows[2].insertCell(-1);
+                cell.innerHTML = window.Format.timeSpan(travelTimes[troopType]);
             }
-            raiderUnitsTable.rows[2].cells[0].innerHTML = window.Format.timeSpan(travelTimes.spear);
-            raiderUnitsTable.rows[2].cells[1].innerHTML = window.Format.timeSpan(travelTimes.sword);
-            raiderUnitsTable.rows[2].cells[2].innerHTML = window.Format.timeSpan(travelTimes.axe);
-            raiderUnitsTable.rows[2].cells[3].innerHTML = window.Format.timeSpan(travelTimes.archer);
-            raiderUnitsTable.rows[2].cells[4].innerHTML = window.Format.timeSpan(travelTimes.light);
-            raiderUnitsTable.rows[2].cells[5].innerHTML = window.Format.timeSpan(travelTimes.marcher);
-            raiderUnitsTable.rows[2].cells[6].innerHTML = window.Format.timeSpan(travelTimes.heavy);
 
             raiderTable.insertRow(-1);
             raiderTable.rows[2].insertCell(-1);
@@ -622,10 +618,8 @@ class BattleReportTools {
         }
 
         let raiderTable = this.gameDoc.getElementById('twcheese_raider_units');
-        let troopTypes = ['spear', 'sword', 'axe', 'archer', 'light', 'marcher', 'heavy'];
 
-        for (var i = 0; i < troopTypes.length; i++) {
-            let troopType = troopTypes[i];
+        for (let [i, troopType] of Object.entries(this.raiderTroopTypes)) {
             raiderTable.rows[1].cells[i].innerHTML = troopCounts[troopType];
             if (window.game_data.market === 'uk') {
                 continue;

@@ -120,6 +120,10 @@ function calcTravelDuration(minutesPerField, distance) {
 
 let TroopCalculator = {
 
+    existsOnWorld(troopType) {
+        return typeof troopConfig.get(troopType) !== 'undefined';
+    },
+
     /** 
      * @param {string} troopType
      * @param {number} resourceAmount     

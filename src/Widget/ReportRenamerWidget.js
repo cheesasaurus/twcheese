@@ -17,6 +17,7 @@ class ReportRenamerWidget extends AbstractWidget {
 
         this.initStructure();
         this.watchSelf();
+        this.applyUserConfig();
     }
 
     initStructure() {
@@ -61,6 +62,11 @@ class ReportRenamerWidget extends AbstractWidget {
         this.$autoRename.on('click', function() {
             userConfig.set('ReportRenamerWidget.autoRename', this.checked);
         });
+    }
+
+    applyUserConfig() {
+        let autoRename = userConfig.get('ReportRenamerWidget.autoRename', false);
+        this.$autoRename.prop('checked', autoRename);
     }
 
     /**

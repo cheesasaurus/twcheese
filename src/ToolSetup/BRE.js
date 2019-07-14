@@ -2124,7 +2124,6 @@ function enhanceReport() {
     /*==== auto rename ====*/
     if (userConfig.get('ReportRenamerWidget.autoRename', false)) {
         pageMod.renameReport('');
-        document.getElementById('twcheese_auto_rename').checked = true;
     }
 
     if (!userConfig.get('ReportToolsWidget.collapse', false)) {

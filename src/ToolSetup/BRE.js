@@ -235,13 +235,11 @@ class BattleReportTools {
     * @param {HTMLDocument} gameDoc the document from game.php?screen=report&mode=attack
     * @param {BattleReport} report
     * @param {ReportRenamer} renamer
-    * @param {Config} gameConfig
     */
-    constructor(gameDoc, report, renamer, gameConfig) {
+    constructor(gameDoc, report, renamer) {
         this.gameDoc = gameDoc;
         this.report = report;
         this.renamer = renamer;
-        this.gameConfig = gameConfig;
 
         this.raiderTroopTypes = ['spear', 'sword', 'axe', 'archer', 'light', 'marcher', 'heavy']
             .filter(troopType => TroopCalculator.existsOnWorld(troopType));
@@ -252,7 +250,6 @@ class BattleReportTools {
         let _this = this;
         let gameDoc = this.gameDoc;
         let report = this.report;
-        let gameConfig = this.gameConfig;
         var contentValueElement = gameDoc.getElementById('content_value');
 
         function toggleCollapse() {
@@ -585,7 +582,6 @@ class BattleReportTools {
         var haulBonus = Number(this.gameDoc.getElementById('twcheese_raider_haulBonus').value);
         let gameDoc = this.gameDoc;
         let report = this.report;
-        let gameConfig = this.gameConfig;
 
         if (mode == 'scouted') {
             gameDoc.getElementById('twcheese_raider_selection').value = 'scouted';
@@ -2373,7 +2369,7 @@ function enhanceReport() {
     /*==== add stuff to the page ====*/
     enhanceBattleReport(document, report);
     let renamer = new ReportRenamer();
-    let pageMod = new BattleReportTools(document, report, renamer, gameConfig);
+    let pageMod = new BattleReportTools(document, report, renamer);
     pageMod.includeReportTools();
 
     /*==== auto rename ====*/
@@ -2406,7 +2402,7 @@ function enhanceReportsFolder() {
     let twcheese_reportsFolderDisplaySettings = twcheese_loadReportsFolderDisplaySettings();
     twcheese_saveReportsFolderDisplaySettings(twcheese_reportsFolderDisplaySettings);
     let renamer = new ReportRenamer();
-    let pageMod = new twcheese_BattleReportsFolderEnhancer(document, renamer, twcheese_reportsFolderDisplaySettings, gameConfig);
+    let pageMod = new twcheese_BattleReportsFolderEnhancer(document, renamer, twcheese_reportsFolderDisplaySettings);
     pageMod.applySettings(twcheese_reportsFolderDisplaySettings);
 }
 

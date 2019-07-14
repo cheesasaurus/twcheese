@@ -1,12 +1,11 @@
 /* global $, game_data */
-import { initCss, escapeHtml } from '/twcheese/src/Util/UI.js';
+import { initCss } from '/twcheese/src/Util/UI.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { BattleReport } from '/twcheese/src/Models/BattleReport.js';
 import { BattleReportCondensed } from '/twcheese/src/Models/BattleReportCondensed.js';
 import { Resources } from '/twcheese/src/Models/Resources.js';
-import { TroopCounts, calcTravelDurations, troopTypes, TroopCalculator } from '/twcheese/src/Models/Troops.js';
+import { troopTypes, TroopCalculator } from '/twcheese/src/Models/Troops.js';
 import { buildingTypes } from '/twcheese/src/Models/Buildings.js';
-import { TwCheeseDate } from '/twcheese/src/Models/TwCheeseDate.js';
 import { ReportRenamer } from '/twcheese/src/Models/ReportRenamer.js';
 import { BattleReportScraper } from '/twcheese/src/Scrape/BattleReportScraper.js';
 import { BattleReportCondensedScraper } from '/twcheese/src/Scrape/BattleReportCondensedScraper.js';
@@ -375,7 +374,7 @@ class BattleReportTools {
      * @param {string} note
      */
     async renameReport(note) {
-        this.renamerWidget.rename(note);
+        this.renamerWidget.renameReport(note);
     }
 
 }

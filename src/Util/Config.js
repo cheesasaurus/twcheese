@@ -15,4 +15,20 @@ let troopConfig = (new RemoteConfig('twcheese.troopConfig'))
     .setUrl(`https://${document.domain}/interface.php?func=get_unit_info`)
     .setTtl(8 * 3600);
 
-export { userConfig, gameConfig, buildingConfig, troopConfig };
+
+async function ensureRemoteConfigsUpdated() {
+    await Promise.all([
+        gameConfig.ensureUpdated(),
+        troopConfig.ensureUpdated(),
+        buildingConfig.ensureUpdated()
+    ]);
+}
+    
+
+export {
+    userConfig,
+    gameConfig,
+    buildingConfig,
+    troopConfig,
+    ensureRemoteConfigsUpdated
+};

@@ -12,7 +12,7 @@ import { BattleReportScraper } from '/twcheese/src/Scrape/BattleReportScraper.js
 import { BattleReportCondensedScraper } from '/twcheese/src/Scrape/BattleReportCondensedScraper.js';
 import { textScraper } from '/twcheese/src/Scrape/TextScraper.js';
 import { enhanceBattleReport } from '/twcheese/src/Transform/enhanceBattleReport.js';
-import { userConfig, gameConfig, buildingConfig, troopConfig } from '/twcheese/src/Util/Config.js';
+import { userConfig, gameConfig, buildingConfig, troopConfig, ensureRemoteConfigsUpdated } from '/twcheese/src/Util/Config.js';
 import { requestDocument, gameUrl, attackPrepUrl } from '/twcheese/src/Util/Network.js';
 import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.js';
 
@@ -2317,12 +2317,7 @@ let reportsFolderEnhanced = false;
 
 async function useTool() {
     if (!initialized) {
-        await Promise.all([
-            gameConfig.ensureUpdated(),
-            troopConfig.ensureUpdated(),
-            buildingConfig.ensureUpdated()
-        ]);
-
+        await ensureRemoteConfigsUpdated();
         initBRE();
         initialized = true;
     }

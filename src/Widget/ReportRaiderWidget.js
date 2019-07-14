@@ -117,24 +117,21 @@ class ReportRaiderWidget extends AbstractWidget {
 
     watchSelf() {
         this.$raidMode.on('change', () => {
-            this.changeRaidMode(this.$raidMode.val());
+            this.updateRaiders();
         });
 
         this.$haulBonus.on('input', () => {
-            this.changeRaidMode(this.$raidMode.val()); // relying on side effect: recalcs + updates raiders displayed
+            this.updateRaiders();
         });
 
         this.$period.on('input', () => {
-            let haulBonus = parseFloat(this.$haulBonus.val());
-            let period = parseFloat(this.$period.val());
-            let raiders = this.report.calcRaidPeriodic(period, haulBonus);
-            this.setRaiders(raiders);
+            this.updateRaiders();
         });
 
         this.$scouts.on('input', () => {
-            let scouts = parseInt(this.$scouts.val());
+            let scouts = parseInt(this.$scouts.val()) || 0;
             userConfig.set('ReportRaiderWidget.raidScouts', scouts);
-            this.changeRaidMode(this.$raidMode.val());  // relying on side effect: recalcs + updates raiders displayed
+            this.updateRaiders();
         });
 
         this.$buttonSetDefault.on('click', () => {
@@ -162,36 +159,33 @@ class ReportRaiderWidget extends AbstractWidget {
         this.$scouts.val(scouts);
         
         let raidMode = userConfig.get('ReportRaiderWidget.raidMode', 'scouted');
-        this.changeRaidMode(raidMode);
+        this.$raidMode.val(raidMode);
+
+        this.updateRaiders();
     }
 
-
-    /**
-     * @param {string} mode - (scouted|predicted|periodic)
-     */
-    changeRaidMode(mode) {
-        let haulBonus = parseFloat(this.$haulBonus.val());
-        let period = parseFloat(this.$period.val());
+    updateRaiders() {
+        let mode = this.$raidMode.val();
+        let haulBonus = parseFloat(this.$haulBonus.val()) || 0;
+        let period = parseFloat(this.$period.val()) || 0;
         let report = this.report;
-        this.$raidMode.val(mode);
 
-        if (mode == 'scouted') {            
+        if (mode === 'scouted') {            
             let raiders = report.calcRaidScouted(haulBonus);
             this.setRaiders(raiders);
             this.$periodContainer.hide();
         }
-        else if (mode == 'predicted') {
+        else if (mode === 'predicted') {
             let raiders = report.calcRaidPredicted(window.game_data.village, TwCheeseDate.newServerDate(), haulBonus);
             this.setRaiders(raiders);
             this.$periodContainer.hide();
         }
-        else if (mode == 'periodic') {
+        else if (mode === 'periodic') {
             let raiders = report.calcRaidPeriodic(period, haulBonus);
             this.setRaiders(raiders);
             this.$periodContainer.show();
         }
     }
-
 
     /**
      * @param {TroopCounts} troopCounts

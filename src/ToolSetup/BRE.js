@@ -283,17 +283,17 @@ class BattleReportTools {
         widgetContent.style.display = 'none';
         var $widgetContent = $(widgetContent);
 
-        var toolTable = document.createElement('table');
-        toolTable.id = 'twcheese_BRE_tools';
-        toolTable.border = 1;
-        toolTable.insertRow(-1);
-        toolTable.rows[0].insertCell(-1); /* spot for raid calculator */
-        toolTable.rows[0].cells[0].vAlign = 'top';
-        toolTable.rows[0].insertCell(-1); /* spot for demolition information */
-        toolTable.rows[0].cells[1].vAlign = 'top';
-        toolTable.insertRow(-1);
-        toolTable.rows[1].insertCell(-1); /* spot for renamer */
-        toolTable.rows[1].cells[0].colSpan = 2;
+        let toolTable = $(`
+            <table id="twcheese_BRE_tools" border="1">
+                <tr>
+                    <td valign="top"><!-- raid calculator goes here --></td>
+                    <td><!-- demolition info goes here --></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="top"><!-- renamer goes here --></td>
+                </tr>
+            </table>
+        `.trim())[0];
 
         widgetContent.appendChild(toolTable);
         toolContainer.appendChild(widgetContent);

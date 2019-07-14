@@ -22,7 +22,7 @@ class Config {
      * @return {object|null}
      */
     _loadCachedData() {
-        let saved = localStorage.getItem(this.id);
+        let saved = window.localStorage.getItem(this.id);
         if (saved) {
             let data = JSON.parse(saved);
 
@@ -40,7 +40,7 @@ class Config {
      */
     _save() {
         this._beforeSave();
-        localStorage.setItem(this.id, JSON.stringify(this._getCacheableData()));
+        window.localStorage.setItem(this.id, JSON.stringify(this._getCacheableData()));
     }
 
     /**

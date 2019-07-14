@@ -1,5 +1,5 @@
 const { JSDOM } = require('jsdom');
-const w = (new JSDOM('')).window;
+const w = (new JSDOM('', { url: 'https://example.com' })).window;
 global.jQuery = require('jquery')(w);
 global.$ = jQuery;
 

@@ -2,8 +2,8 @@ import { RateLimiter } from '/twcheese/src/Models/RateLimiter.js';
 
 let throttle = new RateLimiter(5);
 
-let originalFetch = fetch;
-fetch = function() {
+let originalFetch = window.fetch;
+window.fetch = function() {
     throttle.requestWasMade();
     return originalFetch.apply(this, arguments);
 };

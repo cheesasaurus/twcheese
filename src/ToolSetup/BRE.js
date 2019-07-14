@@ -250,7 +250,37 @@ class BattleReportTools {
         let report = this.report;
         var contentValueElement = gameDoc.getElementById('content_value');
 
-        function toggleCollapse() {
+        let $toolContainer = $(`
+            <div id="twcheese_show_report_tools" class="vis widget">
+                <h4>
+                    Report Tools
+                    <img class="twcheese-toggle-icon" src="${ImageSrc.plus}" style="float:right; cursor:pointer;">
+                </h4>
+                <div class="widget_content" style="display: none">
+                    <table id="twcheese_BRE_tools" border="1">
+                        <tr>
+                            <td valign="top">
+                                <!-- raid calculator goes here -->
+                            </td>
+                            <td valign="top">
+                                <!-- demolition info goes here -->
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" valign="top">
+                                <!-- renamer goes here -->
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        `.trim());
+
+        let $toggleIcon = $toolContainer.find('.twcheese-toggle-icon');
+        let $widgetContent = $toolContainer.find('.widget_content');
+        let toolTable = $widgetContent.find('#twcheese_BRE_tools')[0];
+
+        this.toggleReportTools = function() {
             $widgetContent.toggle({
                 duration: 200,
                 start: function() {
@@ -260,49 +290,9 @@ class BattleReportTools {
                 }
             });
         };
-        this.toggleReportTools = toggleCollapse;
+        $toggleIcon.on('click', () => this.toggleReportTools());
 
-        /*==== tools widget containers ====*/
-        var toolContainer = document.createElement('div');
-        toolContainer.className = 'vis widget';
-        toolContainer.id = 'twcheese_show_report_tools';
-
-        var titleBar = document.createElement('h4');
-        titleBar.innerHTML = 'Report Tools';
-        var toggleButton = document.createElement('img');
-        toggleButton.src = ImageSrc.plus;
-        toggleButton.style.cssFloat = 'right';
-        toggleButton.style.cursor = 'pointer';
-        toggleButton.onclick = toggleCollapse;
-        var $toggleIcon = $(toggleButton);
-        titleBar.appendChild(toggleButton);
-        toolContainer.appendChild(titleBar);
-
-        let $widgetContent = $(`
-            <div class="widget_content" style="display: none">
-                <table id="twcheese_BRE_tools" border="1">
-                    <tr>
-                        <td valign="top">
-                            <!-- raid calculator goes here -->
-                        </td>
-                        <td valign="top">
-                            <!-- demolition info goes here -->
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" valign="top">
-                            <!-- renamer goes here -->
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        `.trim());
-
-        let toolTable = $widgetContent.find('#twcheese_BRE_tools')[0];
-
-        toolContainer.appendChild($widgetContent[0]);
-
-        contentValueElement.insertBefore(toolContainer, contentValueElement.getElementsByTagName('h2')[0]);
+        contentValueElement.insertBefore($toolContainer[0], contentValueElement.getElementsByTagName('h2')[0]);
 
         /*==== raider table ====*/
         if (report.espionageLevel >= 1) {

@@ -12,6 +12,7 @@ import { BattleReportScraper } from '/twcheese/src/Scrape/BattleReportScraper.js
 import { BattleReportCondensedScraper } from '/twcheese/src/Scrape/BattleReportCondensedScraper.js';
 import { textScraper } from '/twcheese/src/Scrape/TextScraper.js';
 import { enhanceBattleReport } from '/twcheese/src/Transform/enhanceBattleReport.js';
+import { ReportRaiderWidget } from '/twcheese/src/Widget/ReportRaiderWidget.js';
 import { ReportRenamerWidget } from '/twcheese/src/Widget/ReportRenamerWidget.js';
 import { userConfig, ensureRemoteConfigsUpdated } from '/twcheese/src/Util/Config.js';
 import { requestDocument, gameUrl, attackPrepUrl } from '/twcheese/src/Util/Network.js';
@@ -295,175 +296,13 @@ class BattleReportTools {
         };
         $toggleIcon.on('click', () => this.toggleReportTools());
 
+        if (report.espionageLevel >= 1) {
+            let raiderWidget = new ReportRaiderWidget(this.report);
+            raiderWidget.appendTo($(toolTable.rows[0].cells[0]));
+        }
         this.renamerWidget.appendTo($(toolTable.rows[1].cells[0]));
 
         contentValueElement.insertBefore($toolContainer[0], contentValueElement.getElementsByTagName('h2')[0]);
-
-        /*==== raider table ====*/
-        if (report.espionageLevel >= 1) {
-            var raiderTable = document.createElement('table');
-            raiderTable.id = 'twcheese_raider_calculator';
-            raiderTable.insertRow(-1);
-            raiderTable.rows[0].insertCell(-1);
-            raiderTable.rows[0].cells[0].innerHTML = '<span align="center"><h2>Raiders</h2></span>';
-            raiderTable.insertRow(-1);
-            raiderTable.rows[1].align = 'center';
-            raiderTable.rows[1].insertCell(-1);
-
-            raiderTable.rows[1].cells[0].innerHTML = '';
-
-            /*==== raid-category selection ====*/
-
-            let raidModeOptions = [];
-            if (report.espionageLevel >= 1) { // resources were scouted
-                raidModeOptions.push(`<option value="scouted">raid scouted resources</option>`);
-            }
-            if (report.espionageLevel >= 2) { // buildings were scouted
-                raidModeOptions.push(`<option value="predicted">raid predicted resources</option>`);
-                raidModeOptions.push(`<option value="periodic">periodically raid resources</option>`);
-            }
-            let raidModeSelect = document.createElement('select');
-            raidModeSelect.id = 'twcheese_raider_selection';
-            raidModeSelect.innerHTML = raidModeOptions.join('');
-            raidModeSelect.addEventListener('change', function() {
-                _this.changeRaidMode(this.value);
-            });
-            raiderTable.rows[1].cells[0].appendChild(raidModeSelect);
-
-            /*==== rally point link ====*/
-            let rallyPointLink = document.createElement('a');
-            rallyPointLink.href = gameUrl('place', {target: report.defenderVillage.id});
-            rallyPointLink.innerHTML = '&raquo; Send troops';
-            raiderTable.rows[1].cells[0].appendChild(rallyPointLink);
-
-            /*==== haul Bonus ====*/
-            let $haulBonus = $(`<div>Haul Bonus: <input id="twcheese_raider_haulBonus" type="text" size=5 value=0></input>%</div>`.trim());
-            $haulBonus.find('#twcheese_raider_haulBonus').on('input', function() {
-                _this.changeRaidMode(gameDoc.getElementById('twcheese_raider_selection').value);
-            });
-            raiderTable.rows[1].cells[0].appendChild($haulBonus[0]);
-
-            /*==== Periodic Raider section ====*/
-            var periodicDiv = document.createElement('div');
-            periodicDiv.id = 'twcheese_periodic_options';
-            periodicDiv.innerHTML = 'Period (hours):';
-            var periodInput = document.createElement('input');
-            periodInput.id = 'twcheese_period';
-            periodInput.type = 'text';
-            periodInput.size = 4;
-            periodInput.maxLength = 4;
-            periodInput.value = 8;
-            periodInput.addEventListener('input', function() {
-                let haulBonus = Number(document.getElementById('twcheese_raider_haulBonus').value);
-                let raiders = report.calcRaidPeriodic(Number(this.value), haulBonus);
-                _this.setRaiders(raiders);
-            });
-            periodicDiv.appendChild(periodInput);
-
-            raiderTable.rows[1].cells[0].appendChild(periodicDiv);
-
-            /*==== button to use settings as default ====*/
-            var setDefaultButton = document.createElement('button');
-            setDefaultButton.innerHTML = 'Use current selection as default';
-            setDefaultButton.onclick = function () {
-                let raidMode = gameDoc.getElementById('twcheese_raider_selection').value;
-                userConfig.set('ReportToolsWidget.raidMode', raidMode);
-
-                let haulBonus = gameDoc.getElementById('twcheese_raider_haulBonus').value;
-                userConfig.set('ReportToolsWidget.haulBonus', parseFloat(haulBonus));
-
-                let period = gameDoc.getElementById('twcheese_period').value;
-                userConfig.set('ReportToolsWidget.raidPeriodHours', parseFloat(period));
-
-                window.UI.SuccessMessage('Settings Saved', 2000);
-            };
-            raiderTable.rows[1].cells[0].appendChild(setDefaultButton);
-
-            /*==== units section ====*/
-            var raiderUnitsTable = document.createElement('table');
-            raiderUnitsTable.id = 'twcheese_raider_units';
-
-            raiderUnitsTable.className = 'vis overview_table';
-            raiderUnitsTable.style.borderStyle = 'solid';
-            raiderUnitsTable.style.borderWidth = '1px';
-
-
-            raiderUnitsTable.insertRow(-1);
-            raiderUnitsTable.rows[0].className = 'center';
-
-            //==== icons ====
-            for (let troopType of this.raiderTroopTypes) {
-                let cell = raiderUnitsTable.rows[0].insertCell(-1);
-                cell.width = "35px";
-                cell.innerHTML = `<img src="${ImageSrc.troopIcon(troopType)}" />`;
-            }
-
-            //==== looting suggestions ====
-            raiderUnitsTable.insertRow(-1);
-            raiderUnitsTable.rows[1].className = 'center';
-            for (let i = 0; i < 7; i++) {
-                raiderUnitsTable.rows[1].insertCell(-1);
-            }
-
-            //==== travel times ====
-            raiderUnitsTable.insertRow(-1);
-            raiderUnitsTable.rows[2].className = 'center';
-
-            var travelTimes = calcTravelDurations(report.attackerVillage.distanceTo(report.defenderVillage));
-
-            for (let troopType of this.raiderTroopTypes) {
-                let cell = raiderUnitsTable.rows[2].insertCell(-1);
-                cell.innerHTML = window.Format.timeSpan(travelTimes[troopType]);
-            }
-
-            raiderTable.insertRow(-1);
-            raiderTable.rows[2].insertCell(-1);
-            raiderTable.rows[2].align = 'center';
-            raiderTable.rows[2].cells[0].appendChild(raiderUnitsTable);
-
-            /*==== scout option ====*/
-            if (game_data.market != 'uk') //uk rules forbid filling units into rally point
-            {
-                var raiderScoutTable = document.createElement('table');
-                raiderScoutTable.id = 'twcheese_raider_scout';
-
-                raiderScoutTable.className = 'vis overview_table';
-                raiderScoutTable.style.borderStyle = 'solid';
-                raiderScoutTable.style.borderWidth = '1px';
-
-                raiderScoutTable.insertRow(-1);
-                raiderScoutTable.rows[0].className = 'center';
-                raiderScoutTable.rows[0].insertCell(-1);
-                raiderScoutTable.rows[0].cells[0].width = "35px";
-                raiderScoutTable.rows[0].cells[0].innerHTML = '<img src="' + ImageSrc.troopIcon('spy') + '" title="Number of scouts to send when a unit icon to the left is clicked" />';
-                raiderScoutTable.insertRow(-1);
-                raiderScoutTable.rows[1].className = 'center';
-                raiderScoutTable.rows[1].insertCell(-1);
-
-                var raiderScoutInput = document.createElement('input');
-                raiderScoutInput.id = 'twcheese_raider_scouts';
-
-                if (navigator.appName == 'Microsoft Internet Explorer') //internet buttsExplorer
-                    raiderScoutInput.type = 'text';
-                else
-                    raiderScoutInput.type = 'number';
-                raiderScoutInput.size = 3;
-                raiderScoutInput.value = 0;
-                raiderScoutInput.min = 0;
-                raiderScoutTable.rows[1].cells[0].appendChild(raiderScoutInput);
-
-                raiderScoutInput.onchange = function () {
-                    _this.changeRaidMode(gameDoc.getElementById('twcheese_raider_selection').value)
-                    userConfig.set('ReportToolsWidget.raidScouts', parseInt(this.value));
-                };
-
-                raiderTable.rows[2].insertCell(-1);
-                raiderTable.rows[2].cells[1].appendChild(raiderScoutTable);
-            }
-
-            toolTable.rows[0].cells[0].appendChild(raiderTable);
-        }
-
     }
 
     createDemolitionTableHtml() {
@@ -537,57 +376,6 @@ class BattleReportTools {
      */
     async renameReport(note) {
         this.renamerWidget.rename(note);
-    }
-
-
-    /**
-     * @param {string} mode - (scouted|predicted|periodic)
-     */
-    changeRaidMode(mode) {
-        var haulBonus = Number(this.gameDoc.getElementById('twcheese_raider_haulBonus').value);
-        let gameDoc = this.gameDoc;
-        let report = this.report;
-
-        if (mode == 'scouted') {
-            gameDoc.getElementById('twcheese_raider_selection').value = 'scouted';
-            let raiders = report.calcRaidScouted(haulBonus);
-            this.setRaiders(raiders);
-            gameDoc.getElementById('twcheese_periodic_options').style.display = 'none';
-        }
-        else if (mode == 'predicted') {
-            gameDoc.getElementById('twcheese_raider_selection').value = 'predicted';
-            let raiders = report.calcRaidPredicted(window.game_data.village, TwCheeseDate.newServerDate(), haulBonus);
-            this.setRaiders(raiders);
-            gameDoc.getElementById('twcheese_periodic_options').style.display = 'none';
-        }
-        else if (mode == 'periodic') {
-            gameDoc.getElementById('twcheese_raider_selection').value = 'periodic';
-            let raiders = report.calcRaidPeriodic(Number(gameDoc.getElementById('twcheese_period').value), haulBonus);
-            this.setRaiders(raiders);
-            gameDoc.getElementById('twcheese_periodic_options').style.display = '';
-        }
-    }
-
-
-    /**
-     * @param {TroopCounts} troopCounts
-     */
-    setRaiders(troopCounts) {
-        let spyCount = this.gameDoc.getElementById('twcheese_raider_scouts').value;
-        let attackUrl = (troopType, count) => {
-            return attackPrepUrl({spy: spyCount, [troopType]: count}, this.report.defenderVillage.id);
-        }
-
-        let raiderTable = this.gameDoc.getElementById('twcheese_raider_units');
-
-        for (let [i, troopType] of Object.entries(this.raiderTroopTypes)) {
-            raiderTable.rows[1].cells[i].innerHTML = troopCounts[troopType];
-            if (window.game_data.market === 'uk') {
-                continue;
-            }
-            let url = attackUrl(troopType, Math.round(troopCounts[troopType]));
-            raiderTable.rows[0].cells[i].innerHTML = '<a href="' + url + '"><img src="' + ImageSrc.troopIcon(troopType) + '"/></a>';
-        }
     }
 
 }
@@ -2337,19 +2125,6 @@ function enhanceReport() {
     if (userConfig.get('ReportToolsWidget.autoRename', false)) {
         pageMod.renameReport('');
         document.getElementById('twcheese_auto_rename').checked = true;
-    }    
-
-    /*==== set to user defaults ====*/
-    if (report.espionageLevel >= 1) {
-        document.getElementById('twcheese_period').value = userConfig.get('ReportToolsWidget.raidPeriodHours', 8);
-        document.getElementById('twcheese_raider_haulBonus').value = userConfig.get('ReportToolsWidget.haulBonus', 0);
-
-        if (game_data.market != 'uk') {
-            let raiderScouts = userConfig.get('ReportToolsWidget.raidScouts', 0);
-            document.getElementById('twcheese_raider_scouts').value = raiderScouts;
-        }
-        
-        pageMod.changeRaidMode(userConfig.get('ReportToolsWidget.raidMode', 'scouted'));
     }
 
     if (!userConfig.get('ReportToolsWidget.collapse', false)) {

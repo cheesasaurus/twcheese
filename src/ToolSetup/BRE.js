@@ -2297,21 +2297,6 @@ function createFooterButton(text, address) {
 };
 
 
-/*==== other functions ====*/
-
-
-/**
- *	requests the xml from a page
- *	@param {string} url
- *	@return	{XMLDocument}
- */
-function twcheese_requestXML(url) {
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("GET", url, false);
-    xmlhttp.send("");
-    return $.parseXML(xmlhttp.responseText);
-}
-
 /*==== storage functions ====*/
 
 function twcheese_saveReportsFolderDisplaySettings(settings) {

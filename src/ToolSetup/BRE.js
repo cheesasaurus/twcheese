@@ -263,7 +263,7 @@ class BattleReportTools {
                                 <!-- raid calculator goes here -->
                             </td>
                             <td valign="top">
-                                <!-- demolition info goes here -->
+                                ${this.createDemolitionTableHtml()}
                             </td>
                         </tr>
                         <tr>
@@ -457,9 +457,50 @@ class BattleReportTools {
             }
 
             toolTable.rows[0].cells[0].appendChild(raiderTable);
+        }        
+
+        /*==== renamer ====*/
+
+        let renamer = this.renamer;
+        let name = renamer.createName(report, '');
+
+        let $renamer = $(`
+            <div id="twcheese_renamer" align="center">
+                <span align="center"><h2>Renamer</h2></span>
+                note <input id="twcheese_note" type="text"/>
+                <button>rename</button>
+                <input id="twcheese_auto_rename" type="checkbox" />auto rename
+                <img id="twcheese_autoRenameInfo" src="/graphic/questionmark.png?1" width="13" height="13" title="automatically rename reports when the BRE is used" />
+                <br/> characters available: <span id="twcheese_availableCharacters">${renamer.availableChars(name)}</span>
+                <br/><b>Preview: </b><span id="twcheese_rename_preview">${escapeHtml(name)}</span>
+            </div>
+        `.trim());
+
+        toolTable.rows[1].cells[0].appendChild($renamer[0]);
+        let noteInput = document.getElementById('twcheese_note');
+
+        $('#twcheese_note').on('input', function() {
+            let name = renamer.createName(report, noteInput.value);
+            document.getElementById('twcheese_rename_preview').innerHTML = escapeHtml(name);
+            document.getElementById('twcheese_availableCharacters').innerHTML = renamer.availableChars(name);
+        });
+
+        $renamer.find('button').on('click', function() {
+            _this.renameReport(noteInput.value);
+        });
+
+        $('#twcheese_auto_rename').on('click', function() {
+            userConfig.set('ReportToolsWidget.autoRename', gameDoc.getElementById('twcheese_auto_rename').checked);
+        });
+
+    }
+
+    createDemolitionTableHtml() {
+        let report = this.report;
+        if (!report.buildingLevels) {
+            return '';
         }
 
-        /*==== demolition table ====*/
         if (report.buildingLevels) {
             let catHeaders = [];
             let ramHeaders = [];
@@ -515,43 +556,8 @@ class BattleReportTools {
                 </table>
             `;
 
-            toolTable.rows[0].cells[1].appendChild($(demolitionHtml.trim())[0]);
+            return demolitionHtml.trim();
         }
-
-        /*==== renamer ====*/
-
-        let renamer = this.renamer;
-        let name = renamer.createName(report, '');
-
-        let $renamer = $(`
-            <div id="twcheese_renamer" align="center">
-                <span align="center"><h2>Renamer</h2></span>
-                note <input id="twcheese_note" type="text"/>
-                <button>rename</button>
-                <input id="twcheese_auto_rename" type="checkbox" />auto rename
-                <img id="twcheese_autoRenameInfo" src="/graphic/questionmark.png?1" width="13" height="13" title="automatically rename reports when the BRE is used" />
-                <br/> characters available: <span id="twcheese_availableCharacters">${renamer.availableChars(name)}</span>
-                <br/><b>Preview: </b><span id="twcheese_rename_preview">${escapeHtml(name)}</span>
-            </div>
-        `.trim());
-
-        toolTable.rows[1].cells[0].appendChild($renamer[0]);
-        let noteInput = document.getElementById('twcheese_note');
-
-        $('#twcheese_note').on('input', function() {
-            let name = renamer.createName(report, noteInput.value);
-            document.getElementById('twcheese_rename_preview').innerHTML = escapeHtml(name);
-            document.getElementById('twcheese_availableCharacters').innerHTML = renamer.availableChars(name);
-        });
-
-        $renamer.find('button').on('click', function() {
-            _this.renameReport(noteInput.value);
-        });
-
-        $('#twcheese_auto_rename').on('click', function() {
-            userConfig.set('ReportToolsWidget.autoRename', gameDoc.getElementById('twcheese_auto_rename').checked);
-        });
-
     }
 
 

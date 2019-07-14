@@ -17,6 +17,15 @@ class ReportRaiderWidget extends AbstractWidget {
         this.initStructure();
         this.watchSelf();
         this.applyUserConfig();
+
+        if (!this.mayFillRallyPoint()) {
+            this.$scoutsContainer.hide();
+        }
+    }
+
+    mayFillRallyPoint() {
+        // uk rules forbid filling units into rally point
+        return window.game_data.market !== 'uk';
     }
 
     initStructure() {
@@ -26,6 +35,7 @@ class ReportRaiderWidget extends AbstractWidget {
         this.$period = this.$el.find('#twcheese_period');
         this.$periodContainer = this.$el.find('#twcheese_periodic_options');
         this.$scouts = this.$el.find('#twcheese_raider_scouts');
+        this.$scoutsContainer = this.$el.find('#twcheese_raider_scout');
         this.$buttonSetDefault = $('.twcheese-button-set-default');
         this.raiderUnitsTable = this.$el.find('#twcheese_raider_units')[0]; // todo
         this.$raiderLinks = $(this.raiderUnitsTable.rows[0]).find('a');
@@ -49,7 +59,7 @@ class ReportRaiderWidget extends AbstractWidget {
         let troopCountCells = [];
         let travelTimeCells = [];
         for (let troopType of this.raiderTroopTypes) {
-            if (window.game_data.market === 'uk') {
+            if (this.mayFillRallyPoint()) {
                 iconCells.push(`<td width="35px"><img src="${ImageSrc.troopIcon(troopType)}"></td>`);
             } else {
                 iconCells.push(`<td width="35px"><a><img src="${ImageSrc.troopIcon(troopType)}"></a></td>`);
@@ -196,8 +206,7 @@ class ReportRaiderWidget extends AbstractWidget {
 
         for (let [i, troopType] of Object.entries(this.raiderTroopTypes)) {
             raiderTable.rows[1].cells[i].innerHTML = troopCounts[troopType];
-            if (window.game_data.market === 'uk') {
-                // uk rules forbid filling units into rally point
+            if (!this.mayFillRallyPoint()) {
                 continue;
             }
             let url = attackUrl(troopType, Math.round(troopCounts[troopType]));

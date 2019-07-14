@@ -1,5 +1,5 @@
 import { initCss } from '/twcheese/src/Util/UI.js';
-import { userConfig } from '/twcheese/src/Util/UserConfig.js';
+import { userConfig } from '/twcheese/src/Util/Config.js';
 
 
 function suggestRedirect(options) {

@@ -3,7 +3,7 @@ import { Command } from '/twcheese/src/Models/Command.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { initCss } from '/twcheese/src/Util/UI.js';
 import { TwCheeseDate } from '/twcheese/src/Models/TwCheeseDate.js';
-import { userConfig } from '/twcheese/src/Util/UserConfig.js';
+import { userConfig } from '/twcheese/src/Util/Config.js';
 
 class HaulStatsWidget extends AbstractWidget {
 

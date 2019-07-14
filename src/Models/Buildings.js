@@ -1,6 +1,5 @@
 import { Resources } from '/twcheese/src/Models/Resources.js';
-import { gameConfig } from '/twcheese/src/Util/GameConfig.js';
-import { buildingConfig } from '/twcheese/src/Util/BuildingConfig.js';
+import { gameConfig, buildingConfig } from '/twcheese/src/Util/Config.js';
 
  // todo: request devs make additional info available via interface.php, so this won't be necessary
 import { cfg } from '/twcheese/conf/Buildings.js';

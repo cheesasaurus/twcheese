@@ -1,5 +1,5 @@
 import { TroopCalculator } from '/twcheese/src/Models/Troops.js';
-import { gameConfig } from '/twcheese/src/Util/GameConfig.js';
+import { gameConfig } from '/twcheese/src/Util/Config.js';
 
 
 /**

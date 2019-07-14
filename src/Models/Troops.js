@@ -1,4 +1,4 @@
-import { troopConfig } from '/twcheese/src/Util/TroopConfig.js';
+import { troopConfig } from '/twcheese/src/Util/Config.js';
 
 let troopTypes = ['spear', 'sword', 'axe', 'archer', 'spy', 'light', 'marcher', 'heavy', 'ram', 'catapult', 'knight', 'snob', 'militia'];
 

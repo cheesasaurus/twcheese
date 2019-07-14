@@ -12,10 +12,7 @@ import { BattleReportScraper } from '/twcheese/src/Scrape/BattleReportScraper.js
 import { BattleReportCondensedScraper } from '/twcheese/src/Scrape/BattleReportCondensedScraper.js';
 import { textScraper } from '/twcheese/src/Scrape/TextScraper.js';
 import { enhanceBattleReport } from '/twcheese/src/Transform/enhanceBattleReport.js';
-import { userConfig } from '/twcheese/src/Util/UserConfig.js';
-import { gameConfig } from '/twcheese/src/Util/GameConfig.js';
-import { troopConfig } from '/twcheese/src/Util/TroopConfig.js';
-import { buildingConfig } from '/twcheese/src/Util/BuildingConfig.js';
+import { userConfig, gameConfig, buildingConfig, troopConfig } from '/twcheese/src/Util/Config.js';
 import { requestDocument, gameUrl, attackPrepUrl } from '/twcheese/src/Util/Network.js';
 import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.js';
 

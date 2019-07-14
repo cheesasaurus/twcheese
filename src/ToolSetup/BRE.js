@@ -542,12 +542,10 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
         document.getElementById('twcheese_reportsDisplay_y-table-emulator').style.height = document.getElementById('twcheese_reportsTable_body').clientHeight + 'px';
 
         /*==== set display dimensions ====*/
-        if (settings.displayWidth) {
-            document.getElementById('twcheese_reportsFolderDisplay').style.width = settings.displayWidth;
-            document.getElementById('twcheese_reportsFolderDisplay').style.height = settings.displayHeight;
-            document.getElementById('twcheese_reportsFolderDisplay').fitDisplayComponents();
-
-        }
+        let reportsFolderDisplay = document.getElementById('twcheese_reportsFolderDisplay');
+        reportsFolderDisplay.style.width = userConfig.get('ReportListWidget.size.width', '720px');
+        reportsFolderDisplay.style.height = userConfig.get('ReportListWidget.size.height', '250px');
+        reportsFolderDisplay.fitDisplayComponents();
     }
 
     /*==== find reports table ====*/
@@ -877,13 +875,11 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
     $('#twcheese_reportsFolderDisplay').resize(
         function () {
             try {
-                document.getElementById('twcheese_reportsFolderDisplay').fitDisplayComponents();
+                let reportsFolderDisplay = document.getElementById('twcheese_reportsFolderDisplay');
+                reportsFolderDisplay.fitDisplayComponents();
 
-                /*==== save settings ====*/
-                var reportsFolderDisplay = document.getElementById('twcheese_reportsFolderDisplay');
-                twcheese_reportsFolderDisplaySettings.displayWidth = reportsFolderDisplay.style.width;
-                twcheese_reportsFolderDisplaySettings.displayHeight = reportsFolderDisplay.style.height;
-                twcheese_saveReportsFolderDisplaySettings(twcheese_reportsFolderDisplaySettings);
+                userConfig.set('ReportListWidget.size.width', reportsFolderDisplay.style.width);
+                userConfig.set('ReportListWidget.size.height', reportsFolderDisplay.style.height);
             } catch (e) { console.error(e) }
         }
     );

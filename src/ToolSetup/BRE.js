@@ -582,10 +582,11 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
             }
 
         }
-        yTableEmulator.style.height = reportsTableBody.clientHeight + 'px';
-        xTableEmulator.style.width = reportsTableBody.clientWidth + 'px';
+        
         this.alignForTroops();
         this.alignForResources();
+        yTableEmulator.style.height = reportsTableBody.clientHeight + 'px';
+        xTableEmulator.style.width = reportsTableBody.clientWidth + 'px';
     };
 
     /**
@@ -882,29 +883,34 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     /*==== create headers ====*/
     reportsTableHeader.insertRow(-1);
     reportsTableHeader.insertRow(-1);
+    reportsTableHeader.insertRow(-1);
 
     let cellIndex = 0;
     for (let category of this.columnCategories) {
-        let upperTh = document.createElement('th');
-        upperTh.innerHTML = category.title || '';
-        upperTh.initialColSpan = category.cols.length;
-        upperTh.colSpan = category.cols.length;
-        reportsTableHeader.rows[0].appendChild(upperTh);
+        let titleTh = document.createElement('th');
+        titleTh.innerHTML = category.title || '';
+        titleTh.initialColSpan = category.cols.length;
+        titleTh.colSpan = category.cols.length;
+        reportsTableHeader.rows[1].appendChild(titleTh);
 
         let widthSum = 0;
         let colIndexes = [];
         for (let col of category.cols) {
+            let alignmentTh = document.createElement('th');
+            alignmentTh.style.width = col.width + 'px';
+            reportsTableHeader.rows[0].appendChild(alignmentTh);
+
             let lowerTh = document.createElement('th');
             lowerTh.innerHTML = col.header;
-            lowerTh.style.width = col.width + 'px';
-            reportsTableHeader.rows[1].appendChild(lowerTh);
+            // lowerTh.style.width = col.width + 'px';
+            reportsTableHeader.rows[2].appendChild(lowerTh);
 
             widthSum += col.width;
             colIndexes.push(cellIndex);
             cellIndex++;
         }
         let borderSpacing = 2 * (category.cols.length - 1);
-        upperTh.style.width = (widthSum + borderSpacing) + 'px';
+        titleTh.style.width = (widthSum + borderSpacing) + 'px';
         this.columnIndexes.set(category.key, colIndexes);
     }
 
@@ -926,9 +932,9 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
 
     /*==== create first row to match widths to header table ====*/
     reportsTableBody.insertRow(-1);
-    for (let i = 0; i < reportsTableHeader.rows[1].cells.length; i++) {
+    for (let i = 0; i < reportsTableHeader.rows[0].cells.length; i++) {
         reportsTableBody.rows[0].insertCell(-1);
-        reportsTableBody.rows[0].cells[i].style.width = reportsTableHeader.rows[1].cells[i].style.width;
+        reportsTableBody.rows[0].cells[i].style.width = reportsTableHeader.rows[0].cells[i].style.width;
     }
 
     /*==== y scroll panel====*/
@@ -1026,14 +1032,17 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         var reportsTableBody = document.getElementById('twcheese_reportsTable_body');
         var reportsTableHeader = document.getElementById('twcheese_reportsTable_header');
 
-        var tableWidth = reportsTableHeader.style.width.split('px')[0];
-        var columnWidth = reportsTableHeader.rows[1].cells[column].style.width.split('px')[0];
-        tableWidth = Number(tableWidth) + Number(columnWidth);
+        var tableWidth = reportsTableHeader.style.width.split('px')[0];        
 
         /*==== header ====*/
+        let alignmentTh = cellAtIndex(reportsTableHeader.rows[0], column);
+        let columnWidth = alignmentTh.style.width.split('px')[0];
+        tableWidth = parseFloat(tableWidth) + parseFloat(columnWidth);
         reportsTableHeader.style.width = tableWidth + 'px';
-        cellAtIndex(reportsTableHeader.rows[0], column).style.display = "table-cell";
-        reportsTableHeader.rows[1].cells[column].style.display = "table-cell";
+
+        alignmentTh.style.display = "table-cell";
+        cellAtIndex(reportsTableHeader.rows[1], column).style.display = "table-cell";
+        reportsTableHeader.rows[2].cells[column].style.display = "table-cell";
 
         /*==== body ====*/
         reportsTableBody.style.width = tableWidth + 'px';
@@ -1046,7 +1055,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
                 cell.style.display = 'table-cell';
             }
         }
-    }
+    };
 
 
     reportsTable.hideColumn = function(column) {
@@ -1056,12 +1065,14 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         var tableWidth = reportsTableHeader.style.width.split('px')[0];
 
         /*==== header ====*/
-        let upperHeaderCell = cellAtIndex(reportsTableHeader.rows[0], column);
-        upperHeaderCell.style.display = "none";
-        let columnWidth = upperHeaderCell.style.width.split('px')[0];
-        tableWidth = Number(tableWidth) - Number(columnWidth);
+        let alignmentTh = cellAtIndex(reportsTableHeader.rows[0], column);
+        let columnWidth = alignmentTh.style.width.split('px')[0];
+        tableWidth = parseFloat(tableWidth) - parseFloat(columnWidth);
         reportsTableHeader.style.width = tableWidth + 'px';
-        reportsTableHeader.rows[1].cells[column].style.display = "none";
+
+        alignmentTh.style.display = "none";
+        cellAtIndex(reportsTableHeader.rows[1], column).style.display = "none";
+        reportsTableHeader.rows[2].cells[column].style.display = "none";
 
         /*==== body ====*/
         reportsTableBody.style.width = tableWidth + 'px';
@@ -1336,17 +1347,14 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     let digitWidth = 8;
 
     /**
-     *	todo: fix buginess
      *	adjusts reports table width based on troop counts
      */
     this.alignForTroops = function () {
-        // todo: I think the first row's cells having colSpans is messing things up.
-        // try adding an extra blank row in the table header. will need to rewrite some things :(
         let colIndexes = this.columnIndexes.get('defenderSurvivors');
 
         let maxDigits = Array(colIndexes.length).fill(2);
 
-        for (var r = 1; r < reportsTableBody.rows.length; r++) {
+        for (let r = 1; r < reportsTableBody.rows.length; r++) {
             let row = reportsTableBody.rows[r];
             if (!row.twcheeseReport.defenderSurvivors) {
                 continue;
@@ -1363,60 +1371,19 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
             width = Math.max(20, width);
             widthSum += width;
 
-            let lowerTh = reportsTableHeader.rows[1].cells[col];
+            let alignmentTh = reportsTableHeader.rows[0].cells[col];
             let bodyCell = reportsTableBody.rows[0].cells[col];            
 
-            lowerTh.style.minWidth = width + 'px';
+            alignmentTh.style.minWidth = width + 'px';
             bodyCell.style.minWidth = width + 'px';
         }
 
         let padding = 3 * 2 * colIndexes.length;
         let borderSpacing = 2 * (colIndexes.length - 1);
         let width = widthSum + borderSpacing + padding;
-        console.log(width);
         
-        let titleCell = cellAtIndex(reportsTableHeader.rows[0], colIndexes[0]);
-        titleCell.style.width = width + 'px';
-
-        // reportsTableHeader.style.width = Number(Number(reportsTableHeader.style.width.split('px')[0]) + width) + 'px';
-        // reportsTableBody.style.width = reportsTableHeader.clientWidth + 'px';
-        // xTableEmulator.style.width = reportsTableBody.clientWidth + 'px';
-
-        console.log(maxDigits);
-
-        return; // todo: rewrite
-        /*
-        var maxDigits = new Array(2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2);
-        for (var row = 1; row < reportsTableBody.rows.length; row++) {
-            let report = reportsTableBody.rows[row].twcheeseReport;
-            if (report.defenderSurvivors) {
-                let survivors = report.defenderSurvivors.toArray();
-                for (var i = 0; i < 12; i++) {
-                    var digits = new String(survivors[i]).length;
-                    if (digits > maxDigits[i])
-                        maxDigits[i] = digits;
-                }
-            }
-        }
-
-        var totalWidth = 0;
-        for (let i = 0; i < 12; i++) {
-            let $headerCell = $(reportsTableHeader.rows[1].cells[i + 12]);
-            let $bodyCell = $(reportsTableBody.rows[0].cells[i + 12]);
-            let width = Math.max($headerCell.innerWidth(), $bodyCell.innerWidth());
-
-            $headerCell.css({'min-width': width});
-            $bodyCell.css({'min-width': width});
-
-            totalWidth += $bodyCell.outerWidth();
-        }
-        totalWidth += 11 * 2; // border spacing between the 12 cells
-        let padding = 3;
-        reportsTableHeader.style.width = Number(Number(reportsTableHeader.style.width.split('px')[0]) - Number(reportsTableHeader.rows[0].cells[12].style.width.split('px')[0]) + totalWidth - 2*padding) + 'px';
-        reportsTableHeader.rows[0].cells[12].style.width = Number(totalWidth - 2*padding) + 'px';
-        reportsTableBody.style.width = reportsTableHeader.clientWidth + 'px';
-        xTableEmulator.style.width = reportsTableBody.clientWidth + 'px';
-        */
+        let titleTh = cellAtIndex(reportsTableHeader.rows[1], colIndexes[0]);
+        titleTh.style.width = width + 'px';
     };
 
     /**

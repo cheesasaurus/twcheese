@@ -1333,11 +1333,57 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         }
     };
 
+    let digitWidth = 8;
+
     /**
      *	todo: fix buginess
      *	adjusts reports table width based on troop counts
      */
     this.alignForTroops = function () {
+        // todo: I think the first row's cells having colSpans is messing things up.
+        // try adding an extra blank row in the table header. will need to rewrite some things :(
+        let colIndexes = this.columnIndexes.get('defenderSurvivors');
+
+        let maxDigits = Array(colIndexes.length).fill(2);
+
+        for (var r = 1; r < reportsTableBody.rows.length; r++) {
+            let row = reportsTableBody.rows[r];
+            if (!row.twcheeseReport.defenderSurvivors) {
+                continue;
+            }
+            for (let [i, col] of Object.entries(colIndexes)) {
+                let digits = String(row.cells[col].innerHTML).length;
+                maxDigits[i] = Math.max(digits, maxDigits[i]);
+            }
+        }
+
+        let widthSum = 0;
+        for (let [i, col] of Object.entries(colIndexes)) {
+            let width = digitWidth * maxDigits[i];
+            width = Math.max(20, width);
+            widthSum += width;
+
+            let lowerTh = reportsTableHeader.rows[1].cells[col];
+            let bodyCell = reportsTableBody.rows[0].cells[col];            
+
+            lowerTh.style.minWidth = width + 'px';
+            bodyCell.style.minWidth = width + 'px';
+        }
+
+        let padding = 3 * 2 * colIndexes.length;
+        let borderSpacing = 2 * (colIndexes.length - 1);
+        let width = widthSum + borderSpacing + padding;
+        console.log(width);
+        
+        let titleCell = cellAtIndex(reportsTableHeader.rows[0], colIndexes[0]);
+        titleCell.style.width = width + 'px';
+
+        // reportsTableHeader.style.width = Number(Number(reportsTableHeader.style.width.split('px')[0]) + width) + 'px';
+        // reportsTableBody.style.width = reportsTableHeader.clientWidth + 'px';
+        // xTableEmulator.style.width = reportsTableBody.clientWidth + 'px';
+
+        console.log(maxDigits);
+
         return; // todo: rewrite
         /*
         var maxDigits = new Array(2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2);

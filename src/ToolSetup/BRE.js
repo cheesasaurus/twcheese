@@ -1179,42 +1179,14 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
 
 
     reportsTable.toggleReportsColumn = function (settingName) {
-        let column = columnIndexes.get(settingName)[0];
+        let columnIndex = columnIndexes.get(settingName)[0];
 
-        var reportsTableBody = document.getElementById('twcheese_reportsTable_body');
-        var reportsTableHeader = document.getElementById('twcheese_reportsTable_header');
         if (userConfig.get(`ReportListWidget.showCols.${settingName}`, true)) {
-            document.getElementById('twcheese_reportsFolderDisplay').hideColumn(column);
+            reportsTable.hideColumn(columnIndex);
             userConfig.set(`ReportListWidget.showCols.${settingName}`, false);
         }
         else {
-            /* show */
-            var tableWidth = reportsTableHeader.style.width.split('px')[0];
-            var columnWidth = reportsTableHeader.rows[1].cells[column].style.width.split('px')[0];
-            tableWidth = Number(tableWidth) + Number(columnWidth);
-
-            /*==== header ====*/
-            reportsTableHeader.style.width = tableWidth + 'px';
-            if (column < 12)
-                reportsTableHeader.rows[0].cells[column].style.display = "table-cell";
-            else if (column >= 24)
-                reportsTableHeader.rows[0].cells[column - 11].style.display = "table-cell";
-            reportsTableHeader.rows[1].cells[column].style.display = "table-cell";
-
-            /*==== body ====*/
-            reportsTableBody.style.width = tableWidth + 'px';
-            for (var i = 0; i < reportsTableBody.rows.length; i++) {
-                if (!reportsTableBody.rows[i].twcheeseShowDetails && column > 2) {
-                    if (settingName === 'strTimeReceived')
-                        reportsTableBody.rows[i].cells[4].style.display = 'table-cell';
-                    else
-                        reportsTableBody.rows[i].cells[3].colSpan += 1;
-                }
-                else {
-                    reportsTableBody.rows[i].cells[column].style.display = "table-cell";
-                }
-            }
-
+            reportsTable.showColumn(columnIndex);
             userConfig.set(`ReportListWidget.showCols.${settingName}`, true);
         }
 
@@ -1249,7 +1221,41 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         document.getElementById('twcheese_reportsDisplay_y-table-emulator').style.height = document.getElementById('twcheese_reportsTable_body').clientHeight + 'px';
     };
 
-    reportsTable.hideColumn = function (column) {
+
+    reportsTable.showColumn = function(column) {
+        var reportsTableBody = document.getElementById('twcheese_reportsTable_body');
+        var reportsTableHeader = document.getElementById('twcheese_reportsTable_header');
+
+        /* show */
+        var tableWidth = reportsTableHeader.style.width.split('px')[0];
+        var columnWidth = reportsTableHeader.rows[1].cells[column].style.width.split('px')[0];
+        tableWidth = Number(tableWidth) + Number(columnWidth);
+
+        /*==== header ====*/
+        reportsTableHeader.style.width = tableWidth + 'px';
+        if (column < 12)
+            reportsTableHeader.rows[0].cells[column].style.display = "table-cell";
+        else if (column >= 24)
+            reportsTableHeader.rows[0].cells[column - 11].style.display = "table-cell";
+        reportsTableHeader.rows[1].cells[column].style.display = "table-cell";
+
+        /*==== body ====*/
+        reportsTableBody.style.width = tableWidth + 'px';
+        for (var i = 0; i < reportsTableBody.rows.length; i++) {
+            if (!reportsTableBody.rows[i].twcheeseShowDetails && column > 2) {
+                if (settingName === 'strTimeReceived')
+                    reportsTableBody.rows[i].cells[4].style.display = 'table-cell';
+                else
+                    reportsTableBody.rows[i].cells[3].colSpan += 1;
+            }
+            else {
+                reportsTableBody.rows[i].cells[column].style.display = "table-cell";
+            }
+        }
+    }
+
+
+    reportsTable.hideColumn = function(column) {
         var reportsTableBody = document.getElementById('twcheese_reportsTable_body');
         var reportsTableHeader = document.getElementById('twcheese_reportsTable_header');
 

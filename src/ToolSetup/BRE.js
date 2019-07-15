@@ -949,7 +949,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     yScrollPanel.style.background = 'transparent';
     yScrollPanel.style.position = 'absolute';
     yScrollPanel.style.right = 0;
-    //yScrollPanel.style.maxHeight = Number(400 - 20 - reportsTableHeaderDiv.clientHeight) + 'px';
     yScrollPanel.style.height = Number(400 - 20 - reportsTableHeaderDiv.clientHeight) + 'px';
     yScrollPanel.style.top = reportsTableHeaderDiv.clientHeight + "px";
 
@@ -958,8 +957,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     yTableEmulator.id = 'twcheese_reportsDisplay_y-table-emulator';
     yScrollPanel.appendChild(yTableEmulator);
     yTableEmulator.style.height = reportsTableBody.clientHeight;
-    //if(navigator.appName.search('Internet Explorer') != -1)
-    //yTableEmulator.style.height = '10000px';
     yTableEmulator.style.overflow = 'hidden';
     yTableEmulator.style.position = 'relative';
     yTableEmulator.innerHTML = '&nbsp;';
@@ -996,6 +993,30 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         reportsTableBodyDiv.scrollLeft = xScrollPanel.scrollLeft;
         reportsTableHeaderDiv.scrollLeft = xScrollPanel.scrollLeft;
     };
+
+    reportsTableBody.addEventListener('wheel', function(e) {
+        e.preventDefault();
+        let deltaY = 90 * Math.sign(e.deltaY);
+        
+        let timeStart = performance.now();
+        let animDurationMs = 250;
+        let y = 0;
+
+        let scrollStep = function() {
+            let msElapsed = performance.now() - timeStart;
+            let targetY = deltaY * Math.min(1, msElapsed / animDurationMs);
+            let stepY = targetY - y;
+
+            y += stepY;
+            yScrollPanel.scrollTop += stepY;
+            reportsTableBody.scrollTop += stepY;
+
+            if (msElapsed < animDurationMs) {
+                window.requestAnimationFrame(scrollStep);
+            }
+        }
+        window.requestAnimationFrame(scrollStep);
+    });
 
     /*==== reports table functions ====*/
     var reportsTable = reportsFolderDisplay;

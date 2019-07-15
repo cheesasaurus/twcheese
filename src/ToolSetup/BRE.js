@@ -1390,35 +1390,45 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
      *	adjusts reportsTable width based on resources
      */
     this.alignForResources = function () {
-        return; // todo: rewrite
-        var maxDigits = new Array(2, 2, 2, 5);
-        for (var row = 1; row < reportsTableBody.rows.length; row++) {
-            let report = reportsTableBody.rows[row].twcheeseReport;
-            if (report.resources) {
-                let res = report.resources.toArray();
-                for (var i = 0; i < 3; i++) {
-                    let digits = new String(res[i]).length;
-                    if (digits > maxDigits[i])
-                        maxDigits[i] = digits;
-                }
-                let digits = new String(report.resources.sum()).length;
-                if (digits > maxDigits[3])
-                    maxDigits[3] = digits;
+        let colIndexes = [
+            ...this.columnIndexes.get('resources.wood'),
+            ...this.columnIndexes.get('resources.stone'),
+            ...this.columnIndexes.get('resources.iron'),
+            ...this.columnIndexes.get('resources.sum'),
+        ];
+
+        let maxDigits = [2, 2, 2, 2];
+
+        for (let r = 1; r < reportsTableBody.rows.length; r++) {
+            let row = reportsTableBody.rows[r];
+            if (!row.twcheeseReport.resources) {
+                continue;
+            }
+            for (let [i, col] of Object.entries(colIndexes)) {
+                let digits = String(row.cells[col].innerHTML).length;
+                maxDigits[i] = Math.max(digits, maxDigits[i]);
             }
         }
 
-        reportsTableHeader.style.width = Number(Number(reportsTable.style.width.split('px')[0]) - 88) + 'px';
-        for (let i = 0; i < 4; i++) {
-            var width = maxDigits[i] * 8;
-            if (width < 20)
-                width = 20;
-            reportsTableHeader.rows[1].cells[i + 42].style.width = width + 'px';
-            reportsTableHeader.rows[0].cells[i + 31].style.width = width + 'px';
-            reportsTableBody.rows[0].cells[i + 42].style.width = width + 'px';
-            reportsTableHeader.style.width = Number(Number(reportsTableHeader.style.width.split('px')[0]) + width) + 'px';
+        let widthSum = 0;
+        for (let [i, col] of Object.entries(colIndexes)) {
+            let width = digitWidth * maxDigits[i];
+            width = Math.max(20, width);
+            widthSum += width;
+
+            let alignmentTh = reportsTableHeader.rows[0].cells[col];
+            let bodyCell = reportsTableBody.rows[0].cells[col];
+
+            alignmentTh.style.minWidth = width + 'px';
+            bodyCell.style.minWidth = width + 'px';
         }
-        reportsTableBody.style.width = reportsTableHeader.clientWidth + 'px';
-        xTableEmulator.style.width = reportsTableBody.clientWidth + 'px';
+
+        let padding = 3 * 2 * colIndexes.length;
+        let borderSpacing = 2 * (colIndexes.length - 1);
+        let width = widthSum + borderSpacing + padding;
+        
+        let titleTh = cellAtIndex(reportsTableHeader.rows[1], colIndexes[0]);
+        titleTh.style.width = width + 'px';
     };
 
     /*==== put report information into table ====*/

@@ -423,110 +423,16 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
      *	marks checkboxes and hides certain displays in accordance with the user's Folder Display settings
      */
     this.applySettings = function() {
-        var checkboxes = document.getElementById('twcheese_reportsFolderSettings').getElementsByTagName('input');
-
-        if (userConfig.get('ReportListWidget.showCols.repeatLinks', true))
-            checkboxes[0].checked = true;
-        else
-            reportsTable.hideColumns('repeatLinks');
-
-        if (userConfig.get('ReportListWidget.showCols.distance', true))
-            checkboxes[2].checked = true;
-        else
-            reportsTable.hideColumns('distance');
-
-        if (userConfig.get('ReportListWidget.showCols.fullSubject', true))
-            checkboxes[4].checked = true;
-        else
-            reportsTable.hideColumns('fullSubject');
-
-        if (userConfig.get('ReportListWidget.showCols.note', true))
-            checkboxes[6].checked = true;
-        else
-            reportsTable.hideColumns('note');
-
-        if (userConfig.get('ReportListWidget.showCols.attackerName', true))
-            checkboxes[8].checked = true;
-        else
-            reportsTable.hideColumns('attackerName');
-
-        if (userConfig.get('ReportListWidget.showCols.defenderName', true))
-            checkboxes[10].checked = true;
-        else
-            reportsTable.hideColumns('defenderName');
-
-        if (userConfig.get('ReportListWidget.showCols.attackerVillage', true))
-            checkboxes[12].checked = true;
-        else
-            reportsTable.hideColumns('attackerVillage');
-
-        if (userConfig.get('ReportListWidget.showCols.defenderVillage', true))
-            checkboxes[14].checked = true;
-        else
-            reportsTable.hideColumns('defenderVillage');
-
-        if (userConfig.get('ReportListWidget.showCols.feint', true))
-            checkboxes[16].checked = true;
-        else
-            reportsTable.hideColumns('feint');
-
-        if (userConfig.get('ReportListWidget.showCols.deadNoble', true))
-            checkboxes[18].checked = true;
-        else
-            reportsTable.hideColumns('deadNoble');
-
-        if (userConfig.get('ReportListWidget.showCols.loyalty', true))
-            checkboxes[20].checked = true;
-        else
-            reportsTable.hideColumns('loyalty');
-
-        if (userConfig.get('ReportListWidget.showCols.defenderSurvivors', true))
-            checkboxes[22].checked = true;
-        else
-            reportsTable.hideColumns('defenderSurvivors');
-
-        if (userConfig.get('ReportListWidget.showCols.resources.wood', true))
-            checkboxes[24].checked = true;
-        else
-            reportsTable.hideColumns('resources.wood');
-
-        if (userConfig.get('ReportListWidget.showCols.resources.stone', true))
-            checkboxes[26].checked = true;
-        else
-            reportsTable.hideColumns('resources.stone');
-
-        if (userConfig.get('ReportListWidget.showCols.resources.iron', true))
-            checkboxes[28].checked = true;
-        else
-            reportsTable.hideColumns('resources.iron');
-
-        if (userConfig.get('ReportListWidget.showCols.resources.sum', true))
-            checkboxes[30].checked = true;
-        else
-            reportsTable.hideColumns('resources.sum');
-
-        if (userConfig.get('ReportListWidget.showCols.timeLaunched', true))
-            checkboxes[32].checked = true;
-        else
-            reportsTable.hideColumns('timeLaunched');
-
-        if (userConfig.get('ReportListWidget.showCols.strTimeReceived', true))
-            checkboxes[34].checked = true;
-        else
-            reportsTable.hideColumns('strTimeReceived');
-
-        var checkboxIndex;
-        for (var i = 0; i < 18; i++) {
-            checkboxIndex = i * 2 + 1;
-            // todo: all building types, not hardcoded
-            let settingName = `buildingLevels.${buildingTypes[i]}`;
-            if (userConfig.get(`ReportListWidget.showCols.${settingName}`, true))
-                checkboxes[checkboxIndex].checked = true;
-            else
+        let checkboxes = document.getElementById('twcheese_reportsFolderSettings').getElementsByTagName('input');
+        for (let checkbox of checkboxes) {
+            let settingName = checkbox.dataset.settingName;
+            if (userConfig.get(`ReportListWidget.showCols.${settingName}`, true)) {
+                checkbox.checked = true;
+            } else {
                 reportsTable.hideColumns(settingName);
+            }
         }
 
-        /*==== set display dimensions ====*/
         let reportsFolderDisplay = document.getElementById('twcheese_reportsFolderDisplay');
         reportsFolderDisplay.style.width = userConfig.get('ReportListWidget.size.width', '720px');
         reportsFolderDisplay.style.height = userConfig.get('ReportListWidget.size.height', '250px');
@@ -764,7 +670,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     }
     
     function insertCheckbox(key, text, rowNum, colNum) {
-        let $el = $(`<label><input data-for="${key}" type="checkbox"> ${text}</label>`);
+        let $el = $(`<label><input data-setting-name="${key}" type="checkbox"> ${text}</label>`);
         $el.find('input').on('click', () => {
             reportsTable.toggleReportsColumns(key);
         });    

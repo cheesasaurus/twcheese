@@ -1352,7 +1352,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     this.alignForTroops = function () {
         let colIndexes = this.columnIndexes.get('defenderSurvivors');
 
-        let maxDigits = Array(colIndexes.length).fill(2);
+        let maxChars = Array(colIndexes.length).fill(2);
 
         for (let r = 1; r < reportsTableBody.rows.length; r++) {
             let row = reportsTableBody.rows[r];
@@ -1360,30 +1360,12 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
                 continue;
             }
             for (let [i, col] of Object.entries(colIndexes)) {
-                let digits = String(row.cells[col].innerHTML).length;
-                maxDigits[i] = Math.max(digits, maxDigits[i]);
+                let chars = String(row.cells[col].innerHTML).length;
+                maxChars[i] = Math.max(chars, maxChars[i]);
             }
         }
 
-        let widthSum = 0;
-        for (let [i, col] of Object.entries(colIndexes)) {
-            let width = digitWidth * maxDigits[i];
-            width = Math.max(20, width);
-            widthSum += width;
-
-            let alignmentTh = reportsTableHeader.rows[0].cells[col];
-            let bodyCell = reportsTableBody.rows[0].cells[col];            
-
-            alignmentTh.style.minWidth = width + 'px';
-            bodyCell.style.minWidth = width + 'px';
-        }
-
-        let padding = 3 * 2 * colIndexes.length;
-        let borderSpacing = 2 * (colIndexes.length - 1);
-        let width = widthSum + borderSpacing + padding;
-        
-        let titleTh = cellAtIndex(reportsTableHeader.rows[1], colIndexes[0]);
-        titleTh.style.width = width + 'px';
+        this.alignCols(colIndexes, maxChars);
     };
 
     /**
@@ -1397,7 +1379,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
             ...this.columnIndexes.get('resources.sum'),
         ];
 
-        let maxDigits = [2, 2, 2, 2];
+        let maxChars = [2, 2, 2, 2];
 
         for (let r = 1; r < reportsTableBody.rows.length; r++) {
             let row = reportsTableBody.rows[r];
@@ -1405,14 +1387,19 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
                 continue;
             }
             for (let [i, col] of Object.entries(colIndexes)) {
-                let digits = String(row.cells[col].innerHTML).length;
-                maxDigits[i] = Math.max(digits, maxDigits[i]);
+                let chars = row.cells[col].innerHTML.length;
+                maxChars[i] = Math.max(chars, maxChars[i]);
             }
         }
 
+        this.alignCols(colIndexes, maxChars);
+    };
+
+    this.alignCols = function(colIndexes, maxChars) {
+        let charWidth = 8;
         let widthSum = 0;
         for (let [i, col] of Object.entries(colIndexes)) {
-            let width = digitWidth * maxDigits[i];
+            let width = charWidth * maxChars[i];
             width = Math.max(20, width);
             widthSum += width;
 

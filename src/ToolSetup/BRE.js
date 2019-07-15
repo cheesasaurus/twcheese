@@ -525,15 +525,13 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
                 document.getElementById('twcheese_reportsFolderDisplay').hideColumn(i + 24);
         }
 
-        /*==== adjust scrollbars ====*/
-        document.getElementById('twcheese_reportsDisplay_x-table-emulator').style.width = document.getElementById('twcheese_reportsTable_header').clientWidth + 'px';
-        document.getElementById('twcheese_reportsDisplay_y-table-emulator').style.height = document.getElementById('twcheese_reportsTable_body').clientHeight + 'px';
-
         /*==== set display dimensions ====*/
         let reportsFolderDisplay = document.getElementById('twcheese_reportsFolderDisplay');
         reportsFolderDisplay.style.width = userConfig.get('ReportListWidget.size.width', '720px');
         reportsFolderDisplay.style.height = userConfig.get('ReportListWidget.size.height', '250px');
         reportsFolderDisplay.fitDisplayComponents();
+
+        reportsFolderDisplay.adjustScrollbars();
     }
 
     /*==== find reports table ====*/
@@ -1154,6 +1152,11 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
 
     let columnIndexes = this.columnIndexes;
 
+    reportsFolderDisplay.adjustScrollbars = function() {
+        document.getElementById('twcheese_reportsDisplay_x-table-emulator').style.width = document.getElementById('twcheese_reportsTable_header').clientWidth + 'px';
+        document.getElementById('twcheese_reportsDisplay_y-table-emulator').style.height = document.getElementById('twcheese_reportsTable_body').clientHeight + 'px';
+    }
+
     reportsTable.toggleReportsDefenseColumns = function () {
         var reportsTableBody = document.getElementById('twcheese_reportsTable_body');
         var reportsTableHeader = document.getElementById('twcheese_reportsTable_header');
@@ -1186,9 +1189,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
             userConfig.set('ReportListWidget.showCols.defenderSurvivors', true);
         }
 
-        /*==== adjust scrollbars ====*/
-        document.getElementById('twcheese_reportsDisplay_x-table-emulator').style.width = document.getElementById('twcheese_reportsTable_header').clientWidth + 'px';
-        document.getElementById('twcheese_reportsDisplay_y-table-emulator').style.height = document.getElementById('twcheese_reportsTable_body').clientHeight + 'px';
+        reportsFolderDisplay.adjustScrollbars();
     };
 
 
@@ -1203,10 +1204,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
             reportsTable.showColumn(columnIndex);
             userConfig.set(`ReportListWidget.showCols.${settingName}`, true);
         }
-
-        /*==== adjust scrollbars ====*/
-        document.getElementById('twcheese_reportsDisplay_x-table-emulator').style.width = document.getElementById('twcheese_reportsTable_header').clientWidth + 'px';
-        document.getElementById('twcheese_reportsDisplay_y-table-emulator').style.height = document.getElementById('twcheese_reportsTable_body').clientHeight + 'px';
+        reportsFolderDisplay.adjustScrollbars();
     };
 
     reportsTable.hideDefenseColumns = function () {
@@ -1230,9 +1228,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         }
         reportsTableBody.style.width = reportsTableHeader.style.width;
 
-        /*==== adjust scrollbars ====*/
-        document.getElementById('twcheese_reportsDisplay_x-table-emulator').style.width = document.getElementById('twcheese_reportsTable_header').clientWidth + 'px';
-        document.getElementById('twcheese_reportsDisplay_y-table-emulator').style.height = document.getElementById('twcheese_reportsTable_body').clientHeight + 'px';
+        reportsFolderDisplay.adjustScrollbars();
     };
 
 
@@ -1240,7 +1236,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         var reportsTableBody = document.getElementById('twcheese_reportsTable_body');
         var reportsTableHeader = document.getElementById('twcheese_reportsTable_header');
 
-        /* show */
         var tableWidth = reportsTableHeader.style.width.split('px')[0];
         var columnWidth = reportsTableHeader.rows[1].cells[column].style.width.split('px')[0];
         tableWidth = Number(tableWidth) + Number(columnWidth);
@@ -1289,11 +1284,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
                 cell.style.display = 'none';
             }
         }
-
-        /*==== adjust scrollbars ====*/
-        document.getElementById('twcheese_reportsDisplay_x-table-emulator').style.width = document.getElementById('twcheese_reportsTable_header').clientWidth + 'px';
-        document.getElementById('twcheese_reportsDisplay_y-table-emulator').style.height = document.getElementById('twcheese_reportsTable_body').clientHeight + 'px';
-
     };
 
     /**

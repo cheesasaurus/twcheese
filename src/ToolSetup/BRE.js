@@ -186,12 +186,6 @@ switch (game_data.market) {
         language['twcheese']['Help'] = 'Hjelp';
         language['twcheese']['noReportsSelected'] = 'Du har ikke valgt hvilke rapporter som skal endres navn på.';
         break;
-
-    // Portugal
-    case 'pt':        
-        language['twcheese']['Building'] = 'Building';
-        language['twcheese']['Help'] = 'Help';
-        language['twcheese']['noReportsSelected'] = 'You haven\'t selected any reports to be renamed.';
                         
 }
 
@@ -240,6 +234,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     this.columnCategories = [
         {
             key: 'essential',
+            hideable: false,
             cols: [{
                 width: 120,
                 header: '',
@@ -270,6 +265,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
 
         {
             key: 'repeatLinks',
+            hideable: true,
+            description: 'Links to repeat attack',
             cols: [{
                 width: 50,
                 header: 'Repeat',
@@ -289,6 +286,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         },
         {
             key: 'distance',
+            hideable: true,
+            description: 'Distance',
             cols: [{
                 width: 60,
                 header: 'Distance',
@@ -297,6 +296,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         },
         {
             key: 'fullSubject',
+            hideable: true,
+            description: 'Full subject',
             cols: [{
                 width: 400,
                 header: 'Subject',
@@ -305,6 +306,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         },
         {
             key: 'note',
+            hideable: true,
+            description: 'Note',
             cols: [{
                 width: 200,
                 header: 'Note',
@@ -312,7 +315,9 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
             }]
         },
         {
-            key: 'attackername',
+            key: 'attackerName',
+            hideable: true,
+            description: 'Attacker',
             cols: [{
                 width: 150,
                 header: 'Attacker',
@@ -321,6 +326,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         },
         {
             key: 'defenderName',
+            hideable: true,
+            description: 'Defender',
             cols: [{
                 width: 150,
                 header: 'Defender',
@@ -329,6 +336,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         },
         {
             key: 'attackerVillage',
+            hideable: true,
+            description: `Attacker's village`,
             cols: [{
                 width: 70,
                 header: 'Origin',
@@ -342,6 +351,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         },
         {
             key: 'defenderVillage',
+            hideable: true,
+            description: `Defender's village`,
             cols: [{
                 width: 70,
                 header: 'Target',
@@ -355,6 +366,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         },
         {
             key: 'feint',
+            hideable: true,
+            description: 'Feint',
             cols: [{
                 width: 50,
                 header: 'Feint',
@@ -368,6 +381,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         },
         {
             key: 'deadNoble',
+            hideable: true,
+            description: 'Attacking noble died',
             cols: [{
                 width: 50,
                 header: 'Noble',
@@ -386,6 +401,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         },
         {
             key: 'loyalty',
+            hideable: true,
+            description: 'Loyalty reported',
             cols: [{
                 width: 50,
                 header: 'Loyalty',
@@ -399,6 +416,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         },
         {
             key: 'defenderSurvivors',
+            hideable: true,
+            description: 'Troops: Defense remaining',
             title: 'Defense remaining',
             cols: defCols.map(i => {
                 let troopType = troopTypes[i];
@@ -428,6 +447,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
             let buildingType = buildingTypes[i];
             return {
                 key: 'buildingLevels.' + buildingType,
+                hideable: true,
+                description: language['twcheese']['Building'] + ': ' + textScraper.t(`buildings.${buildingType}`),
                 cols: [{
                     width: 20,
                     align: 'center',
@@ -454,8 +475,11 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         }),
 
         ...Resources.TYPES.map(function(resType) {
+            let resName = {wood:'Timber', stone:'Clay', iron:'Iron'}[resType];
             return {
                 key: `resources.${resType}`,
+                hideable: true,
+                description: `Resources: ${resName}`,
                 cols: [{
                     width: 16,
                     align: 'center',
@@ -478,6 +502,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
 
         {
             key: 'resources.sum',
+            hideable: true,
+            description: 'Resources: Total',
             cols: [{
                 width: 40,
                 align: 'center',
@@ -498,6 +524,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         },
         {
             key: 'timelaunched',
+            hideable: true,
+            description: 'Time: Attack launched',
             cols: [{
                 width: 170,
                 header: 'Launched',
@@ -511,6 +539,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         },
         {
             key: 'strTimeReceived',
+            hideable: true,
+            description: 'Time: Report received',
             cols: [{
                 width: 140,
                 header: 'Received',
@@ -793,64 +823,22 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     reportsFolderToolbar.appendChild(reportsFolderSettingsDiv);
     reportsFolderSettingsDiv.id = 'twcheese_reportsFolderSettings';
     reportsFolderSettingsDiv.style.display = 'none';
-
-    /*==== options table ====*/
-    var reportsFolderSettingsTable = document.createElement('table');
-    reportsFolderSettingsTable.width = '100%';
-    reportsFolderSettingsDiv.appendChild(reportsFolderSettingsTable);
-    reportsFolderSettingsTable.id = 'twcheese_reportsFolderSettingsTable';
-
-    for (let i = 0; i < 19; i++) {
-        reportsFolderSettingsTable.insertRow(-1);
-        reportsFolderSettingsTable.rows[i].insertCell(-1);
-        reportsFolderSettingsTable.rows[i].insertCell(-1);
-    }
+    reportsFolderSettingsDiv.style.columnWidth = 200 + 'px';
     
-    function insertCheckbox(key, text, rowNum, colNum) {
-        let $el = $(`<label><input data-setting-name="${key}" type="checkbox"> ${text}</label>`);
+    function insertCheckbox(key, text) {
+        let $el = $(`<div style="white-space:nowrap"><label><input data-setting-name="${key}" type="checkbox"> ${text}</label></div>`);
         $el.find('input').on('click', () => {
             reportsTable.toggleReportsColumns(key);
-        });    
-        reportsFolderSettingsTable.rows[rowNum].cells[colNum].appendChild($el[0]);
+        });
+        reportsFolderSettingsDiv.appendChild($el[0]);
     }
-
-    let hideableColumns = [
-        ['repeatLinks', 'Links to repeat attack'],
-        ['distance', 'Distance'],
-        ['fullSubject', 'Full subject'],
-        ['note', 'Note'],
-        ['attackerName', 'Attacker'],
-        ['defenderName', 'Defender'],
-        ['attackerVillage', `Attacker's village`],
-        ['defenderVillage', `Defender's village`],
-        ['feint', 'Feint'],
-        ['deadNoble', 'Attacking noble died'],
-        ['loyalty', 'Loyalty'],
-        ['defenderSurvivors', 'Troops: remaining defense'],
-        ['resources.wood', 'Resources: Timber'],
-        ['resources.stone', 'Resources: Clay'],
-        ['resources.iron', 'Resources: Iron'],
-        ['resources.sum', 'Resources: Total'],
-        ['timeLaunched', 'Time: Attack launched'],
-        ['strTimeReceived', 'Time: Report received'],
-    ];
-
-    {
-        let i = 0;
-        for (let [key, text] of hideableColumns) {
-            insertCheckbox(key, text, i++, 0);
-        }    
+    
+    for (let category of this.columnCategories) {
+        if (!category.hideable) {
+            continue;
+        }
+        insertCheckbox(category.key, category.description);
     }
-
-    /*=== building options ====*/
-    for (let i = 0; i < 18; i++) {
-        // todo: all buildings, not hardcoded
-        let buildingType = buildingTypes[i];
-        let key = `buildingLevels.${buildingType}`;
-        let text = language['twcheese']['Building'] + ': ' + textScraper.t(`buildings.${buildingType}`);
-        insertCheckbox(key, text, i, 1);
-    }
-
 
     /*==== reports display ====*/
     var reportsFolderDisplay = document.createElement('div');

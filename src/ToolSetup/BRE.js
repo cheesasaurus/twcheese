@@ -222,196 +222,333 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
 
     this.columnIndexes = new Map();
 
+    // todo: all troop types, not hardcoded
+    let defCols = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+
+    // todo: all building types, not hardcoded
+    let buildingCols = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17];
+
+    function centeredImg(src, tooltip = '') {
+        return `<img style="display:block; margin-left:auto; margin-right:auto" src="${src}" title="${tooltip}">`;
+    }
+
+    function villageLink(village) {
+        let url = gameUrl('info_village', {id: village.id});
+        return `<a href="${url}">${village.x}|${village.y}</a>`;
+    }
+
+    this.columnCategories = [
+        {
+            key: 'essential',
+            cols: [{
+                width: 120,
+                header: '',
+                createCellHtml(report) {
+                    let icons = [`<img src="${ImageSrc.dotIcon(report.dotColor)}">`];
+                    if (report.haulStatus !== BattleReportCondensed.HAUL_STATUS_UNKNOWN) {
+                        icons.push(`<img src="${report.haulStatusIconSrc()}">`);
+                    }
+                    if (report.isForwarded) {
+                        icons.push('<img src="graphic/forwarded.png?1">');
+                    }
+                    let html = `<input name="id_${report.reportId}" type="checkbox"> ${icons.join(' ')}
+                        <a href="${gameUrl('report', {mode:game_data.mode, view:report.reportId})}"> view</a>
+                    `;
+                    if (report.defenderName && report.defenderVillage) {
+                        let isDefenderMe = report.defenderName == game_data.player.name;
+                        let wasVillageConquered = report.loyalty && report.loyalty.after <= 0;
+                        if (isDefenderMe || wasVillageConquered) {
+                            html += `<a href="${gameUrl('place', {mode:'units', village:report.defenderVillage.id})}">
+                                <img title="manage troops" style="float:right; cursor:pointer;" src="${ImageSrc.buildingIcon('place')}" />
+                            </a>`;
+                        }
+                    }
+                    return html;
+                }
+            }]
+        },
+
+        {
+            key: 'repeatLinks',
+            cols: [{
+                width: 50,
+                header: 'Repeat',
+                createCellHtml(report) {
+                    if (report.attackerName !== game_data.player.name) {
+                        return '';
+                    }
+                    let url = gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportId});
+                    let html = `<a title="repeat attack, from current village" href="${url}"><img src="${ImageSrc.attack}"></a>`;
+                    if (report.attackerVillage && report.attackerVillage.id) {
+                        let url = gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportId, village: report.attackerVillage.id});
+                        html += ` | <a title="repeat attack, from original village" href="${url}"><img src="${ImageSrc.attack}"></a>`;
+                    }
+                    return html;
+                }
+            }]
+        },
+        {
+            key: 'distance',
+            cols: [{
+                width: 60,
+                header: 'Distance',
+                createCellHtml: (report) => report.defenderDistance(game_data.village)
+            }]
+        },
+        {
+            key: 'fullSubject',
+            cols: [{
+                width: 400,
+                header: 'Subject',
+                createCellHtml: (report) => report.subject
+            }]
+        },
+        {
+            key: 'note',
+            cols: [{
+                width: 200,
+                header: 'Note',
+                createCellHtml: (report) => report.note || ''
+            }]
+        },
+        {
+            key: 'attackername',
+            cols: [{
+                width: 150,
+                header: 'Attacker',
+                createCellHtml: (report) => report.attackerName || ''
+            }]
+        },
+        {
+            key: 'defenderName',
+            cols: [{
+                width: 150,
+                header: 'Defender',
+                createCellHtml: (report) => report.defenderName || ''
+            }]
+        },
+        {
+            key: 'attackerVillage',
+            cols: [{
+                width: 70,
+                header: 'Origin',
+                createCellHtml(report) {
+                    if (!report.attackerVillage) {
+                        return '';
+                    }
+                    return villageLink(report.attackerVillage);
+                }
+            }]
+        },
+        {
+            key: 'defenderVillage',
+            cols: [{
+                width: 70,
+                header: 'Target',
+                createCellHtml(report) {
+                    if (!report.defenderVillage) {
+                        return '';
+                    }
+                    return villageLink(report.defenderVillage);
+                }
+            }]
+        },
+        {
+            key: 'feint',
+            cols: [{
+                width: 50,
+                header: 'Feint',
+                createCellHtml(report) {
+                    if (report.wasAttackFeint) {
+                        return centeredImg('graphic/dots/grey.png?1', 'The attack contained only a small amount of units');
+                    }
+                    return '';
+                }
+            }]
+        },
+        {
+            key: 'deadNoble',
+            cols: [{
+                width: 50,
+                header: 'Noble',
+                createCellHtml(report) {
+                    if (!report.attackerNobleDied) {
+                        return '';
+                    }
+                    let img = centeredImg(ImageSrc.troopIcon('priest'), 'An attacking nobleman died.');
+                    if (report.attackerVillage && report.attackerName === game_data.player.name) {
+                        let url = gameUrl('snob', {village: report.attackerVillage.id});
+                        return `<a href="${url}">${img}</a>`;
+                    }
+                    return img;
+                }
+            }]
+        },
+        {
+            key: 'loyalty',
+            cols: [{
+                width: 50,
+                header: 'Loyalty',
+                createCellHtml(report) {
+                    if (report.loyalty) {
+                        return '<span class="icon ally lead" title="Loyalty change"></span> ' + report.loyalty.after;
+                    }
+                    return '';
+                }
+            }]
+        },
+        {
+            key: 'defenderSurvivors',
+            title: 'Defense remaining',
+            cols: defCols.map(i => {
+                let troopType = troopTypes[i];
+                return {
+                    width: 20,
+                    align: 'center',
+                    header: centeredImg(ImageSrc.troopIcon(troopType)),
+                    createCellHtml(report) {
+                        if (!report.defenderSurvivors) {
+                            return '';
+                        }
+                        let survivorCount = report.defenderSurvivors[troopType];
+                        return survivorCount;
+                    },
+                    cssClass(report) {
+                        if (!report.defenderSurvivors) {
+                            return '';
+                        }
+                        let survivorCount = report.defenderSurvivors[troopType];
+                        return (survivorCount === 0) ? 'unit-item hidden' : '';
+                    }
+                };
+            })
+        },
+
+        ...buildingCols.map(function(i) {
+            let buildingType = buildingTypes[i];
+            return {
+                key: 'buildingLevels.' + buildingType,
+                cols: [{
+                    width: 20,
+                    align: 'center',
+                    header: centeredImg(ImageSrc.buildingIcon(buildingType)),
+                    createCellHtml(report) {
+                        if (!report.buildingLevels) {
+                            return '';
+                        }
+                        let level = report.buildingLevels[buildingType];
+                        if (level === '?') {
+                            return '';
+                        }
+                        return level;
+                    },
+                    cssClass(report) {
+                        if (!report.buildingLevels) {
+                            return '';
+                        }
+                        let level = report.buildingLevels[buildingType];
+                        return ['?', 0].includes(level) ? 'hidden' : '';
+                    }
+                }]
+            };
+        }),
+
+        ...Resources.TYPES.map(function(resType) {
+            return {
+                key: `resources.${resType}`,
+                cols: [{
+                    width: 16,
+                    align: 'center',
+                    header: centeredImg(ImageSrc[resType]),
+                    createCellHtml(report) {
+                        if (!report.resources) {
+                            return '';                        
+                        }
+                        return report.resources[resType].amount;
+                    },
+                    cssClass(report) {
+                        if (!report.resources) {
+                            return '';                        
+                        }
+                        return (report.resources[resType].amount === 0) ? 'hidden' : '';
+                    }
+                }]
+            };
+        }),
+
+        {
+            key: 'resources.sum',
+            cols: [{
+                width: 40,
+                align: 'center',
+                header: 'Total',
+                createCellHtml(report) {
+                    if (!report.resources) {
+                        return '';                        
+                    }
+                    return report.resources.sum();
+                },
+                cssClass(report) {
+                    if (!report.resources) {
+                        return '';                        
+                    }
+                    return (report.resources.sum() === 0) ? 'hidden' : '';
+                }
+            }]
+        },
+        {
+            key: 'timelaunched',
+            cols: [{
+                width: 170,
+                header: 'Launched',
+                createCellHtml(report) {
+                    if (!report.timeLaunched) {
+                        return '';
+                    }
+                    return report.timeLaunched.toHtml(false);
+                }
+            }]
+        },
+        {
+            key: 'strTimeReceived',
+            cols: [{
+                width: 140,
+                header: 'Received',
+                createCellHtml: (report) => report.strTimeReceived || ''
+            }]
+        }
+    ];
+
     /**
      *	fills reportsTableBody with information
      */
     this.populateReportsTable = function () {
         for (let report of this.reports) {
             let row = reportsTableBody.insertRow(-1);
-            row.twcheeseShowDetails = report.attackerName && report.defenderName && report.attackerVillage && report.defenderVillage;
-
-            /*==== basic cell ====*/
-            let cell = row.insertCell(-1);
-            cell.innerHTML = '<input name="id_' + report.reportId + '" type="checkbox">';
-            cell.innerHTML += ' <img src="' + ImageSrc.dotIcon(report.dotColor) + '"> ';
-            if (report.haulStatus !== BattleReportCondensed.HAUL_STATUS_UNKNOWN) {
-                cell.innerHTML += '<img src="' + report.haulStatusIconSrc() + '"> ';
-            }
-            if (report.isForwarded) {
-                cell.innerHTML += '<img src="graphic/forwarded.png?1" />';
-            }
-            cell.innerHTML += `<a href="${gameUrl('report', {mode:game_data.mode, view:report.reportId})}"> view</a>`;
-
-            if (report.defenderName && report.defenderVillage) {
-                let isDefenderMe = report.defenderName == game_data.player.name;
-                let wasVillageConquered = report.loyalty && report.loyalty.after <= 0;
-                if (isDefenderMe || wasVillageConquered) {
-                    cell.innerHTML += `<a href="${gameUrl('place', {mode:'units', village:report.defenderVillage.id})}">
-                        <img title="manage troops" style="float:right; cursor:pointer;" src="${ImageSrc.buildingIcon('place')}" />
-                    </a>`;
-                }
-            }
-
-            /*==== repeat attack cell ====*/
-            cell = row.insertCell(-1);
-            if (report.attackerName === game_data.player.name) {
-                let url = gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportId});
-                cell.innerHTML = '<a title="repeat attack, from current village" href="' + url + '"><img src="' + ImageSrc.attack + '" /></a>';
-                if (report.attackerVillage && report.attackerVillage.id) {
-                    let url = gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportId, village: report.attackerVillage.id});
-                    cell.innerHTML += ' | <a title="repeat attack, from original village" href="' + url + '"><img src="' + ImageSrc.attack + '" /></a>';
-                }
-            }
-
-            /*==== distance cell ====*/
-            cell = row.insertCell(-1);
-            cell.innerHTML = report.defenderDistance(game_data.village);
-
-            /*==== full subject cell ====*/
-            cell = row.insertCell(-1);
-            cell.innerHTML = report.subject;
-            if (!row.twcheeseShowDetails) {
-                cell.initialColSpan = 44;
-                cell.colSpan = cell.initialColSpan;
-            }
-
-            if (row.twcheeseShowDetails) {
-                /*==== note cell ====*/
-                let cell = row.insertCell(-1);
-                if (report.note) {
-                    cell.innerHTML = report.note;
-                }
-
-                /*==== attacker cell ====*/
-                cell = row.insertCell(-1);
-                if (report.attackerName) {
-                    cell.innerHTML = report.attackerName;
-                }
-
-                /*==== defender cell ====*/
-                cell = row.insertCell(-1);
-                if (report.defenderName) {
-                    cell.innerHTML = report.defenderName;
-                }
-
-                /*==== origin cell ====*/
-                cell = row.insertCell(-1);
-                if (report.attackerVillage) {
-                    cell.innerHTML = '<a href="' + game_data.link_base_pure + 'info_village&id=' + report.attackerVillage.id + '" >' + report.attackerVillage.x + '|' + report.attackerVillage.y + '</a>';
-                }
-
-                /*==== target cell ====*/
-                cell = row.insertCell(-1);
-                if (report.defenderVillage) {
-                    cell.innerHTML = '<a href="' + game_data.link_base_pure + 'info_village&id=' + report.defenderVillage.id + '" >' + report.defenderVillage.x + '|' + report.defenderVillage.y + '</a>';
-                }
-
-                /*==== feint cell ====*/
-                cell = row.insertCell(-1);
-                if (report.wasAttackFeint) {
-                    cell.innerHTML = '<img title="The attack contained only a small amount of units" style="display:block; margin-left:auto; margin-right:auto" src="graphic/dots/grey.png?1">';
-                }
-
-                /*==== deadNoble cell ====*/
-                cell = row.insertCell(-1);
-                if (report.attackerNobleDied) {
-                    if (report.attackerVillage && report.attackerName === game_data.player.name) {
-                        cell.innerHTML = '<a href="/game.php?village=' + report.attackerVillage.id + '&screen=snob"><img src="' + ImageSrc.troopIcon('priest') + '" style="display:block; margin-left:auto; margin-right:auto" title="An attacking nobleman died."/></a>';
-                    }
-                    else {
-                        cell.innerHTML = '<img src="' + ImageSrc.troopIcon('priest') + '" style="display:block; margin-left:auto; margin-right:auto" title="An attacking nobleman died."/>';
-                    }
-                }
-
-                /*==== loyalty cell ====*/
-                cell = row.insertCell(-1);
-                if (report.loyalty) {
-                    cell.innerHTML = '<span class="icon ally lead" title="Loyalty change"></span> ' + report.loyalty.after;
-                }
-
-                /*==== defender survivors ====*/
-                for (let troopType of troopTypes) {
-                    if (troopType === 'militia') {
-                        continue;
-                        // todo: change headers and display options to handle various troop types, instead of hardcoded
-                    }
-                    let cell = row.insertCell(-1);
-                    cell.style.textAlign = 'center';
-                    if (report.defenderSurvivors) {
-                        let survivorCount = report.defenderSurvivors[troopType];
-                        cell.innerHTML = survivorCount;
-                        if (survivorCount === 0) {
-                            cell.className = 'unit-item hidden';
-                        }
-                        cell.troopDigits = String(survivorCount).length;
-                    }
-                }
-
-                /*==== buildings ====*/
-                for (let buildingType of buildingTypes) {
-                    if (buildingType === 'watchtower') {
-                        continue;
-                        // todo: change headers and display options to handle various building types, instead of hardcoded
-                    }
-                    let cell = row.insertCell(-1);
-                    cell.style.textAlign = 'center';
-                    if (report.buildingLevels) {
-                        let level = report.buildingLevels[buildingType];
-                        if (level !== '?') {
-                            cell.innerHTML = level;
-                        }
-                        if (level === 0) {
-                            cell.className = 'hidden';
-                        }
-                    }
-                }
-
-                /*==== wood, stone, iron ====*/
-                for (let resType of Resources.TYPES) {
-                    let cell = row.insertCell(-1);
-                    cell.style.textAlign = 'center';
-                    if (report.resources) {
-                        let res = report.resources[resType];
-                        cell.innerHTML = res.amount;
-                        if (res.amount === 0) {
-                            cell.className = 'hidden';
-                        }
-                        cell.resourceDigits = String(res).length;
-                    }
-                }
-
-                /*==== resources total cell ====*/
-                cell = row.insertCell(-1);
-                cell.style.textAlign = 'center';
-                if (report.resources) {
-                    let sum = report.resources.sum();
-                    cell.innerHTML = sum;
-                    if (sum === 0) {
-                        cell.className = 'hidden'
-                    }
-                }
-
-                /*==== timeLaunched cell ====*/
-                cell = row.insertCell(-1);
-                if (report.timeLaunched) {
-                    cell.innerHTML = report.timeLaunched.toHtml(false);
-                }
-
-                /*==== timeReceived cell ====*/
-                cell = row.insertCell(-1);
-                if (report.strTimeReceived) {
-                    cell.innerHTML = report.strTimeReceived;
-                }
-            }
-            else {
-                /*==== timeReceived cell ====*/
-                let cell = row.insertCell(-1);
-                if (report.strTimeReceived) {
-                    cell.innerHTML = report.strTimeReceived;
-                }
-            }
-
             row.twcheeseReport = report;
+            let hasDecentInfo = report.attackerName && report.defenderName && report.attackerVillage && report.defenderVillage;
+            let minimal = new Set(['essential', 'repeatLinks', 'distance', 'fullSubject', 'strTimeReceived']);
+
+            for (let category of this.columnCategories) {
+                if (!hasDecentInfo && !minimal.has(category.key)) {
+                    continue;
+                }
+                for (let col of category.cols) {
+                    let cell = row.insertCell(-1);
+                    cell.innerHTML = col.createCellHtml(report);
+                    if (typeof col.align === 'string') {
+                        cell.style.textAlign = col.align;
+                    }
+                    if (typeof col.cssClass === 'function') {
+                        cell.className = col.cssClass(report);
+                    }
+                    if (!hasDecentInfo && category.key === 'fullSubject') {
+                        cell.initialColSpan = 44; // todo: not hardcoded
+                        cell.colSpan = cell.initialColSpan;
+                    }                    
+                }                
+            }
+
         }
         yTableEmulator.style.height = reportsTableBody.clientHeight + 'px';
         xTableEmulator.style.width = reportsTableBody.clientWidth + 'px';
@@ -756,113 +893,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     reportsTableHeader.insertRow(-1);
     reportsTableHeader.insertRow(-1);
 
-    // todo: all troop types, not hardcoded
-    let defCols = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-
-    // todo: all building types, not hardcoded
-    let buildingCols = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17];
-
-    function centeredImg(src) {
-        return `<img style="display:block; margin-left:auto; margin-right:auto" src="${src}">`;
-    }
-
-    let columnCategories = [
-        {
-            key: 'essential',
-            cols: [{ width: 120, header: '' }]
-        },
-        {
-            key: 'repeatLinks',
-            cols: [{ width: 50, header: 'Repeat' }]
-        },
-        {
-            key: 'distance',
-            cols: [{ width: 60, header: 'Distance' }]
-        },
-        {
-            key: 'fullSubject',
-            cols: [{ width: 400, header: 'Subject' }]
-        },
-        {
-            key: 'note',
-            cols: [{ width: 200, header: 'Note' }]
-        },
-        {
-            key: 'attackername',
-            cols: [{ width: 150, header: 'Attacker' }]
-        },
-        {
-            key: 'defenderName',
-            cols: [{ width: 150, header: 'Defender' }]
-        },
-        {
-            key: 'attackerVillage',
-            cols: [{ width: 70, header: 'Origin' }]
-        },
-        {
-            key: 'defenderVillage',
-            cols: [{ width: 70, header: 'Target' }]
-        },
-        {
-            key: 'feint',
-            cols: [{ width: 50, header: 'Feint' }]
-        },
-        {
-            key: 'deadNoble',
-            cols: [{ width: 50, header: 'Noble' }]
-        },
-        {
-            key: 'loyalty',
-            cols: [{ width: 50, header: 'Loyalty' }]
-        },
-        {
-            key: 'defenderSurvivors',
-            title: 'Defense remaining',
-            cols: defCols.map(i => {
-                let troopType = troopTypes[i];
-                return {
-                    width: 20,
-                    header: centeredImg(ImageSrc.troopIcon(troopType))
-                };
-            })
-        },
-
-        ...buildingCols.map(function(i) {
-            let buildingType = buildingTypes[i];
-            return {
-                key: 'buildingLevels.' + buildingType,
-                cols: [{ width: 20, header: centeredImg(ImageSrc.buildingIcon(buildingType)) }]
-            };
-        }),
-
-        {
-            key: 'resources.wood',
-            cols: [{ width: 16, header: centeredImg(ImageSrc.wood) }]
-        },
-        {
-            key: 'resources.stone',
-            cols: [{ width: 16, header: centeredImg(ImageSrc.stone) }]
-        },
-        {
-            key: 'resources.iron',
-            cols: [{ width: 16, header: centeredImg(ImageSrc.iron) }]
-        },
-        {
-            key: 'resources.sum',
-            cols: [{ width: 40, header: 'Total' }]
-        },
-        {
-            key: 'timelaunched',
-            cols: [{ width: 170, header: 'Launched' }]
-        },
-        {
-            key: 'strTimeReceived',
-            cols: [{ width: 140, header: 'Received' }]
-        }
-    ];
-
     let cellIndex = 0;
-    for (let category of columnCategories) {
+    for (let category of this.columnCategories) {
         let upperTh = document.createElement('th');
         upperTh.innerHTML = category.title || '';
         upperTh.initialColSpan = category.cols.length;
@@ -908,7 +940,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         reportsTableBody.rows[0].insertCell(-1);
         reportsTableBody.rows[0].cells[i].style.width = reportsTableHeader.rows[1].cells[i].style.width;
     }
-    reportsTableBody.rows[0].twcheeseShowDetails = true;
 
     /*==== y scroll panel====*/
     var yScrollPanel = document.createElement('div');

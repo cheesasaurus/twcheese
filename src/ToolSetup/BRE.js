@@ -195,33 +195,6 @@ switch (game_data.market) {
                         
 }
 
-/*==== templates ====*/
-
-/**
- *	settings for the display of various report attributes in the reports folder
- */
-function twcheese_ReportsFolderDisplaySettings() {
-    this.repeatLinks = 1;
-    this.fullSubject = 1;
-    this.note = 1;
-    this.distance = 1;
-    this.feint = 1;
-    this.attacker = 1;
-    this.defender = 1;
-    this.attackerVillage = 1;
-    this.defenderVillage = 1;
-    this.deadNoble = 1;
-    this.loyalty = 1;
-    this.survivors = 1;
-    this.resourcesTimber = 1;
-    this.resourcesClay = 1;
-    this.resourcesIron = 1;
-    this.resourcesTotal = 1;
-    this.timeLaunched = 1;
-    this.timeReceived = 1;
-    this.buildings = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
-}
-
 
 /*==== page modifier functions ====*/
 
@@ -231,7 +204,7 @@ function twcheese_ReportsFolderDisplaySettings() {
  * @param {HTMLDocument} gameDoc the document from game.php?screen=report&mode=attack
  * @param {ReportRenamer} renamer
  */
-function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reportsFolderDisplaySettings) {
+function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     var pageMod = this;
     this.reports = new Array();
 
@@ -433,97 +406,96 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
 
     /**
      *	marks checkboxes and hides certain displays in accordance with the user's Folder Display settings
-     *	@param settings:twcheese_ReportsFolderDisplaySettings()
      */
-    this.applySettings = function (settings) {
+    this.applySettings = function() {
         var checkboxes = document.getElementById('twcheese_reportsFolderSettings').getElementsByTagName('input');
 
-        if (settings.repeatLinks == 1)
+        if (userConfig.get('ReportListWidget.showCols.repeatLinks', true))
             checkboxes[0].checked = true;
         else
             document.getElementById('twcheese_reportsFolderDisplay').hideColumn(1);
 
-        if (settings.distance == 1)
+        if (userConfig.get('ReportListWidget.showCols.distance', true))
             checkboxes[2].checked = true;
         else
             document.getElementById('twcheese_reportsFolderDisplay').hideColumn(2);
 
-        if (settings.fullSubject == 1)
+        if (userConfig.get('ReportListWidget.showCols.fullSubject', true))
             checkboxes[4].checked = true;
         else
             document.getElementById('twcheese_reportsFolderDisplay').hideColumn(3);
 
-        if (settings.note == 1)
+        if (userConfig.get('ReportListWidget.showCols.note', true))
             checkboxes[6].checked = true;
         else
             document.getElementById('twcheese_reportsFolderDisplay').hideColumn(4);
 
-        if (settings.attacker == 1)
+        if (userConfig.get('ReportListWidget.showCols.attackerName', true))
             checkboxes[8].checked = true;
         else
             document.getElementById('twcheese_reportsFolderDisplay').hideColumn(5);
 
-        if (settings.defender == 1)
+        if (userConfig.get('ReportListWidget.showCols.defenderName', true))
             checkboxes[10].checked = true;
         else
             document.getElementById('twcheese_reportsFolderDisplay').hideColumn(6);
 
-        if (settings.attackerVillage == 1)
+        if (userConfig.get('ReportListWidget.showCols.attackerVillage', true))
             checkboxes[12].checked = true;
         else
             document.getElementById('twcheese_reportsFolderDisplay').hideColumn(7);
 
-        if (settings.defenderVillage == 1)
+        if (userConfig.get('ReportListWidget.showCols.defenderVillage', true))
             checkboxes[14].checked = true;
         else
             document.getElementById('twcheese_reportsFolderDisplay').hideColumn(8);
 
-        if (settings.feint == 1)
+        if (userConfig.get('ReportListWidget.showCols.feint', true))
             checkboxes[16].checked = true;
         else
             document.getElementById('twcheese_reportsFolderDisplay').hideColumn(9);
 
-        if (settings.deadNoble == 1)
+        if (userConfig.get('ReportListWidget.showCols.deadNoble', true))
             checkboxes[18].checked = true;
         else
             document.getElementById('twcheese_reportsFolderDisplay').hideColumn(10);
 
-        if (settings.loyalty == 1)
+        if (userConfig.get('ReportListWidget.showCols.loyalty', true))
             checkboxes[20].checked = true;
         else
             document.getElementById('twcheese_reportsFolderDisplay').hideColumn(11);
 
-        if (settings.survivors == 1)
+        if (userConfig.get('ReportListWidget.showCols.defenderSurvivors', true))
             checkboxes[22].checked = true;
         else
             document.getElementById('twcheese_reportsFolderDisplay').hideDefenseColumns();
 
-        if (settings.resourcesTimber == 1)
+        if (userConfig.get('ReportListWidget.showCols.resources.wood', true))
             checkboxes[24].checked = true;
         else
             document.getElementById('twcheese_reportsFolderDisplay').hideColumn(42);
 
-        if (settings.resourcesClay == 1)
+        if (userConfig.get('ReportListWidget.showCols.resources.stone', true))
             checkboxes[26].checked = true;
         else
             document.getElementById('twcheese_reportsFolderDisplay').hideColumn(43);
 
-        if (settings.resourcesIron == 1)
+        if (userConfig.get('ReportListWidget.showCols.resources.iron', true))
             checkboxes[28].checked = true;
         else
             document.getElementById('twcheese_reportsFolderDisplay').hideColumn(44);
 
-        if (settings.resourcesTotal == 1)
+        if (userConfig.get('ReportListWidget.showCols.resources.sum', true))
             checkboxes[30].checked = true;
         else
             document.getElementById('twcheese_reportsFolderDisplay').hideColumn(45);
 
-        if (settings.timeLaunched == 1)
+        if (userConfig.get('ReportListWidget.showCols.timeLaunched', true))
             checkboxes[32].checked = true;
         else
             document.getElementById('twcheese_reportsFolderDisplay').hideColumn(46);
 
-        if (settings.timeReceived == 1)
+        if (userConfig.get('ReportListWidget.showCols.strTimeReceived', true))
             checkboxes[34].checked = true;
         else
             document.getElementById('twcheese_reportsFolderDisplay').hideColumn(47);
@@ -531,7 +503,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
         var checkboxIndex;
         for (var i = 0; i < 18; i++) {
             checkboxIndex = i * 2 + 1;
-            if (settings.buildings[i] == 1)
+            // todo: all building types, not hardcoded
+            if (userConfig.get(`ReportListWidget.showCols.buildingLevels.${buildingTypes[i]}`, true))
                 checkboxes[checkboxIndex].checked = true;
             else
                 document.getElementById('twcheese_reportsFolderDisplay').hideColumn(i + 24);
@@ -793,11 +766,11 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
     reportsFolderSettingsTable.rows[3].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Note';
 
     /*==== attacker option ====*/
-    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(5,'attacker')";
+    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(5,'attackerName')";
     reportsFolderSettingsTable.rows[4].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Attacker';
 
     /*==== defender option ====*/
-    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(6,'defender')";
+    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(6,'defenderName')";
     reportsFolderSettingsTable.rows[5].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Defender';
 
     /*==== attackerVillage option ====*/
@@ -825,19 +798,19 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
     reportsFolderSettingsTable.rows[11].cells[0].innerHTML += '<input onClick="' + survivorsScript + '" type="checkbox"/>Troops: remaining defense';
 
     /*==== resourcesTimber option ====*/
-    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(42,'resourcesTimber')";
+    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(42,'resources.wood')";
     reportsFolderSettingsTable.rows[12].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Resources: Timber';
 
     /*==== resourcesstone option ====*/
-    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(43,'resourcesClay')";
+    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(43,'resources.stone')";
     reportsFolderSettingsTable.rows[13].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Resources: Clay';
 
     /*==== resourcesIron option ====*/
-    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(44,'resourcesIron')";
+    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(44,'resources.iron')";
     reportsFolderSettingsTable.rows[14].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Resources: Iron';
 
     /*==== resourcesTotal option ====*/
-    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(45,'resourcesTotal')";
+    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(45,'resources.sum')";
     reportsFolderSettingsTable.rows[15].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Resources: Total';
 
     /*==== timeLaunched option ====*/
@@ -845,16 +818,17 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
     reportsFolderSettingsTable.rows[16].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Time: Launched';
 
     /*==== timeReceived option ====*/
-    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(47,'timeReceived')";
+    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(47,'strTimeReceived')";
     reportsFolderSettingsTable.rows[17].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Time: Received';
 
     /*=== building options ====*/
     for (let i = 0; i < 18; i++) {
         // todo: all buildings, not hardcoded
-        checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(" + Number(i + 24) + ",'buildings[" + i + "]')";
+        let buildingType = buildingTypes[i];
+        checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(" + Number(i + 24) + `,'buildingLevels.${buildingType}')`;
         var targetCell = reportsFolderSettingsTable.rows[i].cells[1];
         targetCell.innerHTML = '<input onClick="' + checkboxScript + '" type="checkbox"/>';
-        targetCell.innerHTML += language['twcheese']['Building'] + ': ' + textScraper.t(`buildings.${buildingTypes[i]}`);
+        targetCell.innerHTML += language['twcheese']['Building'] + ': ' + textScraper.t(`buildings.${buildingType}`);
     }
 
 
@@ -1145,11 +1119,10 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
         var reportsTableBody = document.getElementById('twcheese_reportsTable_body');
         var reportsTableHeader = document.getElementById('twcheese_reportsTable_header');
 
-        if (twcheese_reportsFolderDisplaySettings.survivors == 1) {
+        if (userConfig.get('ReportListWidget.showCols.defenderSurvivors', true)) {
             /* hide */
             document.getElementById('twcheese_reportsFolderDisplay').hideDefenseColumns();
-            twcheese_reportsFolderDisplaySettings.survivors = 0;
-            twcheese_saveReportsFolderDisplaySettings(twcheese_reportsFolderDisplaySettings);
+            userConfig.set('ReportListWidget.showCols.defenderSurvivors', false);
         }
         else {
             /* show */
@@ -1169,8 +1142,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
             }
             reportsTableBody.style.width = reportsTableHeader.style.width;
 
-            twcheese_reportsFolderDisplaySettings.survivors = 1;
-            twcheese_saveReportsFolderDisplaySettings(twcheese_reportsFolderDisplaySettings);
+            userConfig.set('ReportListWidget.showCols.defenderSurvivors', true);
         }
 
         /*==== adjust scrollbars ====*/
@@ -1181,10 +1153,9 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
     reportsTable.toggleReportsColumn = function (column, settingName) {
         var reportsTableBody = document.getElementById('twcheese_reportsTable_body');
         var reportsTableHeader = document.getElementById('twcheese_reportsTable_header');
-        if (eval('twcheese_reportsFolderDisplaySettings.' + settingName) == 1) {
+        if (userConfig.get(`ReportListWidget.showCols.${settingName}`, true)) {
             document.getElementById('twcheese_reportsFolderDisplay').hideColumn(column);
-            eval('twcheese_reportsFolderDisplaySettings.' + settingName + '= 0');
-            twcheese_saveReportsFolderDisplaySettings(twcheese_reportsFolderDisplaySettings);
+            userConfig.set(`ReportListWidget.showCols.${settingName}`, false);
         }
         else {
             /* show */
@@ -1204,7 +1175,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
             reportsTableBody.style.width = tableWidth + 'px';
             for (var i = 0; i < reportsTableBody.rows.length; i++) {
                 if (!reportsTableBody.rows[i].twcheeseShowDetails && column > 2) {
-                    if (column == 47) //timeReceived column
+                    if (settingName === 'strTimeReceived')
                         reportsTableBody.rows[i].cells[4].style.display = 'table-cell';
                     else
                         reportsTableBody.rows[i].cells[3].colSpan += 1;
@@ -1214,8 +1185,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
                 }
             }
 
-            eval('twcheese_reportsFolderDisplaySettings.' + settingName + '= 1');
-            twcheese_saveReportsFolderDisplaySettings(twcheese_reportsFolderDisplaySettings);
+            userConfig.set(`ReportListWidget.showCols.${settingName}`, true);
         }
 
         /*==== adjust scrollbars ====*/
@@ -1381,7 +1351,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer, twcheese_reports
         }
 
         pageMod.populateReportsTable();
-        pageMod.applySettings(twcheese_reportsFolderDisplaySettings);
+        pageMod.applySettings();
 
         //yTableEmulator.style.height = reportsTableBody.clientHeight + 'px';
         //xTableEmulator.style.width = reportsTableBody.clientWidth + 'px';				
@@ -1880,29 +1850,6 @@ function createFooterButton(text, address) {
 };
 
 
-/*==== storage functions ====*/
-
-function twcheese_saveReportsFolderDisplaySettings(settings) {
-
-    //localStorage.setItem('twcheese_reportsFolderDisplaySettings',escape(JSON.stringify(settings))); //old
-    localStorage.setItem('twcheese_reportsFolderDisplaySettings', JSON.stringify(settings));
-}
-
-function twcheese_loadReportsFolderDisplaySettings() {
-    if (!localStorage.getItem('twcheese_reportsFolderDisplaySettings')) {
-        return new twcheese_ReportsFolderDisplaySettings();
-    }
-    else {
-        var settings;
-        if (localStorage.getItem('twcheese_reportsFolderDisplaySettings').search('%') != -1)
-            settings = eval('(' + unescape(localStorage.getItem('twcheese_reportsFolderDisplaySettings')) + ')'); //old
-        else
-            settings = eval('(' + localStorage.getItem('twcheese_reportsFolderDisplaySettings') + ')'); //new
-        return settings;
-    }
-}
-
-
 /*==== main ====*/
 
 let initialized = false;
@@ -1973,11 +1920,9 @@ function enhanceReport() {
 
 
 function enhanceReportsFolder() {
-    let twcheese_reportsFolderDisplaySettings = twcheese_loadReportsFolderDisplaySettings();
-    twcheese_saveReportsFolderDisplaySettings(twcheese_reportsFolderDisplaySettings);
     let renamer = new ReportRenamer();
-    let pageMod = new twcheese_BattleReportsFolderEnhancer(document, renamer, twcheese_reportsFolderDisplaySettings);
-    pageMod.applySettings(twcheese_reportsFolderDisplaySettings);
+    let pageMod = new twcheese_BattleReportsFolderEnhancer(document, renamer);
+    pageMod.applySettings();
 }
 
 

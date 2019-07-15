@@ -9,7 +9,8 @@ function getProp(object, propPath, defaultValue) {
         }
         object = object[token];
     }
-    return object[tokens[tokens.length - 1]];
+    let value = object[tokens[tokens.length - 1]];
+    return (typeof value === 'undefined') ? defaultValue : value;
 }
 
 

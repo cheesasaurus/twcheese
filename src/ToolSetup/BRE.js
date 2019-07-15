@@ -428,101 +428,102 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         if (userConfig.get('ReportListWidget.showCols.repeatLinks', true))
             checkboxes[0].checked = true;
         else
-            document.getElementById('twcheese_reportsFolderDisplay').hideColumn(1);
+            reportsTable.hideColumns('repeatLinks');
 
         if (userConfig.get('ReportListWidget.showCols.distance', true))
             checkboxes[2].checked = true;
         else
-            document.getElementById('twcheese_reportsFolderDisplay').hideColumn(2);
+            reportsTable.hideColumns('distance');
 
         if (userConfig.get('ReportListWidget.showCols.fullSubject', true))
             checkboxes[4].checked = true;
         else
-            document.getElementById('twcheese_reportsFolderDisplay').hideColumn(3);
+            reportsTable.hideColumns('fullSubject');
 
         if (userConfig.get('ReportListWidget.showCols.note', true))
             checkboxes[6].checked = true;
         else
-            document.getElementById('twcheese_reportsFolderDisplay').hideColumn(4);
+            reportsTable.hideColumns('note');
 
         if (userConfig.get('ReportListWidget.showCols.attackerName', true))
             checkboxes[8].checked = true;
         else
-            document.getElementById('twcheese_reportsFolderDisplay').hideColumn(5);
+            reportsTable.hideColumns('attackerName');
 
         if (userConfig.get('ReportListWidget.showCols.defenderName', true))
             checkboxes[10].checked = true;
         else
-            document.getElementById('twcheese_reportsFolderDisplay').hideColumn(6);
+            reportsTable.hideColumns('defenderName');
 
         if (userConfig.get('ReportListWidget.showCols.attackerVillage', true))
             checkboxes[12].checked = true;
         else
-            document.getElementById('twcheese_reportsFolderDisplay').hideColumn(7);
+            reportsTable.hideColumns('attackerVillage');
 
         if (userConfig.get('ReportListWidget.showCols.defenderVillage', true))
             checkboxes[14].checked = true;
         else
-            document.getElementById('twcheese_reportsFolderDisplay').hideColumn(8);
+            reportsTable.hideColumns('defenderVillage');
 
         if (userConfig.get('ReportListWidget.showCols.feint', true))
             checkboxes[16].checked = true;
         else
-            document.getElementById('twcheese_reportsFolderDisplay').hideColumn(9);
+            reportsTable.hideColumns('feint');
 
         if (userConfig.get('ReportListWidget.showCols.deadNoble', true))
             checkboxes[18].checked = true;
         else
-            document.getElementById('twcheese_reportsFolderDisplay').hideColumn(10);
+            reportsTable.hideColumns('deadNoble');
 
         if (userConfig.get('ReportListWidget.showCols.loyalty', true))
             checkboxes[20].checked = true;
         else
-            document.getElementById('twcheese_reportsFolderDisplay').hideColumn(11);
+            reportsTable.hideColumns('loyalty');
 
         if (userConfig.get('ReportListWidget.showCols.defenderSurvivors', true))
             checkboxes[22].checked = true;
         else
-            document.getElementById('twcheese_reportsFolderDisplay').hideDefenseColumns();
+            reportsTable.hideColumns('defenderSurvivors');
 
         if (userConfig.get('ReportListWidget.showCols.resources.wood', true))
             checkboxes[24].checked = true;
         else
-            document.getElementById('twcheese_reportsFolderDisplay').hideColumn(42);
+            reportsTable.hideColumns('resources.wood');
 
         if (userConfig.get('ReportListWidget.showCols.resources.stone', true))
             checkboxes[26].checked = true;
         else
-            document.getElementById('twcheese_reportsFolderDisplay').hideColumn(43);
+            reportsTable.hideColumns('resources.stone');
 
         if (userConfig.get('ReportListWidget.showCols.resources.iron', true))
             checkboxes[28].checked = true;
         else
-            document.getElementById('twcheese_reportsFolderDisplay').hideColumn(44);
+            reportsTable.hideColumns('resources.iron');
 
         if (userConfig.get('ReportListWidget.showCols.resources.sum', true))
             checkboxes[30].checked = true;
         else
-            document.getElementById('twcheese_reportsFolderDisplay').hideColumn(45);
+            reportsTable.hideColumns('resources.sum');
 
         if (userConfig.get('ReportListWidget.showCols.timeLaunched', true))
             checkboxes[32].checked = true;
         else
-            document.getElementById('twcheese_reportsFolderDisplay').hideColumn(46);
+            reportsTable.hideColumns('timeLaunched');
 
         if (userConfig.get('ReportListWidget.showCols.strTimeReceived', true))
             checkboxes[34].checked = true;
         else
-            document.getElementById('twcheese_reportsFolderDisplay').hideColumn(47);
+            reportsTable.hideColumns('strTimeReceived');
 
         var checkboxIndex;
         for (var i = 0; i < 18; i++) {
             checkboxIndex = i * 2 + 1;
             // todo: all building types, not hardcoded
-            if (userConfig.get(`ReportListWidget.showCols.buildingLevels.${buildingTypes[i]}`, true))
+            let settingName = `buildingLevels.${buildingTypes[i]}`;
+            if (userConfig.get(`ReportListWidget.showCols.${settingName}`, true))
                 checkboxes[checkboxIndex].checked = true;
             else
-                document.getElementById('twcheese_reportsFolderDisplay').hideColumn(i + 24);
+                reportsTable.hideColumns(settingName);
         }
 
         /*==== set display dimensions ====*/
@@ -1172,13 +1173,12 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         }
         reportsFolderDisplay.adjustScrollbars();
     };
+    
 
-
-    reportsTable.hideDefenseColumns = function () {
-        for (let i of columnIndexes.get('defenderSurvivors')) {
+    reportsTable.hideColumns = function (settingName) {
+        for (let i of columnIndexes.get(settingName)) {
             reportsTable.hideColumn(i);
         }
-        reportsFolderDisplay.adjustScrollbars();
     };
 
 

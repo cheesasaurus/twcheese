@@ -1138,6 +1138,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     /*==== reports table functions ====*/
     var reportsTable = reportsFolderDisplay;
 
+    let columnIndexes = this.columnIndexes;
+
     reportsTable.toggleReportsDefenseColumns = function () {
         var reportsTableBody = document.getElementById('twcheese_reportsTable_body');
         var reportsTableHeader = document.getElementById('twcheese_reportsTable_header');
@@ -1148,9 +1150,11 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
             userConfig.set('ReportListWidget.showCols.defenderSurvivors', false);
         }
         else {
+            let defColIndexes = columnIndexes.get('defenderSurvivors');
+
             /* show */
-            reportsTableHeader.rows[0].cells[12].style.display = "table-cell";
-            for (var j = 12; j < 24; j++) {
+            reportsTableHeader.rows[0].cells[defColIndexes[0]].style.display = "table-cell";
+            for (let j of defColIndexes) {
                 reportsTableHeader.rows[1].cells[j].style.display = "table-cell";
                 for (var i = 0; i < reportsTableBody.rows.length; i++) {
                     if (!reportsTableBody.rows[i].twcheeseShowDetails)
@@ -1173,8 +1177,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         document.getElementById('twcheese_reportsDisplay_y-table-emulator').style.height = document.getElementById('twcheese_reportsTable_body').clientHeight + 'px';
     };
 
-    let columnIndexes = this.columnIndexes;
-    
+
     reportsTable.toggleReportsColumn = function (settingName) {
         let column = columnIndexes.get(settingName)[0];
 
@@ -1223,9 +1226,10 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     reportsTable.hideDefenseColumns = function () {
         var reportsTableBody = document.getElementById('twcheese_reportsTable_body');
         var reportsTableHeader = document.getElementById('twcheese_reportsTable_header');
+        let defColIndexes = columnIndexes.get('defenderSurvivors');
 
-        reportsTableHeader.rows[0].cells[12].style.display = "none";
-        for (var j = 12; j < 24; j++) {
+        reportsTableHeader.rows[0].cells[defColIndexes[0]].style.display = "none";
+        for (let j of defColIndexes) {
             reportsTableHeader.rows[1].cells[j].style.display = "none";
             for (var i = 0; i < reportsTableBody.rows.length; i++) {
                 if (!reportsTableBody.rows[i].twcheeseShowDetails)

@@ -196,6 +196,18 @@ switch (game_data.market) {
 }
 
 
+function cellAtIndex(row, i) {
+    let endIndex = -1;
+    for (let cell of row.cells) {
+        let initialColSpan = cell.initialColSpan || cell.colSpan;
+        endIndex += initialColSpan;
+        if (endIndex >= i) {
+            return cell;
+        }
+    }
+}
+
+
 /*==== page modifier functions ====*/
 
 
@@ -259,7 +271,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
             cell = row.insertCell(-1);
             cell.innerHTML = report.subject;
             if (!row.twcheeseShowDetails) {
-                cell.colSpan = 44;
+                cell.initialColSpan = 44;
+                cell.colSpan = cell.initialColSpan;
             }
 
             if (row.twcheeseShowDetails) {
@@ -878,6 +891,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     for (let i = 0; i < 37; i++) {
         reportsTableHeader.rows[0].appendChild(document.createElement('th'));
     }
+    reportsTableHeader.rows[0].cells[12].initialColSpan = 12;
     reportsTableHeader.rows[0].cells[12].colSpan = 12;
     reportsTableHeader.rows[0].cells[12].innerHTML = 'Defense Remaining';
 
@@ -1233,23 +1247,18 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
 
         /*==== header ====*/
         reportsTableHeader.style.width = tableWidth + 'px';
-        if (column < 12)
-            reportsTableHeader.rows[0].cells[column].style.display = "table-cell";
-        else if (column >= 24)
-            reportsTableHeader.rows[0].cells[column - 11].style.display = "table-cell";
+        cellAtIndex(reportsTableHeader.rows[0], column).style.display = "table-cell";
         reportsTableHeader.rows[1].cells[column].style.display = "table-cell";
 
         /*==== body ====*/
         reportsTableBody.style.width = tableWidth + 'px';
-        for (var i = 0; i < reportsTableBody.rows.length; i++) {
-            if (!reportsTableBody.rows[i].twcheeseShowDetails && column > 2) {
-                if (settingName === 'strTimeReceived')
-                    reportsTableBody.rows[i].cells[4].style.display = 'table-cell';
-                else
-                    reportsTableBody.rows[i].cells[3].colSpan += 1;
-            }
-            else {
-                reportsTableBody.rows[i].cells[column].style.display = "table-cell";
+        for (let row of reportsTableBody.rows) {
+            let cell = cellAtIndex(row, column);
+
+            if (cell.initialColSpan && cell.initialColSpan > 1) {
+                cell.colSpan += 1;
+            } else {
+                cell.style.display = 'table-cell';
             }
         }
     }
@@ -1260,33 +1269,24 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         var reportsTableHeader = document.getElementById('twcheese_reportsTable_header');
 
         var tableWidth = reportsTableHeader.style.width.split('px')[0];
-        var columnWidth;
 
         /*==== header ====*/
-        if (column < 12) {
-            reportsTableHeader.rows[0].cells[column].style.display = "none";
-            columnWidth = reportsTableHeader.rows[0].cells[column].style.width.split('px')[0];
-        }
-        else if (column >= 24) {
-            reportsTableHeader.rows[0].cells[column - 11].style.display = "none";
-            columnWidth = reportsTableHeader.rows[0].cells[column - 11].style.width.split('px')[0];
-
-        }
+        let upperHeaderCell = cellAtIndex(reportsTableHeader.rows[0], column);
+        upperHeaderCell.style.display = "none";
+        let columnWidth = upperHeaderCell.style.width.split('px')[0];
         tableWidth = Number(tableWidth) - Number(columnWidth);
         reportsTableHeader.style.width = tableWidth + 'px';
         reportsTableHeader.rows[1].cells[column].style.display = "none";
 
         /*==== body ====*/
         reportsTableBody.style.width = tableWidth + 'px';
-        for (var i = 0; i < reportsTableBody.rows.length; i++) {
-            if (!reportsTableBody.rows[i].twcheeseShowDetails && column > 2) {
-                if (column == 47) // timeReceived column
-                    reportsTableBody.rows[i].cells[4].style.display = 'none';
-                else
-                    reportsTableBody.rows[i].cells[3].colSpan -= 1;
-            }
-            else {
-                reportsTableBody.rows[i].cells[column].style.display = "none";
+        for (let row of reportsTableBody.rows) {
+            let cell = cellAtIndex(row, column);
+
+            if (cell.initialColSpan && cell.initialColSpan > 1) {
+                cell.colSpan -= 1;
+            } else {
+                cell.style.display = 'none';
             }
         }
 

@@ -897,11 +897,12 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         for (let col of category.cols) {
             let alignmentTh = document.createElement('th');
             alignmentTh.style.width = col.width + 'px';
+            alignmentTh.style.paddingTop = 0;
+            alignmentTh.style.paddingBottom = 0;
             reportsTableHeader.rows[0].appendChild(alignmentTh);
 
             let lowerTh = document.createElement('th');
             lowerTh.innerHTML = col.header;
-            // lowerTh.style.width = col.width + 'px';
             reportsTableHeader.rows[2].appendChild(lowerTh);
 
             widthSum += col.width;
@@ -931,9 +932,11 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
 
     /*==== create first row to match widths to header table ====*/
     reportsTableBody.insertRow(-1);
-    for (let i = 0; i < reportsTableHeader.rows[0].cells.length; i++) {
-        reportsTableBody.rows[0].insertCell(-1);
-        reportsTableBody.rows[0].cells[i].style.width = reportsTableHeader.rows[0].cells[i].style.width;
+    for (let alignmentTh of reportsTableHeader.rows[0].cells) {
+        let alignmentCell = reportsTableBody.rows[0].insertCell(-1);
+        alignmentCell.style.width = alignmentTh.style.width;
+        alignmentCell.style.paddingTop = 0;
+        alignmentCell.style.paddingBottom = 0;
     }
 
     /*==== y scroll panel====*/

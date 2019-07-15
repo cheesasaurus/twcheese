@@ -756,185 +756,135 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     reportsTableHeader.insertRow(-1);
     reportsTableHeader.insertRow(-1);
 
-    for (let i = 0; i < 37; i++) {
-        reportsTableHeader.rows[0].appendChild(document.createElement('th'));
-    }
-    reportsTableHeader.rows[0].cells[12].initialColSpan = 12;
-    reportsTableHeader.rows[0].cells[12].colSpan = 12;
-    reportsTableHeader.rows[0].cells[12].innerHTML = 'Defense Remaining';
+    // todo: all troop types, not hardcoded
+    let defCols = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
-    var cellIndex = 0;
+    // todo: all building types, not hardcoded
+    let buildingCols = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17];
 
-    /*==== basic header ====*/
-    reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = '';
-    reportsTableHeader.rows[1].cells[cellIndex].style.width = '120px';
-    reportsTableHeader.rows[0].cells[cellIndex].style.width = '120px';
-    cellIndex++;
-
-    /*==== repeat links header ====*/
-    this.columnIndexes.set('repeatLinks', [cellIndex]);
-    reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Repeat';
-    reportsTableHeader.rows[1].cells[cellIndex].style.width = '50px';
-    reportsTableHeader.rows[0].cells[cellIndex].style.width = '50px';
-    cellIndex++;
-
-    /*==== distance header ====*/
-    this.columnIndexes.set('distance', [cellIndex]);
-    reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Distance';
-    reportsTableHeader.rows[1].cells[cellIndex].style.width = '60px';
-    reportsTableHeader.rows[0].cells[cellIndex].style.width = '60px';
-    cellIndex++;
-
-    /*==== subject header ====*/
-    this.columnIndexes.set('fullSubject', [cellIndex]);
-    reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Subject';
-    reportsTableHeader.rows[1].cells[cellIndex].style.width = '400px';
-    reportsTableHeader.rows[0].cells[cellIndex].style.width = '400px';
-    cellIndex++;
-
-    /*==== note header ====*/
-    this.columnIndexes.set('note', [cellIndex]);
-    reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Note';
-    reportsTableHeader.rows[1].cells[cellIndex].style.width = '200px';
-    reportsTableHeader.rows[0].cells[cellIndex].style.width = '200px';
-    cellIndex++;
-
-    /*==== attacker header ====*/
-    this.columnIndexes.set('attackerName', [cellIndex]);
-    reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Attacker';
-    reportsTableHeader.rows[1].cells[cellIndex].style.width = '150px';
-    reportsTableHeader.rows[0].cells[cellIndex].style.width = '150px';
-    cellIndex++;
-
-    /*==== defender header ====*/
-    this.columnIndexes.set('defenderName', [cellIndex]);
-    reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Defender';
-    reportsTableHeader.rows[1].cells[cellIndex].style.width = '150px';
-    reportsTableHeader.rows[0].cells[cellIndex].style.width = '150px';
-    cellIndex++;
-
-    /*==== origin header ====*/
-    this.columnIndexes.set('attackerVillage', [cellIndex]);
-    reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Origin';
-    reportsTableHeader.rows[1].cells[cellIndex].style.width = '70px';
-    reportsTableHeader.rows[0].cells[cellIndex].style.width = '70px';
-    cellIndex++;
-
-    /*==== target header ====*/
-    this.columnIndexes.set('defenderVillage', [cellIndex]);
-    reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Target';
-    reportsTableHeader.rows[1].cells[cellIndex].style.width = '70px';
-    reportsTableHeader.rows[0].cells[cellIndex].style.width = '70px';
-    cellIndex++;
-
-    /*==== feint header ====*/
-    this.columnIndexes.set('feint', [cellIndex]);
-    reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Feint';
-    reportsTableHeader.rows[1].cells[cellIndex].style.width = '50px';
-    reportsTableHeader.rows[0].cells[cellIndex].style.width = '50px';
-    cellIndex++;
-
-    /*==== dead noble header ====*/
-    this.columnIndexes.set('deadNoble', [cellIndex]);
-    reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Noble';
-    reportsTableHeader.rows[1].cells[cellIndex].style.width = '50px';
-    reportsTableHeader.rows[0].cells[cellIndex].style.width = '50px';
-    cellIndex++;
-
-    /*==== loyalty header ====*/
-    this.columnIndexes.set('loyalty', [cellIndex]);
-    reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Loyalty';
-    reportsTableHeader.rows[1].cells[cellIndex].style.width = '50px';
-    reportsTableHeader.rows[0].cells[cellIndex].style.width = '50px';
-    cellIndex++;
-
-    /*==== defense remaining ====*/
-    var widthSum = 0;
-    let defSurvivorIndexes = [];
-    for (let i = 0; i < 12; i++) {
-        defSurvivorIndexes.push(cellIndex);
-        let troopType = troopTypes[i];
-        reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-        reportsTableHeader.rows[1].cells[cellIndex].style.width = '20px';
-        reportsTableHeader.rows[1].cells[cellIndex].innerHTML = '<img style="display:block; margin-left:auto; margin-right:auto" src="' + ImageSrc.troopIcon(troopType) + '" />';
-
-        widthSum = widthSum + 20;
-        cellIndex++;
-    }
-    this.columnIndexes.set('defenderSurvivors', defSurvivorIndexes);
-    reportsTableHeader.rows[0].cells[cellIndex - 12].style.width = widthSum + 'px';
-
-
-    /*==== building levels ====*/
-    for (let i = 0; i < 18; i++) {
-        let buildingType = buildingTypes[i];
-        this.columnIndexes.set(`buildingLevels.${buildingType}`, [cellIndex]);
-        reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-        reportsTableHeader.rows[1].cells[cellIndex].innerHTML = '<img style="display:block; margin-left:auto; margin-right:auto" src="' + ImageSrc.buildingIcon(buildingType) + '" />';
-        reportsTableHeader.rows[1].cells[cellIndex].style.width = '20px';
-        reportsTableHeader.rows[0].cells[cellIndex - 11].style.width = '20px';
-        cellIndex++;
+    function centeredImg(src) {
+        return `<img style="display:block; margin-left:auto; margin-right:auto" src="${src}">`;
     }
 
-    /*==== wood header ====*/
-    this.columnIndexes.set('resources.wood', [cellIndex]);
-    reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = '<img style="display:block; margin-left:auto; margin-right:auto" src="' + ImageSrc.wood + '" />';
-    reportsTableHeader.rows[1].cells[cellIndex].style.width = '16px';
-    reportsTableHeader.rows[0].cells[cellIndex - 11].style.width = '16px';
-    cellIndex++;
+    let columnCategories = [
+        {
+            key: 'essential',
+            cols: [{ width: 120, header: '' }]
+        },
+        {
+            key: 'repeatLinks',
+            cols: [{ width: 50, header: 'Repeat' }]
+        },
+        {
+            key: 'distance',
+            cols: [{ width: 60, header: 'Distance' }]
+        },
+        {
+            key: 'fullSubject',
+            cols: [{ width: 400, header: 'Subject' }]
+        },
+        {
+            key: 'note',
+            cols: [{ width: 200, header: 'Note' }]
+        },
+        {
+            key: 'attackername',
+            cols: [{ width: 150, header: 'Attacker' }]
+        },
+        {
+            key: 'defenderName',
+            cols: [{ width: 150, header: 'Defender' }]
+        },
+        {
+            key: 'attackerVillage',
+            cols: [{ width: 70, header: 'Origin' }]
+        },
+        {
+            key: 'defenderVillage',
+            cols: [{ width: 70, header: 'Target' }]
+        },
+        {
+            key: 'feint',
+            cols: [{ width: 50, header: 'Feint' }]
+        },
+        {
+            key: 'deadNoble',
+            cols: [{ width: 50, header: 'Noble' }]
+        },
+        {
+            key: 'loyalty',
+            cols: [{ width: 50, header: 'Loyalty' }]
+        },
+        {
+            key: 'defenderSurvivors',
+            title: 'Defense remaining',
+            cols: defCols.map(i => {
+                let troopType = troopTypes[i];
+                return {
+                    width: 20,
+                    header: centeredImg(ImageSrc.troopIcon(troopType))
+                };
+            })
+        },
 
-    /*==== stone header ====*/
-    this.columnIndexes.set('resources.stone', [cellIndex]);
-    reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = '<img style="display:block; margin-left:auto; margin-right:auto" src="' + ImageSrc.stone + '" />';
-    reportsTableHeader.rows[1].cells[cellIndex].style.width = '16px';
-    reportsTableHeader.rows[0].cells[cellIndex - 11].style.width = '16px';
-    cellIndex++;
+        ...buildingCols.map(function(i) {
+            let buildingType = buildingTypes[i];
+            return {
+                key: 'buildingLevels.' + buildingType,
+                cols: [{ width: 20, header: centeredImg(ImageSrc.buildingIcon(buildingType)) }]
+            };
+        }),
 
-    /*==== iron header ====*/
-    this.columnIndexes.set('resources.iron', [cellIndex]);
-    reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = '<img style="display:block; margin-left:auto; margin-right:auto" src="' + ImageSrc.iron + '" />';
-    reportsTableHeader.rows[1].cells[cellIndex].style.width = '16px';
-    reportsTableHeader.rows[0].cells[cellIndex - 11].style.width = '16px';
-    cellIndex++;
+        {
+            key: 'resources.wood',
+            cols: [{ width: 16, header: centeredImg(ImageSrc.wood) }]
+        },
+        {
+            key: 'resources.stone',
+            cols: [{ width: 16, header: centeredImg(ImageSrc.stone) }]
+        },
+        {
+            key: 'resources.iron',
+            cols: [{ width: 16, header: centeredImg(ImageSrc.iron) }]
+        },
+        {
+            key: 'resources.sum',
+            cols: [{ width: 40, header: 'Total' }]
+        },
+        {
+            key: 'timelaunched',
+            cols: [{ width: 170, header: 'Launched' }]
+        },
+        {
+            key: 'strTimeReceived',
+            cols: [{ width: 140, header: 'Received' }]
+        }
+    ];
 
-    /*==== total resources header ====*/
-    this.columnIndexes.set('resources.sum', [cellIndex]);
-    reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Total';
-    reportsTableHeader.rows[1].cells[cellIndex].style.width = '40px';
-    reportsTableHeader.rows[0].cells[cellIndex - 11].style.width = '40px';
-    cellIndex++;
+    let cellIndex = 0;
+    for (let category of columnCategories) {
+        let upperTh = document.createElement('th');
+        upperTh.innerHTML = category.title || '';
+        upperTh.initialColSpan = category.cols.length;
+        upperTh.colSpan = category.cols.length;
+        reportsTableHeader.rows[0].appendChild(upperTh);
 
-    /*==== timeLaunched header ====*/
-    this.columnIndexes.set('timeLaunched', [cellIndex]);
-    reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Launched';
-    reportsTableHeader.rows[1].cells[cellIndex].style.width = '170px';
-    reportsTableHeader.rows[0].cells[cellIndex - 11].style.width = '170px';
-    cellIndex++;
+        let widthSum = 0;
+        let colIndexes = [];
+        for (let col of category.cols) {
+            let lowerTh = document.createElement('th');
+            lowerTh.innerHTML = col.header;
+            lowerTh.style.width = col.width + 'px';
+            reportsTableHeader.rows[1].appendChild(lowerTh);
 
-    /*==== timeReceived header ====*/
-    this.columnIndexes.set('strTimeReceived', [cellIndex]);
-    reportsTableHeader.rows[1].appendChild(document.createElement('th'));
-    reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Received';
-    reportsTableHeader.rows[1].cells[cellIndex].style.width = '140px';
-    reportsTableHeader.rows[0].cells[cellIndex - 11].style.width = '140px';
-    cellIndex++;
+            widthSum += col.width;
+            colIndexes.push(cellIndex);
+            cellIndex++;
+        }
+        let borderSpacing = 2 * (category.cols.length - 1);
+        upperTh.style.width = (widthSum + borderSpacing) + 'px';
+        this.columnIndexes.set(category.key, colIndexes);
+    }
 
     /*==== reports table body ====*/
     var reportsTableBodyDiv = document.createElement('div');

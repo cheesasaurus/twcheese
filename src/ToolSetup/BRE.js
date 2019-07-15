@@ -208,6 +208,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     var pageMod = this;
     this.reports = new Array();
 
+    this.columnIndexes = new Map();
+
     /**
      *	fills reportsTableBody with information
      */
@@ -889,6 +891,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     cellIndex++;
 
     /*==== repeat links header ====*/
+    this.columnIndexes.set('repeatLinks', [cellIndex]);
     reportsTableHeader.rows[1].appendChild(document.createElement('th'));
     reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Repeat';
     reportsTableHeader.rows[1].cells[cellIndex].style.width = '50px';
@@ -896,6 +899,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     cellIndex++;
 
     /*==== distance header ====*/
+    this.columnIndexes.set('distance', [cellIndex]);
     reportsTableHeader.rows[1].appendChild(document.createElement('th'));
     reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Distance';
     reportsTableHeader.rows[1].cells[cellIndex].style.width = '60px';
@@ -903,6 +907,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     cellIndex++;
 
     /*==== subject header ====*/
+    this.columnIndexes.set('fullSubject', [cellIndex]);
     reportsTableHeader.rows[1].appendChild(document.createElement('th'));
     reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Subject';
     reportsTableHeader.rows[1].cells[cellIndex].style.width = '400px';
@@ -910,6 +915,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     cellIndex++;
 
     /*==== note header ====*/
+    this.columnIndexes.set('note', [cellIndex]);
     reportsTableHeader.rows[1].appendChild(document.createElement('th'));
     reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Note';
     reportsTableHeader.rows[1].cells[cellIndex].style.width = '200px';
@@ -917,6 +923,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     cellIndex++;
 
     /*==== attacker header ====*/
+    this.columnIndexes.set('attackerName', [cellIndex]);
     reportsTableHeader.rows[1].appendChild(document.createElement('th'));
     reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Attacker';
     reportsTableHeader.rows[1].cells[cellIndex].style.width = '150px';
@@ -924,6 +931,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     cellIndex++;
 
     /*==== defender header ====*/
+    this.columnIndexes.set('defenderName', [cellIndex]);
     reportsTableHeader.rows[1].appendChild(document.createElement('th'));
     reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Defender';
     reportsTableHeader.rows[1].cells[cellIndex].style.width = '150px';
@@ -931,6 +939,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     cellIndex++;
 
     /*==== origin header ====*/
+    this.columnIndexes.set('attackerVillage', [cellIndex]);
     reportsTableHeader.rows[1].appendChild(document.createElement('th'));
     reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Origin';
     reportsTableHeader.rows[1].cells[cellIndex].style.width = '70px';
@@ -938,6 +947,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     cellIndex++;
 
     /*==== target header ====*/
+    this.columnIndexes.set('defenderVillage', [cellIndex]);
     reportsTableHeader.rows[1].appendChild(document.createElement('th'));
     reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Target';
     reportsTableHeader.rows[1].cells[cellIndex].style.width = '70px';
@@ -945,6 +955,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     cellIndex++;
 
     /*==== feint header ====*/
+    this.columnIndexes.set('feint', [cellIndex]);
     reportsTableHeader.rows[1].appendChild(document.createElement('th'));
     reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Feint';
     reportsTableHeader.rows[1].cells[cellIndex].style.width = '50px';
@@ -952,6 +963,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     cellIndex++;
 
     /*==== dead noble header ====*/
+    this.columnIndexes.set('deadNoble', [cellIndex]);
     reportsTableHeader.rows[1].appendChild(document.createElement('th'));
     reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Noble';
     reportsTableHeader.rows[1].cells[cellIndex].style.width = '50px';
@@ -959,6 +971,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     cellIndex++;
 
     /*==== loyalty header ====*/
+    this.columnIndexes.set('loyalty', [cellIndex]);
     reportsTableHeader.rows[1].appendChild(document.createElement('th'));
     reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Loyalty';
     reportsTableHeader.rows[1].cells[cellIndex].style.width = '50px';
@@ -967,7 +980,9 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
 
     /*==== defense remaining ====*/
     var widthSum = 0;
+    let defSurvivorIndexes = [];
     for (let i = 0; i < 12; i++) {
+        defSurvivorIndexes.push(cellIndex);
         let troopType = troopTypes[i];
         reportsTableHeader.rows[1].appendChild(document.createElement('th'));
         reportsTableHeader.rows[1].cells[cellIndex].style.width = '20px';
@@ -976,12 +991,14 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         widthSum = widthSum + 20;
         cellIndex++;
     }
+    this.columnIndexes.set('defenderSurvivors', defSurvivorIndexes);
     reportsTableHeader.rows[0].cells[cellIndex - 12].style.width = widthSum + 'px';
 
 
     /*==== building levels ====*/
     for (let i = 0; i < 18; i++) {
         let buildingType = buildingTypes[i];
+        this.columnIndexes.set(`buildingLevels.${buildingType}`, [cellIndex]);
         reportsTableHeader.rows[1].appendChild(document.createElement('th'));
         reportsTableHeader.rows[1].cells[cellIndex].innerHTML = '<img style="display:block; margin-left:auto; margin-right:auto" src="' + ImageSrc.buildingIcon(buildingType) + '" />';
         reportsTableHeader.rows[1].cells[cellIndex].style.width = '20px';
@@ -990,6 +1007,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     }
 
     /*==== wood header ====*/
+    this.columnIndexes.set('resources.wood', [cellIndex]);
     reportsTableHeader.rows[1].appendChild(document.createElement('th'));
     reportsTableHeader.rows[1].cells[cellIndex].innerHTML = '<img style="display:block; margin-left:auto; margin-right:auto" src="' + ImageSrc.wood + '" />';
     reportsTableHeader.rows[1].cells[cellIndex].style.width = '16px';
@@ -997,13 +1015,15 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     cellIndex++;
 
     /*==== stone header ====*/
+    this.columnIndexes.set('resources.stone', [cellIndex]);
     reportsTableHeader.rows[1].appendChild(document.createElement('th'));
     reportsTableHeader.rows[1].cells[cellIndex].innerHTML = '<img style="display:block; margin-left:auto; margin-right:auto" src="' + ImageSrc.stone + '" />';
     reportsTableHeader.rows[1].cells[cellIndex].style.width = '16px';
     reportsTableHeader.rows[0].cells[cellIndex - 11].style.width = '16px';
     cellIndex++;
 
-    /*==== wood header ====*/
+    /*==== iron header ====*/
+    this.columnIndexes.set('resources.iron', [cellIndex]);
     reportsTableHeader.rows[1].appendChild(document.createElement('th'));
     reportsTableHeader.rows[1].cells[cellIndex].innerHTML = '<img style="display:block; margin-left:auto; margin-right:auto" src="' + ImageSrc.iron + '" />';
     reportsTableHeader.rows[1].cells[cellIndex].style.width = '16px';
@@ -1011,6 +1031,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     cellIndex++;
 
     /*==== total resources header ====*/
+    this.columnIndexes.set('resources.sum', [cellIndex]);
     reportsTableHeader.rows[1].appendChild(document.createElement('th'));
     reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Total';
     reportsTableHeader.rows[1].cells[cellIndex].style.width = '40px';
@@ -1018,6 +1039,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     cellIndex++;
 
     /*==== timeLaunched header ====*/
+    this.columnIndexes.set('timeLaunched', [cellIndex]);
     reportsTableHeader.rows[1].appendChild(document.createElement('th'));
     reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Launched';
     reportsTableHeader.rows[1].cells[cellIndex].style.width = '170px';
@@ -1025,6 +1047,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     cellIndex++;
 
     /*==== timeReceived header ====*/
+    this.columnIndexes.set('strTimeReceived', [cellIndex]);
     reportsTableHeader.rows[1].appendChild(document.createElement('th'));
     reportsTableHeader.rows[1].cells[cellIndex].innerHTML = 'Received';
     reportsTableHeader.rows[1].cells[cellIndex].style.width = '140px';

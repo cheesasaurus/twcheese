@@ -3,7 +3,7 @@ import { initCss } from '/twcheese/src/Util/UI.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { BattleReportCondensed } from '/twcheese/src/Models/BattleReportCondensed.js';
 import { Resources } from '/twcheese/src/Models/Resources.js';
-import { buildingTypes } from '/twcheese/src/Models/Buildings.js';
+import { buildingUtil } from '/twcheese/src/Models/Buildings.js';
 import { ReportRenamer } from '/twcheese/src/Models/ReportRenamer.js';
 import { BattleReportScraper } from '/twcheese/src/Scrape/BattleReportScraper.js';
 import { BattleReportCondensedScraper } from '/twcheese/src/Scrape/BattleReportCondensedScraper.js';
@@ -435,7 +435,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
             })
         },
 
-        ...buildingTypes.map(function(buildingType) {
+        ...buildingUtil.buildingTypesOnWorld().map(function(buildingType) {
             return {
                 key: 'buildingLevels.' + buildingType,
                 hideable: true,

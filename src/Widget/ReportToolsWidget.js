@@ -3,7 +3,7 @@ import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { userConfig } from '/twcheese/src/Util/Config.js';
 import { ReportRaiderWidget } from '/twcheese/src/Widget/ReportRaiderWidget.js';
 import { ReportRenamerWidget } from '/twcheese/src/Widget/ReportRenamerWidget.js';
-import { buildingTypes } from '/twcheese/src/Models/Buildings.js';
+import { buildingUtil } from '/twcheese/src/Models/Buildings.js';
 import { attackPrepUrl } from '/twcheese/src/Util/Network.js';
 
 
@@ -71,7 +71,7 @@ class ReportToolsWidget extends AbstractWidget {
 
             let suggestedCounts = report.suggestSiegeUnits();
 
-            for (let buildingType of buildingTypes) {
+            for (let buildingType of buildingUtil.buildingTypesOnWorld()) {
                 let siegeWeapon = (buildingType === 'wall') ? 'ram' : 'catapult';
 
                 let headerInnerHtml;

@@ -156,4 +156,15 @@ class BuildingLevels {
 }
 
 
-export { BuildingLevels, buildingTypes };
+let buildingUtil = {
+    buildingTypesOnWorld() {
+        return buildingTypes.filter(type => this.typeExistsOnWorld(type));
+    },
+
+    typeExistsOnWorld(buildingType) {
+        return typeof buildingConfig.get(buildingType) !== 'undefined';
+    },
+};
+
+
+export { BuildingLevels, buildingUtil };

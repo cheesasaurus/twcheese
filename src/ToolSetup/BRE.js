@@ -3,7 +3,6 @@ import { initCss } from '/twcheese/src/Util/UI.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { BattleReportCondensed } from '/twcheese/src/Models/BattleReportCondensed.js';
 import { Resources } from '/twcheese/src/Models/Resources.js';
-import { troopTypes } from '/twcheese/src/Models/Troops.js';
 import { buildingTypes } from '/twcheese/src/Models/Buildings.js';
 import { ReportRenamer } from '/twcheese/src/Models/ReportRenamer.js';
 import { BattleReportScraper } from '/twcheese/src/Scrape/BattleReportScraper.js';
@@ -480,7 +479,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
                         if (!report.resources) {
                             return '';                        
                         }
-                        return report.resources[resType].amount;
+                        return window.Format.number(report.resources[resType].amount);
                     },
                     cssClass(report) {
                         if (!report.resources) {
@@ -504,7 +503,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
                     if (!report.resources) {
                         return '';                        
                     }
-                    return report.resources.sum();
+                    return window.Format.number(report.resources.sum());
                 },
                 cssClass(report) {
                     if (!report.resources) {
@@ -1344,8 +1343,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         }
     };
 
-    let digitWidth = 8;
-
     /**
      *	adjusts reports table width based on troop counts
      */
@@ -1387,7 +1384,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
                 continue;
             }
             for (let [i, col] of Object.entries(colIndexes)) {
-                let chars = row.cells[col].innerHTML.length;
+                let chars = row.cells[col].innerText.length;
                 maxChars[i] = Math.max(chars, maxChars[i]);
             }
         }

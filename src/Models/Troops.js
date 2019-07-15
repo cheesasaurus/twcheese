@@ -118,7 +118,7 @@ function calcTravelDuration(minutesPerField, distance) {
 }
 
 
-let TroopCalculator = {
+let troopUtil = {
 
     existsOnWorld(troopType) {
         return typeof troopConfig.get(troopType) !== 'undefined';
@@ -148,4 +148,4 @@ let TroopCalculator = {
 };
 
 
-export { TroopCounts, calcTravelDurations, TroopCalculator, troopTypes };
+export { TroopCounts, calcTravelDurations, troopUtil, troopTypes };

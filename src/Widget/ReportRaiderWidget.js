@@ -1,7 +1,7 @@
 import { AbstractWidget } from '/twcheese/src/Widget/AbstractWidget.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { userConfig } from '/twcheese/src/Util/Config.js';
-import { TroopCounts, calcTravelDurations, TroopCalculator } from '/twcheese/src/Models/Troops.js';
+import { TroopCounts, calcTravelDurations, troopUtil } from '/twcheese/src/Models/Troops.js';
 import { TwCheeseDate } from '/twcheese/src/Models/TwCheeseDate.js';
 import { gameUrl, attackPrepUrl } from '/twcheese/src/Util/Network.js';
 
@@ -12,7 +12,7 @@ class ReportRaiderWidget extends AbstractWidget {
         this.report = report;
 
         this.raiderTroopTypes = ['spear', 'sword', 'axe', 'archer', 'light', 'marcher', 'heavy']
-            .filter(troopType => TroopCalculator.existsOnWorld(troopType));
+            .filter(troopType => troopUtil.existsOnWorld(troopType));
 
         this.initStructure();
         this.watchSelf();

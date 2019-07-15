@@ -1,4 +1,4 @@
-import { TroopCalculator } from '/twcheese/src/Models/Troops.js';
+import { troopUtil } from '/twcheese/src/Models/Troops.js';
 import { gameConfig } from '/twcheese/src/Util/Config.js';
 
 
@@ -21,7 +21,7 @@ function calcLoyalty(reportedLoyalty, timeReported, timeNow, home, target) {
     let loyaltyNow = Math.min(100, parseInt(reportedLoyalty) + parseInt(hoursPassed * hourlyGain));
 
     let distance = target.distanceTo(home);
-    let travelHours = TroopCalculator.travelDuration('snob', distance) / 60;
+    let travelHours = troopUtil.travelDuration('snob', distance) / 60;
     let loyaltyAtArrival = Math.min(100, Math.floor(loyaltyNow + travelHours * hourlyGain));
 
     return {loyaltyNow, loyaltyAtArrival};

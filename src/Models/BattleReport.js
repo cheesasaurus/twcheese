@@ -1,4 +1,4 @@
-import { TroopCounts, TroopCalculator, troopTypes } from '/twcheese/src/Models/Troops.js';
+import { TroopCounts, troopUtil, troopTypes } from '/twcheese/src/Models/Troops.js';
 import { DemolitionCalculator } from '/twcheese/src/Models/DemolitionCalculator.js';
 
 
@@ -92,11 +92,11 @@ class BattleReport {
 
         let troopCounts = new TroopCounts();
         for (let troopType of troopTypes) {
-            let travelDuration = TroopCalculator.travelDuration(troopType, distance);
+            let travelDuration = troopUtil.travelDuration(troopType, distance);
             let travelHours = travelDuration / 3600;
             let resourcesProducedDuringTravel = hourlyProduction.multiply(travelHours);
             let resourcesAtArrival = resourcesNow.add(resourcesProducedDuringTravel).cap(maxLoot);
-            troopCounts[troopType] = TroopCalculator.countToCarry(troopType, resourcesAtArrival.sum(), haulBonus);
+            troopCounts[troopType] = troopUtil.countToCarry(troopType, resourcesAtArrival.sum(), haulBonus);
         }
         return troopCounts;
     }
@@ -121,7 +121,7 @@ class BattleReport {
     calcRaidUnits(resources, haulBonus = 0) {
         let troopCounts = new TroopCounts();
         for (let troopType of troopTypes) {
-            troopCounts[troopType] = TroopCalculator.countToCarry(troopType, resources, haulBonus);
+            troopCounts[troopType] = troopUtil.countToCarry(troopType, resources, haulBonus);
         }
         return troopCounts;
     }

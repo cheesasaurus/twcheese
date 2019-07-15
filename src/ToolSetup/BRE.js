@@ -1158,8 +1158,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     }
 
     reportsTable.toggleReportsDefenseColumns = function () {
-        var reportsTableBody = document.getElementById('twcheese_reportsTable_body');
-        var reportsTableHeader = document.getElementById('twcheese_reportsTable_header');
 
         if (userConfig.get('ReportListWidget.showCols.defenderSurvivors', true)) {
             /* hide */
@@ -1167,25 +1165,9 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
             userConfig.set('ReportListWidget.showCols.defenderSurvivors', false);
         }
         else {
-            let defColIndexes = columnIndexes.get('defenderSurvivors');
-
-            /* show */
-            reportsTableHeader.rows[0].cells[defColIndexes[0]].style.display = "table-cell";
-            for (let j of defColIndexes) {
-                reportsTableHeader.rows[1].cells[j].style.display = "table-cell";
-                for (var i = 0; i < reportsTableBody.rows.length; i++) {
-                    if (!reportsTableBody.rows[i].twcheeseShowDetails)
-                        reportsTableBody.rows[i].cells[3].colSpan += 1;
-                    else
-                        reportsTableBody.rows[i].cells[j].style.display = "table-cell";
-                }
-                var tableWidth = reportsTableHeader.style.width.split('px')[0];
-                var columnWidth = reportsTableHeader.rows[1].cells[j].style.width.split('px')[0];
-                tableWidth = Number(tableWidth) + Number(columnWidth);
-                reportsTableHeader.style.width = tableWidth + 'px';
+            for (let i of columnIndexes.get('defenderSurvivors')) {
+                reportsTable.showColumn(i);
             }
-            reportsTableBody.style.width = reportsTableHeader.style.width;
-
             userConfig.set('ReportListWidget.showCols.defenderSurvivors', true);
         }
 

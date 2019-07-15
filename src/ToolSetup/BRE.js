@@ -219,9 +219,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     // todo: all troop types, not hardcoded
     let defCols = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
-    // todo: all building types, not hardcoded
-    let buildingCols = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17];
-
     function centeredImg(src, tooltip = '') {
         return `<img style="display:block; margin-left:auto; margin-right:auto" src="${src}" title="${tooltip}">`;
     }
@@ -443,8 +440,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
             })
         },
 
-        ...buildingCols.map(function(i) {
-            let buildingType = buildingTypes[i];
+        ...buildingTypes.map(function(buildingType) {
             return {
                 key: 'buildingLevels.' + buildingType,
                 hideable: true,
@@ -588,7 +584,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
                     }                    
                 }                
             }
-            
+
         }
         yTableEmulator.style.height = reportsTableBody.clientHeight + 'px';
         xTableEmulator.style.width = reportsTableBody.clientWidth + 'px';

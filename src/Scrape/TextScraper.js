@@ -22,6 +22,7 @@ switch (game_data.market) {
         language['buildings']['storage'] = 'Warehouse';
         language['buildings']['hide'] = 'Hiding place';
         language['buildings']['wall'] = 'Wall';
+        language['buildings']['watchtower'] = 'Watchtower';
 
         language['report']['catDamage'] = 'Damage by catapults:';
         language['report']['ramDamage'] = 'Damage by rams:';
@@ -52,6 +53,7 @@ switch (game_data.market) {
         language['buildings']['storage'] = 'Skladiště';
         language['buildings']['hide'] = 'Skrýš';
         language['buildings']['wall'] = 'Hradby';
+        language['buildings']['watchtower'] = 'Watchtower'; // todo: translate
 
         language['report']['catDamage'] = 'Škoda vzniklá střelbou z katapultu:';
         language['report']['ramDamage'] = 'Škoda vzniklá beranidlem:';
@@ -81,6 +83,7 @@ switch (game_data.market) {
         language['buildings']['storage'] = 'Förråd';
         language['buildings']['hide'] = 'Gömställe';
         language['buildings']['wall'] = 'Mur';
+        language['buildings']['watchtower'] = 'Watchtower'; // todo: translate
 
         language['report']['catDamage'] = 'Skada gjord av katapulter:';
         language['report']['ramDamage'] = 'Skada gjorda av Murbräckan:';
@@ -111,6 +114,7 @@ switch (game_data.market) {
         language['buildings']['storage'] = 'Αποθήκη';
         language['buildings']['hide'] = 'Κρυψώνα';
         language['buildings']['wall'] = 'Τείχος';
+        language['buildings']['watchtower'] = 'Watchtower'; // todo: translate
 
         language['report']['catDamage'] = 'Ζημία που έκαναν οι καταπέλτες:';
         language['report']['ramDamage'] = 'Ζημιά που προκλήθηκε από τον πολιορκητικό κριό:';
@@ -141,6 +145,7 @@ switch (game_data.market) {
         language['buildings']['storage'] = 'Spremište';
         language['buildings']['hide'] = 'Skrovište';
         language['buildings']['wall'] = 'Zid';
+        language['buildings']['watchtower'] = 'Watchtower'; // todo: translate
 
         language['report']['catDamage'] = 'Šteta nanešena katapultima:	';
         language['report']['ramDamage'] = 'Šteta nanešena ovnovima:';
@@ -170,6 +175,7 @@ switch (game_data.market) {
         language['buildings']['storage'] = 'Varehus';
         language['buildings']['hide'] = 'Skjulested';
         language['buildings']['wall'] = 'Mur';
+        language['buildings']['watchtower'] = 'Watchtower'; // todo: translate
 
         language['report']['catDamage'] = 'Skade forårsaket av katapulter:';
         language['report']['ramDamage'] = 'Skade forårsaket av rambukker:';
@@ -201,6 +207,7 @@ switch (game_data.market) {
         language['buildings']['storage'] = 'Armazém';
         language['buildings']['hide'] = 'Esconderijo';
         language['buildings']['wall'] = 'Muralha';
+        language['buildings']['watchtower'] = 'Watchtower'; // todo: translate
     
         language['report']['catDamage'] = 'Dano provocado por catapultas:';
         language['report']['ramDamage'] = 'Dano provocado por aríetes:';

@@ -752,47 +752,47 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     }
 
     /*==== repeatLinks option ====*/
-    var checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(1,'repeatLinks')";
+    var checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn('repeatLinks')";
     reportsFolderSettingsTable.rows[0].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Links to Repeat';
 
     /*==== distance option ====*/
-    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(2,'distance')";
+    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn('distance')";
     reportsFolderSettingsTable.rows[1].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Distance';
 
     /*==== fullSubject option ====*/
-    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(3,'fullSubject')";
+    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn('fullSubject')";
     reportsFolderSettingsTable.rows[2].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Full Subject';
 
     /*==== note option ====*/
-    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(4,'note')";
+    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn('note')";
     reportsFolderSettingsTable.rows[3].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Note';
 
     /*==== attacker option ====*/
-    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(5,'attackerName')";
+    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn('attackerName')";
     reportsFolderSettingsTable.rows[4].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Attacker';
 
     /*==== defender option ====*/
-    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(6,'defenderName')";
+    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn('defenderName')";
     reportsFolderSettingsTable.rows[5].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Defender';
 
     /*==== attackerVillage option ====*/
-    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(7,'attackerVillage')";
+    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn('attackerVillage')";
     reportsFolderSettingsTable.rows[6].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Attacker\'s Village';
 
     /*==== defenderVillage option ====*/
-    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(8,'defenderVillage')";
+    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn('defenderVillage')";
     reportsFolderSettingsTable.rows[7].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Defender\'s Village';
 
     /*==== feint option ====*/
-    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(9,'feint')";
+    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn('feint')";
     reportsFolderSettingsTable.rows[8].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Feint';
 
     /*==== deadNoble option ====*/
-    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(10,'deadNoble')";
+    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn('deadNoble')";
     reportsFolderSettingsTable.rows[9].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Dead Noble';
 
     /*==== loyalty option ====*/
-    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(11,'loyalty')";
+    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn('loyalty')";
     reportsFolderSettingsTable.rows[10].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Loyalty';
 
     /*==== survivors option ====*/
@@ -800,34 +800,34 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     reportsFolderSettingsTable.rows[11].cells[0].innerHTML += '<input onClick="' + survivorsScript + '" type="checkbox"/>Troops: remaining defense';
 
     /*==== resourcesTimber option ====*/
-    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(42,'resources.wood')";
+    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn('resources.wood')";
     reportsFolderSettingsTable.rows[12].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Resources: Timber';
 
     /*==== resourcesstone option ====*/
-    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(43,'resources.stone')";
+    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn('resources.stone')";
     reportsFolderSettingsTable.rows[13].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Resources: Clay';
 
     /*==== resourcesIron option ====*/
-    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(44,'resources.iron')";
+    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn('resources.iron')";
     reportsFolderSettingsTable.rows[14].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Resources: Iron';
 
     /*==== resourcesTotal option ====*/
-    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(45,'resources.sum')";
+    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn('resources.sum')";
     reportsFolderSettingsTable.rows[15].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Resources: Total';
 
     /*==== timeLaunched option ====*/
-    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(46,'timeLaunched')";
+    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn('timeLaunched')";
     reportsFolderSettingsTable.rows[16].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Time: Launched';
 
     /*==== timeReceived option ====*/
-    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(47,'strTimeReceived')";
+    checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn('strTimeReceived')";
     reportsFolderSettingsTable.rows[17].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Time: Received';
 
     /*=== building options ====*/
     for (let i = 0; i < 18; i++) {
         // todo: all buildings, not hardcoded
         let buildingType = buildingTypes[i];
-        checkboxScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn(" + Number(i + 24) + `,'buildingLevels.${buildingType}')`;
+        checkboxScript = `document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumn('buildingLevels.${buildingType}')`;
         var targetCell = reportsFolderSettingsTable.rows[i].cells[1];
         targetCell.innerHTML = '<input onClick="' + checkboxScript + '" type="checkbox"/>';
         targetCell.innerHTML += language['twcheese']['Building'] + ': ' + textScraper.t(`buildings.${buildingType}`);
@@ -1173,7 +1173,11 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         document.getElementById('twcheese_reportsDisplay_y-table-emulator').style.height = document.getElementById('twcheese_reportsTable_body').clientHeight + 'px';
     };
 
-    reportsTable.toggleReportsColumn = function (column, settingName) {
+    let columnIndexes = this.columnIndexes;
+    
+    reportsTable.toggleReportsColumn = function (settingName) {
+        let column = columnIndexes.get(settingName)[0];
+
         var reportsTableBody = document.getElementById('twcheese_reportsTable_body');
         var reportsTableHeader = document.getElementById('twcheese_reportsTable_header');
         if (userConfig.get(`ReportListWidget.showCols.${settingName}`, true)) {

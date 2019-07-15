@@ -216,9 +216,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
 
     this.columnIndexes = new Map();
 
-    // todo: all troop types, not hardcoded
-    let defCols = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-
     function centeredImg(src, tooltip = '') {
         return `<img style="display:block; margin-left:auto; margin-right:auto" src="${src}" title="${tooltip}">`;
     }
@@ -416,8 +413,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
             hideable: true,
             description: 'Troops: Defense remaining',
             title: 'Defense remaining',
-            cols: defCols.map(i => {
-                let troopType = troopTypes[i];
+            cols: window.game_data.units.map(troopType => {
                 return {
                     width: 20,
                     align: 'center',
@@ -1342,6 +1338,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
      *	adjusts reports table width based on troop counts
      */
     this.alignForTroops = function () {
+        return; // todo: rewrite
+        /*
         var maxDigits = new Array(2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2);
         for (var row = 1; row < reportsTableBody.rows.length; row++) {
             let report = reportsTableBody.rows[row].twcheeseReport;
@@ -1372,12 +1370,14 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         reportsTableHeader.rows[0].cells[12].style.width = Number(totalWidth - 2*padding) + 'px';
         reportsTableBody.style.width = reportsTableHeader.clientWidth + 'px';
         xTableEmulator.style.width = reportsTableBody.clientWidth + 'px';
+        */
     };
 
     /**
      *	adjusts reportsTable width based on resources
      */
     this.alignForResources = function () {
+        return; // todo: rewrite
         var maxDigits = new Array(2, 2, 2, 5);
         for (var row = 1; row < reportsTableBody.rows.length; row++) {
             let report = reportsTableBody.rows[row].twcheeseReport;

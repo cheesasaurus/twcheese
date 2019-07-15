@@ -549,15 +549,25 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         }
     ];
 
+
     /**
      *	fills reportsTableBody with information
      */
     this.populateReportsTable = function () {
+        let minimal = new Set(['essential', 'repeatLinks', 'distance', 'fullSubject', 'strTimeReceived']);
+
+        let fallbackSubjectColSpan = this.columnCategories.reduce(function(acc, category) {
+            if (category.key !== 'fullSubject' && minimal.has(category.key)) {
+                return acc;
+            }
+            return acc + category.cols.length;
+        }, 0);
+
+
         for (let report of this.reports) {
             let row = reportsTableBody.insertRow(-1);
             row.twcheeseReport = report;
             let hasDecentInfo = report.attackerName && report.defenderName && report.attackerVillage && report.defenderVillage;
-            let minimal = new Set(['essential', 'repeatLinks', 'distance', 'fullSubject', 'strTimeReceived']);
 
             for (let category of this.columnCategories) {
                 if (!hasDecentInfo && !minimal.has(category.key)) {
@@ -573,12 +583,12 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
                         cell.className = col.cssClass(report);
                     }
                     if (!hasDecentInfo && category.key === 'fullSubject') {
-                        cell.initialColSpan = 44; // todo: not hardcoded
+                        cell.initialColSpan = fallbackSubjectColSpan;
                         cell.colSpan = cell.initialColSpan;
                     }                    
                 }                
             }
-
+            
         }
         yTableEmulator.style.height = reportsTableBody.clientHeight + 'px';
         xTableEmulator.style.width = reportsTableBody.clientWidth + 'px';

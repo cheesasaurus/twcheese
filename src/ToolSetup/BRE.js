@@ -807,7 +807,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     reportsFolderSettingsTable.rows[10].cells[0].innerHTML += '<input onClick="' + checkboxScript + '" type="checkbox"/>Loyalty';
 
     /*==== survivors option ====*/
-    var survivorsScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsDefenseColumns()";
+    var survivorsScript = "document.getElementById('twcheese_reportsFolderDisplay').toggleReportsColumns('defenderSurvivors')";
     reportsFolderSettingsTable.rows[11].cells[0].innerHTML += '<input onClick="' + survivorsScript + '" type="checkbox"/>Troops: remaining defense';
 
     /*==== resourcesTimber option ====*/
@@ -1155,22 +1155,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     reportsFolderDisplay.adjustScrollbars = function() {
         document.getElementById('twcheese_reportsDisplay_x-table-emulator').style.width = document.getElementById('twcheese_reportsTable_header').clientWidth + 'px';
         document.getElementById('twcheese_reportsDisplay_y-table-emulator').style.height = document.getElementById('twcheese_reportsTable_body').clientHeight + 'px';
-    }
-
-    reportsTable.toggleReportsDefenseColumns = function () {
-
-        if (userConfig.get('ReportListWidget.showCols.defenderSurvivors', true)) {
-            document.getElementById('twcheese_reportsFolderDisplay').hideDefenseColumns();
-            userConfig.set('ReportListWidget.showCols.defenderSurvivors', false);
-        }
-        else {
-            for (let i of columnIndexes.get('defenderSurvivors')) {
-                reportsTable.showColumn(i);
-            }
-            userConfig.set('ReportListWidget.showCols.defenderSurvivors', true);
-        }
-
-        reportsFolderDisplay.adjustScrollbars();
     };
 
 
@@ -1188,7 +1172,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         }
         reportsFolderDisplay.adjustScrollbars();
     };
-    
+
 
     reportsTable.hideDefenseColumns = function () {
         for (let i of columnIndexes.get('defenderSurvivors')) {

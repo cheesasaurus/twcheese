@@ -4,6 +4,7 @@ import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { BattleReportCondensed } from '/twcheese/src/Models/BattleReportCondensed.js';
 import { Resources } from '/twcheese/src/Models/Resources.js';
 import { buildingUtil } from '/twcheese/src/Models/Buildings.js';
+import { troopUtil } from '/twcheese/src/Models/Troops.js';
 import { ReportRenamer } from '/twcheese/src/Models/ReportRenamer.js';
 import { BattleReportScraper } from '/twcheese/src/Scrape/BattleReportScraper.js';
 import { BattleReportCondensedScraper } from '/twcheese/src/Scrape/BattleReportCondensedScraper.js';
@@ -412,7 +413,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
             hideable: true,
             description: 'Troops: Defense remaining',
             title: 'Defense remaining',
-            cols: window.game_data.units.map(troopType => {
+            cols: troopUtil.troopTypesOnWorld().map(troopType => {
                 return {
                     width: 20,
                     align: 'center',

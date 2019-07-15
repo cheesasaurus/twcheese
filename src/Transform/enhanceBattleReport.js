@@ -1,5 +1,6 @@
 import { calcAttackerScore, calcDefenderScore } from '/twcheese/src/Models/KillScores.js';
 import { calcLoyalty } from '/twcheese/src/Models/Loyalty.js';
+import { troopUtil } from '/twcheese/src/Models/Troops.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { escapeHtml } from '/twcheese/src/Util/UI.js';
 import { gameUrl } from '/twcheese/src/Util/Network.js';
@@ -22,7 +23,7 @@ function enhanceBattleReport(gameDoc, report) {
         survivorsRow.cells[0].innerHTML = 'Survivors:';
         survivorsRow.cells[0].align = 'left';
         
-        for (let unitType of window.game_data.units) {
+        for (let unitType of troopUtil.troopTypesOnWorld()) {
             if (survivorsRow.cells.length >= rowAbove.cells.length) {
                 break;
             }
@@ -45,7 +46,7 @@ function enhanceBattleReport(gameDoc, report) {
         survivorsRow.cells[0].innerHTML = 'Survivors:';
         survivorsRow.cells[0].align = 'left';
 
-        for (let unitType of window.game_data.units) {
+        for (let unitType of troopUtil.troopTypesOnWorld()) {
             if (survivorsRow.cells.length >= rowAbove.cells.length) {
                 break;
             }

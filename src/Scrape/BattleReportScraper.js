@@ -3,7 +3,7 @@ import { Player } from '/twcheese/src/Models/Player.js';
 import { Village } from '/twcheese/src/Models/Village.js';
 import { BuildingLevels } from '/twcheese/src/Models/Buildings.js';
 import { StationedTroops } from '/twcheese/src/Models/StationedTroops.js';
-import { TroopCounts } from '/twcheese/src/Models/Troops.js';
+import { TroopCounts, troopUtil } from '/twcheese/src/Models/Troops.js';
 import { parseArrival } from '/twcheese/src/Scrape/time.js';
 import { scrapeResources } from '/twcheese/src/Scrape/res.js';
 import { textScraper } from '/twcheese/src/Scrape/TextScraper.js';
@@ -32,10 +32,10 @@ function scrapePlayer(playerCell) {
  */
 function scrapeTroopCounts(troopRow) {
     let troops = new TroopCounts();
-    let unitTypes =  window.game_data.units;
-    for (let i = 0; i < unitTypes.length; i++) {
+    let troopTypes = troopUtil.troopTypesOnWorld();
+    for (let i = 0; i < troopTypes.length; i++) {
         if (typeof troopRow.cells[i] !== 'undefined') { // attacker can't have militia
-            troops[unitTypes[i]] = parseInt(troopRow.cells[i].innerHTML);
+            troops[troopTypes[i]] = parseInt(troopRow.cells[i].innerHTML);
         }        
     }
     return troops;

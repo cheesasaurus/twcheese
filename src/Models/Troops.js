@@ -120,6 +120,10 @@ function calcTravelDuration(minutesPerField, distance) {
 
 let troopUtil = {
 
+    troopTypesOnWorld() {
+        return window.game_data.units;
+    },
+
     existsOnWorld(troopType) {
         return typeof troopConfig.get(troopType) !== 'undefined';
     },

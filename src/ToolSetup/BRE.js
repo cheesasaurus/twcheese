@@ -1406,8 +1406,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
             let alignmentTh = reportsTableHeader.rows[0].cells[col];
             let bodyCell = reportsTableBody.rows[0].cells[col];
 
-            alignmentTh.style.minWidth = width + 'px';
-            bodyCell.style.minWidth = width + 'px';
+            alignmentTh.style.width = width + 'px';
+            bodyCell.style.width = width + 'px';
         }
 
         let padding = 3 * 2 * colIndexes.length;

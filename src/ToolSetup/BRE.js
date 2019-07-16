@@ -1117,37 +1117,42 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         }
     };
 
-    /**
-     *	note: changed from a loop to recursive method in 2.2 to allow redrawing of progress in IE via setTimeout method
-     *	@param reports:Array(reportID:String)	an array of reportIDs for reports that still need to be renamed
-     *	@param total:Number		the total amount of reports that will have been renamed
-     */
-    this.massRename = async function (reports, total) {
-        var reportsTable = document.getElementById('twcheese_reportsTable_body');
-        var inputs = reportsTable.getElementsByTagName('input');
-        if (!reports) {
-            reports = new Array(); //array of report IDs for reports to rename
 
-            /*==== detect which reports need to be renamed ====*/
-            for (var i = 0; i < inputs.length; i++) {
-                if (inputs[i].type == 'checkbox') {
-                    if (inputs[i].checked) {
-                        reports.push(inputs[i].name.substring(3));
-                    }
+    reportListWidget.getSelectedReportIds = function() {
+        var reportsTableBody = document.getElementById('twcheese_reportsTable_body');
+        var inputs = reportsTableBody.getElementsByTagName('input');
+        var reportIds = [];
+
+        for (var i = 0; i < inputs.length; i++) {
+            if (inputs[i].type == 'checkbox') {
+                if (inputs[i].checked) {
+                    reportIds.push(inputs[i].name.substring(3));
                 }
             }
-            document.getElementById('twcheese_progress_count_max').innerHTML = reports.length;
-            total = reports.length;
+        }
+        return reportIds;
+    };
+
+    /**
+     *	note: changed from a loop to recursive method in 2.2 to allow redrawing of progress in IE via setTimeout method
+     *	@param reportIds:Array(reportID:String)	an array of reportIDs for reports that still need to be renamed
+     *	@param total:Number		the total amount of reports that will have been renamed
+     */
+    this.massRename = async function (reportIds, total) {
+        if (!reportIds) {
+            reportIds = reportListWidget.getSelectedReportIds();
+            document.getElementById('twcheese_progress_count_max').innerHTML = reportIds.length;
+            total = reportIds.length;
         }
         var estimatedTimeRemaining;
 
         /*==== rename reports 1 by 1 ====*/
-        if (reports.length == 0) {
+        if (reportIds.length == 0) {
             document.getElementById('twcheese_progress_count').innerHTML = 0;
             window.UI.ErrorMessage(language['twcheese']['noReportsSelected'], 3000);
         }
         else {
-            var reportId = reports.shift();
+            var reportId = reportIds.shift();
             var startTime = performance.now();
 
             let reportDoc = await requestDocument(gameUrl('report', {mode: game_data.mode, view: reportId}));
@@ -1177,7 +1182,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
 
                 /*==== update progress display ====*/
                 var millisElapsed = performance.now() - startTime;
-                estimatedTimeRemaining = (millisElapsed * reports.length) / 1000;
+                estimatedTimeRemaining = (millisElapsed * reportIds.length) / 1000;
                 var minutesRemaining = Math.floor(estimatedTimeRemaining / 60);
                 var secondsRemaining = Math.round(estimatedTimeRemaining - (minutesRemaining * 60));
                 if (minutesRemaining < 10)
@@ -1186,15 +1191,15 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
                     secondsRemaining = '0' + secondsRemaining;
                 document.getElementById('twcheese_time_remaining').innerHTML = minutesRemaining; //minutes
                 document.getElementById('twcheese_time_remaining').innerHTML += ':' + secondsRemaining; //seconds
-                document.getElementById('twcheese_progress_count').innerHTML = Number(total - reports.length);
-                document.getElementById('twcheese_progress_percent').innerHTML = Number(Math.round((total - reports.length) / total * 100));
+                document.getElementById('twcheese_progress_count').innerHTML = Number(total - reportIds.length);
+                document.getElementById('twcheese_progress_percent').innerHTML = Number(Math.round((total - reportIds.length) / total * 100));
             }
             catch (e) {
                 console.error('error renaming report:', e);
             }
 
-            if (reports.length > 0)
-                setTimeout(() => { this.massRename(reports, total) }, 1);
+            if (reportIds.length > 0)
+                setTimeout(() => { this.massRename(reportIds, total) }, 1);
             else {
                 reportListWidget.refreshContents();
             }

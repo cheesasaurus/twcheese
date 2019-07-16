@@ -456,107 +456,7 @@ class ReportListWidget extends AbstractWidget {
             document.getElementById('twcheese_reportsDisplay_yScrollPanel').style.height = tableBody.style.height;
         };
 
-        reportListWidget.selectMatchingReports = function(isReportMatch) {
-            for (let report of this.reports.values()) {
-                if (isReportMatch(report)) {
-                    $(`input[name='id_${report.reportId}']`).prop('checked', true);
-                }
-            }
-        };
-    
-        reportListWidget.selectNew = function () {
-            this.selectMatchingReports(report => report.isNew);
-        }
-    
-        reportListWidget.selectOld = function () {
-            this.selectMatchingReports(report => !report.isNew);
-        }
-    
-        reportListWidget.selectAll = function () {
-            this.selectMatchingReports(report => true);
-        };
-    
-        reportListWidget.selectNone = function () {
-            for (let report of this.reports.values()) {
-                $(`input[name='id_${report.reportId}']`).prop('checked', false);
-            }
-        };
-    
-        reportListWidget.selectDotColor = function (dotColor) {
-            this.selectMatchingReports(report => report.dotColor === dotColor);
-        };
-    
-        reportListWidget.selectForwarded = function () {
-            this.selectMatchingReports(report => report.isForwarded);
-        };
-    
-        /**
-         * @param {number} haulStatus 0 for non full haul, 1 for full haul
-         */
-        reportListWidget.selectLoot = function (haulStatus) {
-            this.selectMatchingReports(report => report.haulStatus === haulStatus);
-        };
-    
-        reportListWidget.selectFeint = function () {
-            this.selectMatchingReports(report => report.wasAttackFeint);
-        };
-    
-        reportListWidget.selectDeadNoble = function () {
-            this.selectMatchingReports(report => report.attackerNobleDied);
-        };
-    
-        reportListWidget.selectLoyalty = function () {
-            this.selectMatchingReports(report => report.loyalty !== null);
-        };
-    
-        reportListWidget.selectCleared = function () {
-            this.selectMatchingReports(report => report.wasDefenderCleared());
-        };
-    
-        reportListWidget.selectText = function (text) {
-            let textLower = text.toLowerCase();
-            this.selectMatchingReports(report => report.subject.toLowerCase().includes(textLower));
-        };
-    
-        reportListWidget.selectAttacker = function (attackerName) {
-            let nameLower = attackerName.toLowerCase();
-            this.selectMatchingReports(report => report.attackerName && report.attackerName.toLowerCase().includes(nameLower));
-        };
-    
-        reportListWidget.selectDefender = function (defenderName) {
-            let nameLower = defenderName.toLowerCase();
-            this.selectMatchingReports(report => report.defenderName && report.defenderName.toLowerCase().includes(nameLower));
-        };
-    
-        reportListWidget.selectAttackerVillage = function (coordinates) {
-            let [, x, y] = coordinates.match(/(\d+)\|(\d+)/);
-            x = parseInt(x);
-            y = parseInt(y);
-
-            this.selectMatchingReports(report => {
-                if (!report.attackerVillage) {
-                    return false;
-                }
-
-                return report.attackerVillage.x === x
-                    && report.attackerVillage.y === y;
-            });
-        };
-    
-        reportListWidget.selectDefenderVillage = function (coordinates) {
-            let [, x, y] = coordinates.match(/(\d+)\|(\d+)/);
-            x = parseInt(x);
-            y = parseInt(y);
-
-            this.selectMatchingReports(report => {
-                if (!report.defenderVillage) {
-                    return false;
-                }
-                
-                return report.defenderVillage.x === x
-                    && report.defenderVillage.y === y;
-            });
-        };
+        
     
         /**
          *	adjusts reports table width based on troop counts
@@ -631,6 +531,110 @@ class ReportListWidget extends AbstractWidget {
         };
 
     }
+
+
+    selectMatchingReports(isReportMatch) {
+        for (let report of this.reports.values()) {
+            if (isReportMatch(report)) {
+                $(`input[name='id_${report.reportId}']`).prop('checked', true);
+            }
+        }
+    }
+
+    selectNew() {
+        this.selectMatchingReports(report => report.isNew);
+    }
+
+    selectOld() {
+        this.selectMatchingReports(report => !report.isNew);
+    }
+
+    selectAll() {
+        this.selectMatchingReports(report => true);
+    }
+
+    selectNone() {
+        for (let report of this.reports.values()) {
+            $(`input[name='id_${report.reportId}']`).prop('checked', false);
+        }
+    }
+
+    selectDotColor(dotColor) {
+        this.selectMatchingReports(report => report.dotColor === dotColor);
+    }
+
+    selectForwarded() {
+        this.selectMatchingReports(report => report.isForwarded);
+    }
+
+    /**
+     * @param {number} haulStatus 0 for non full haul, 1 for full haul
+     */
+    selectLoot(haulStatus) {
+        this.selectMatchingReports(report => report.haulStatus === haulStatus);
+    }
+
+    selectFeint() {
+        this.selectMatchingReports(report => report.wasAttackFeint);
+    }
+
+    selectDeadNoble() {
+        this.selectMatchingReports(report => report.attackerNobleDied);
+    }
+
+    selectLoyalty() {
+        this.selectMatchingReports(report => report.loyalty !== null);
+    }
+
+    selectCleared() {
+        this.selectMatchingReports(report => report.wasDefenderCleared());
+    }
+
+    selectText(text) {
+        let textLower = text.toLowerCase();
+        this.selectMatchingReports(report => report.subject.toLowerCase().includes(textLower));
+    }
+
+    selectAttacker(attackerName) {
+        let nameLower = attackerName.toLowerCase();
+        this.selectMatchingReports(report => report.attackerName && report.attackerName.toLowerCase().includes(nameLower));
+    }
+
+    selectDefender(defenderName) {
+        let nameLower = defenderName.toLowerCase();
+        this.selectMatchingReports(report => report.defenderName && report.defenderName.toLowerCase().includes(nameLower));
+    }
+
+    selectAttackerVillage(coordinates) {
+        let [, x, y] = coordinates.match(/(\d+)\|(\d+)/);
+        x = parseInt(x);
+        y = parseInt(y);
+
+        this.selectMatchingReports(report => {
+            if (!report.attackerVillage) {
+                return false;
+            }
+
+            return report.attackerVillage.x === x
+                && report.attackerVillage.y === y;
+        });
+    }
+
+    selectDefenderVillage(coordinates) {
+        let [, x, y] = coordinates.match(/(\d+)\|(\d+)/);
+        x = parseInt(x);
+        y = parseInt(y);
+
+        this.selectMatchingReports(report => {
+            if (!report.defenderVillage) {
+                return false;
+            }
+            
+            return report.defenderVillage.x === x
+                && report.defenderVillage.y === y;
+        });
+    }
+
 }
 
 ReportListWidget.columnCategories = [

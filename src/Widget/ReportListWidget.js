@@ -63,7 +63,7 @@ function cellAtIndex(row, i) {
 
 class ReportListWidget extends AbstractWidget {
     /**
-     * @param {BattleReportCondensed[]} reports 
+     * @param {Map.<number, BattleReportCondensed>} reports 
      */
     constructor(reports, container) {
         super();
@@ -266,7 +266,7 @@ class ReportListWidget extends AbstractWidget {
             }, 0);
 
 
-            for (let report of this.reports) {
+            for (let report of this.reports.values()) {
                 let row = reportsTableBody.insertRow(-1);
                 row.twcheeseReport = report;
                 let hasDecentInfo = report.attackerName && report.defenderName && report.attackerVillage && report.defenderVillage;

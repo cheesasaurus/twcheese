@@ -205,7 +205,10 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
 
     /*==== scrape reports information ====*/    
     let reportScraper = new BattleReportCondensedScraper(renamer);
-    this.reports = reportScraper.scrapeReports(reportsTable);
+    this.reports = new Map();
+    for (let report of reportScraper.scrapeReports(reportsTable)) {
+        this.reports.set(report.reportId, report);
+    }
 
     /*==== remove old table ====*/
     reportsTable.parentNode.removeChild(reportsTable);
@@ -377,7 +380,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
 
         var exportString = buildHeader();
 
-        for (let report of this.reports) {
+        for (let report of this.reports.values()) {
             if (!report.defenderVillage) {
                 continue; // not enough information
             }
@@ -460,8 +463,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
                     .find('.quickedit-label').html(name);
 
                 /*==== update reports information so row can be redrawn with updated information====*/
-                let row = document.getElementsByName('id_' + reportId)[0].parentNode.parentNode;
-                let oldReport = row.twcheeseReport; // todo: don't use rows
+                let oldReport = this.reports.get(reportId);
 
                 let report = renamer.parseName(name);
                 report.reportId = reportId;
@@ -470,8 +472,9 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
                 report.isForwarded = oldReport.isForwarded;
                 report.strTimeReceived = oldReport.strTimeReceived;
 
-                row.twcheeseReport = report;
-                reportListWidget.reports[row.rowIndex - 1] = report;
+                let row = document.getElementsByName('id_' + reportId)[0].parentNode.parentNode;
+                row.twcheeseReport = report; // todo: don't use rows as repo
+                reportListWidget.reports.set(report.reportId, report);
 
 
                 /*==== update progress display ====*/

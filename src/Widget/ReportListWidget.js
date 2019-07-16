@@ -419,28 +419,16 @@ class ReportListWidget extends AbstractWidget {
     }
 
     getSelectedReportIds() {
-        // todo: ref checkboxes
-        var reportsTableBody = this.$body[0];
-        var inputs = reportsTableBody.getElementsByTagName('input');
-        var reportIds = [];
-
-        for (var i = 0; i < inputs.length; i++) {
-            if (inputs[i].type == 'checkbox') {
-                if (inputs[i].checked) {
-                    reportIds.push(inputs[i].name.substring(3));
-                }
-            }
-        }
-        return reportIds;
+        return this.$body.find('input:checked')
+            .map((i, el) => parseInt(el.name.match(/\d+/)))
+            .toArray();
     }
-
 
     refreshContents() {
         this.$body.find('tr:not(:first)').remove();    
         this.populateReportsTable();
         this.applySettings();    
     }
-
 
     /**
      * sets display components styles to fill the display zone and ensure scrolling functionality

@@ -211,9 +211,6 @@ function cellAtIndex(row, i) {
  * @param {ReportRenamer} renamer
  */
 function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
-    var pageMod = this;
-    this.reports = new Array();
-
     this.columnIndexes = new Map();
 
     function centeredImg(src, tooltip = '') {
@@ -541,11 +538,18 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         }
     ];
 
+    // todo: refactor to class
+    let reportListWidget = {
+        reports: new Array(),
+        columnCategories: this.columnCategories,
+        columnIndexes: this.columnIndexes
+    };
+
 
     /**
      *	fills reportsTableBody with information
      */
-    this.populateReportsTable = function () {
+    reportListWidget.populateReportsTable = function () {
         let minimal = new Set(['essential', 'repeatLinks', 'distance', 'fullSubject', 'strTimeReceived']);
 
         let fallbackSubjectColSpan = this.columnCategories.reduce(function(acc, category) {
@@ -592,23 +596,23 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     /**
      *	marks checkboxes and hides certain displays in accordance with the user's Folder Display settings
      */
-    this.applySettings = function() {
+    reportListWidget.applySettings = function() {
         let checkboxes = document.getElementById('twcheese_reportsFolderSettings').getElementsByTagName('input');
         for (let checkbox of checkboxes) {
             let settingName = checkbox.dataset.settingName;
             if (userConfig.get(`ReportListWidget.showCols.${settingName}`, true)) {
                 checkbox.checked = true;
             } else {
-                reportsTable.hideColumns(settingName);
+                reportListWidget.hideColumns(settingName);
             }
         }
 
         let reportsFolderDisplay = document.getElementById('twcheese_reportsFolderDisplay');
         reportsFolderDisplay.style.width = userConfig.get('ReportListWidget.size.width', '720px');
         reportsFolderDisplay.style.height = userConfig.get('ReportListWidget.size.height', '250px');
-        reportsFolderDisplay.fitDisplayComponents();
+        reportListWidget.fitDisplayComponents();
 
-        reportsFolderDisplay.adjustScrollbars();
+        reportListWidget.adjustScrollbars();
     }
 
     /*==== find reports table ====*/
@@ -623,7 +627,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
 
     /*==== scrape reports information ====*/    
     let reportScraper = new BattleReportCondensedScraper(renamer);
-    this.reports = reportScraper.scrapeReports(reportsTable);
+    reportListWidget.reports = reportScraper.scrapeReports(reportsTable);
 
     /*==== remove old table ====*/
     reportsTable.parentNode.removeChild(reportsTable);
@@ -831,7 +835,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     function insertCheckbox(key, text) {
         let $el = $(`<div style="white-space:nowrap"><label><input data-setting-name="${key}" type="checkbox"> ${text}</label></div>`);
         $el.find('input').on('click', () => {
-            reportsTable.toggleReportsColumns(key);
+            reportListWidget.toggleReportsColumns(key);
         });
         reportsFolderSettingsDiv.appendChild($el[0]);
     }
@@ -861,7 +865,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         function () {
             try {
                 let reportsFolderDisplay = document.getElementById('twcheese_reportsFolderDisplay');
-                reportsFolderDisplay.fitDisplayComponents();
+                reportListWidget.fitDisplayComponents();
 
                 userConfig.set('ReportListWidget.size.width', reportsFolderDisplay.style.width);
                 userConfig.set('ReportListWidget.size.height', reportsFolderDisplay.style.height);
@@ -1025,36 +1029,36 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
 
     let columnIndexes = this.columnIndexes;
 
-    reportsFolderDisplay.adjustScrollbars = function() {
+    reportListWidget.adjustScrollbars = function() {
         document.getElementById('twcheese_reportsDisplay_x-table-emulator').style.width = document.getElementById('twcheese_reportsTable_header').clientWidth + 'px';
         document.getElementById('twcheese_reportsDisplay_y-table-emulator').style.height = document.getElementById('twcheese_reportsTable_body').clientHeight + 'px';
     };
 
 
-    reportsTable.toggleReportsColumns = function (settingName) {
+    reportListWidget.toggleReportsColumns = function (settingName) {
         let configKey = `ReportListWidget.showCols.${settingName}`;
         let show = !userConfig.get(configKey, true);
         userConfig.set(configKey, show);
 
         for (let i of columnIndexes.get(settingName)) {
             if (show) {
-                reportsTable.showColumn(i);
+                reportListWidget.showColumn(i);
             } else {
-                reportsTable.hideColumn(i);
+                reportListWidget.hideColumn(i);
             }
         }
-        reportsFolderDisplay.adjustScrollbars();
+        reportListWidget.adjustScrollbars();
     };
 
 
-    reportsTable.hideColumns = function (settingName) {
+    reportListWidget.hideColumns = function (settingName) {
         for (let i of columnIndexes.get(settingName)) {
-            reportsTable.hideColumn(i);
+            reportListWidget.hideColumn(i);
         }
     };
 
 
-    reportsTable.showColumn = function(column) {
+    reportListWidget.showColumn = function(column) {
         var reportsTableBody = document.getElementById('twcheese_reportsTable_body');
         var reportsTableHeader = document.getElementById('twcheese_reportsTable_header');
 
@@ -1084,7 +1088,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     };
 
 
-    reportsTable.hideColumn = function(column) {
+    reportListWidget.hideColumn = function(column) {
         var reportsTableBody = document.getElementById('twcheese_reportsTable_body');
         var reportsTableHeader = document.getElementById('twcheese_reportsTable_header');
 
@@ -1118,7 +1122,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
      *	@param reports:Array(reportID:String)	an array of reportIDs for reports that still need to be renamed
      *	@param total:Number		the total amount of reports that will have been renamed
      */
-    reportsTable.massRename = async function (reports, total) {
+    this.massRename = async function (reports, total) {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         var inputs = reportsTable.getElementsByTagName('input');
         if (!reports) {
@@ -1168,7 +1172,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
                 report.strTimeReceived = oldReport.strTimeReceived;
 
                 row.twcheeseReport = report;
-                pageMod.reports[row.rowIndex - 1] = report;
+                reportListWidget.reports[row.rowIndex - 1] = report;
 
 
                 /*==== update progress display ====*/
@@ -1190,22 +1194,22 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
             }
 
             if (reports.length > 0)
-                setTimeout(function () { document.getElementById('twcheese_reportsFolderDisplay').massRename(reports, total) }, 1);
+                setTimeout(() => { this.massRename(reports, total) }, 1);
             else {
-                document.getElementById('twcheese_reportsFolderDisplay').refreshContents();
+                reportListWidget.refreshContents();
             }
         }
     };
 
-    reportsTable.refreshContents = function () {
+    reportListWidget.refreshContents = function () {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
 
         for (var i = 1; i < reportsTable.rows.length;) {
             reportsTable.deleteRow(1);
         }
 
-        pageMod.populateReportsTable();
-        pageMod.applySettings();
+        reportListWidget.populateReportsTable();
+        reportListWidget.applySettings();
 
         //yTableEmulator.style.height = reportsTableBody.clientHeight + 'px';
         //xTableEmulator.style.width = reportsTableBody.clientWidth + 'px';				
@@ -1219,7 +1223,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     /**
      *	sets display components styles to fill the display zone and ensure scrolling functionality
      */
-    reportsTable.fitDisplayComponents = function () {
+    reportListWidget.fitDisplayComponents = function () {
         var displayZone = document.getElementById('twcheese_reportsFolderDisplay');
         var tableBody = document.getElementById('twcheese_reportsTable');
         tableBody.style.width = displayZone.style.width;
@@ -1227,7 +1231,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         document.getElementById('twcheese_reportsDisplay_yScrollPanel').style.height = tableBody.style.height;
     };
 
-    reportsTable.selectNew = function () {
+    reportListWidget.selectNew = function () {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if (reportsTable.rows[i].twcheeseReport.isNew)
@@ -1235,7 +1239,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         }
     }
 
-    reportsTable.selectOld = function () {
+    reportListWidget.selectOld = function () {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if (!reportsTable.rows[i].twcheeseReport.isNew)
@@ -1243,21 +1247,21 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         }
     }
 
-    reportsTable.selectAll = function () {
+    reportListWidget.selectAll = function () {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
         }
     };
 
-    reportsTable.selectNone = function () {
+    reportListWidget.selectNone = function () {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = false;
         }
     };
 
-    reportsTable.selectDotColor = function (dotColor) {
+    reportListWidget.selectDotColor = function (dotColor) {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if (reportsTable.rows[i].twcheeseReport.dotColor === dotColor)
@@ -1265,7 +1269,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         }
     };
 
-    reportsTable.selectForwarded = function () {
+    reportListWidget.selectForwarded = function () {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if (reportsTable.rows[i].twcheeseReport.isForwarded)
@@ -1276,7 +1280,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     /**
      * @param {number} haulStatus 0 for non full haul, 1 for full haul
      */
-    reportsTable.selectLoot = function (haulStatus) {
+    reportListWidget.selectLoot = function (haulStatus) {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         
         for (let row of reportsTable.rows) {
@@ -1290,7 +1294,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         }
     };
 
-    reportsTable.selectFeint = function () {
+    reportListWidget.selectFeint = function () {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if (reportsTable.rows[i].twcheeseReport.wasAttackFeint)
@@ -1298,7 +1302,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         }
     };
 
-    reportsTable.selectDeadNoble = function () {
+    reportListWidget.selectDeadNoble = function () {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if (reportsTable.rows[i].twcheeseReport.attackerNobleDied)
@@ -1306,7 +1310,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         }
     };
 
-    reportsTable.selectLoyalty = function () {
+    reportListWidget.selectLoyalty = function () {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if (reportsTable.rows[i].twcheeseReport.loyalty)
@@ -1314,7 +1318,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         }
     };
 
-    reportsTable.selectCleared = function () {
+    reportListWidget.selectCleared = function () {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if (reportsTable.rows[i].twcheeseReport.wasDefenderCleared())
@@ -1322,7 +1326,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         }
     };
 
-    reportsTable.selectText = function (text) {
+    reportListWidget.selectText = function (text) {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if (reportsTable.rows[i].twcheeseReport.subject.toLowerCase().search(text) != -1)
@@ -1330,7 +1334,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         }
     };
 
-    reportsTable.selectAttacker = function (attackerName) {
+    reportListWidget.selectAttacker = function (attackerName) {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if (reportsTable.rows[i].twcheeseReport.attackerName === attackerName)
@@ -1338,7 +1342,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         }
     };
 
-    reportsTable.selectDefender = function (defenderName) {
+    reportListWidget.selectDefender = function (defenderName) {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
         for (var i = 1; i < reportsTable.rows.length; i++) {
             if (reportsTable.rows[i].twcheeseReport.defenderName === defenderName)
@@ -1346,7 +1350,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         }
     };
 
-    reportsTable.selectAttackerVillage = function (coordinates) {
+    reportListWidget.selectAttackerVillage = function (coordinates) {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
 
         for (var i = 1; i < reportsTable.rows.length; i++) {
@@ -1358,7 +1362,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         }
     };
 
-    reportsTable.selectDefenderVillage = function (coordinates) {
+    reportListWidget.selectDefenderVillage = function (coordinates) {
         var reportsTable = document.getElementById('twcheese_reportsTable_body');
 
         for (var i = 1; i < reportsTable.rows.length; i++) {
@@ -1373,7 +1377,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     /**
      *	adjusts reports table width based on troop counts
      */
-    this.alignForTroops = function () {
+    reportListWidget.alignForTroops = function () {
         let colIndexes = this.columnIndexes.get('defenderSurvivors');
 
         let maxChars = Array(colIndexes.length).fill(2);
@@ -1395,7 +1399,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     /**
      *	adjusts reportsTable width based on resources
      */
-    this.alignForResources = function () {
+    reportListWidget.alignForResources = function () {
         let colIndexes = [
             ...this.columnIndexes.get('resources.wood'),
             ...this.columnIndexes.get('resources.stone'),
@@ -1419,7 +1423,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         this.alignCols(colIndexes, maxChars);
     };
 
-    this.alignCols = function(colIndexes, maxChars) {
+    reportListWidget.alignCols = function(colIndexes, maxChars) {
         let charWidth = 8;
         let widthSum = 0;
         for (let [i, col] of Object.entries(colIndexes)) {
@@ -1443,7 +1447,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     };
 
     /*==== put report information into table ====*/
-    this.populateReportsTable();
+    reportListWidget.populateReportsTable();
+    reportListWidget.applySettings();
 
     /*==== reports selector bar ====*/
     var reportsSelectorBar = document.createElement('div');
@@ -1474,66 +1479,66 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
 
     let clickyOptions = new Map([
         ['all', {
-            click: () => reportsFolderDisplay.selectAll(),
+            click: () => reportListWidget.selectAll(),
             html: 'all'
         }],
         ['none', {
-            click: () => reportsFolderDisplay.selectNone(),
+            click: () => reportListWidget.selectNone(),
             html: 'none'
         }],
         ['new', {
-            click: () => reportsFolderDisplay.selectNew(),
+            click: () => reportListWidget.selectNew(),
             html: 'new'
         }],
         ['old', {
-            click: () => reportsFolderDisplay.selectOld(),
+            click: () => reportListWidget.selectOld(),
             html: 'old'
         }],
         ['dotGreen', {
-            click: () => reportsFolderDisplay.selectDotColor('green'),
+            click: () => reportListWidget.selectDotColor('green'),
             html: imgHtml('graphic/dots/green.png')
         }],
         ['dotYellow', {
-            click: () => reportsFolderDisplay.selectDotColor('yellow'),
+            click: () => reportListWidget.selectDotColor('yellow'),
             html: imgHtml('graphic/dots/yellow.png')
         }],
         ['dotRed', {
-            click: () => reportsFolderDisplay.selectDotColor('red'),
+            click: () => reportListWidget.selectDotColor('red'),
             html: imgHtml('graphic/dots/red.png')
         }],
         ['dotBlue', {
-            click: () => reportsFolderDisplay.selectDotColor('blue'),
+            click: () => reportListWidget.selectDotColor('blue'),
             html: imgHtml('graphic/dots/blue.png')
         }],
         ['forwarded', {
-            click: () => reportsFolderDisplay.selectForwarded(),
+            click: () => reportListWidget.selectForwarded(),
             html: imgHtml('graphic/forwarded.png')
         }],
         ['haulPartial', {
-            click: () => reportsFolderDisplay.selectLoot(BattleReportCondensed.HAUL_STATUS_PARTIAL),
+            click: () => reportListWidget.selectLoot(BattleReportCondensed.HAUL_STATUS_PARTIAL),
             html: imgHtml('graphic/max_loot/0.png')
         }],
         ['haulFull', {
-            click: () => reportsFolderDisplay.selectLoot(BattleReportCondensed.HAUL_STATUS_FULL),
+            click: () => reportListWidget.selectLoot(BattleReportCondensed.HAUL_STATUS_FULL),
             html: imgHtml('graphic/max_loot/1.png')
         }],
         ['feint', {
-            click: () => reportsFolderDisplay.selectFeint(),
+            click: () => reportListWidget.selectFeint(),
             html: imgHtml('graphic/dots/grey.png'),
             tooltip: 'feint'
         }],
         ['deadNoble', {
-            click: () => reportsFolderDisplay.selectDeadNoble(),
+            click: () => reportListWidget.selectDeadNoble(),
             html: imgHtml(ImageSrc.troopIcon('priest')),
             tooltip: 'dead noble'
         }],
         ['loyalty', {
-            click: () => reportsFolderDisplay.selectLoyalty(),
+            click: () => reportListWidget.selectLoyalty(),
             html: '<span style="display:block; margin-left:auto; margin-right:auto" class="icon ally lead"/>',
             tooltip: 'loyalty change'
         }],
         ['cleared', {
-            click: () => reportsFolderDisplay.selectCleared(),
+            click: () => reportListWidget.selectCleared(),
             html: 'defenseless'
         }]
     ]);
@@ -1564,33 +1569,33 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         {
             hintInput: 'contains text',
             hintButton: 'select text',
-            use: reportsFolderDisplay.selectText,
+            use: () => reportListWidget.selectText(),
             sprite: [-140, 0]
         },
         {
             hintInput: 'attacker',
             hintButton: 'select attacking player',
-            use: reportsFolderDisplay.selectAttacker,
+            use: () => reportListWidget.selectAttacker(),
             sprite: [-80, 0]
         },
         {
             hintInput: 'defender',
             hintButton: 'select defending player',
-            use: reportsFolderDisplay.selectDefender,
+            use: reportListWidget.selectDefender,
             sprite: [-80, 0]
         },
         {
             hintInput: 'origin',
             hintButton: 'select attacking village',
             placeholder: 'x|y',
-            use: reportsFolderDisplay.selectAttackerVillage,
+            use: reportListWidget.selectAttackerVillage,
             sprite: [-120, 0]
         },
         {
             hintInput: 'target',
             hintButton: 'select defending village',
             placeholder: 'x|y',
-            use: reportsFolderDisplay.selectDefenderVillage,
+            use: reportListWidget.selectDefenderVillage,
             sprite: [-120, 0]
         }
     ];
@@ -1656,7 +1661,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         `.trim());
         $massRename.find('a').on('click', (e) => {
             e.preventDefault();
-            reportsFolderDisplay.massRename();
+            this.massRename();
         });
         $massRename.appendTo(reportsFolder);
     }
@@ -1777,7 +1782,6 @@ function enhanceReport() {
 function enhanceReportsFolder() {
     let renamer = new ReportRenamer();
     let pageMod = new twcheese_BattleReportsFolderEnhancer(document, renamer);
-    pageMod.applySettings();
 }
 
 

@@ -949,8 +949,9 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     yScrollPanel.style.background = 'transparent';
     yScrollPanel.style.position = 'absolute';
     yScrollPanel.style.right = 0;
-    yScrollPanel.style.height = Number(400 - 20 - reportsTableHeaderDiv.clientHeight) + 'px';
-    yScrollPanel.style.top = reportsTableHeaderDiv.clientHeight + "px";
+    yScrollPanel.style.height = (400 - 20 - reportsTableHeaderDiv.offsetHeight) + 'px';
+    yScrollPanel.style.scrollbarWidth = 'thin';
+    yScrollPanel.style.top = (reportsTableHeaderDiv.offsetHeight + 2) + "px";
 
     /*==== y table emulator ====*/
     var yTableEmulator = document.createElement('div');

@@ -72,7 +72,6 @@ class ReportListWidget extends AbstractWidget {
 
 
         var reportsFolderDisplay = document.createElement('div');
-        this.$el = $(reportsFolderDisplay);
         container.appendChild(reportsFolderDisplay); // todo: not like this
         reportsFolderDisplay.id = 'twcheese_reportsFolderDisplay';
         reportsFolderDisplay.style.overflow = 'hidden';
@@ -80,15 +79,7 @@ class ReportListWidget extends AbstractWidget {
         reportsFolderDisplay.style.width = '646px';
         reportsFolderDisplay.style.height = '400px';
         reportsFolderDisplay.style.minHeight = '100px';
-        reportsFolderDisplay.style.minWidth = '100px';
-
-        /*==== resizable functionality ====*/
-        $(function () { $("#twcheese_reportsFolderDisplay").resizable(); });
-        $('#twcheese_reportsFolderDisplay').resize(() => {
-            this.fitDisplayComponents();
-            userConfig.set('ReportListWidget.size.width', this.$el.width());
-            userConfig.set('ReportListWidget.size.height', this.$el.height());
-        });
+        reportsFolderDisplay.style.minWidth = '100px';        
 
         /*==== reports table header ====*/
         var reportsTableHeaderDiv = document.createElement('div');
@@ -202,37 +193,58 @@ class ReportListWidget extends AbstractWidget {
         xScrollPanel.appendChild(xTableEmulator);
         xTableEmulator.style.width = reportsTableHeader.clientWidth + 'px';
         xTableEmulator.innerHTML = '&nbsp;';
+        
+        this.$el = $(reportsFolderDisplay);
+        this.$head = this.$el.find('#twcheese_reportsTable_header');
+        this.$body = this.$el.find('#twcheese_reportsTable_body');
+        this.$bodyPane = this.$el.find('#twcheese_reportsTable');
+        this.$xBodyEmulator = this.$el.find('#twcheese_reportsDisplay_x-table-emulator');
+        this.$yBodyEmulator = this.$el.find('#twcheese_reportsDisplay_y-table-emulator');
+        this.$xScrollPanel = this.$el.find('#twcheese_reportsDisplay_xScrollPanel');
+        this.$yScrollPanel = this.$el.find('#twcheese_reportsDisplay_yScrollPanel');
 
-        /*==== scrolling functionality ====*/
-        reportsTableBodyDiv.onscroll = function (e) {
-            xScrollPanel.scrollTop = reportsTableBodyDiv.scrollTop;
-        };
+        this.$el.resizable();
+        this.watchSelf();
+    }
 
-        yScrollPanel.onscroll = function (e) {
-            reportsTableBodyDiv.scrollTop = yScrollPanel.scrollTop;
-        };
 
-        xScrollPanel.onscroll = function (e) {
-            reportsTableBodyDiv.scrollLeft = xScrollPanel.scrollLeft;
-            reportsTableHeaderDiv.scrollLeft = xScrollPanel.scrollLeft;
-        };
+    watchSelf() {
 
-        reportsTableBody.addEventListener('wheel', function(e) {
+        this.$el.on('resize', (e) => {
+            this.fitDisplayComponents();
+            userConfig.set('ReportListWidget.size.width', this.$el.width());
+            userConfig.set('ReportListWidget.size.height', this.$el.height());
+        });
+
+        this.$bodyPane.on('scroll', (e) => {
+            this.$xScrollPanel.scrollTop(this.$bodyPane.scrollTop());
+        });
+
+        this.$yScrollPanel.on('scroll', (e) => {
+            this.$bodyPane.scrollTop(this.$yScrollPanel.scrollTop());
+        });
+
+        this.$xScrollPanel.on('scroll', (e) => {
+            this.$bodyPane.scrollLeft(this.$xScrollPanel.scrollLeft());
+            this.$head.parent().scrollLeft(this.$xScrollPanel.scrollLeft());
+        });
+
+        this.$bodyPane.on('wheel', (e) => {
             e.preventDefault();
-            let deltaY = 90 * Math.sign(e.deltaY);
+            let deltaY = 90 * Math.sign(e.originalEvent.deltaY);
             
             let timeStart = performance.now();
             let animDurationMs = 250;
             let y = 0;
 
-            let scrollStep = function() {
+            let scrollStep = () => {
                 let msElapsed = performance.now() - timeStart;
                 let targetY = deltaY * Math.min(1, msElapsed / animDurationMs);
                 let stepY = targetY - y;
 
                 y += stepY;
-                yScrollPanel.scrollTop += stepY;
-                reportsTableBody.scrollTop += stepY;
+                this.$yScrollPanel[0].scrollTop += stepY;
+                this.$bodyPane[0].scrollTop += stepY;
 
                 if (msElapsed < animDurationMs) {
                     window.requestAnimationFrame(scrollStep);
@@ -240,15 +252,9 @@ class ReportListWidget extends AbstractWidget {
             }
             window.requestAnimationFrame(scrollStep);
         });
-        
 
-        this.$head = this.$el.find('#twcheese_reportsTable_header');
-        this.$body = this.$el.find('#twcheese_reportsTable_body');
-        this.$bodyPane = this.$el.find('#twcheese_reportsTable');
-        this.$xBodyEmulator = this.$el.find('#twcheese_reportsDisplay_x-table-emulator');
-        this.$yBodyEmulator = this.$el.find('#twcheese_reportsDisplay_y-table-emulator');
-        this.$yScrollPanel = this.$el.find('#twcheese_reportsDisplay_yScrollPanel');
     }
+
 
     /**
      * fills body with information

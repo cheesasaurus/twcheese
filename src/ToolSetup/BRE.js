@@ -481,8 +481,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
                 report.isForwarded = oldReport.isForwarded;
                 report.strTimeReceived = oldReport.strTimeReceived;
 
-                let row = document.getElementsByName('id_' + reportId)[0].parentNode.parentNode;
-                row.twcheeseReport = report; // todo: don't use rows as repo
                 reportListWidget.reports.set(report.reportId, report);
 
 

@@ -205,7 +205,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
 
     /*==== scrape reports information ====*/    
     let reportScraper = new BattleReportCondensedScraper(renamer);
-    let reports = reportScraper.scrapeReports(reportsTable);
+    this.reports = reportScraper.scrapeReports(reportsTable);
 
     /*==== remove old table ====*/
     reportsTable.parentNode.removeChild(reportsTable);
@@ -312,8 +312,6 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     exportConfigTable.rows[3].cells[0].innerHTML = '<a href="javascript:document.getElementById(\'twcheese_reportsFolderExport\').exportLinks();" > &raquo; Export</a>';
 
     reportsFolderExportContainer.exportLinks = function () {
-        var reportsTable = document.getElementById('twcheese_reportsTable_body'); // todo: don't use elements to get reports
-
         let format = $("input[name='twcheese-repeat-attack-export-format']:checked").val();
         let attackingVillage = $("input[name='twcheese-repeat-attack-export-village']:checked").val();
 
@@ -337,61 +335,60 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         }
 
 
-        function urlCurrentVillage(twcheeseReport) {
-            return gameUrl('place', {try: 'confirm', type: 'same', report_id: twcheeseReport.reportId});
+        function urlCurrentVillage(report) {
+            return gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportId});
         }
 
-        function buildEntryCurrentVillage(twcheeseReport) {
+        function buildEntryCurrentVillage(report) {
             switch (format) {
                 case 'bbcode':
-                    return '\n[url=' + urlCurrentVillage(twcheeseReport) + ']repeat attack ' + twcheeseReport.reportId + ' from (' + game_data.village.coord + ') to (' + twcheeseReport.defenderVillage.x + '|' + twcheeseReport.defenderVillage.y + ')[/url]';
+                    return '\n[url=' + urlCurrentVillage(report) + ']repeat attack ' + report.reportId + ' from (' + game_data.village.coord + ') to (' + report.defenderVillage.x + '|' + report.defenderVillage.y + ')[/url]';
 
                 case 'plainLink':
-                    return '\n' + urlCurrentVillage(twcheeseReport);
+                    return '\n' + urlCurrentVillage(report);
 
                 case 'html':
                     let leadingZero = '';
-                    let distance = twcheeseReport.defenderDistance(game_data.village);
+                    let distance = report.defenderDistance(game_data.village);
                     if (distance < 10) {
                         leadingZero = '0';
                     }
-                    return '\n<DT><A HREF="' + urlCurrentVillage(twcheeseReport) + '" >' + leadingZero + distance + ' Repeat Attack ' + twcheeseReport.reportId + ' from (' + game_data.village.coord + ') to (' + twcheeseReport.defenderVillage.x + '|' + twcheeseReport.defenderVillage.y + ')</A></DT>';                
+                    return '\n<DT><A HREF="' + urlCurrentVillage(report) + '" >' + leadingZero + distance + ' Repeat Attack ' + report.reportId + ' from (' + game_data.village.coord + ') to (' + report.defenderVillage.x + '|' + report.defenderVillage.y + ')</A></DT>';                
             }
         }
 
 
-        function urlOriginalVillage(twcheeseReport) {
-            return gameUrl('place', {try: 'confirm', type: 'same', report_id: twcheeseReport.reportId, village: twcheeseReport.attackerVillage.id});
+        function urlOriginalVillage(report) {
+            return gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportId, village: report.attackerVillage.id});
         }
 
-        function buildEntryOriginalVillage(twcheeseReport) {
+        function buildEntryOriginalVillage(report) {
             switch (format) {
                 case 'bbcode':
-                    return '\n[url=' + urlOriginalVillage(twcheeseReport) + ']repeat attack ' + twcheeseReport.reportId + ' from (' + twcheeseReport.attackerVillage.x + '|' + twcheeseReport.attackerVillage.y + ') to (' + twcheeseReport.defenderVillage.x + '|' + twcheeseReport.defenderVillage.y + ')[/url]';
+                    return '\n[url=' + urlOriginalVillage(report) + ']repeat attack ' + report.reportId + ' from (' + report.attackerVillage.x + '|' + report.attackerVillage.y + ') to (' + report.defenderVillage.x + '|' + report.defenderVillage.y + ')[/url]';
 
                 case 'plainLink':
-                    return '\n' + urlOriginalVillage(twcheeseReport);
+                    return '\n' + urlOriginalVillage(report);
 
                 case 'html':
-                    return '\n<DT><A HREF="' + urlOriginalVillage(twcheeseReport) + '" >Repeat Attack ' + twcheeseReport.reportId + ' from (' + twcheeseReport.attackerVillage.x + '|' + twcheeseReport.attackerVillage.y + ') to (' + twcheeseReport.defenderVillage.x + '|' + twcheeseReport.defenderVillage.y + ')</A></DT>';
+                    return '\n<DT><A HREF="' + urlOriginalVillage(report) + '" >Repeat Attack ' + report.reportId + ' from (' + report.attackerVillage.x + '|' + report.attackerVillage.y + ') to (' + report.defenderVillage.x + '|' + report.defenderVillage.y + ')</A></DT>';
             }
         }
 
         var exportString = buildHeader();
 
-        for (let i = 1; i < reportsTable.rows.length; i++) {
-            let twcheeseReport = reportsTable.rows[i].twcheeseReport;
-            if (!twcheeseReport.defenderVillage) {
+        for (let report of this.reports) {
+            if (!report.defenderVillage) {
                 continue; // not enough information
             }
-            if (twcheeseReport.attackerName !== game_data.player.name) {
+            if (report.attackerName !== game_data.player.name) {
                 continue; // can't repeat somebody else's attack
             }
             if (attackingVillage == 'current') {
-                exportString += buildEntryCurrentVillage(twcheeseReport);
+                exportString += buildEntryCurrentVillage(report);
             }
-            else if (attackingVillage == 'original' && twcheeseReport.attackerVillage) {
-                exportString += buildEntryOriginalVillage(twcheeseReport);
+            else if (attackingVillage == 'original' && report.attackerVillage) {
+                exportString += buildEntryOriginalVillage(report);
             } 
         }
 
@@ -426,7 +423,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     }
 
     /*==== reports display ====*/
-    let reportListWidget = new ReportListWidget(reports, reportsFolder);
+    let reportListWidget = new ReportListWidget(this.reports, reportsFolder);
     reportListWidget.populateReportsTable();
     reportListWidget.applySettings();
 

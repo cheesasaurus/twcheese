@@ -72,6 +72,7 @@ class ReportListWidget extends AbstractWidget {
 
 
         var reportsFolderDisplay = document.createElement('div');
+        this.$el = $(reportsFolderDisplay);
         container.appendChild(reportsFolderDisplay); // todo: not like this
         reportsFolderDisplay.id = 'twcheese_reportsFolderDisplay';
         reportsFolderDisplay.style.overflow = 'hidden';
@@ -409,127 +410,125 @@ class ReportListWidget extends AbstractWidget {
                 }
             }
         };
-
-
-        reportListWidget.getSelectedReportIds = function() {
-            var reportsTableBody = document.getElementById('twcheese_reportsTable_body');
-            var inputs = reportsTableBody.getElementsByTagName('input');
-            var reportIds = [];
-
-            for (var i = 0; i < inputs.length; i++) {
-                if (inputs[i].type == 'checkbox') {
-                    if (inputs[i].checked) {
-                        reportIds.push(inputs[i].name.substring(3));
-                    }
-                }
-            }
-            return reportIds;
-        };
-
-        reportListWidget.refreshContents = function () {
-            var reportsTable = document.getElementById('twcheese_reportsTable_body');
-    
-            for (var i = 1; i < reportsTable.rows.length;) {
-                reportsTable.deleteRow(1);
-            }
-    
-            reportListWidget.populateReportsTable();
-            reportListWidget.applySettings();
-    
-            //yTableEmulator.style.height = reportsTableBody.clientHeight + 'px';
-            //xTableEmulator.style.width = reportsTableBody.clientWidth + 'px';				
-    
-            /*==== adjust scrollbars ====*/
-            //document.getElementById('twcheese_reportsDisplay_x-table-emulator').style.width = document.getElementById('twcheese_reportsTable_header').clientWidth + 'px';
-            //document.getElementById('twcheese_reportsDisplay_y-table-emulator').style.height = document.getElementById('twcheese_reportsTable_body').clientHeight + 'px';
-    
-        };
-    
-        /**
-         *	sets display components styles to fill the display zone and ensure scrolling functionality
-         */
-        reportListWidget.fitDisplayComponents = function () {
-            var displayZone = document.getElementById('twcheese_reportsFolderDisplay');
-            var tableBody = document.getElementById('twcheese_reportsTable');
-            tableBody.style.width = displayZone.style.width;
-            tableBody.style.height = Number(Number(displayZone.style.height.substring(0, displayZone.style.height.indexOf('px'))) - 67) + 'px';
-            document.getElementById('twcheese_reportsDisplay_yScrollPanel').style.height = tableBody.style.height;
-        };
-
         
-    
-        /**
-         *	adjusts reports table width based on troop counts
-         */
-        reportListWidget.alignForTroops = function () {
-            let colIndexes = this.columnIndexes.get('defenderSurvivors');
-    
-            let maxChars = Array(colIndexes.length).fill(2);
-    
-            for (let r = 1; r < reportsTableBody.rows.length; r++) {
-                let row = reportsTableBody.rows[r];
-                if (!row.twcheeseReport.defenderSurvivors) {
-                    continue;
-                }
-                for (let [i, col] of Object.entries(colIndexes)) {
-                    let chars = String(row.cells[col].innerHTML).length;
-                    maxChars[i] = Math.max(chars, maxChars[i]);
-                }
-            }
-    
-            this.alignCols(colIndexes, maxChars);
-        };
-    
-        /**
-         *	adjusts reportsTable width based on resources
-         */
-        reportListWidget.alignForResources = function () {
-            let colIndexes = [
-                ...this.columnIndexes.get('resources.wood'),
-                ...this.columnIndexes.get('resources.stone'),
-                ...this.columnIndexes.get('resources.iron'),
-                ...this.columnIndexes.get('resources.sum'),
-            ];
-    
-            let maxChars = [2, 2, 2, 2];
-    
-            for (let r = 1; r < reportsTableBody.rows.length; r++) {
-                let row = reportsTableBody.rows[r];
-                if (!row.twcheeseReport.resources) {
-                    continue;
-                }
-                for (let [i, col] of Object.entries(colIndexes)) {
-                    let chars = row.cells[col].innerText.length;
-                    maxChars[i] = Math.max(chars, maxChars[i]);
-                }
-            }
-    
-            this.alignCols(colIndexes, maxChars);
-        };
-    
-        reportListWidget.alignCols = function(colIndexes, maxChars) {
-            let charWidth = 8;
-            let widthSum = 0;
-            for (let [i, col] of Object.entries(colIndexes)) {
-                let width = charWidth * maxChars[i];
-                width = Math.max(20, width);
-                widthSum += width;
-    
-                let alignmentTh = reportsTableHeader.rows[0].cells[col];
-                let bodyCell = reportsTableBody.rows[0].cells[col];
-    
-                alignmentTh.style.width = width + 'px';
-                bodyCell.style.width = width + 'px';
-            }
-    
-            let padding = 3 * 2 * colIndexes.length;
-            let borderSpacing = 2 * (colIndexes.length - 1);
-            let width = widthSum + borderSpacing + padding;
-            
-            let titleTh = cellAtIndex(reportsTableHeader.rows[1], colIndexes[0]);
-            titleTh.style.width = width + 'px';
-        };
 
+        this.$head = this.$el.find('#twcheese_reportsTable_header');
+        this.$body = this.$el.find('#twcheese_reportsTable_body');
+        this.$bodyPane = this.$el.find('#twcheese_reportsTable');
+        this.$yScrollPanel = this.$el.find('#twcheese_reportsDisplay_yScrollPanel');
+    }
+
+    getSelectedReportIds() {
+        // todo: ref checkboxes
+        var reportsTableBody = this.$body[0];
+        var inputs = reportsTableBody.getElementsByTagName('input');
+        var reportIds = [];
+
+        for (var i = 0; i < inputs.length; i++) {
+            if (inputs[i].type == 'checkbox') {
+                if (inputs[i].checked) {
+                    reportIds.push(inputs[i].name.substring(3));
+                }
+            }
+        }
+        return reportIds;
+    }
+
+
+    refreshContents() {
+        this.$body.find('tr:not(:first)').remove();    
+        this.populateReportsTable();
+        this.applySettings();    
+    }
+
+
+    /**
+     * sets display components styles to fill the display zone and ensure scrolling functionality
+     */
+    fitDisplayComponents() {
+        let bodyPaneHeight = this.$el.height() - 67;
+
+        this.$bodyPane.css({
+            width: this.$el.width(),
+            height: bodyPaneHeight
+        });
+        
+        this.$yScrollPanel.css({height: bodyPaneHeight});
+    }
+
+
+    /**
+     * adjust widths for troop counts
+     */
+    alignForTroops() {
+        let colIndexes = this.columnIndexes.get('defenderSurvivors');
+
+        let maxChars = Array(colIndexes.length).fill(2);
+
+        for (let r = 1; r < this.$body[0].rows.length; r++) {
+            let row = this.$body[0].rows[r];
+            if (!row.twcheeseReport.defenderSurvivors) {
+                continue;
+            }
+            for (let [i, col] of Object.entries(colIndexes)) {
+                let chars = String(row.cells[col].innerHTML).length;
+                maxChars[i] = Math.max(chars, maxChars[i]);
+            }
+        }
+
+        this.alignCols(colIndexes, maxChars);
+    }
+
+
+    /**
+     * adjust widths for resources
+     */
+    alignForResources() {
+        let colIndexes = [
+            ...this.columnIndexes.get('resources.wood'),
+            ...this.columnIndexes.get('resources.stone'),
+            ...this.columnIndexes.get('resources.iron'),
+            ...this.columnIndexes.get('resources.sum'),
+        ];
+
+        let maxChars = [2, 2, 2, 2];
+
+        for (let r = 1; r < this.$body[0].rows.length; r++) {
+            let row = this.$body[0].rows[r];
+            if (!row.twcheeseReport.resources) {
+                continue;
+            }
+            for (let [i, col] of Object.entries(colIndexes)) {
+                let chars = row.cells[col].innerText.length;
+                maxChars[i] = Math.max(chars, maxChars[i]);
+            }
+        }
+
+        this.alignCols(colIndexes, maxChars);
+    }
+
+
+    alignCols(colIndexes, maxChars) {
+        let charWidth = 8;
+        let widthSum = 0;
+        for (let [i, col] of Object.entries(colIndexes)) {
+            let width = charWidth * maxChars[i];
+            width = Math.max(20, width);
+            widthSum += width;
+
+            let alignmentTh = this.$head[0].rows[0].cells[col];
+            let bodyCell = this.$body[0].rows[0].cells[col];
+
+            alignmentTh.style.width = width + 'px';
+            bodyCell.style.width = width + 'px';
+        }
+
+        let padding = 3 * 2 * colIndexes.length;
+        let borderSpacing = 2 * (colIndexes.length - 1);
+        let width = widthSum + borderSpacing + padding;
+        
+        let titleTh = cellAtIndex(this.$head[0].rows[1], colIndexes[0]);
+        titleTh.style.width = width + 'px';
     }
 
 

@@ -426,9 +426,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     }
 
     /*==== reports display ====*/
-    let reportListWidget = new ReportListWidget(this.reports, reportsFolder);
-    reportListWidget.populateReportsTable();
-    reportListWidget.applySettings();
+    let reportListWidget = new ReportListWidget(this.reports);
+    reportListWidget.appendTo(reportsFolder);
 
     /**
      *	note: changed from a loop to recursive method in 2.2 to allow redrawing of progress in IE via setTimeout method

@@ -65,14 +65,13 @@ class ReportListWidget extends AbstractWidget {
     /**
      * @param {Map.<number, BattleReportCondensed>} reports 
      */
-    constructor(reports, container) {
+    constructor(reports) {
         super();
         this.reports = reports;
         this.columnIndexes = new Map();
 
 
         var reportsFolderDisplay = document.createElement('div');
-        container.appendChild(reportsFolderDisplay); // todo: not like this
         reportsFolderDisplay.id = 'twcheese_reportsFolderDisplay';
         reportsFolderDisplay.style.overflow = 'hidden';
         reportsFolderDisplay.style.position = 'relative';
@@ -161,9 +160,7 @@ class ReportListWidget extends AbstractWidget {
         yScrollPanel.style.background = 'transparent';
         yScrollPanel.style.position = 'absolute';
         yScrollPanel.style.right = 0;
-        yScrollPanel.style.height = (400 - 20 - reportsTableHeaderDiv.offsetHeight) + 'px';
         yScrollPanel.style.scrollbarWidth = 'thin';
-        yScrollPanel.style.top = (reportsTableHeaderDiv.offsetHeight + 2) + "px";
 
         /*==== y table emulator ====*/
         var yTableEmulator = document.createElement('div');
@@ -174,13 +171,12 @@ class ReportListWidget extends AbstractWidget {
         yTableEmulator.style.position = 'relative';
         yTableEmulator.innerHTML = '&nbsp;';
 
-
         /*==== x scroll panel ====*/
         var xScrollPanel = document.createElement('div');
         xScrollPanel.id = 'twcheese_reportsDisplay_xScrollPanel';
         reportsFolderDisplay.appendChild(xScrollPanel);
         xScrollPanel.style.height = '40px';
-        xScrollPanel.style.width = `calc(100% - ${yScrollPanel.offsetWidth}px)`;
+        xScrollPanel.style.width = `calc(100% - 18px)`;
         xScrollPanel.style.marginTop = '-23px';
         xScrollPanel.style.overflowX = 'scroll';
         xScrollPanel.style.overflowY = 'hidden';
@@ -207,9 +203,18 @@ class ReportListWidget extends AbstractWidget {
         this.watchSelf();
     }
 
+    afterInsert() {
+        let $headContainer = this.$head.parent();
+        this.$yScrollPanel.css({
+            height: 400 - 20 - $headContainer.outerHeight(),
+            top: $headContainer.outerHeight() + 2
+        });
+        this.populateReportsTable();
+        this.applySettings();
+    }
+
 
     watchSelf() {
-
         this.$el.on('resize', (e) => {
             this.fitDisplayComponents();
             userConfig.set('ReportListWidget.size.width', this.$el.width());
@@ -252,7 +257,6 @@ class ReportListWidget extends AbstractWidget {
             }
             window.requestAnimationFrame(scrollStep);
         });
-
     }
 
 
@@ -340,7 +344,7 @@ class ReportListWidget extends AbstractWidget {
         let show = !userConfig.get(configKey, true);
         userConfig.set(configKey, show);
 
-        for (let i of columnIndexes.get(settingName)) {
+        for (let i of this.columnIndexes.get(settingName)) {
             if (show) {
                 this.showColumn(i);
             } else {

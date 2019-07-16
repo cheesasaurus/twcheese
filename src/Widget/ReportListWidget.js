@@ -70,7 +70,12 @@ class ReportListWidget extends AbstractWidget {
         this.reports = reports;
         this.columnIndexes = new Map();
 
+        this.initStructure();
+        this.$el.resizable();
+        this.watchSelf();
+    }
 
+    initStructure() {
         var reportsFolderDisplay = document.createElement('div');
         reportsFolderDisplay.id = 'twcheese_reportsFolderDisplay';
         reportsFolderDisplay.style.overflow = 'hidden';
@@ -198,10 +203,8 @@ class ReportListWidget extends AbstractWidget {
         this.$yBodyEmulator = this.$el.find('#twcheese_reportsDisplay_y-table-emulator');
         this.$xScrollPanel = this.$el.find('#twcheese_reportsDisplay_xScrollPanel');
         this.$yScrollPanel = this.$el.find('#twcheese_reportsDisplay_yScrollPanel');
-
-        this.$el.resizable();
-        this.watchSelf();
     }
+
 
     afterInsert() {
         let $headContainer = this.$head.parent();

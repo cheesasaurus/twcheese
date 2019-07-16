@@ -312,16 +312,9 @@ class ReportListWidget extends AbstractWidget {
      * hides columns and resizes to user's preferences
      */
     applySettings() {
-
-        // todo: checking the checkboxes doesn't belong here.
-        // Refactor hiding the columns, and move checking the checkboxes elsewhere
-        let checkboxes = document.getElementById('twcheese_reportsFolderSettings').getElementsByTagName('input');
-        for (let checkbox of checkboxes) {
-            let settingName = checkbox.dataset.settingName;
-            if (userConfig.get(`ReportListWidget.showCols.${settingName}`, true)) {
-                checkbox.checked = true;
-            } else {
-                this.hideColumns(settingName);
+        for (let category of ReportListWidget.columnCategories) {
+            if (!userConfig.get(`ReportListWidget.showCols.${category.key}`, true)) {
+                this.hideColumns(category.key);
             }
         }
 
@@ -329,6 +322,7 @@ class ReportListWidget extends AbstractWidget {
             width: userConfig.get('ReportListWidget.size.width', '720px'),
             height: userConfig.get('ReportListWidget.size.height', '250px')
         });
+                
         this.fitDisplayComponents();
         this.adjustScrollbars();
     }

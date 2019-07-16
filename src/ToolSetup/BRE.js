@@ -411,10 +411,13 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     reportsFolderSettingsDiv.style.columnWidth = 200 + 'px';
     
     function insertCheckbox(key, text) {
-        let $el = $(`<div style="white-space:nowrap"><label><input data-setting-name="${key}" type="checkbox"> ${text}</label></div>`);
-        $el.find('input').on('click', () => {
-            reportListWidget.toggleReportsColumns(key);
-        });
+        let $el = $(`<div style="white-space:nowrap"><label><input type="checkbox"> ${text}</label></div>`);
+        $el.find('input')
+            .prop('checked', userConfig.get(`ReportListWidget.showCols.${key}`, true))
+            .on('click', () => {
+                reportListWidget.toggleReportsColumns(key);
+            });
+            
         reportsFolderSettingsDiv.appendChild($el[0]);
     }
     

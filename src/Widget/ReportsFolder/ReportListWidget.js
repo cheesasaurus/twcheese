@@ -7,6 +7,7 @@ import { textScraper } from '/twcheese/src/Scrape/TextScraper.js';
 import { AbstractWidget } from '/twcheese/src/Widget/AbstractWidget.js';
 import { gameUrl } from '/twcheese/src/Util/Network.js';
 import { userConfig } from '/twcheese/src/Util/Config.js';
+import { initCss } from '/twcheese/src/Util/UI.js';
 
 
 var language = { "twcheese": {} };
@@ -850,6 +851,129 @@ ReportListWidget.columnCategories = [
         }]
     }
 ];
+
+
+
+// jquery-ui. Used for resizable
+initCss(`
+    .ui-icon-gripsmall-diagonal-se { background-position: -64px -224px; }
+
+    /* Icons
+    ----------------------------------*/
+
+    .ui-icon {
+        display: block;
+        text-indent: -99999px;
+        overflow: hidden;
+        background-repeat: no-repeat;
+    }
+
+    .ui-icon {
+        width: 16px;
+        height: 16px;
+    }
+    .ui-icon,
+    .ui-widget-content .ui-icon {
+        background-image: url(${ImageSrc.jq.darkGrey});
+    }
+    .ui-widget-header .ui-icon {
+        background-image: url(${ImageSrc.jq.black});
+    }
+    .ui-state-default .ui-icon {
+        background-image: url(${ImageSrc.jq.grey});
+    }
+    .ui-state-hover .ui-icon,
+    .ui-state-focus .ui-icon {
+        background-image: url(${ImageSrc.jq.darkGrey});
+    }
+    .ui-state-active .ui-icon {
+        background-image: url(${ImageSrc.jq.darkGrey});
+    }
+    .ui-state-highlight .ui-icon {
+        background-image: url(${ImageSrc.jq.blue});
+    }
+    .ui-state-error .ui-icon,
+    .ui-state-error-text .ui-icon {
+        background-image: url(${ImageSrc.jq.red});
+    }
+
+    /* Overlays */
+    .ui-widget-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+    .ui-resizable {
+        position: relative;
+    }
+    .ui-resizable-handle {
+        position: absolute;
+        font-size: 0.1px;
+        display: block;
+    }
+    .ui-resizable-disabled .ui-resizable-handle,
+    .ui-resizable-autohide .ui-resizable-handle {
+        display: none;
+    }
+    .ui-resizable-n {
+        cursor: n-resize;
+        height: 7px;
+        width: 100%;
+        top: -5px;
+        left: 0;
+    }
+    .ui-resizable-s {
+        cursor: s-resize;
+        height: 7px;
+        width: 100%;
+        bottom: -5px;
+        left: 0;
+    }
+    .ui-resizable-e {
+        cursor: e-resize;
+        width: 7px;
+        right: -5px;
+        top: 0;
+        height: 100%;
+    }
+    .ui-resizable-w {
+        cursor: w-resize;
+        width: 7px;
+        left: -5px;
+        top: 0;
+        height: 100%;
+    }
+    .ui-resizable-se {
+        cursor: se-resize;
+        width: 12px;
+        height: 12px;
+        right: 1px;
+        bottom: 1px;
+    }
+    .ui-resizable-sw {
+        cursor: sw-resize;
+        width: 9px;
+        height: 9px;
+        left: -5px;
+        bottom: -5px;
+    }
+    .ui-resizable-nw {
+        cursor: nw-resize;
+        width: 9px;
+        height: 9px;
+        left: -5px;
+        top: -5px;
+    }
+    .ui-resizable-ne {
+        cursor: ne-resize;
+        width: 9px;
+        height: 9px;
+        right: -5px;
+        top: -5px;
+    }
+`);
 
 
 export { ReportListWidget };

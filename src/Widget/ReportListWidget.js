@@ -84,17 +84,11 @@ class ReportListWidget extends AbstractWidget {
 
         /*==== resizable functionality ====*/
         $(function () { $("#twcheese_reportsFolderDisplay").resizable(); });
-        $('#twcheese_reportsFolderDisplay').resize(
-            function () {
-                try {
-                    let reportsFolderDisplay = document.getElementById('twcheese_reportsFolderDisplay');
-                    reportListWidget.fitDisplayComponents();
-
-                    userConfig.set('ReportListWidget.size.width', reportsFolderDisplay.style.width);
-                    userConfig.set('ReportListWidget.size.height', reportsFolderDisplay.style.height);
-                } catch (e) { console.error(e) }
-            }
-        );
+        $('#twcheese_reportsFolderDisplay').resize(() => {
+            this.fitDisplayComponents();
+            userConfig.set('ReportListWidget.size.width', this.$el.width());
+            userConfig.set('ReportListWidget.size.height', this.$el.height());
+        });
 
         /*==== reports table header ====*/
         var reportsTableHeaderDiv = document.createElement('div');
@@ -246,59 +240,6 @@ class ReportListWidget extends AbstractWidget {
             }
             window.requestAnimationFrame(scrollStep);
         });
-
-        /*==== reports table functions ====*/
-        var reportListWidget = this;
-
-        let columnIndexes = this.columnIndexes;
-
-
-        /**
-         *	fills reportsTableBody with information
-         */
-        reportListWidget.populateReportsTable = function () {
-            let minimal = new Set(['essential', 'repeatLinks', 'distance', 'fullSubject', 'strTimeReceived']);
-
-            let fallbackSubjectColSpan = ReportListWidget.columnCategories.reduce(function(acc, category) {
-                if (category.key !== 'fullSubject' && minimal.has(category.key)) {
-                    return acc;
-                }
-                return acc + category.cols.length;
-            }, 0);
-
-
-            for (let report of this.reports.values()) {
-                let row = reportsTableBody.insertRow(-1);
-                row.twcheeseReport = report;
-                let hasDecentInfo = report.attackerName && report.defenderName && report.attackerVillage && report.defenderVillage;
-
-                for (let category of ReportListWidget.columnCategories) {
-                    if (!hasDecentInfo && !minimal.has(category.key)) {
-                        continue;
-                    }
-                    for (let col of category.cols) {
-                        let cell = row.insertCell(-1);
-                        cell.innerHTML = col.createCellHtml(report);
-                        if (typeof col.align === 'string') {
-                            cell.style.textAlign = col.align;
-                        }
-                        if (typeof col.cssClass === 'function') {
-                            cell.className = col.cssClass(report);
-                        }
-                        if (!hasDecentInfo && category.key === 'fullSubject') {
-                            cell.initialColSpan = fallbackSubjectColSpan;
-                            cell.colSpan = cell.initialColSpan;
-                        }                    
-                    }                
-                }
-
-            }
-            
-            this.alignForTroops();
-            this.alignForResources();
-            yTableEmulator.style.height = reportsTableBody.clientHeight + 'px';
-            xTableEmulator.style.width = reportsTableBody.clientWidth + 'px';
-        };
         
 
         this.$head = this.$el.find('#twcheese_reportsTable_header');
@@ -308,6 +249,53 @@ class ReportListWidget extends AbstractWidget {
         this.$yBodyEmulator = this.$el.find('#twcheese_reportsDisplay_y-table-emulator');
         this.$yScrollPanel = this.$el.find('#twcheese_reportsDisplay_yScrollPanel');
     }
+
+    /**
+     * fills body with information
+     */
+    populateReportsTable() {
+        let minimal = new Set(['essential', 'repeatLinks', 'distance', 'fullSubject', 'strTimeReceived']);
+
+        let fallbackSubjectColSpan = ReportListWidget.columnCategories.reduce(function(acc, category) {
+            if (category.key !== 'fullSubject' && minimal.has(category.key)) {
+                return acc;
+            }
+            return acc + category.cols.length;
+        }, 0);
+
+        for (let report of this.reports.values()) {
+            let row = this.$body[0].insertRow(-1);
+            row.twcheeseReport = report;
+            let hasDecentInfo = report.attackerName && report.defenderName && report.attackerVillage && report.defenderVillage;
+
+            for (let category of ReportListWidget.columnCategories) {
+                if (!hasDecentInfo && !minimal.has(category.key)) {
+                    continue;
+                }
+                for (let col of category.cols) {
+                    let cell = row.insertCell(-1);
+                    cell.innerHTML = col.createCellHtml(report);
+                    if (typeof col.align === 'string') {
+                        cell.style.textAlign = col.align;
+                    }
+                    if (typeof col.cssClass === 'function') {
+                        cell.className = col.cssClass(report);
+                    }
+                    if (!hasDecentInfo && category.key === 'fullSubject') {
+                        cell.initialColSpan = fallbackSubjectColSpan;
+                        cell.colSpan = cell.initialColSpan;
+                    }                    
+                }                
+            }
+        }
+        
+        this.alignForTroops();
+        this.alignForResources();
+
+        this.$xBodyEmulator.width(this.$body.width());
+        this.$yBodyEmulator.height(this.$body.height());
+    }
+
 
     /**
      * hides columns and resizes to user's preferences

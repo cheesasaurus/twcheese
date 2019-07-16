@@ -426,8 +426,8 @@ class ReportListWidget extends AbstractWidget {
 
     getSelectedReportIds() {
         return this.$body.find('input:checked')
-            .map((i, el) => parseInt(el.name.match(/\d+/)))
-            .toArray();
+            .toArray()
+            .map(el => parseInt(el.name.match(/\d+/)[0]));
     }
 
     refreshContents() {

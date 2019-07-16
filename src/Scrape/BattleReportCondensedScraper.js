@@ -40,7 +40,7 @@ class BattleReportCondensedScraper {
         let reportIcons = [...row.cells[1].getElementsByTagName('img')];
 
         let report = this.reportRenamer.parseName(reportName);
-        report.reportId = reportLink.href.match(/view=(\d+)/)[1];
+        report.reportId = parseInt(reportLink.href.match(/view=(\d+)/)[1]);
         report.dotColor = reportIcons.find(img => img.src.includes('graphic/dots/')).src.match(/dots\/(.+).png/)[1];
         report.isForwarded = !!reportIcons.find(img => img.src.includes('graphic/forwarded.png'));
         report.isNew = $(row.cells[1]).text().trim().endsWith(textScraper.t('report.unread'));

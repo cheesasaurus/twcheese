@@ -463,6 +463,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
                     .find('.quickedit-label').html(name);
 
                 /*==== update reports information so row can be redrawn with updated information====*/
+
                 let oldReport = this.reports.get(reportId);
 
                 let report = renamer.parseName(name);

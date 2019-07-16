@@ -304,9 +304,7 @@ class ReportListWidget extends AbstractWidget {
         
         this.alignForTroops();
         this.alignForResources();
-
-        this.$xBodyEmulator.width(this.$body.width());
-        this.$yBodyEmulator.height(this.$body.height());
+        this.adjustScrollbars();
     }
 
 

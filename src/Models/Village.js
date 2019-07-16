@@ -1,9 +1,9 @@
 
 class Village {
     constructor(id, x, y) {
-        this.id = id;
-        this.x = x;
-        this.y = y;
+        this.id = parseInt(id);
+        this.x = parseInt(x);
+        this.y = parseInt(y);
     }
 
     /**

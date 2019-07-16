@@ -623,33 +623,33 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         {
             hintInput: 'contains text',
             hintButton: 'select text',
-            use: () => reportListWidget.selectText(),
+            use: (text) => reportListWidget.selectText(text),
             sprite: [-140, 0]
         },
         {
             hintInput: 'attacker',
             hintButton: 'select attacking player',
-            use: () => reportListWidget.selectAttacker(),
+            use: (attackerName) => reportListWidget.selectAttacker(attackerName),
             sprite: [-80, 0]
         },
         {
             hintInput: 'defender',
             hintButton: 'select defending player',
-            use: reportListWidget.selectDefender,
+            use: (defenderName) => reportListWidget.selectDefender(defenderName),
             sprite: [-80, 0]
         },
         {
             hintInput: 'origin',
             hintButton: 'select attacking village',
             placeholder: 'x|y',
-            use: reportListWidget.selectAttackerVillage,
+            use: (coords) => reportListWidget.selectAttackerVillage(coords),
             sprite: [-120, 0]
         },
         {
             hintInput: 'target',
             hintButton: 'select defending village',
             placeholder: 'x|y',
-            use: reportListWidget.selectDefenderVillage,
+            use: (coords) => reportListWidget.selectDefenderVillage(coords),
             sprite: [-120, 0]
         }
     ];

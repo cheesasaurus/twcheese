@@ -455,148 +455,107 @@ class ReportListWidget extends AbstractWidget {
             tableBody.style.height = Number(Number(displayZone.style.height.substring(0, displayZone.style.height.indexOf('px'))) - 67) + 'px';
             document.getElementById('twcheese_reportsDisplay_yScrollPanel').style.height = tableBody.style.height;
         };
-    
-        reportListWidget.selectNew = function () {
-            var reportsTable = document.getElementById('twcheese_reportsTable_body');
-            for (var i = 1; i < reportsTable.rows.length; i++) {
-                if (reportsTable.rows[i].twcheeseReport.isNew)
-                    document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
-            }
-        }
-    
-        reportListWidget.selectOld = function () {
-            var reportsTable = document.getElementById('twcheese_reportsTable_body');
-            for (var i = 1; i < reportsTable.rows.length; i++) {
-                if (!reportsTable.rows[i].twcheeseReport.isNew)
-                    document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
-            }
-        }
-    
-        reportListWidget.selectAll = function () {
-            var reportsTable = document.getElementById('twcheese_reportsTable_body');
-            for (var i = 1; i < reportsTable.rows.length; i++) {
-                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
+
+        reportListWidget.selectMatchingReports = function(isReportMatch) {
+            for (let report of this.reports.values()) {
+                if (isReportMatch(report)) {
+                    $(`input[name='id_${report.reportId}']`).prop('checked', true);
+                }
             }
         };
     
+        reportListWidget.selectNew = function () {
+            this.selectMatchingReports(report => report.isNew);
+        }
+    
+        reportListWidget.selectOld = function () {
+            this.selectMatchingReports(report => !report.isNew);
+        }
+    
+        reportListWidget.selectAll = function () {
+            this.selectMatchingReports(report => true);
+        };
+    
         reportListWidget.selectNone = function () {
-            var reportsTable = document.getElementById('twcheese_reportsTable_body');
-            for (var i = 1; i < reportsTable.rows.length; i++) {
-                document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = false;
+            for (let report of this.reports.values()) {
+                $(`input[name='id_${report.reportId}']`).prop('checked', false);
             }
         };
     
         reportListWidget.selectDotColor = function (dotColor) {
-            var reportsTable = document.getElementById('twcheese_reportsTable_body');
-            for (var i = 1; i < reportsTable.rows.length; i++) {
-                if (reportsTable.rows[i].twcheeseReport.dotColor === dotColor)
-                    document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
-            }
+            this.selectMatchingReports(report => report.dotColor === dotColor);
         };
     
         reportListWidget.selectForwarded = function () {
-            var reportsTable = document.getElementById('twcheese_reportsTable_body');
-            for (var i = 1; i < reportsTable.rows.length; i++) {
-                if (reportsTable.rows[i].twcheeseReport.isForwarded)
-                    document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
-            }
+            this.selectMatchingReports(report => report.isForwarded);
         };
     
         /**
          * @param {number} haulStatus 0 for non full haul, 1 for full haul
          */
         reportListWidget.selectLoot = function (haulStatus) {
-            var reportsTable = document.getElementById('twcheese_reportsTable_body');
-            
-            for (let row of reportsTable.rows) {
-                if (typeof row.twcheeseReport === 'undefined') {
-                    continue; // e.g. header row
-                }
-                let report = row.twcheeseReport;
-                if (report.haulStatus === haulStatus) {
-                    document.getElementsByName('id_' + report.reportId)[0].checked = true;
-                }
-            }
+            this.selectMatchingReports(report => report.haulStatus === haulStatus);
         };
     
         reportListWidget.selectFeint = function () {
-            var reportsTable = document.getElementById('twcheese_reportsTable_body');
-            for (var i = 1; i < reportsTable.rows.length; i++) {
-                if (reportsTable.rows[i].twcheeseReport.wasAttackFeint)
-                    document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
-            }
+            this.selectMatchingReports(report => report.wasAttackFeint);
         };
     
         reportListWidget.selectDeadNoble = function () {
-            var reportsTable = document.getElementById('twcheese_reportsTable_body');
-            for (var i = 1; i < reportsTable.rows.length; i++) {
-                if (reportsTable.rows[i].twcheeseReport.attackerNobleDied)
-                    document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
-            }
+            this.selectMatchingReports(report => report.attackerNobleDied);
         };
     
         reportListWidget.selectLoyalty = function () {
-            var reportsTable = document.getElementById('twcheese_reportsTable_body');
-            for (var i = 1; i < reportsTable.rows.length; i++) {
-                if (reportsTable.rows[i].twcheeseReport.loyalty)
-                    document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
-            }
+            this.selectMatchingReports(report => report.loyalty !== null);
         };
     
         reportListWidget.selectCleared = function () {
-            var reportsTable = document.getElementById('twcheese_reportsTable_body');
-            for (var i = 1; i < reportsTable.rows.length; i++) {
-                if (reportsTable.rows[i].twcheeseReport.wasDefenderCleared())
-                    document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
-            }
+            this.selectMatchingReports(report => report.wasDefenderCleared());
         };
     
         reportListWidget.selectText = function (text) {
-            var reportsTable = document.getElementById('twcheese_reportsTable_body');
-            for (var i = 1; i < reportsTable.rows.length; i++) {
-                if (reportsTable.rows[i].twcheeseReport.subject.toLowerCase().search(text) != -1)
-                    document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
-            }
+            let textLower = text.toLowerCase();
+            this.selectMatchingReports(report => report.subject.toLowerCase().includes(textLower));
         };
     
         reportListWidget.selectAttacker = function (attackerName) {
-            var reportsTable = document.getElementById('twcheese_reportsTable_body');
-            for (var i = 1; i < reportsTable.rows.length; i++) {
-                if (reportsTable.rows[i].twcheeseReport.attackerName === attackerName)
-                    document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
-            }
+            let nameLower = attackerName.toLowerCase();
+            this.selectMatchingReports(report => report.attackerName && report.attackerName.toLowerCase().includes(nameLower));
         };
     
         reportListWidget.selectDefender = function (defenderName) {
-            var reportsTable = document.getElementById('twcheese_reportsTable_body');
-            for (var i = 1; i < reportsTable.rows.length; i++) {
-                if (reportsTable.rows[i].twcheeseReport.defenderName === defenderName)
-                    document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
-            }
+            let nameLower = defenderName.toLowerCase();
+            this.selectMatchingReports(report => report.defenderName && report.defenderName.toLowerCase().includes(nameLower));
         };
     
         reportListWidget.selectAttackerVillage = function (coordinates) {
-            var reportsTable = document.getElementById('twcheese_reportsTable_body');
-    
-            for (var i = 1; i < reportsTable.rows.length; i++) {
-                if (!twcheeseReport.attackerVillage) {
-                    continue;
+            let [, x, y] = coordinates.match(/(\d+)\|(\d+)/);
+            x = parseInt(x);
+            y = parseInt(y);
+
+            this.selectMatchingReports(report => {
+                if (!report.attackerVillage) {
+                    return false;
                 }
-                if (reportsTable.rows[i].twcheeseReport.attackerVillage.x == coordinates.split('|')[0] && reportsTable.rows[i].twcheeseReport.attackerVillage.y == coordinates.split('|')[1])
-                    document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
-            }
+
+                return report.attackerVillage.x === x
+                    && report.attackerVillage.y === y;
+            });
         };
     
         reportListWidget.selectDefenderVillage = function (coordinates) {
-            var reportsTable = document.getElementById('twcheese_reportsTable_body');
-    
-            for (var i = 1; i < reportsTable.rows.length; i++) {
-                if (!twcheeseReport.defenderVillage) {
-                    continue;
+            let [, x, y] = coordinates.match(/(\d+)\|(\d+)/);
+            x = parseInt(x);
+            y = parseInt(y);
+
+            this.selectMatchingReports(report => {
+                if (!report.defenderVillage) {
+                    return false;
                 }
-                if (reportsTable.rows[i].twcheeseReport.defenderVillage.x == coordinates.split('|')[0] && reportsTable.rows[i].twcheeseReport.defenderVillage.y == coordinates.split('|')[1])
-                    document.getElementsByName('id_' + reportsTable.rows[i].twcheeseReport.reportId)[0].checked = true;
-            }
+                
+                return report.defenderVillage.x === x
+                    && report.defenderVillage.y === y;
+            });
         };
     
         /**

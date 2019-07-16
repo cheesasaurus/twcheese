@@ -7,7 +7,8 @@ import { BattleReportScraper } from '/twcheese/src/Scrape/BattleReportScraper.js
 import { BattleReportCondensedScraper } from '/twcheese/src/Scrape/BattleReportCondensedScraper.js';
 import { enhanceBattleReport } from '/twcheese/src/Transform/enhanceBattleReport.js';
 import { ReportToolsWidget } from '/twcheese/src/Widget/ReportToolsWidget.js';
-import { ReportListWidget } from '/twcheese/src/Widget/ReportListWidget.js';
+import { ReportListWidget } from '/twcheese/src/Widget/ReportsFolder/ReportListWidget.js';
+import { ReportSelector } from '/twcheese/src/Widget/ReportsFolder/ReportSelector.js';
 import { userConfig, ensureRemoteConfigsUpdated } from '/twcheese/src/Util/Config.js';
 import { requestDocument, gameUrl } from '/twcheese/src/Util/Network.js';
 import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.js';
@@ -417,7 +418,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
             .on('click', () => {
                 reportListWidget.toggleReportsColumns(key);
             });
-            
+
         reportsFolderSettingsDiv.appendChild($el[0]);
     }
     
@@ -431,6 +432,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     /*==== reports display ====*/
     let reportListWidget = new ReportListWidget(this.reports);
     reportListWidget.appendTo(reportsFolder);
+
 
     /**
      *	note: changed from a loop to recursive method in 2.2 to allow redrawing of progress in IE via setTimeout method
@@ -508,6 +510,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
 
 
     /*==== reports selector bar ====*/
+    let reportSelector = new ReportSelector(reportListWidget);
+
     var reportsSelectorBar = document.createElement('div');
     reportsFolder.appendChild(reportsSelectorBar);
     reportsSelectorBar.id = 'twcheese_reportsSelectorBar';
@@ -536,66 +540,66 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
 
     let clickyOptions = new Map([
         ['all', {
-            click: () => reportListWidget.selectAll(),
+            click: () => reportSelector.selectAll(),
             html: 'all'
         }],
         ['none', {
-            click: () => reportListWidget.selectNone(),
+            click: () => reportSelector.selectNone(),
             html: 'none'
         }],
         ['new', {
-            click: () => reportListWidget.selectNew(),
+            click: () => reportSelector.selectNew(),
             html: 'new'
         }],
         ['old', {
-            click: () => reportListWidget.selectOld(),
+            click: () => reportSelector.selectOld(),
             html: 'old'
         }],
         ['dotGreen', {
-            click: () => reportListWidget.selectDotColor('green'),
+            click: () => reportSelector.selectDotColor('green'),
             html: imgHtml('graphic/dots/green.png')
         }],
         ['dotYellow', {
-            click: () => reportListWidget.selectDotColor('yellow'),
+            click: () => reportSelector.selectDotColor('yellow'),
             html: imgHtml('graphic/dots/yellow.png')
         }],
         ['dotRed', {
-            click: () => reportListWidget.selectDotColor('red'),
+            click: () => reportSelector.selectDotColor('red'),
             html: imgHtml('graphic/dots/red.png')
         }],
         ['dotBlue', {
-            click: () => reportListWidget.selectDotColor('blue'),
+            click: () => reportSelector.selectDotColor('blue'),
             html: imgHtml('graphic/dots/blue.png')
         }],
         ['forwarded', {
-            click: () => reportListWidget.selectForwarded(),
+            click: () => reportSelector.selectForwarded(),
             html: imgHtml('graphic/forwarded.png')
         }],
         ['haulPartial', {
-            click: () => reportListWidget.selectLoot(BattleReportCondensed.HAUL_STATUS_PARTIAL),
+            click: () => reportSelector.selectLoot(BattleReportCondensed.HAUL_STATUS_PARTIAL),
             html: imgHtml('graphic/max_loot/0.png')
         }],
         ['haulFull', {
-            click: () => reportListWidget.selectLoot(BattleReportCondensed.HAUL_STATUS_FULL),
+            click: () => reportSelector.selectLoot(BattleReportCondensed.HAUL_STATUS_FULL),
             html: imgHtml('graphic/max_loot/1.png')
         }],
         ['feint', {
-            click: () => reportListWidget.selectFeint(),
+            click: () => reportSelector.selectFeint(),
             html: imgHtml('graphic/dots/grey.png'),
             tooltip: 'feint'
         }],
         ['deadNoble', {
-            click: () => reportListWidget.selectDeadNoble(),
+            click: () => reportSelector.selectDeadNoble(),
             html: imgHtml(ImageSrc.troopIcon('priest')),
             tooltip: 'dead noble'
         }],
         ['loyalty', {
-            click: () => reportListWidget.selectLoyalty(),
+            click: () => reportSelector.selectLoyalty(),
             html: '<span style="display:block; margin-left:auto; margin-right:auto" class="icon ally lead"/>',
             tooltip: 'loyalty change'
         }],
         ['cleared', {
-            click: () => reportListWidget.selectCleared(),
+            click: () => reportSelector.selectCleared(),
             html: 'defenseless'
         }]
     ]);
@@ -626,33 +630,33 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         {
             hintInput: 'contains text',
             hintButton: 'select text',
-            use: (text) => reportListWidget.selectText(text),
+            use: (text) => reportSelector.selectText(text),
             sprite: [-140, 0]
         },
         {
             hintInput: 'attacker',
             hintButton: 'select attacking player',
-            use: (attackerName) => reportListWidget.selectAttacker(attackerName),
+            use: (attackerName) => reportSelector.selectAttacker(attackerName),
             sprite: [-80, 0]
         },
         {
             hintInput: 'defender',
             hintButton: 'select defending player',
-            use: (defenderName) => reportListWidget.selectDefender(defenderName),
+            use: (defenderName) => reportSelector.selectDefender(defenderName),
             sprite: [-80, 0]
         },
         {
             hintInput: 'origin',
             hintButton: 'select attacking village',
             placeholder: 'x|y',
-            use: (coords) => reportListWidget.selectAttackerVillage(coords),
+            use: (coords) => reportSelector.selectAttackerVillage(coords),
             sprite: [-120, 0]
         },
         {
             hintInput: 'target',
             hintButton: 'select defending village',
             placeholder: 'x|y',
-            use: (coords) => reportListWidget.selectDefenderVillage(coords),
+            use: (coords) => reportSelector.selectDefenderVillage(coords),
             sprite: [-120, 0]
         }
     ];

@@ -62,9 +62,9 @@ class ReportRaiderWidget extends AbstractWidget {
         let travelTimeCells = [];
         for (let troopType of this.raiderTroopTypes) {
             if (this.mayFillRallyPoint()) {
-                iconCells.push(`<td width="35px"><img src="${ImageSrc.troopIcon(troopType)}"></td>`);
-            } else {
                 iconCells.push(`<td width="35px"><a><img src="${ImageSrc.troopIcon(troopType)}"></a></td>`);
+            } else {
+                iconCells.push(`<td width="35px"><img src="${ImageSrc.troopIcon(troopType)}"></td>`);
             }
             troopCountCells.push('<td></td>');
             travelTimeCells.push(`<td>${window.Format.timeSpan(travelTimes[troopType])}</td>`);

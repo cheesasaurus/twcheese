@@ -967,6 +967,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     xScrollPanel.id = 'twcheese_reportsDisplay_xScrollPanel';
     reportsFolderDisplay.appendChild(xScrollPanel);
     xScrollPanel.style.height = '40px';
+    xScrollPanel.style.width = `calc(100% - ${yScrollPanel.offsetWidth}px)`;
     xScrollPanel.style.marginTop = '-23px';
     xScrollPanel.style.overflowX = 'scroll';
     xScrollPanel.style.overflowY = 'hidden';

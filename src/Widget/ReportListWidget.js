@@ -299,124 +299,130 @@ class ReportListWidget extends AbstractWidget {
             yTableEmulator.style.height = reportsTableBody.clientHeight + 'px';
             xTableEmulator.style.width = reportsTableBody.clientWidth + 'px';
         };
-
-        /**
-         *	marks checkboxes and hides certain displays in accordance with the user's Folder Display settings
-         */
-        reportListWidget.applySettings = function() {
-            let checkboxes = document.getElementById('twcheese_reportsFolderSettings').getElementsByTagName('input');
-            for (let checkbox of checkboxes) {
-                let settingName = checkbox.dataset.settingName;
-                if (userConfig.get(`ReportListWidget.showCols.${settingName}`, true)) {
-                    checkbox.checked = true;
-                } else {
-                    reportListWidget.hideColumns(settingName);
-                }
-            }
-
-            let reportsFolderDisplay = document.getElementById('twcheese_reportsFolderDisplay');
-            reportsFolderDisplay.style.width = userConfig.get('ReportListWidget.size.width', '720px');
-            reportsFolderDisplay.style.height = userConfig.get('ReportListWidget.size.height', '250px');
-            reportListWidget.fitDisplayComponents();
-
-            reportListWidget.adjustScrollbars();
-        }
-
-
-        reportListWidget.adjustScrollbars = function() {
-            document.getElementById('twcheese_reportsDisplay_x-table-emulator').style.width = document.getElementById('twcheese_reportsTable_header').clientWidth + 'px';
-            document.getElementById('twcheese_reportsDisplay_y-table-emulator').style.height = document.getElementById('twcheese_reportsTable_body').clientHeight + 'px';
-        };
-
-
-        reportListWidget.toggleReportsColumns = function (settingName) {
-            let configKey = `ReportListWidget.showCols.${settingName}`;
-            let show = !userConfig.get(configKey, true);
-            userConfig.set(configKey, show);
-
-            for (let i of columnIndexes.get(settingName)) {
-                if (show) {
-                    reportListWidget.showColumn(i);
-                } else {
-                    reportListWidget.hideColumn(i);
-                }
-            }
-            reportListWidget.adjustScrollbars();
-        };
-
-
-        reportListWidget.hideColumns = function (settingName) {
-            for (let i of columnIndexes.get(settingName)) {
-                reportListWidget.hideColumn(i);
-            }
-        };
-
-
-        reportListWidget.showColumn = function(column) {
-            var reportsTableBody = document.getElementById('twcheese_reportsTable_body');
-            var reportsTableHeader = document.getElementById('twcheese_reportsTable_header');
-
-            var tableWidth = reportsTableHeader.style.width.split('px')[0];        
-
-            /*==== header ====*/
-            let alignmentTh = cellAtIndex(reportsTableHeader.rows[0], column);
-            let columnWidth = alignmentTh.style.width.split('px')[0];
-            tableWidth = parseFloat(tableWidth) + parseFloat(columnWidth);
-            reportsTableHeader.style.width = tableWidth + 'px';
-
-            alignmentTh.style.display = "table-cell";
-            cellAtIndex(reportsTableHeader.rows[1], column).style.display = "table-cell";
-            reportsTableHeader.rows[2].cells[column].style.display = "table-cell";
-
-            /*==== body ====*/
-            reportsTableBody.style.width = tableWidth + 'px';
-            for (let row of reportsTableBody.rows) {
-                let cell = cellAtIndex(row, column);
-
-                if (cell.initialColSpan && cell.initialColSpan > 1) {
-                    cell.colSpan += 1;
-                } else {
-                    cell.style.display = 'table-cell';
-                }
-            }
-        };
-
-
-        reportListWidget.hideColumn = function(column) {
-            var reportsTableBody = document.getElementById('twcheese_reportsTable_body');
-            var reportsTableHeader = document.getElementById('twcheese_reportsTable_header');
-
-            var tableWidth = reportsTableHeader.style.width.split('px')[0];
-
-            /*==== header ====*/
-            let alignmentTh = cellAtIndex(reportsTableHeader.rows[0], column);
-            let columnWidth = alignmentTh.style.width.split('px')[0];
-            tableWidth = parseFloat(tableWidth) - parseFloat(columnWidth);
-            reportsTableHeader.style.width = tableWidth + 'px';
-
-            alignmentTh.style.display = "none";
-            cellAtIndex(reportsTableHeader.rows[1], column).style.display = "none";
-            reportsTableHeader.rows[2].cells[column].style.display = "none";
-
-            /*==== body ====*/
-            reportsTableBody.style.width = tableWidth + 'px';
-            for (let row of reportsTableBody.rows) {
-                let cell = cellAtIndex(row, column);
-
-                if (cell.initialColSpan && cell.initialColSpan > 1) {
-                    cell.colSpan -= 1;
-                } else {
-                    cell.style.display = 'none';
-                }
-            }
-        };
         
 
         this.$head = this.$el.find('#twcheese_reportsTable_header');
         this.$body = this.$el.find('#twcheese_reportsTable_body');
         this.$bodyPane = this.$el.find('#twcheese_reportsTable');
+        this.$xBodyEmulator = this.$el.find('#twcheese_reportsDisplay_x-table-emulator');
+        this.$yBodyEmulator = this.$el.find('#twcheese_reportsDisplay_y-table-emulator');
         this.$yScrollPanel = this.$el.find('#twcheese_reportsDisplay_yScrollPanel');
     }
+
+    /**
+     * hides columns and resizes to user's preferences
+     */
+    applySettings() {
+
+        // todo: checking the checkboxes doesn't belong here.
+        // Refactor hiding the columns, and move checking the checkboxes elsewhere
+        let checkboxes = document.getElementById('twcheese_reportsFolderSettings').getElementsByTagName('input');
+        for (let checkbox of checkboxes) {
+            let settingName = checkbox.dataset.settingName;
+            if (userConfig.get(`ReportListWidget.showCols.${settingName}`, true)) {
+                checkbox.checked = true;
+            } else {
+                this.hideColumns(settingName);
+            }
+        }
+
+        this.$el.css({
+            width: userConfig.get('ReportListWidget.size.width', '720px'),
+            height: userConfig.get('ReportListWidget.size.height', '250px')
+        });
+        this.fitDisplayComponents();
+        this.adjustScrollbars();
+    }
+
+
+    adjustScrollbars() {
+        this.$xBodyEmulator.width(this.$body.width());
+        this.$yBodyEmulator.height(this.$body.height());
+    }
+
+
+    toggleReportsColumns(settingName) {
+        let configKey = `ReportListWidget.showCols.${settingName}`;
+        let show = !userConfig.get(configKey, true);
+        userConfig.set(configKey, show);
+
+        for (let i of columnIndexes.get(settingName)) {
+            if (show) {
+                this.showColumn(i);
+            } else {
+                this.hideColumn(i);
+            }
+        }
+        this.adjustScrollbars();
+    }
+
+
+    hideColumns(settingName) {
+        for (let i of this.columnIndexes.get(settingName)) {
+            this.hideColumn(i);
+        }
+    }
+
+
+    showColumn(column) {
+        var body = this.$body[0];
+        var head = this.$head[0];
+
+        var tableWidth = head.style.width.split('px')[0];        
+
+        /*==== header ====*/
+        let alignmentTh = cellAtIndex(head.rows[0], column);
+        let columnWidth = alignmentTh.style.width.split('px')[0];
+        tableWidth = parseFloat(tableWidth) + parseFloat(columnWidth);
+        head.style.width = tableWidth + 'px';
+
+        alignmentTh.style.display = "table-cell";
+        cellAtIndex(head.rows[1], column).style.display = "table-cell";
+        head.rows[2].cells[column].style.display = "table-cell";
+
+        /*==== body ====*/
+        body.style.width = tableWidth + 'px';
+        for (let row of body.rows) {
+            let cell = cellAtIndex(row, column);
+
+            if (cell.initialColSpan && cell.initialColSpan > 1) {
+                cell.colSpan += 1;
+            } else {
+                cell.style.display = 'table-cell';
+            }
+        }
+    }
+
+
+    hideColumn(column) {
+        var body = this.$body[0];
+        var head = this.$head[0];
+
+        var tableWidth = head.style.width.split('px')[0];
+
+        /*==== header ====*/
+        let alignmentTh = cellAtIndex(head.rows[0], column);
+        let columnWidth = alignmentTh.style.width.split('px')[0];
+        tableWidth = parseFloat(tableWidth) - parseFloat(columnWidth);
+        head.style.width = tableWidth + 'px';
+
+        alignmentTh.style.display = "none";
+        cellAtIndex(head.rows[1], column).style.display = "none";
+        head.rows[2].cells[column].style.display = "none";
+
+        /*==== body ====*/
+        body.style.width = tableWidth + 'px';
+        for (let row of body.rows) {
+            let cell = cellAtIndex(row, column);
+
+            if (cell.initialColSpan && cell.initialColSpan > 1) {
+                cell.colSpan -= 1;
+            } else {
+                cell.style.display = 'none';
+            }
+        }
+    }
+
 
     getSelectedReportIds() {
         return this.$body.find('input:checked')

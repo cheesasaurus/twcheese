@@ -20,7 +20,11 @@ class AbstractWidget {
 
     _afterInsert() {
         if (typeof this.afterInsert === 'function') {
-            this.afterInsert();
+            // setTimout, because the widget could be inserted into a parent widget, which didn't get inserted into the dom yet.
+            // this isn't a proper solution, but it should work in most cases
+            setTimeout(() => {
+                this.afterInsert();
+            }, 0);
         }
     }
 

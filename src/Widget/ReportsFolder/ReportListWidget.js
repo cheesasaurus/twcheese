@@ -172,7 +172,6 @@ class ReportListWidget extends AbstractWidget {
         var yTableEmulator = document.createElement('div');
         yTableEmulator.id = 'twcheese_reportsDisplay_y-table-emulator';
         yScrollPanel.appendChild(yTableEmulator);
-        yTableEmulator.style.height = reportsTableBody.clientHeight;
         yTableEmulator.style.overflow = 'hidden';
         yTableEmulator.style.position = 'relative';
         yTableEmulator.innerHTML = '&nbsp;';
@@ -210,7 +209,6 @@ class ReportListWidget extends AbstractWidget {
     afterInsert() {
         let $headContainer = this.$head.parent();
         this.$yScrollPanel.css({
-            height: 400 - 20 - $headContainer.outerHeight(),
             top: $headContainer.outerHeight() + 2
         });
         this.populateReportsTable();

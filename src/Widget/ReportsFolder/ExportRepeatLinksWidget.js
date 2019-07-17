@@ -16,53 +16,48 @@ class ExportRepeatLinksWidget extends AbstractWidget {
     }
 
     initStructure() {
-        /*==== export repeatLinks div ====*/
-        var reportsFolderExportContainer = document.createElement('table');
-        reportsFolderExportContainer.id = 'twcheese_reportsFolderExport';
-        reportsFolderExportContainer.style.display = 'none';
-
-        reportsFolderExportContainer.insertRow(-1);
-        reportsFolderExportContainer.rows[0].insertCell(-1);
-        reportsFolderExportContainer.rows[0].insertCell(-1);
-        reportsFolderExportContainer.rows[0].cells[0].innerHTML += '<textarea rows=10 cols=40 />';
-
-        /*==== export repeatLinks configuration table ====*/
-        var exportConfigTable = document.createElement('table');
-        exportConfigTable.id = 'twcheese_exportConfigTable';
-        reportsFolderExportContainer.rows[0].cells[1].appendChild(exportConfigTable);
-
-        exportConfigTable.insertRow(-1);
-        exportConfigTable.rows[0].appendChild(document.createElement('th'));
-        exportConfigTable.rows[0].cells[0].innerHTML = 'Format';
-        exportConfigTable.rows[0].appendChild(document.createElement('th'));
-        exportConfigTable.rows[0].cells[1].innerHTML = 'Attacking Village';
-
-        exportConfigTable.insertRow(-1);
-        exportConfigTable.rows[1].insertCell(-1);
-        exportConfigTable.rows[1].cells[0].innerHTML = `
-            <input type="radio" name="twcheese-repeat-attack-export-format" checked="true" value="bbcode"/> BBCode
-            <br/><input type="radio" name="twcheese-repeat-attack-export-format" value="plainLink"/> plain links
-            <br/><input type="radio" name="twcheese-repeat-attack-export-format" value="html"/> HTML`;
-
-        exportConfigTable.rows[1].insertCell(-1);
-        exportConfigTable.rows[1].cells[1].innerHTML = `
-            <input type="radio" name="twcheese-repeat-attack-export-village" checked="true" value="current"/> current village
-            <br/><input type="radio" name="twcheese-repeat-attack-export-village" value="original"/> original village`;
-
-        exportConfigTable.insertRow(-1);
-        exportConfigTable.rows[2].insertCell(-1);
-        exportConfigTable.rows[2].cells[0].colSpan = 2;
-        exportConfigTable.rows[2].cells[0].innerHTML = 'Header: <input type="text" id="twcheese_export_header" value="new cheesy attack group" />';
-
-        exportConfigTable.insertRow(-1);
-        exportConfigTable.rows[3].insertCell(-1);
-        exportConfigTable.rows[3].cells[0].colSpan = 2;
-        exportConfigTable.rows[3].cells[0].innerHTML = '<a class="twcheese-button-export" href="#"> &raquo; Export</a>';
-
-        this.$el = $(reportsFolderExportContainer);
+        this.$el = $(this.createHtml().trim());
         this.$buttonExport = this.$el.find('.twcheese-button-export');
         this.$headerInput = this.$el.find('#twcheese_export_header');
+    }
 
+    createHtml() {
+        return `
+            <table id="twcheese_reportsFolderExport" style="display: none;">
+                <td>
+                    <textarea rows=10 cols=40 />
+                </td>
+                <td>
+                    <table id="twcheese_exportConfigTable">
+                        <tr>
+                            <th>Format</th>
+                            <th>Attacking Village</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="radio" name="twcheese-repeat-attack-export-format" checked="true" value="bbcode"/> BBCode
+                                <br/><input type="radio" name="twcheese-repeat-attack-export-format" value="plainLink"/> plain links
+                                <br/><input type="radio" name="twcheese-repeat-attack-export-format" value="html"/> HTML
+                            </td>
+                            <td>
+                                <input type="radio" name="twcheese-repeat-attack-export-village" checked="true" value="current"/> current village
+                                <br/><input type="radio" name="twcheese-repeat-attack-export-village" value="original"/> original village
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                Header: <input type="text" id="twcheese_export_header" value="new cheesy attack group" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <a class="twcheese-button-export" href="#">&raquo; Export</a>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </table>
+        `;
     }
 
     watchSelf() {

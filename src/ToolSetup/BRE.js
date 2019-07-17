@@ -51,33 +51,8 @@ switch (game_data.market) {
 }
 
 
-
 /*==== page modifier functions ====*/
 
-
-/**
- * modifies page on the reports folder view
- * @param {HTMLDocument} gameDoc the document from game.php?screen=report&mode=attack
- * @param {ReportRenamer} renamer
- */
-function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
-    let reportsTable = gameDoc.getElementById('report_list');
-    let reportsForm = reportsTable.parentNode;
-
-    /*==== scrape reports information ====*/    
-    let reportScraper = new BattleReportCondensedScraper(renamer);
-    let reports = new Map();
-    for (let report of reportScraper.scrapeReports(reportsTable)) {
-        reports.set(report.reportId, report);
-    }
-
-    /*==== remove old list ====*/
-    reportsForm.removeChild(reportsTable);
-
-    /*==== insert new list and tools ====*/
-    (new ReportsFolderWidget(reports, renamer))
-        .insertBefore(reportsForm.firstChild);
-}
 
 /**
  *	@param	text:String	text to be displayed inside the button
@@ -192,7 +167,22 @@ function enhanceReport() {
 
 function enhanceReportsFolder() {
     let renamer = new ReportRenamer();
-    let pageMod = new twcheese_BattleReportsFolderEnhancer(document, renamer);
+
+    let oldReportsList = gameDoc.getElementById('report_list');
+    let reportsForm = oldReportsList.parentNode;
+  
+    // scrape listed reports
+    let reportScraper = new BattleReportCondensedScraper(renamer);
+    let reports = new Map();
+    for (let report of reportScraper.scrapeReports(oldReportsList)) {
+        reports.set(report.reportId, report);
+    }
+
+    // enhance list and add tools
+    reportsForm.removeChild(oldReportsList);
+
+    (new ReportsFolderWidget(reports, renamer))
+        .insertBefore(reportsForm.firstChild);
 }
 
 

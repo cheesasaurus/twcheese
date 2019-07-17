@@ -7,6 +7,7 @@ import { BattleReportCondensedScraper } from '/twcheese/src/Scrape/BattleReportC
 import { enhanceBattleReport } from '/twcheese/src/Transform/enhanceBattleReport.js';
 import { ReportToolsWidget } from '/twcheese/src/Widget/ReportToolsWidget.js';
 import { DisplayConfigurer } from '/twcheese/src/Widget/ReportsFolder/DisplayConfigurer.js';
+import { DisplayConfigWidget } from '/twcheese/src/Widget/ReportsFolder/DisplayConfigWidget.js';
 import { ExportRepeatLinksWidget } from '/twcheese/src/Widget/ReportsFolder/ExportRepeatLinksWidget.js';
 import { ReportListWidget } from '/twcheese/src/Widget/ReportsFolder/ReportListWidget.js';
 import { ReportSelector } from '/twcheese/src/Widget/ReportsFolder/ReportSelector.js';
@@ -157,28 +158,8 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     let exportLinksWidget = new ExportRepeatLinksWidget(this.reports);
     exportLinksWidget.appendTo(reportsFolderToolbar);
 
-
     /*==== display settings ====*/
-    var reportsFolderSettingsDiv = document.createElement('div');
-    reportsFolderToolbar.appendChild(reportsFolderSettingsDiv);
-    reportsFolderSettingsDiv.id = 'twcheese_reportsFolderSettings';
-    reportsFolderSettingsDiv.style.display = 'none';
-    reportsFolderSettingsDiv.style.columnWidth = 200 + 'px';
-    
-    function insertCheckbox(key, text) {
-        let $el = $(`<div style="white-space:nowrap"><label><input type="checkbox"> ${text}</label></div>`);
-        $el.find('input')
-            .prop('checked', displayConfigurer.shouldShowColumn(key))
-            .on('click', () => {
-                displayConfigurer.toggleColumn(key);
-            });
-
-        reportsFolderSettingsDiv.appendChild($el[0]);
-    }
-
-    for (let col of displayConfigurer.getHideableColumns()) {
-        insertCheckbox(col.key, col.description);
-    }
+    (new DisplayConfigWidget(displayConfigurer)).appendTo(reportsFolderToolbar);
 
     /*==== reports display ====*/
     reportListWidget.appendTo(reportsFolder);

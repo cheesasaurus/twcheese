@@ -1,31 +1,52 @@
+
+function afterDOMInsert(el, callback) {
+    let observer = new MutationObserver((mutations) => {
+        outerloop:
+            for (let mutation of mutations) {
+                for (let node of mutation.addedNodes) {
+                    if (node === el || node.contains(el)) {
+                        setTimeout(callback, 0);
+                        observer.disconnect();
+                        break outerloop;
+                    }
+                }
+            }
+    });
+
+    observer.observe(document, {
+        attributes: true,
+        childList: true,
+        subtree: true
+    });
+}
+
+
 class AbstractWidget {
 
     insertBefore(el) {
+        this._beforeInsert();
         $(el).before(this.$el);
-        this._afterInsert();
         return this;
     }
 
     insertAfter(el) {
+        this._beforeInsert();
         $(el).after(this.$el);
-        this._afterInsert();
         return this;
     }
 
     appendTo(el) {
+        this._beforeInsert();
         $(el).append(this.$el);
-        this._afterInsert();
         return this;
     }
 
-    _afterInsert() {
-        if (typeof this.afterInsert === 'function') {
-            // setTimout, because the widget could be inserted into a parent widget, which didn't get inserted into the dom yet.
-            // this isn't a proper solution, but it should work in most cases
-            setTimeout(() => {
-                this.afterInsert();
-            }, 0);
+    _beforeInsert() {
+        if (typeof this.afterInsert !== 'function') {
+            return;
         }
+        let el = this.$el[0];
+        afterDOMInsert(el, () => this.afterInsert());
     }
 
 }

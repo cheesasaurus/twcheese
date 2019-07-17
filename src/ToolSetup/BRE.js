@@ -168,7 +168,7 @@ function enhanceReport() {
 function enhanceReportsFolder() {
     let renamer = new ReportRenamer();
 
-    let oldReportsList = gameDoc.getElementById('report_list');
+    let oldReportsList = document.getElementById('report_list');
     let reportsForm = oldReportsList.parentNode;
   
     // scrape listed reports

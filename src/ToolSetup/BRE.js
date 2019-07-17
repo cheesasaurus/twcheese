@@ -6,6 +6,7 @@ import { BattleReportScraper } from '/twcheese/src/Scrape/BattleReportScraper.js
 import { BattleReportCondensedScraper } from '/twcheese/src/Scrape/BattleReportCondensedScraper.js';
 import { enhanceBattleReport } from '/twcheese/src/Transform/enhanceBattleReport.js';
 import { ReportToolsWidget } from '/twcheese/src/Widget/ReportToolsWidget.js';
+import { DisplayConfigurer } from '/twcheese/src/Widget/ReportsFolder/DisplayConfigurer.js';
 import { ExportRepeatLinksWidget } from '/twcheese/src/Widget/ReportsFolder/ExportRepeatLinksWidget.js';
 import { ReportListWidget } from '/twcheese/src/Widget/ReportsFolder/ReportListWidget.js';
 import { ReportSelector } from '/twcheese/src/Widget/ReportsFolder/ReportSelector.js';
@@ -88,6 +89,10 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
         this.reports.set(report.reportId, report);
     }
 
+    let reportListWidget = new ReportListWidget(this.reports);
+    let displayConfigurer = new DisplayConfigurer(reportListWidget);
+    let reportSelector = new ReportSelector(reportListWidget);
+
     /*==== remove old table ====*/
     reportsTable.parentNode.removeChild(reportsTable);
 
@@ -163,27 +168,22 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     function insertCheckbox(key, text) {
         let $el = $(`<div style="white-space:nowrap"><label><input type="checkbox"> ${text}</label></div>`);
         $el.find('input')
-            .prop('checked', userConfig.get(`ReportListWidget.showCols.${key}`, true))
+            .prop('checked', displayConfigurer.shouldShowColumn(key))
             .on('click', () => {
-                reportListWidget.toggleReportsColumns(key);
+                displayConfigurer.toggleColumn(key);
             });
 
         reportsFolderSettingsDiv.appendChild($el[0]);
     }
-    
-    for (let category of ReportListWidget.columnCategories) {
-        if (!category.hideable) {
-            continue;
-        }
-        insertCheckbox(category.key, category.description);
+
+    for (let col of displayConfigurer.getHideableColumns()) {
+        insertCheckbox(col.key, col.description);
     }
 
     /*==== reports display ====*/
-    let reportListWidget = new ReportListWidget(this.reports);
     reportListWidget.appendTo(reportsFolder);
 
     /*==== reports selector bar ====*/
-    let reportSelector = new ReportSelector(reportListWidget);
     (new ReportSelectorWidget(reportSelector)).appendTo(reportsFolder);
 
 

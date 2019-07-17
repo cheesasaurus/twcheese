@@ -10,22 +10,27 @@ class ExportRepeatLinksWidget extends AbstractWidget {
     constructor(reports) {
         super();
         this.reports = reports;
+        this.defaultHeader = 'new cheesy attack group';
 
         this.initStructure();
         this.watchSelf();
+        this.updateExportText();
     }
 
     initStructure() {
         this.$el = $(this.createHtml().trim());
+        this.$exportText = this.$el.find('.twcheese-export-text');
         this.$buttonExport = this.$el.find('.twcheese-button-export');
         this.$headerInput = this.$el.find('#twcheese_export_header');
+        this.$formatOptions = this.$el.find("input[name='twcheese-repeat-attack-export-format']");
+        this.$attackingVillageOptions = this.$el.find("input[name='twcheese-repeat-attack-export-village']");
     }
 
     createHtml() {
         return `
             <table id="twcheese_reportsFolderExport" style="display: none;">
                 <td>
-                    <textarea rows=10 cols=40 />
+                    <textarea class="twcheese-export-text" rows=10 cols=40 />
                 </td>
                 <td>
                     <table id="twcheese_exportConfigTable">
@@ -46,12 +51,7 @@ class ExportRepeatLinksWidget extends AbstractWidget {
                         </tr>
                         <tr>
                             <td colspan="2">
-                                Header: <input type="text" id="twcheese_export_header" value="new cheesy attack group" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">
-                                <a class="twcheese-button-export" href="#">&raquo; Export</a>
+                                Header: <input type="text" id="twcheese_export_header" value="${this.defaultHeader}" />
                             </td>
                         </tr>
                     </table>
@@ -61,23 +61,30 @@ class ExportRepeatLinksWidget extends AbstractWidget {
     }
 
     watchSelf() {
-        this.$headerInput.on('click', function() {
-            if (this.value === 'new cheesy attack group') {
-                this.value = '';
+        this.$headerInput.on('click', () => {
+            if (this.$headerInput.val() === this.defaultHeader) {
+                this.$headerInput.val('');
             }
+            this.updateExportText();
         });
 
-        this.$buttonExport.on('click', (e) => {
-            e.preventDefault();
-            this.exportLinks();
+        this.$headerInput.on('input', (e) => {
+            this.updateExportText();
+        });
+
+        this.$formatOptions.on('change', (e) => {
+            this.updateExportText();
+        });
+
+        this.$attackingVillageOptions.on('change', (e) => {
+            this.updateExportText();
         });
     }
 
-    exportLinks() {
-        let format = $("input[name='twcheese-repeat-attack-export-format']:checked").val();
-        let attackingVillage = $("input[name='twcheese-repeat-attack-export-village']:checked").val();
-
-        var header = document.getElementById('twcheese_export_header').value;
+    updateExportText() {
+        let format = this.$formatOptions.filter(':checked').val();
+        let attackingVillage = this.$attackingVillageOptions.filter(':checked').val();
+        let header = this.$headerInput.val();
 
 
         function buildHeader() {
@@ -158,7 +165,7 @@ class ExportRepeatLinksWidget extends AbstractWidget {
             exportString += '\n</P></DL>';
         }
 
-        document.getElementById('twcheese_reportsFolderExport').getElementsByTagName('textarea')[0].value = exportString;
+        this.$exportText.val(exportString);
     }
 
 }

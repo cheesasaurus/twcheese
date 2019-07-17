@@ -12,8 +12,8 @@ import { ExportRepeatLinksWidget } from '/twcheese/src/Widget/ReportsFolder/Expo
 import { ReportListWidget } from '/twcheese/src/Widget/ReportsFolder/ReportListWidget.js';
 import { ReportSelector } from '/twcheese/src/Widget/ReportsFolder/ReportSelector.js';
 import { ReportSelectorWidget } from '/twcheese/src/Widget/ReportsFolder/ReportSelectorWidget.js';
+import { MassRenamerWidget } from '/twcheese/src/Widget/ReportsFolder/MassRenamerWidget.js';
 import { userConfig, ensureRemoteConfigsUpdated } from '/twcheese/src/Util/Config.js';
-import { requestDocument, gameUrl } from '/twcheese/src/Util/Network.js';
 import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.js';
 
 import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/BRE/Default.js';
@@ -33,30 +33,25 @@ switch (game_data.market) {
     default:
         /*==== tribalwars.net, tribalwars.us, tribalwars.co.uk, beta.tribalwars.net ====*/
         language['twcheese']['Help'] = 'Help';
-        language['twcheese']['noReportsSelected'] = 'You haven\'t selected any reports to be renamed.';
         break;
 
     case 'cz':
         /*==== divokekmeny.cz/ ====*/
         language['twcheese']['Help'] = 'Pomoc';
-        language['twcheese']['noReportsSelected'] = 'Nejdříve si musíte vybrat, které zprávy přejmenovat.';
         break;
 
     case 'se':
         language['twcheese']['Help'] = 'Hjälp';
-        language['twcheese']['noReportsSelected'] = 'Du har inte valt några rapporter som skall döpas om.';
         break;
 
     /*==== fyletikesmaxes.gr/ ====*/
     case 'gr':
         language['twcheese']['Help'] = 'Βοήθεια';
-        language['twcheese']['noReportsSelected'] = 'Δεν έχεις επιλέξει  καμιά αναφορά για μετονομασία';
         break;
 
     /* Norwegian */
     case 'no':
         language['twcheese']['Help'] = 'Hjelp';
-        language['twcheese']['noReportsSelected'] = 'Du har ikke valgt hvilke rapporter som skal endres navn på.';
         break;
                         
 }
@@ -159,111 +154,20 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     exportLinksWidget.appendTo(reportsFolderToolbar);
 
     /*==== display settings ====*/
-    (new DisplayConfigWidget(displayConfigurer)).appendTo(reportsFolderToolbar);
+    (new DisplayConfigWidget(displayConfigurer))
+        .appendTo(reportsFolderToolbar);
 
     /*==== reports display ====*/
-    reportListWidget.appendTo(reportsFolder);
+    reportListWidget
+        .appendTo(reportsFolder);
 
     /*==== reports selector bar ====*/
-    (new ReportSelectorWidget(reportSelector)).appendTo(reportsFolder);
+    (new ReportSelectorWidget(reportSelector))
+        .appendTo(reportsFolder);
 
-
-    
-    this.massRename = async function () {
-        let reportIds = reportSelector.getSelectedReportIds();
-        let total = reportIds.length;
-        let progress = 0;
-
-        if (total === 0) {
-            window.UI.ErrorMessage(language['twcheese']['noReportsSelected'], 3000);
-            return;
-        }
-
-        document.getElementById('twcheese_progress_count').innerHTML = 0;
-        document.getElementById('twcheese_progress_count_max').innerHTML = total;
-        
-        var estimatedTimeRemaining;
-
-        /*==== rename reports 1 by 1 ====*/
-
-        for (let reportId of reportIds) {
-            let startTime = performance.now();           
-
-            try {
-                let reportDoc = await requestDocument(gameUrl('report', {mode: game_data.mode, view: reportId}));
-
-                let scraper = new BattleReportScraper(reportDoc);
-                let fullReport = scraper.scrapeReport();
-                let name = await renamer.rename(fullReport, '');
-    
-                $('.quickedit[data-id="' + reportId + '"]')
-                    .find('.quickedit-label').html(name);
-    
-                /*==== update reports information so row can be redrawn with updated information====*/
-    
-                let oldReport = this.reports.get(reportId);
-    
-                let report = renamer.parseName(name);
-                report.reportId = reportId;
-                report.dotColor = oldReport.dotColor;
-                report.haulStatus = oldReport.haulStatus;
-                report.isForwarded = oldReport.isForwarded;
-                report.strTimeReceived = oldReport.strTimeReceived;
-    
-                this.reports.set(report.reportId, report);
-    
-    
-                /*==== update progress display ====*/
-                progress++;
-                var millisElapsed = performance.now() - startTime;
-                estimatedTimeRemaining = (millisElapsed * (total - progress)) / 1000;
-                var minutesRemaining = Math.floor(estimatedTimeRemaining / 60);
-                var secondsRemaining = Math.round(estimatedTimeRemaining - (minutesRemaining * 60));
-                if (minutesRemaining < 10)
-                    minutesRemaining = '0' + minutesRemaining;
-                if (secondsRemaining < 10)
-                    secondsRemaining = '0' + secondsRemaining;
-                document.getElementById('twcheese_time_remaining').innerHTML = minutesRemaining; //minutes
-                document.getElementById('twcheese_time_remaining').innerHTML += ':' + secondsRemaining; //seconds
-                document.getElementById('twcheese_progress_count').innerHTML = progress;
-                document.getElementById('twcheese_progress_percent').innerHTML = Number(Math.round(progress / total * 100));
-            }
-            catch (e) {
-                console.error('error renaming report:', e);
-            }
-
-        }
-        
-        displayConfigurer.refreshDisplay();
-    };
-    
-
-    /*==== mass rename table ===*/
-
-    // note: non-premium accounts cannot rename reports
-    if (window.premium) {
-        let $massRename = $(`
-            <table class="vis">
-                <tbody>
-                    <tr>
-                        <td>
-                            <a href="#">&raquo; Rename</a>
-                            <img src="/graphic/questionmark.png?1" width="13" height="13" title="rename selected reports to twCheese format">
-                        </td>
-                        <td style="textAlign: right;">Progress:</td>
-                        <td style="width: 40px;"><span id="twcheese_progress_percent">0</span>%</td>
-                        <td style="width: 136px;">(<span id="twcheese_progress_count">0</span>/<span id="twcheese_progress_count_max">0</span> reports)</td>
-                        <td>time remaining: <span id="twcheese_time_remaining">00:00</span></td>
-                    </tr>
-                </tbody>
-            </table>
-        `.trim());
-        $massRename.find('a').on('click', (e) => {
-            e.preventDefault();
-            this.massRename();
-        });
-        $massRename.appendTo(reportsFolder);
-    }
+    /*==== mass renamer ====*/
+    (new MassRenamerWidget(this.reports, renamer, reportSelector, displayConfigurer))
+        .appendTo(reportsFolder);    
 
 }
 

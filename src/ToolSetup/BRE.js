@@ -61,16 +61,8 @@ switch (game_data.market) {
  * @param {ReportRenamer} renamer
  */
 function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
-
-    /*==== find reports table ====*/
-    /* note: premium players have a table with links to folders. regular players don't. But the layout seems to have changed again */
-    var reportsTable;
-    if (window.premium)
-        reportsTable = gameDoc.getElementById('content_value').getElementsByTagName('table')[3];
-    else
-        reportsTable = gameDoc.getElementById('content_value').getElementsByTagName('table')[3];
-
-    var reportsForm = reportsTable.parentNode;
+    let reportsTable = gameDoc.getElementById('report_list');
+    let reportsForm = reportsTable.parentNode;
 
     /*==== scrape reports information ====*/    
     let reportScraper = new BattleReportCondensedScraper(renamer);
@@ -80,7 +72,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
     }
 
     /*==== remove old list ====*/
-    reportsTable.parentNode.removeChild(reportsTable);
+    reportsForm.removeChild(reportsTable);
 
     /*==== insert new list and tools ====*/
     (new ReportsFolderWidget(reports, renamer))

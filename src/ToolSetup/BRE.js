@@ -170,7 +170,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
 
     
     this.massRename = async function () {
-        let reportIds = reportListWidget.getSelectedReportIds();
+        let reportIds = reportSelector.getSelectedReportIds();
         let total = reportIds.length;
         let progress = 0;
 
@@ -210,7 +210,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
                 report.isForwarded = oldReport.isForwarded;
                 report.strTimeReceived = oldReport.strTimeReceived;
     
-                reportListWidget.reports.set(report.reportId, report);
+                this.reports.set(report.reportId, report);
     
     
                 /*==== update progress display ====*/
@@ -234,7 +234,7 @@ function twcheese_BattleReportsFolderEnhancer(gameDoc, renamer) {
 
         }
         
-        reportListWidget.refreshContents();
+        displayConfigurer.refreshDisplay();
     };
     
 

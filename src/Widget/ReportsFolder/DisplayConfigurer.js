@@ -39,6 +39,10 @@ class DisplayConfigurer {
             });
     }
 
+    refreshDisplay() {
+        this.widget.refreshContents();
+    }
+
 }
 
 export { DisplayConfigurer };

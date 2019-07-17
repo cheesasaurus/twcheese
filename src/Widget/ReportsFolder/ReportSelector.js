@@ -8,6 +8,13 @@ class ReportSelector {
         this.widget = reportListWidget;
     }
 
+    /**
+     * @return {number[]}
+     */
+    getSelectedReportIds() {
+        return this.widget.getSelectedReportIds();
+    }
+
     selectNew() {
         this.widget.selectMatchingReports(report => report.isNew);
     }

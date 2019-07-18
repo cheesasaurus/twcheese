@@ -119,6 +119,7 @@ class MassRenamerWidget extends AbstractWidget {
     
                 let report = this.renamer.parseName(name);
                 report.reportId = reportId;
+                report.attackIcons = oldReport.attackIcons;
                 report.dotColor = oldReport.dotColor;
                 report.haulStatus = oldReport.haulStatus;
                 report.isForwarded = oldReport.isForwarded;

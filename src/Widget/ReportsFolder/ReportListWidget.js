@@ -222,7 +222,7 @@ class ReportListWidget extends AbstractWidget {
      * fills body with information
      */
     populateReportsTable() {
-        let minimal = new Set(['essential', 'repeatLinks', 'distance', 'fullSubject', 'strTimeReceived']);
+        let minimal = new Set(['essential', 'attackIcons', 'repeatLinks', 'distance', 'fullSubject', 'strTimeReceived']);
 
         let fallbackSubjectColSpan = columnCategories.toArray().reduce(function(acc, category) {
             if (category.key !== 'fullSubject' && minimal.has(category.key)) {

@@ -92,6 +92,32 @@ let cfg = [
     },
 
     {
+        key: 'attackIcons',
+        hideable: true,
+        description: 'Attack icons',
+        cols: [{
+            width: 50,
+            header: '',
+            createCellHtml: (report) => {
+                return report.attackIcons.getIcons().map(icon => {
+                    return `<img title="${escapeHtml(icon.description)}" src="${icon.src}">`
+                }).join(' ');
+            }
+        }]
+    },
+
+    {
+        key: 'distance',
+        hideable: true,
+        description: 'Distance',
+        cols: [{
+            width: 60,
+            header: 'Distance',
+            createCellHtml: (report) => report.defenderDistance(game_data.village)
+        }]
+    },
+
+    {
         key: 'repeatLinks',
         hideable: true,
         description: 'Links to repeat attack',
@@ -112,16 +138,7 @@ let cfg = [
             }
         }]
     },
-    {
-        key: 'distance',
-        hideable: true,
-        description: 'Distance',
-        cols: [{
-            width: 60,
-            header: 'Distance',
-            createCellHtml: (report) => report.defenderDistance(game_data.village)
-        }]
-    },
+    
     {
         key: 'fullSubject',
         hideable: true,

@@ -30,8 +30,7 @@ class DisplayConfigurer {
      * @return {{key:string, description:string}}
      */
     getHideableColumns() {
-        return columnCategories
-            .filter(category => category.hideable)
+        return columnCategories.getHideableCategories()
             .map(category => {
                 return {
                     key: category.key,

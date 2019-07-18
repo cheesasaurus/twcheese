@@ -47,7 +47,19 @@ function villageLink(village) {
 }
 
 
-let columnCategories = [
+class ColumnCategories extends Map {
+
+    getHideableCategories() {
+        return this.toArray().filter(category => category.hideable);
+    }
+
+    toArray() {
+        return [...this.values()];
+    }
+}
+
+
+let cfg = [
     {
         key: 'essential',
         hideable: false,
@@ -363,5 +375,9 @@ let columnCategories = [
     }
 ];
 
+let columnCategories = new ColumnCategories();
+for (let category of cfg) {
+    columnCategories.set(category.key, category);
+}
 
 export { columnCategories };

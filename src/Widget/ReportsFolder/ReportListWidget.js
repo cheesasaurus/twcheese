@@ -59,7 +59,7 @@ class ReportListWidget extends AbstractWidget {
         reportsTableHeader.insertRow(-1);
 
         let cellIndex = 0;
-        for (let category of columnCategories) {
+        for (let category of columnCategories.values()) {
             let titleTh = document.createElement('th');
             titleTh.innerHTML = category.title || '';
             titleTh.initialColSpan = category.cols.length;
@@ -224,7 +224,7 @@ class ReportListWidget extends AbstractWidget {
     populateReportsTable() {
         let minimal = new Set(['essential', 'repeatLinks', 'distance', 'fullSubject', 'strTimeReceived']);
 
-        let fallbackSubjectColSpan = columnCategories.reduce(function(acc, category) {
+        let fallbackSubjectColSpan = columnCategories.toArray().reduce(function(acc, category) {
             if (category.key !== 'fullSubject' && minimal.has(category.key)) {
                 return acc;
             }
@@ -236,7 +236,7 @@ class ReportListWidget extends AbstractWidget {
             row.twcheeseReport = report;
             let hasDecentInfo = report.attackerName && report.defenderName && report.attackerVillage && report.defenderVillage;
 
-            for (let category of columnCategories) {
+            for (let category of columnCategories.values()) {
                 if (!hasDecentInfo && !minimal.has(category.key)) {
                     continue;
                 }
@@ -267,7 +267,7 @@ class ReportListWidget extends AbstractWidget {
      * hides columns and resizes to user's preferences
      */
     applySettings() {
-        for (let category of columnCategories) {
+        for (let category of columnCategories.values()) {
             if (!userConfig.get(`ReportListWidget.showCols.${category.key}`, true)) {
                 this.hideColumns(category.key);
             }

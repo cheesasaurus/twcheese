@@ -4,6 +4,7 @@ import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 class BattleReportCondensed {
     constructor() {
         this.subject = null; // string
+        this.attackIcons = null; // AttackIcons
         this.attackerName = null; // string
         this.attackerNobleDied = false; // boolean
         this.attackerVillage = null; // Village

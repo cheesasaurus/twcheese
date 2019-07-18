@@ -1,5 +1,6 @@
 import { BattleReportCondensed } from '/twcheese/src/Models/BattleReportCondensed.js';
 import { textScraper } from '/twcheese/src/Scrape/TextScraper.js';
+import { AttackIconsScraper } from '/twcheese/src/Scrape/AttackIconsScraper.js';
 
 
 /**
@@ -15,6 +16,7 @@ class BattleReportCondensedScraper {
      */
     constructor(reportRenamer) {
         this.reportRenamer = reportRenamer;
+        this.attackIconsScraper = new AttackIconsScraper();
     }
 
     /**
@@ -46,6 +48,8 @@ class BattleReportCondensedScraper {
         report.isNew = $(row.cells[1]).text().trim().endsWith(textScraper.t('report.unread'));
         report.strTimeReceived = row.cells[2].innerHTML;
         report.haulStatus = this.determineHaulStatus(reportIcons);
+        report.attackIcons = this.attackIconsScraper.scrapeIcons(reportIcons);
+
         return report;
     }
 

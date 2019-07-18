@@ -70,6 +70,34 @@ class AttackIcons {
         return this.mask;
     }
 
+    setSentViaFa() {
+        this.mask |= bits.SENT_VIA_FA;
+    }
+
+    setContainsSnob() {
+        this.mask |= bits.CONTAINS_SNOB;
+    }
+
+    setContainsSpy() {
+        this.mask |= bits.CONTAINS_SPY;
+    }
+
+    setContainsKnight() {
+        this.mask |= bits.CONTAINS_KNIGHT;
+    }
+
+    setSizeSmall() {
+        this.mask |= bits.SIZE_SMALL;
+    }
+
+    setSizeMedium() {
+        this.mask |= bits.SIZE_MEDIUM;
+    }
+
+    setSizeLarge() {
+        this.mask |= bits.SIZE_LARGE;
+    }
+
     /**
      * @param {TroopCounts} troops
      * @param {boolean} wasSentViaFa

@@ -1,5 +1,7 @@
 import { AbstractWidget } from '/twcheese/src/Widget/AbstractWidget.js';
-import { gameUrl } from '/twcheese/src/Util/Network.js';
+import { ExporterBBCode } from '/twcheese/src/Models/RepeatAttackLinks/ExporterBBCode.js';
+import { ExporterPlainText } from '/twcheese/src/Models/RepeatAttackLinks/ExporterPlainText.js';
+import { ExporterHTML } from '/twcheese/src/Models/RepeatAttackLinks/ExporterHTML.js';
 
 
 class ExportRepeatLinksWidget extends AbstractWidget {
@@ -11,6 +13,12 @@ class ExportRepeatLinksWidget extends AbstractWidget {
         super();
         this.reports = reports;
         this.defaultHeader = 'new cheesy attack group';
+
+        this.exporters = {
+            bbcode: new ExporterBBCode(),
+            plainLink: new ExporterPlainText(),
+            html: new ExporterHTML()
+        };
 
         this.initStructure();
         this.watchSelf();
@@ -95,89 +103,12 @@ class ExportRepeatLinksWidget extends AbstractWidget {
 
     updateExportText() {
         let format = this.$formatOptions.filter(':checked').val();
-        let attackingVillage = this.$attackingVillageOptions.filter(':checked').val();
-        let header = this.$headerInput.val();
+        let attackFrom = this.$attackingVillageOptions.filter(':checked').val();
+        let headerText = this.$headerInput.val();
 
-
-        function buildHeader() {
-            switch (format) {
-                case 'bbcode':
-                    return `[b][u][size=12]${header}[/size][/u][/b]`;
-
-                case 'plainLink':
-                    return header;
-
-                case 'html':
-                    return [
-                        '<!DOCTYPE NETSCAPE-Bookmark-file-1>\n<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">',
-                        `\n<DT><H3>${header}</H3></DT>\n<DL><P>`
-                    ].join('');
-            }
-        }
-
-
-        function urlCurrentVillage(report) {
-            return gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportId});
-        }
-
-        function buildEntryCurrentVillage(report) {
-            switch (format) {
-                case 'bbcode':
-                    return '\n[url=' + urlCurrentVillage(report) + ']repeat attack ' + report.reportId + ' from (' + game_data.village.coord + ') to (' + report.defenderVillage.x + '|' + report.defenderVillage.y + ')[/url]';
-
-                case 'plainLink':
-                    return '\n' + urlCurrentVillage(report);
-
-                case 'html':
-                    let leadingZero = '';
-                    let distance = report.defenderDistance(game_data.village);
-                    if (distance < 10) {
-                        leadingZero = '0';
-                    }
-                    return '\n<DT><A HREF="' + urlCurrentVillage(report) + '" >' + leadingZero + distance + ' Repeat Attack ' + report.reportId + ' from (' + game_data.village.coord + ') to (' + report.defenderVillage.x + '|' + report.defenderVillage.y + ')</A></DT>';                
-            }
-        }
-
-
-        function urlOriginalVillage(report) {
-            return gameUrl('place', {try: 'confirm', type: 'same', report_id: report.reportId, village: report.attackerVillage.id});
-        }
-
-        function buildEntryOriginalVillage(report) {
-            switch (format) {
-                case 'bbcode':
-                    return '\n[url=' + urlOriginalVillage(report) + ']repeat attack ' + report.reportId + ' from (' + report.attackerVillage.x + '|' + report.attackerVillage.y + ') to (' + report.defenderVillage.x + '|' + report.defenderVillage.y + ')[/url]';
-
-                case 'plainLink':
-                    return '\n' + urlOriginalVillage(report);
-
-                case 'html':
-                    return '\n<DT><A HREF="' + urlOriginalVillage(report) + '" >Repeat Attack ' + report.reportId + ' from (' + report.attackerVillage.x + '|' + report.attackerVillage.y + ') to (' + report.defenderVillage.x + '|' + report.defenderVillage.y + ')</A></DT>';
-            }
-        }
-
-        var exportString = buildHeader();
-
-        for (let report of this.reports.values()) {
-            if (!report.defenderVillage) {
-                continue; // not enough information
-            }
-            if (report.attackerName !== game_data.player.name) {
-                continue; // can't repeat somebody else's attack
-            }
-            if (attackingVillage == 'current') {
-                exportString += buildEntryCurrentVillage(report);
-            }
-            else if (attackingVillage == 'original' && report.attackerVillage) {
-                exportString += buildEntryOriginalVillage(report);
-            } 
-        }
-
-        if (format === 'html') {
-            exportString += '\n</P></DL>';
-        }
-
-        this.$exportText.val(exportString);
+        let exporter = this.exporters[format];
+        let exportText = exporter.buildExportText(this.reports.values(), attackFrom, headerText);
+        this.$exportText.val(exportText);
     }
 
 }

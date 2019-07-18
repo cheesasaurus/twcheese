@@ -37,13 +37,21 @@ class TroopCounts {
         }
     }
 
-    isZero() {
+    isZero() {        
         for (let count of Object.values(this)) {
             if (count !== 0) {
                 return false;
             }
         }
         return true;
+    }
+
+    sum() {
+        let sum = 0;
+        for (let count of Object.values(this)) {
+            sum += count;
+        }
+        return sum;
     }
 
     populationUsed() {

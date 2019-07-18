@@ -1,5 +1,4 @@
 /* global $, game_data */
-import { initCss } from '/twcheese/src/Util/UI.js';
 import { ReportRenamer } from '/twcheese/src/Models/ReportRenamer.js';
 import { BattleReportScraper } from '/twcheese/src/Scrape/BattleReportScraper.js';
 import { BattleReportCondensedScraper } from '/twcheese/src/Scrape/BattleReportCondensedScraper.js';
@@ -9,19 +8,8 @@ import { ReportToolsWidget } from '/twcheese/src/Widget/ReportToolsWidget.js';
 import { ReportsFolderWidget } from '/twcheese/src/Widget/ReportsFolder/ReportsFolderWidget.js';
 import { userConfig, ensureRemoteConfigsUpdated } from '/twcheese/src/Util/Config.js';
 import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.js';
-
 import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/BRE/Default.js';
 
-/*==== styles ====*/
-
-initCss(`
-    #twcheese_reportsFolder {
-        margin-bottom: 30px;
-    }
-`);
-
-
-/*==== main ====*/
 
 let initialized = false;
 let reportEnhanced = false;

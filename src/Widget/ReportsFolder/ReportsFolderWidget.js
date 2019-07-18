@@ -6,6 +6,7 @@ import { ReportListWidget } from '/twcheese/src/Widget/ReportsFolder/ReportListW
 import { ReportSelector } from '/twcheese/src/Widget/ReportsFolder/ReportSelector.js';
 import { ReportSelectorWidget } from '/twcheese/src/Widget/ReportsFolder/ReportSelectorWidget.js';
 import { MassRenamerWidget } from '/twcheese/src/Widget/ReportsFolder/MassRenamerWidget.js';
+import { initCss } from '/twcheese/src/Util/UI.js';
 
 
 class ReportsFolderWidget extends AbstractWidget {
@@ -96,5 +97,13 @@ class ReportsFolderWidget extends AbstractWidget {
 
     }
 }
+
+
+initCss(`
+    #twcheese_reportsFolder {
+        margin-bottom: 30px;
+    }
+`);
+
 
 export { ReportsFolderWidget };

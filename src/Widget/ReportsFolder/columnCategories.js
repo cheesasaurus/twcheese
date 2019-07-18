@@ -125,6 +125,7 @@ let cfg = [
     {
         key: 'fullSubject',
         hideable: true,
+        startHidden: true,
         description: 'Full subject',
         cols: [{
             width: 400,
@@ -135,6 +136,7 @@ let cfg = [
     {
         key: 'note',
         hideable: true,
+        startHidden: true,
         description: 'Note',
         cols: [{
             width: 200,

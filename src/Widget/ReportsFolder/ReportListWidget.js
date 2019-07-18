@@ -268,7 +268,7 @@ class ReportListWidget extends AbstractWidget {
      */
     applySettings() {
         for (let category of columnCategories.values()) {
-            if (!userConfig.get(`ReportListWidget.showCols.${category.key}`, true)) {
+            if (!userConfig.get(`ReportListWidget.showCols.${category.key}`, !category.startHidden)) {
                 this.hideColumns(category.key);
             }
         }
@@ -290,8 +290,9 @@ class ReportListWidget extends AbstractWidget {
 
 
     toggleReportsColumns(settingName) {
+        let startHidden = columnCategories.get(settingName).startHidden;
         let configKey = `ReportListWidget.showCols.${settingName}`;
-        let show = !userConfig.get(configKey, true);
+        let show = !userConfig.get(configKey, !startHidden);
         userConfig.set(configKey, show);
 
         for (let i of this.columnIndexes.get(settingName)) {

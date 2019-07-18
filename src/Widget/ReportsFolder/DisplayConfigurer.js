@@ -16,7 +16,8 @@ class DisplayConfigurer {
      * @return {boolean}
      */
     shouldShowColumn(key) {
-        return userConfig.get(`ReportListWidget.showCols.${key}`, true);
+        let startHidden = columnCategories.get(key).startHidden;
+        return userConfig.get(`ReportListWidget.showCols.${key}`, !startHidden);
     }
 
     /**

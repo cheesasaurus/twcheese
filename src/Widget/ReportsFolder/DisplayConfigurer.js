@@ -1,4 +1,5 @@
 import { ReportListWidget } from '/twcheese/src/Widget/ReportsFolder/ReportListWidget.js';
+import { columnCategories } from '/twcheese/src/Widget/ReportsFolder/columnCategories.js';
 import { userConfig } from '/twcheese/src/Util/Config.js';
 
 
@@ -29,7 +30,7 @@ class DisplayConfigurer {
      * @return {{key:string, description:string}}
      */
     getHideableColumns() {
-        return ReportListWidget.columnCategories
+        return columnCategories
             .filter(category => category.hideable)
             .map(category => {
                 return {

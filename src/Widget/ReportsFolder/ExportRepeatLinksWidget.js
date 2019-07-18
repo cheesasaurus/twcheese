@@ -20,7 +20,7 @@ class ExportRepeatLinksWidget extends AbstractWidget {
     initStructure() {
         this.$el = $(this.createHtml().trim());
         this.$exportText = this.$el.find('.twcheese-export-text');
-        this.$buttonExport = this.$el.find('.twcheese-button-export');
+        this.$buttonCopy = this.$el.find('.twcheese-button-copy');
         this.$headerInput = this.$el.find('#twcheese_export_header');
         this.$formatOptions = this.$el.find("input[name='twcheese-repeat-attack-export-format']");
         this.$attackingVillageOptions = this.$el.find("input[name='twcheese-repeat-attack-export-village']");
@@ -30,7 +30,7 @@ class ExportRepeatLinksWidget extends AbstractWidget {
         return `
             <table id="twcheese_reportsFolderExport" style="display: none;">
                 <td>
-                    <textarea class="twcheese-export-text" rows=10 cols=40 />
+                    <textarea class="twcheese-export-text" rows="10" cols="40" readonly="true" />
                 </td>
                 <td>
                     <table id="twcheese_exportConfigTable">
@@ -52,6 +52,11 @@ class ExportRepeatLinksWidget extends AbstractWidget {
                         <tr>
                             <td colspan="2">
                                 Header: <input type="text" id="twcheese_export_header" value="${this.defaultHeader}" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="text-align: center; padding-top: 20px;">
+                                <a class="twcheese-button-copy btn btn-default" href="#">Copy to clipboard</a>
                             </td>
                         </tr>
                     </table>
@@ -78,6 +83,13 @@ class ExportRepeatLinksWidget extends AbstractWidget {
 
         this.$attackingVillageOptions.on('change', (e) => {
             this.updateExportText();
+        });
+
+        this.$buttonCopy.on('click', (e) => {
+            e.preventDefault();
+            this.$exportText.select();
+            document.execCommand('copy');
+            window.UI.SuccessMessage('Copied to clipboard');
         });
     }
 

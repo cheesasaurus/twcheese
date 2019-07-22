@@ -1,5 +1,13 @@
-import { wrappedCode, findScavengeScreenJsCode, findScavengeScreenParamCode, parseScavengeScreenParamCode } from '/twcheese/src/Scrape/scavenge.js';
+import {
+    wrappedCode,
+    findScavengeScreenJsCode,
+    findScavengeScreenParamCode,
+    parseScavengeScreenParamCode,
+    findVillageCode
+} from '/twcheese/src/Scrape/scavenge.js';
+
 import { domSample } from '/twcheese/test/util.js';
+import { scrapeScavengeData } from '../../../src/Scrape/scavenge';
 const assert = require('assert');
 const fs = require('fs');
 
@@ -71,3 +79,31 @@ describe('parseScavengeScreenParamCode', function() {
     });
 
 });
+
+
+describe('findVillageCode', function() {
+
+    it('should work', function() {
+        let jsCode = fs.readFileSync(`test/data/html/scavenge/scavenge-screen-js-code`).toString();
+        let expected = fs.readFileSync(`test/data/html/scavenge/village-code`).toString();
+        assert.equal(expected, findVillageCode(jsCode));
+    });
+
+});
+
+
+describe('scrapeScavengeData', function() {
+
+    it('should work', function() {
+        let content = domSample('scavenge/content-is-scavenging-screen');
+        let data = scrapeScavengeData(content);
+
+        assert.equal('Lackadaisical Looters', data.optionsConfig[1].name);
+
+        assert.equal('Spear fighter', data.troops.spear.name);
+
+        assert.equal(200, data.village.options[1].scavenging_squad.unit_counts.spear);
+    });
+
+});
+

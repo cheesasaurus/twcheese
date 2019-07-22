@@ -7,11 +7,13 @@ function scrapeScavengeData(gameDoc) {
 
     let paramCode = findScavengeScreenParamCode(jsCode);
     let dataFromParams = parseScavengeScreenParamCode(paramCode);
+    
+    let villageCode = findVillageCode(jsCode);
 
     return {
         optionsConfig: dataFromParams.optionsConfig,
         troops: dataFromParams.troops,
-        // todo: village. was changed in the update a couple hours ago, so it's no longer passed as a param
+        village: JSON.parse(villageCode)
     };
 }
 
@@ -33,6 +35,7 @@ function findScavengeScreenJsCode(gameDoc) {
 
 /**
  * @param {string} jsCode
+ * @return {string}
  */
 function findScavengeScreenParamCode(jsCode) {
     let search = 'new ScavengeScreen';
@@ -65,10 +68,22 @@ function parseScavengeScreenParamCode(paramCode) {
 
 
 /**
+ * @param {string} jsCode
+ * @return {string}
+ */
+function findVillageCode(jsCode) {
+    let search = 'var village = ';
+    let startIndex = jsCode.indexOf(search) + search.length;
+    return wrappedCode(jsCode, startIndex, '{', '}');
+}
+
+
+/**
  * @param {string} string 
  * @param {number} firstParenIndex 
  * @param {string} openingChar 
  * @param {string} closingChar 
+ * @return {string}
  */
 function wrappedCode(string, firstParenIndex, openingChar = '(', closingChar = ')') {
     let openingParens = 1;
@@ -91,4 +106,11 @@ function wrappedCode(string, firstParenIndex, openingChar = '(', closingChar = '
 }
 
 
-export { scrapeScavengeData, wrappedCode, findScavengeScreenJsCode, findScavengeScreenParamCode, parseScavengeScreenParamCode };
+export {
+    scrapeScavengeData,
+    wrappedCode,
+    findScavengeScreenJsCode,
+    findScavengeScreenParamCode,
+    parseScavengeScreenParamCode,
+    findVillageCode
+};

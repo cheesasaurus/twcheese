@@ -1,4 +1,4 @@
-import { wrappedCode, findScavengeScreenDataCode, parseScavengeScreenDataCode } from '/twcheese/src/Scrape/scavenge.js';
+import { wrappedCode, findScavengeScreenJsCode, findScavengeScreenParamCode, parseScavengeScreenParamCode } from '/twcheese/src/Scrape/scavenge.js';
 import { domSample } from '/twcheese/test/util.js';
 const assert = require('assert');
 const fs = require('fs');
@@ -33,22 +33,33 @@ describe('wrappedCode', function() {
 });
 
 
-describe('findScavengeScreenDataCode', function() {
+describe('findScavengeScreenJsCode', function() {
 
     it('should work', function() {
         let content = domSample('scavenge/content-is-scavenging-screen');
-        let expected = fs.readFileSync(`test/data/html/scavenge/scavenge-screen-data-code`).toString();
-        assert.equal(expected, findScavengeScreenDataCode(content));
+        let expected = fs.readFileSync(`test/data/html/scavenge/scavenge-screen-js-code`).toString();
+        assert.equal(expected.trim(), findScavengeScreenJsCode(content).trim());
     });
 
 });
 
 
-describe('parseScavengeScreenDataCode', function() {
+describe('findScavengeScreenParamCode', function() {
 
     it('should work', function() {
-        let code = fs.readFileSync(`test/data/html/scavenge/scavenge-screen-data-code`).toString();
-        let data = parseScavengeScreenDataCode(code);
+        let jsCode = fs.readFileSync(`test/data/html/scavenge/scavenge-screen-js-code`).toString();
+        let expected = fs.readFileSync(`test/data/html/scavenge/scavenge-screen-param-code`).toString();
+        assert.equal(expected, findScavengeScreenParamCode(jsCode));
+    });
+
+});
+
+
+describe('parseScavengeScreenParamCode', function() {
+
+    it('should work', function() {
+        let code = fs.readFileSync(`test/data/html/scavenge/scavenge-screen-param-code`).toString();
+        let data = parseScavengeScreenParamCode(code);
 
         assert.equal('Lackadaisical Looters', data.optionsConfig[1].name);
         assert.equal('Humble Haulers', data.optionsConfig[2].name);

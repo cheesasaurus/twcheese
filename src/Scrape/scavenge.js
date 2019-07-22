@@ -3,9 +3,10 @@
  * @param {HTMLDocument} gameDoc 
  */
 function scrapeScavengeData(gameDoc) {
-    let code = findScavengeScreenDataCode(gameDoc);
+    let jsCode = findScavengeScreenJsCode(gameDoc);
 
-    let dataFromParams = parseScavengeScreenDataCode(code);
+    let paramCode = findScavengeScreenParamCode(jsCode);
+    let dataFromParams = parseScavengeScreenParamCode(paramCode);
 
     return {
         optionsConfig: dataFromParams.optionsConfig,
@@ -16,17 +17,42 @@ function scrapeScavengeData(gameDoc) {
 
 
 /**
- * @param {string} code 
+ * @param {HTMLDocument} gameDoc 
  */
-function parseScavengeScreenDataCode(code) {
-    let optionsConfigStartIndex = code.indexOf('{');
-    let optionsConfigCode = wrappedCode(code, optionsConfigStartIndex, '{', '}');
+function findScavengeScreenJsCode(gameDoc) {
+    let scripts = gameDoc.getElementsByTagName('script');
+    
+    for (let script of scripts) {
+        let code = script.innerHTML;
+        if (code.includes('new ScavengeScreen')) {
+            return code;
+        }
+    }
+}
+
+
+/**
+ * @param {string} jsCode
+ */
+function findScavengeScreenParamCode(jsCode) {
+    let search = 'new ScavengeScreen';
+    let startIndex = jsCode.indexOf(search) + search.length;
+    return wrappedCode(jsCode, startIndex, '(', ')');
+}
+
+
+/**
+ * @param {string} paramCode 
+ */
+function parseScavengeScreenParamCode(paramCode) {
+    let optionsConfigStartIndex = paramCode.indexOf('{');
+    let optionsConfigCode = wrappedCode(paramCode, optionsConfigStartIndex, '{', '}');
 
     let troopsCode;
     let troopsStartIndex = optionsConfigStartIndex + optionsConfigCode.length;
-    for (; troopsStartIndex < code.length; troopsStartIndex++) {
-        if (code[troopsStartIndex] === '{') {
-            troopsCode = wrappedCode(code, troopsStartIndex, '{', '}');
+    for (; troopsStartIndex < paramCode.length; troopsStartIndex++) {
+        if (paramCode[troopsStartIndex] === '{') {
+            troopsCode = wrappedCode(paramCode, troopsStartIndex, '{', '}');
             break;
         }
     }
@@ -35,24 +61,6 @@ function parseScavengeScreenDataCode(code) {
         optionsConfig: JSON.parse(optionsConfigCode),
         troops: JSON.parse(troopsCode)
     };
-}
-
-
-/**
- * @param {HTMLDocument} gameDoc 
- */
-function findScavengeScreenDataCode(gameDoc) {
-    let scripts = gameDoc.getElementsByTagName('script');
-    
-    for (let script of scripts) {
-        let code = script.innerHTML;
-        let search = 'new ScavengeScreen';
-        let startIndex = code.indexOf(search);
-        if (startIndex !== -1) {
-            startIndex += search.length;
-            return wrappedCode(code, startIndex, '(', ')');
-        }
-    }
 }
 
 
@@ -83,4 +91,4 @@ function wrappedCode(string, firstParenIndex, openingChar = '(', closingChar = '
 }
 
 
-export { scrapeScavengeData, findScavengeScreenDataCode, wrappedCode, parseScavengeScreenDataCode };
+export { scrapeScavengeData, wrappedCode, findScavengeScreenJsCode, findScavengeScreenParamCode, parseScavengeScreenParamCode };

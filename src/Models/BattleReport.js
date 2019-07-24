@@ -93,7 +93,7 @@ class BattleReport {
         let troopCounts = new TroopCounts();
         for (let troopType of troopTypes) {
             let travelDuration = troopUtil.travelDuration(troopType, distance);
-            let travelHours = travelDuration / 3600;
+            let travelHours = travelDuration / 3600000;
             let resourcesProducedDuringTravel = hourlyProduction.multiply(travelHours);
             let resourcesAtArrival = resourcesNow.add(resourcesProducedDuringTravel).cap(maxLoot);
             troopCounts[troopType] = troopUtil.countToCarry(troopType, resourcesAtArrival.sum(), haulBonus);

@@ -18,10 +18,10 @@ function calcLoyalty(reportedLoyalty, timeReported, timeNow, home, target) {
     let hourlyGain = gameConfig.get('speed');
 
     let hoursPassed = (timeNow - timeReported) / 3600000;
-    let loyaltyNow = Math.min(100, parseInt(reportedLoyalty) + parseInt(hoursPassed * hourlyGain));
+    let loyaltyNow = Math.min(100, Math.floor(reportedLoyalty + hoursPassed * hourlyGain));
 
     let distance = target.distanceTo(home);
-    let travelHours = troopUtil.travelDuration('snob', distance) / 60;
+    let travelHours = troopUtil.travelDuration('snob', distance) / 3600000;
     let loyaltyAtArrival = Math.min(100, Math.floor(loyaltyNow + travelHours * hourlyGain));
 
     return {loyaltyNow, loyaltyAtArrival};

@@ -1,6 +1,8 @@
 import { calcAttackerScore, calcDefenderScore } from '/twcheese/src/Models/KillScores.js';
 import { calcLoyalty } from '/twcheese/src/Models/Loyalty.js';
 import { troopUtil } from '/twcheese/src/Models/Troops.js';
+import { TwCheeseDate } from '/twcheese/src/Models/TwCheeseDate.js';
+import { textScraper } from '/twcheese/src/Scrape/TextScraper.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { escapeHtml } from '/twcheese/src/Util/UI.js';
 import { gameUrl } from '/twcheese/src/Util/Network.js';

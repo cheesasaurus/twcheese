@@ -313,16 +313,6 @@ twcheese.style.popupTitleBar = function (element, exit_function) {
 	element.appendChild(exit_button);
 };
 
-/*==== register ====*/
-var script = {
-	scriptname: 'Mass Incoming Tagger',
-	version: 8.21,
-	author: 'Nicholas Toby',
-	email: 'cheesasaurus@gmail.com',
-	broken: false
-};
-$.post(ScriptAPI.url,script);
-
 
 // register tool ///////////////////////////////////////////////////////
 

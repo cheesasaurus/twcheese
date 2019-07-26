@@ -1,32 +1,5 @@
-/**
- *	Mass Tagger
- *	@version	1.0.0
- *	last updated: April 14, 2014
- *	game compatability:	version	20228 8.21
- *	@author		Nick Toby (cheesasaurus@gmail.com)
- 
- ==== pages where this can be used ==== 
- * incoming overview (screen=overview_villages&mode=incomings)
-  
- ==== changelog ====
- *	14 apr 2014 - released 
- 
- ==== license ====
- *	Copyright (C) 2014  Nick Toby
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see http://www.gnu.org/licenses/
- */
+import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.js';
+import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/MassTagIncomings/Default.js';
 
 if(!twcheese)
 	var twcheese={};
@@ -350,10 +323,27 @@ var script = {
 };
 $.post(ScriptAPI.url,script);
 
-/*==== Main ====*/
-if (game_data.screen == 'overview_villages' && game_data.mode == 'incomings') {
-	twcheese.MassTag.init();
-} else {
-	UI.InfoMessage('Going to Incoming overview ...', 3000, 'success');
-	document.location = game_data.link_base_pure + 'overview_villages&mode=incomings';
-};
+
+// register tool ///////////////////////////////////////////////////////
+
+let processFactory = new ProcessFactory({});
+
+
+window.TwCheese.registerTool({
+	id: 'MassTagIncomings',
+	
+    use() {
+		if (game_data.screen == 'overview_villages' && game_data.mode == 'incomings') {
+			twcheese.MassTag.init();
+		} else {
+			UI.InfoMessage('Going to Incoming overview ...', 3000, 'success');
+			document.location = game_data.link_base_pure + 'overview_villages&mode=incomings';
+		}
+	},
+
+    getDebugProcess() {
+		let name = 'Tool: Mass Tag Incomings';
+		return processFactory.create(name, debugCfgDefault, true);
+	}
+
+});

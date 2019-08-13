@@ -1,0 +1,90 @@
+{
+    "1": {
+        "id": 1,
+        "name": "Lackadaisical Looters",
+        "loot_factor": 0.1,
+        "unlock_cost": {
+            "wood": 25,
+            "stone": 30,
+            "iron": 25
+        },
+        "unlock_duration_seconds": 30,
+        "duration_exponent": 0.45,
+        "duration_initial_seconds": 1800,
+        "duration_factor": 0.8845033719,
+        "premium_cost_exponent": 0.44,
+        "prerequisite_option_ids": [],
+        "premium_boost": {
+            "feature": "ScavengingSquadLoot",
+            "enabled": true,
+            "loot_factor": 1.2,
+            "cost_exponent": 0.44
+        }
+    },
+    "2": {
+        "id": 2,
+        "name": "Humble Haulers",
+        "loot_factor": 0.25,
+        "unlock_cost": {
+            "wood": 250,
+            "stone": 300,
+            "iron": 250
+        },
+        "unlock_duration_seconds": 3600,
+        "duration_exponent": 0.45,
+        "duration_initial_seconds": 1800,
+        "duration_factor": 0.8845033719,
+        "premium_cost_exponent": 0.44,
+        "prerequisite_option_ids": [1],
+        "premium_boost": {
+            "feature": "ScavengingSquadLoot",
+            "enabled": true,
+            "loot_factor": 1.2,
+            "cost_exponent": 0.44
+        }
+    },
+    "3": {
+        "id": 3,
+        "name": "Clever Collectors",
+        "loot_factor": 0.5,
+        "unlock_cost": {
+            "wood": 1000,
+            "stone": 1200,
+            "iron": 1000
+        },
+        "unlock_duration_seconds": 10800,
+        "duration_exponent": 0.45,
+        "duration_initial_seconds": 1800,
+        "duration_factor": 0.8845033719,
+        "premium_cost_exponent": 0.44,
+        "prerequisite_option_ids": [2],
+        "premium_boost": {
+            "feature": "ScavengingSquadLoot",
+            "enabled": true,
+            "loot_factor": 1.2,
+            "cost_exponent": 0.44
+        }
+    },
+    "4": {
+        "id": 4,
+        "name": "Great Gatherers",
+        "loot_factor": 0.75,
+        "unlock_cost": {
+            "wood": 10000,
+            "stone": 12000,
+            "iron": 10000
+        },
+        "unlock_duration_seconds": 21600,
+        "duration_exponent": 0.45,
+        "duration_initial_seconds": 1800,
+        "duration_factor": 0.8845033719,
+        "premium_cost_exponent": 0.44,
+        "prerequisite_option_ids": [3],
+        "premium_boost": {
+            "feature": "ScavengingSquadLoot",
+            "enabled": true,
+            "loot_factor": 1.2,
+            "cost_exponent": 0.44
+        }
+    }
+}

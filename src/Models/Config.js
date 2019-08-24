@@ -17,6 +17,10 @@ class Config {
         this._save();
     }
 
+    initProps(props) {
+        this.props = props;
+    }
+
     /**
      * @protected
      * @return {object|null}

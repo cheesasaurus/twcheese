@@ -35,6 +35,13 @@ class ScavengeTroopsAssigner {
     }
 
     /**
+     * @return {string[]}
+     */
+    getAllowedTroopTypes() {
+        return this.sendableTroopTypes.filter(troopType => this.preferences.troops[troopType].maySend);
+    }
+
+    /**
      * @param {int[]} usableOptionIds 
      * @param {TroopCounts} availableTroopCounts
      * @param {float} haulFactor
@@ -46,11 +53,35 @@ class ScavengeTroopsAssigner {
         return this.assignTroopsForSanePerson(usableOptionIds, availableTroopCounts, haulFactor);
     }
 
+    /**
+     * @param {number[]} usableOptionIds 
+     * @param {TroopCounts} availableTroopCounts 
+     * @param {float} haulFactor
+     * @return {Map<number, TroopCounts>}
+     */
     assignTroopsForSanePerson(usableOptionIds, availableTroopCounts, haulFactor = 1.0) {
-        // todo
+        let assignedCountsByOption = new Map();
+        let allowedTroopTypes = this.getAllowedTroopTypes();
+        let optionIds = [...this.options.keys()].reverse();
+
+        for (let optionId of optionIds) {
+            let assignedCounts;
+            if (usableOptionIds.includes(optionId)) {
+                let option = this.options.get(optionId);
+                let targetCapacity = option.calcTargetCapacity(this.preferences.targetDurationHours * 3600);
+                assignedCounts = this.chunkTroopsToHaul(targetCapacity, availableTroopCounts, allowedTroopTypes, haulFactor);
+            } else {
+                assignedCounts = new TroopCounts();
+            }            
+            assignedCountsByOption.set(optionId, assignedCounts);
+            availableTroopCounts = availableTroopCounts.subtract(assignedCounts);
+        }
+
+        return assignedCountsByOption;
     }
 
     assignTroopsForAddict(usableOptionIds, availableTroopCounts, haulFactor = 1.0) {
+
         // todo: shinko style
     }
 

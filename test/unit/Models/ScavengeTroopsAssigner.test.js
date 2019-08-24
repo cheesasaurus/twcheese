@@ -90,14 +90,38 @@ describe('ScavengeTroopsAssigner.chunkTroopsToHaul', function() {
 
 
 describe('ScavengeTroopsAssigner.assignTroopsForSanePerson', function() {
-    it('should do something', function() {
-        // todo
+    it('should max-out duration of biggest options first', function() {
+        let available = new TroopCounts();
+        available.spear = 200;
+
+        let usableOptionIds = [1, 2, 3, 4];
+
+        let assignedByOption = assigner.assignTroopsForSanePerson(usableOptionIds, available, 1.0);
+
+        assert.equal(89, assignedByOption.get(4).spear);
+        assert.equal(111, assignedByOption.get(3).spear);
+        assert.equal(0, assignedByOption.get(2).spear);
+        assert.equal(0, assignedByOption.get(1).spear);
+    });
+
+    it('should ignore not-usable options', function() {
+        let available = new TroopCounts();
+        available.spear = 200;
+
+        let usableOptionIds = [1, 2, 3]; // option#4 not usable
+
+        let assignedByOption = assigner.assignTroopsForSanePerson(usableOptionIds, available, 1.0);
+
+        assert.equal(0, assignedByOption.get(4).spear);
+        assert.equal(134, assignedByOption.get(3).spear);
+        assert.equal(66, assignedByOption.get(2).spear);
+        assert.equal(0, assignedByOption.get(1).spear);
     });
 });
 
 
 describe('ScavengeTroopsAssigner.assignTroopsForAddict', function() {
-    it('should do something', function() {
+    it('should have similar duration across all options', function() {
         // todo
     });
 });

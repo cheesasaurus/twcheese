@@ -37,6 +37,10 @@ class TroopCounts {
         }
     }
 
+    clone() {
+        return Object.assign(new TroopCounts(), this);
+    }
+
     isZero() {        
         for (let count of Object.values(this)) {
             if (count !== 0) {

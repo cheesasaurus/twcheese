@@ -41,6 +41,16 @@ class TroopCounts {
         return Object.assign(new TroopCounts(), this);
     }
 
+    filter(allowedTroopTypes) {
+        let counts = new TroopCounts();
+        for (let type of troopTypes) {
+            if (allowedTroopTypes.includes(type)) {
+                counts[type] = this[type];
+            }
+        }
+        return counts;
+    }
+
     isZero() {        
         for (let count of Object.values(this)) {
             if (count !== 0) {
@@ -56,6 +66,14 @@ class TroopCounts {
             sum += count;
         }
         return sum;
+    }
+
+    carryCapacity() {
+        let capacity = 0;
+        for (let type of troopTypes) {
+            capacity += this[type] * troopCarry(type);
+        }
+        return capacity;
     }
 
     populationUsed() {

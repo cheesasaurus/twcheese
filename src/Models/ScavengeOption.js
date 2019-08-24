@@ -10,6 +10,10 @@ class ScavengeOption {
         return this.base.loot_factor * 100;
     }
 
+    getLootFactor() {
+        return this.base.loot_factor;
+    }
+
     calcDurationSeconds(squadCapacity) {
         let base = (squadCapacity ** 2) * this.getLootPercent() * this.base.loot_factor;
         let preDuration = Math.pow(base, this.base.duration_exponent) + this.base.duration_initial_seconds

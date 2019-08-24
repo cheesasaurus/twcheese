@@ -80,9 +80,52 @@ class ScavengeTroopsAssigner {
         return assignedCountsByOption;
     }
 
+    /**
+     * @param {number[]} usableOptionIds 
+     * @param {TroopCounts} availableTroopCounts 
+     * @param {float} haulFactor
+     * @return {Map<number, TroopCounts>}
+     */
     assignTroopsForAddict(usableOptionIds, availableTroopCounts, haulFactor = 1.0) {
+        let assignedCountsByOption = new Map();
+        let allowedTroopTypes = this.getAllowedTroopTypes();
+        let optionIds = [...this.options.keys()].reverse();
 
-        // todo: shinko style
+        availableTroopCounts = availableTroopCounts.filter(this.getAllowedTroopTypes());
+        let availableCapacity = availableTroopCounts.carryCapacity() * haulFactor;
+        let targetDurationSeconds = this.preferences.targetDurationHours * 3600;
+
+        let targetCapacitySum = 0;
+        let inverseLootFactors = {};
+        let inverseLootFactorSum = 0;
+
+        for (let optionId of optionIds) {
+            if (!usableOptionIds.includes(optionId)) {
+                continue;
+            }
+            let option = this.options.get(optionId);
+            inverseLootFactors[optionId] = 1 / option.getLootFactor()
+            inverseLootFactorSum += inverseLootFactors[optionId];
+            targetCapacitySum += option.calcTargetCapacity(targetDurationSeconds);
+        }
+
+        let portionAvailableTroopsOverall = Math.min(1, targetCapacitySum / availableCapacity);
+
+        for (let optionId of optionIds) {
+            let assignedCounts;
+            if (usableOptionIds.includes(optionId)) {
+                let portionOfOptionFactors = inverseLootFactors[optionId] / inverseLootFactorSum;
+                let portionAvailableTroopsForOption = portionAvailableTroopsOverall * portionOfOptionFactors;
+                let targetCapacity = portionAvailableTroopsForOption * availableCapacity;
+                assignedCounts = this.chunkTroopsToHaul(targetCapacity, availableTroopCounts, allowedTroopTypes, haulFactor);
+            } else {
+                assignedCounts = new TroopCounts();
+            }            
+            assignedCountsByOption.set(optionId, assignedCounts);
+            availableTroopCounts = availableTroopCounts.subtract(assignedCounts);
+        }
+
+        return assignedCountsByOption;
     }
 
     chunkTroopsToHaul(targetCapacity, availableTroopCounts, allowedTroopTypes, haulFactor = 1.0) {

@@ -121,7 +121,61 @@ describe('ScavengeTroopsAssigner.assignTroopsForSanePerson', function() {
 
 
 describe('ScavengeTroopsAssigner.assignTroopsForAddict', function() {
+
     it('should have similar duration across all options', function() {
-        // todo
+        let available = new TroopCounts();
+        available.spear = 200;
+
+        let usableOptionIds = [1, 2, 3, 4];
+
+        let assignedByOption = assigner.assignTroopsForAddict(usableOptionIds, available, 1.0);
+
+        assert.equal(15, assignedByOption.get(4).spear);
+        assert.equal(23, assignedByOption.get(3).spear);
+        assert.equal(46, assignedByOption.get(2).spear);
+        assert.equal(115, assignedByOption.get(1).spear);
     });
+
+    it('should ignore not-usable options', function() {
+        let available = new TroopCounts();
+        available.spear = 200;
+
+        let usableOptionIds = [1, 2, 4]; // option#3 not usable
+
+        let assignedByOption = assigner.assignTroopsForAddict(usableOptionIds, available, 1.0);
+
+        assert.equal(17, assignedByOption.get(4).spear);
+        assert.equal(0, assignedByOption.get(3).spear);
+        assert.equal(52, assignedByOption.get(2).spear);
+        assert.equal(130, assignedByOption.get(1).spear);
+    });
+
+    it('should not exceed target time too much when excess troops available', function() {
+        let available = new TroopCounts();
+        available.spear = 20000;
+
+        let usableOptionIds = [1, 2, 3, 4];
+
+        let assignedByOption = assigner.assignTroopsForAddict(usableOptionIds, available, 1.0);
+
+        assert.equal(89, assignedByOption.get(4).spear);
+        assert.equal(134, assignedByOption.get(3).spear);
+        assert.equal(268, assignedByOption.get(2).spear);
+        assert.equal(671, assignedByOption.get(1).spear);
+    });
+
+    it('should ignore not-usable options when excess troops available', function() {
+        let available = new TroopCounts();
+        available.spear = 20000;
+
+        let usableOptionIds = [1, 2, 4]; // option#3 not usable
+
+        let assignedByOption = assigner.assignTroopsForAddict(usableOptionIds, available, 1.0);
+
+        assert.equal(89, assignedByOption.get(4).spear);
+        assert.equal(0, assignedByOption.get(3).spear);
+        assert.equal(268, assignedByOption.get(2).spear);
+        assert.equal(671, assignedByOption.get(1).spear);
+    });
+
 });

@@ -148,6 +148,10 @@ let troopUtil = {
         return Math.round(10 * troopCount) / 10;
     },
 
+    carryCapacity(troopType, factor = 1.0) {
+        return troopCarry(troopType) * factor;
+    },
+
     /**
      * @param {string} troopType
      * @param {number} distance

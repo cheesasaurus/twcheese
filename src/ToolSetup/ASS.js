@@ -32,6 +32,7 @@ function suggestRedirectToScavengeScreen() {
     suggestRedirect({
         message: 'To use this, you must be at the scavenging screen.',
         screen: 'place',
+        screenName: 'Scavenging Screen',
         uriParams: {
             mode: 'scavenge'
         },

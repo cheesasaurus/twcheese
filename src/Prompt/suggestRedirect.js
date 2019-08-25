@@ -3,15 +3,16 @@ import { userConfig } from '/twcheese/src/Util/Config.js';
 
 
 function suggestRedirect(options) {
-    let { message, screen, uriParams, skippableId } = options;
+    let { message, screen, screenName, uriParams, skippableId } = options;
     message = message || '{{Some genius forgot to write a message here}}';
+    screenName = screenName || '{{Screen Name goes here}}';
     uriParams = uriParams || {};
     if (!screen) {
         throw Error('screen must be specified!');
     }
 
     if (skippableId && userConfig.get(skipKey(skippableId), false)) {
-        window.UI.InfoMessage('Redirecting to <strong>Commands Overview</strong>...');
+        window.UI.InfoMessage(`Redirecting to <strong>${screenName}</strong>...`);
         setTimeout(() => window.TribalWars.redirect(screen, uriParams), 200);        
         return;
     }    

@@ -35,6 +35,7 @@ function suggestRedirectToCommandsOverview() {
             <p style="font-size:14px;">To use this, you must be at the commands overview.</p>
             <p style="font-size:12px;">Consider using the 'return' filter, since outgoing troops don't carry resources :)</p>`,
         screen: 'overview_villages',
+        screenName: 'Commands Overview',
         uriParams: {
             mode: 'commands',
             type: 'return'

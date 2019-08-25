@@ -1,20 +1,24 @@
 import { userConfig, ensureRemoteConfigsUpdated } from '/twcheese/src/Util/Config.js';
 import { suggestRedirect } from '/twcheese/src/Prompt/suggestRedirect.js';
+import { scrapeScavengeOptions } from '/twcheese/src/Scrape/scavenge.js';
 import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.js';
 import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/BRE/Default.js';
 
 
 let initialized = false;
+let scavengeOptions;
 
 async function useTool() {
-    if (!initialized) {
-        await ensureRemoteConfigsUpdated();
-        initialized = true;
-    }
-
     if (!atScavengeScreen()) {
         suggestRedirectToScavengeScreen();
         return;
+    }
+
+    if (!initialized) {
+        await ensureRemoteConfigsUpdated();
+        scavengeOptions = scrapeScavengeOptions(document);
+        console.log(scavengeOptions);
+        initialized = true;
     }
 
     // todo

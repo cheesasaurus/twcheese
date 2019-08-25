@@ -1,4 +1,4 @@
-
+import { TroopCounts } from '/twcheese/src/Models/Troops.js';
 
 class ScavengeTroopsAssigner {
 
@@ -55,7 +55,30 @@ class ScavengeTroopsAssigner {
     }
 
     chunkTroopsToHaul(targetCapacity, availableTroopCounts, allowedTroopTypes, haulFactor = 1.0) {
-        // todo
+        let assignedTroopCounts = new TroopCounts();
+        let capacities = {};
+        for (let chunk of this.preferences.troopOrder) {
+            let availableCapacity = 0;
+            for (let troopType of chunk) {
+                if (!allowedTroopTypes.includes(troopType)) {
+                    continue;
+                }
+                let troopCount = availableTroopCounts[troopType];
+                capacities[troopType] = this.troopUtil.carryCapacity(troopType, haulFactor);
+                availableCapacity += troopCount * capacities[troopType];
+            }
+            let chunkRatio = Math.min(1, targetCapacity / availableCapacity);
+
+            for (let troopType of chunk) {
+                if (!allowedTroopTypes.includes(troopType)) {
+                    continue;
+                }
+                let troopCount = availableTroopCounts[troopType];                
+                assignedTroopCounts[troopType] = Math.round(troopCount * chunkRatio);
+                targetCapacity -= assignedTroopCounts[troopType] * capacities[troopType];
+            }
+        }
+        return assignedTroopCounts;
     }
 
 }

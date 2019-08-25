@@ -1,3 +1,21 @@
+import { ScavengeOption } from '/twcheese/src/Models/ScavengeOption.js';
+
+
+/**
+ * @param {HTMLDocument} gameDoc
+ * @return {Map<number, ScavengeOption>}
+ */
+function scrapeScavengeOptions(gameDoc) {
+    let data = scrapeScavengeData(gameDoc);
+    let optionBases = data.optionsConfig;
+
+    let options = new Map();
+    for (let optionId of Object.keys(optionBases)) {
+        options.set(optionId, new ScavengeOption(optionBases[optionId]));
+    }
+    return options;
+}
+
 
 /**
  * @param {HTMLDocument} gameDoc 
@@ -107,6 +125,7 @@ function wrappedCode(string, firstParenIndex, openingChar = '(', closingChar = '
 
 
 export {
+    scrapeScavengeOptions,
     scrapeScavengeData,
     wrappedCode,
     findScavengeScreenJsCode,

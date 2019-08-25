@@ -1,0 +1,8 @@
+Another Scavenging Script
+author Nick Toby (cheesasaurus@gmail.com)
+
+use script on: game.php?screen=place&mode=scavenge (the scavenging screen)
+effect: fills in troops to scavenge with and focuses the buttons to start
+
+==== license ====
+Copyright (C) 2019  Nick Toby

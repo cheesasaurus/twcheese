@@ -126,6 +126,8 @@ describe('scrapeScavengeModels', function() {
         assert.equal(75, models.options.get(4).getLootPercent());
 
         assert.deepEqual(['spear', 'sword', 'axe', 'light', 'heavy', 'knight'], models.sendableTroopTypes);
+
+        assert.equal(1, models.haulFactor);
     });
 
 });

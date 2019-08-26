@@ -34,7 +34,7 @@ function scrapeUsableOptionIds(gameDoc) {
 
 /**
  * @param {HTMLDocument} gameDoc
- * @return {Map<number, ScavengeOption>}
+ * @return {object}
  */
 function scrapeScavengeModels(gameDoc) {
     let data = scrapeScavengeData(gameDoc);
@@ -47,7 +47,8 @@ function scrapeScavengeModels(gameDoc) {
 
     return {
         options,
-        sendableTroopTypes: Object.keys(data.troops)
+        sendableTroopTypes: Object.keys(data.troops),
+        haulFactor: data.village.unit_carry_factor
     };
 }
 

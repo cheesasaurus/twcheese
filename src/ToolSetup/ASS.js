@@ -14,7 +14,7 @@ import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/ASS
 
 
 let initialized = false;
-let troopsAssigner;
+let haulFactor, troopsAssigner;
 
 async function useTool() {
     if (!atScavengeScreen()) {
@@ -34,8 +34,9 @@ async function useTool() {
 async function init() {
     await ensureRemoteConfigsUpdated();
 
-    let { options, sendableTroopTypes } = scrapeScavengeModels(document);
-    troopsAssigner = new ScavengeTroopsAssigner(options, sendableTroopTypes, troopUtil);
+    let models = scrapeScavengeModels(document);
+    troopsAssigner = new ScavengeTroopsAssigner(models.options, models.sendableTroopTypes, troopUtil);
+    haulFactor = models.haulFactor;
 
     // todo: configure troopsAssigner
 
@@ -86,7 +87,6 @@ function prepareBestOption(informUserOfIssues = true) {
         return;
     }
     
-    let haulFactor = 1.0; // todo: actual factor
     let assignedTroopsByOption = troopsAssigner.assignTroops(usableOptionIds, availableTroops, haulFactor);
 
     let optionId = usableOptionIds[usableOptionIds.length - 1];
@@ -101,7 +101,6 @@ function focusStartButton(optionId) {
 
 
 function fillTroops(troopCounts) {
-    console.log('filling', troopCounts);
     troopCounts.each(function(troopType, count) {
         $(`.unitsInput[name='${troopType}']`)
             .val(count)

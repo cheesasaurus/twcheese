@@ -6,7 +6,8 @@ import {
     findVillageCode,
     scrapeScavengeData,
     scrapeScavengeModels,
-    scrapeAvailableTroopCounts
+    scrapeAvailableTroopCounts,
+    scrapeUsableOptionIds
 } from '/twcheese/src/Scrape/scavenge.js';
 
 import { ScavengeOption } from '/twcheese/src/Models/ScavengeOption.js';
@@ -144,5 +145,35 @@ describe('scrapeAvailableTroopCounts', function() {
         assert.equal(0, troopCounts.heavy);
         assert.equal(1, troopCounts.knight);
     });
+
+});
+
+
+describe('scrapeUsableOptionIds', function() {
+
+    it('should handle all usable', function() {
+        let content = domSample('scavenge/scavenging-screen-all-unlocked-all-usable');
+        assert.deepEqual([1, 2, 3, 4], scrapeUsableOptionIds(content));
+    });
+
+    it('should handle all unlocked, with none usable', function() {
+        let content = domSample('scavenge/scavenging-screen-all-unlocked-none-usable');
+        assert.deepEqual([], scrapeUsableOptionIds(content));
+    });
+
+    it('should handle all unlocked, with only first usable', function() {
+        let content = domSample('scavenge/scavenging-screen-all-unlocked-only-first-usable');
+        assert.deepEqual([1], scrapeUsableOptionIds(content));
+    });
+
+    it('should handle all unlocked, with only second usable', function() {
+        let content = domSample('scavenge/scavenging-screen-all-unlocked-only-second-usable');
+        assert.deepEqual([2], scrapeUsableOptionIds(content));
+    });
+
+    it('should handle all unlocked, with only first not usable', function() {
+        let content = domSample('scavenge/scavenging-screen-all-unlocked-first-not-usable');
+        assert.deepEqual([2, 3, 4], scrapeUsableOptionIds(content));
+    });    
 
 });

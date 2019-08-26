@@ -18,6 +18,22 @@ function scrapeAvailableTroopCounts(gameDoc) {
 
 /**
  * @param {HTMLDocument} gameDoc
+ * @return {int[]}
+ */
+function scrapeUsableOptionIds(gameDoc) {
+    let usableIds = [];
+
+    $(gameDoc).find('.scavenge-option').has('.free_send_button:not(.btn-disabled)').each(function() {
+        let [, id] = $(this).find('.portrait').css('background-image').match(/options\/(\d).png/);
+        usableIds.push(parseInt(id));
+    });
+
+    return usableIds;
+}
+
+
+/**
+ * @param {HTMLDocument} gameDoc
  * @return {Map<number, ScavengeOption>}
  */
 function scrapeScavengeModels(gameDoc) {
@@ -145,6 +161,7 @@ function wrappedCode(string, firstParenIndex, openingChar = '(', closingChar = '
 
 export {
     scrapeAvailableTroopCounts,
+    scrapeUsableOptionIds,
     scrapeScavengeModels,
     scrapeScavengeData,
     wrappedCode,

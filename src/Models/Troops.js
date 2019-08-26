@@ -68,6 +68,16 @@ class TroopCounts {
         return sum;
     }
 
+    /**
+     * @param {function} doSomething - receives two params: troopType and count
+     */
+    each(doSomething) {
+        for (let type of troopTypes) {
+            let count = this[type];
+            doSomething(type, count);
+        }
+    }
+
     carryCapacity() {
         let capacity = 0;
         for (let type of troopTypes) {

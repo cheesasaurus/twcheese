@@ -5,15 +5,19 @@ import { ScavengeOption } from '/twcheese/src/Models/ScavengeOption.js';
  * @param {HTMLDocument} gameDoc
  * @return {Map<number, ScavengeOption>}
  */
-function scrapeScavengeOptions(gameDoc) {
+function scrapeScavengeModels(gameDoc) {
     let data = scrapeScavengeData(gameDoc);
     let optionBases = data.optionsConfig;
 
     let options = new Map();
     for (let optionId of Object.keys(optionBases)) {
-        options.set(optionId, new ScavengeOption(optionBases[optionId]));
+        options.set(parseInt(optionId), new ScavengeOption(optionBases[optionId]));
     }
-    return options;
+
+    return {
+        options,
+        sendableTroopTypes: Object.keys(data.troops)
+    };
 }
 
 
@@ -125,7 +129,7 @@ function wrappedCode(string, firstParenIndex, openingChar = '(', closingChar = '
 
 
 export {
-    scrapeScavengeOptions,
+    scrapeScavengeModels,
     scrapeScavengeData,
     wrappedCode,
     findScavengeScreenJsCode,

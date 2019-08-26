@@ -3,11 +3,13 @@ import {
     findScavengeScreenJsCode,
     findScavengeScreenParamCode,
     parseScavengeScreenParamCode,
-    findVillageCode
+    findVillageCode,
+    scrapeScavengeData,
+    scrapeScavengeModels
 } from '/twcheese/src/Scrape/scavenge.js';
 
+import { ScavengeOption } from '/twcheese/src/Models/ScavengeOption.js';
 import { domSample } from '/twcheese/test/util.js';
-import { scrapeScavengeData } from '../../../src/Scrape/scavenge';
 const assert = require('assert');
 const fs = require('fs');
 
@@ -103,6 +105,24 @@ describe('scrapeScavengeData', function() {
         assert.equal('Spear fighter', data.troops.spear.name);
 
         assert.equal(200, data.village.options[1].scavenging_squad.unit_counts.spear);
+    });
+
+});
+
+
+describe('scrapeScavengeModels', function() {
+
+    it('should work', function() {
+        let content = domSample('scavenge/content-is-scavenging-screen');
+        let models = scrapeScavengeModels(content);
+        
+        assert(models.options instanceof Map);
+        assert.equal(10, models.options.get(1).getLootPercent());
+        assert.equal(25, models.options.get(2).getLootPercent());
+        assert.equal(50, models.options.get(3).getLootPercent());
+        assert.equal(75, models.options.get(4).getLootPercent());
+
+        assert.deepEqual(['spear', 'sword', 'axe', 'light', 'heavy', 'knight'], models.sendableTroopTypes);
     });
 
 });

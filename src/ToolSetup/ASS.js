@@ -1,14 +1,15 @@
 import { userConfig, ensureRemoteConfigsUpdated } from '/twcheese/src/Util/Config.js';
 import { suggestRedirect } from '/twcheese/src/Prompt/suggestRedirect.js';
 import { scrapeScavengeModels } from '/twcheese/src/Scrape/scavenge.js';
+import { troopUtil } from '/twcheese/src/Models/Troops.js';
+import { ScavengeTroopsAssigner } from '/twcheese/src/Models/ScavengeTroopsAssigner.js';
 import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.js';
-import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/BRE/Default.js';
+import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/ASS/Default.js';
+
 
 
 let initialized = false;
-let scavengeOptions;
-// todo: init ScavengeTroopsAssigner
-
+let troopsAssigner;
 
 // todo: need a function to scrape available troop counts
 
@@ -20,8 +21,8 @@ async function useTool() {
 
     if (!initialized) {
         await ensureRemoteConfigsUpdated();
-        scavengeOptions = scrapeScavengeModels(document).options;
-        console.log(scavengeOptions);
+        let { options, sendableTroopTypes } = scrapeScavengeModels(document);
+        troopsAssigner = new ScavengeTroopsAssigner(options, sendableTroopTypes, troopUtil);
         initialized = true;
     }
 

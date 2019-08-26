@@ -131,7 +131,11 @@ class ScavengeTroopsAssigner {
     chunkTroopsToHaul(targetCapacity, availableTroopCounts, allowedTroopTypes, haulFactor = 1.0) {
         let assignedTroopCounts = new TroopCounts();
         let capacities = {};
-        for (let chunk of this.preferences.troopOrder) {
+        for (let chunk of this.preferences.troopOrder) {            
+            if (targetCapacity < 0) {
+                break;
+            }
+            
             let availableCapacity = 0;
             for (let troopType of chunk) {
                 if (!allowedTroopTypes.includes(troopType)) {

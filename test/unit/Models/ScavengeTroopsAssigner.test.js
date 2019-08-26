@@ -70,8 +70,7 @@ describe('ScavengeTroopsAssigner.chunkTroopsToHaul', function() {
 
         let factor = 1.1;
         let targetCapacity = 50*25 * factor;
-        let allowedTroopTypes = ['spear'];
-        let assigned = assigner.chunkTroopsToHaul(targetCapacity, available, allowedTroopTypes, factor);
+        let assigned = assigner.chunkTroopsToHaul(targetCapacity, available, factor);
         assert.equal(50, assigned.spear);
     });
 
@@ -81,9 +80,8 @@ describe('ScavengeTroopsAssigner.chunkTroopsToHaul', function() {
         available.sword = 100;
 
         let targetCapacity = 20*25 + 20*15;
-        let allowedTroopTypes = ['spear', 'sword'];
 
-        let assigned = assigner.chunkTroopsToHaul(targetCapacity, available, allowedTroopTypes, 1);
+        let assigned = assigner.chunkTroopsToHaul(targetCapacity, available, 1);
         assert.equal(20, assigned.spear);
         assert.equal(20, assigned.sword);
     });
@@ -94,24 +92,10 @@ describe('ScavengeTroopsAssigner.chunkTroopsToHaul', function() {
         available.sword = 200;
 
         let targetCapacity = 20*25 + 40*15;
-        let allowedTroopTypes = ['spear', 'sword'];
 
-        let assigned = assigner.chunkTroopsToHaul(targetCapacity, available, allowedTroopTypes, 1);
+        let assigned = assigner.chunkTroopsToHaul(targetCapacity, available, 1);
         assert.equal(20, assigned.spear);
         assert.equal(40, assigned.sword);
-    });
-
-    it('should only assign allowed troop types', function() {
-        let available = new TroopCounts();
-        available.spear = 100;
-        available.sword = 100;
-
-        let targetCapacity = 50*25;
-        let allowedTroopTypes = ['spear'];
-
-        let assigned = assigner.chunkTroopsToHaul(targetCapacity, available, allowedTroopTypes, 1);
-        assert.equal(50, assigned.spear);
-        assert.equal(0, assigned.sword);
     });
 
     it('should assign offense troops first', function() {
@@ -122,9 +106,8 @@ describe('ScavengeTroopsAssigner.chunkTroopsToHaul', function() {
         available.light = 100;
 
         let targetCapacity = 1*25 + 1*15 + 100*10 + 100*80;
-        let allowedTroopTypes = ['spear', 'sword', 'axe', 'light'];
 
-        let assigned = assigner.chunkTroopsToHaul(targetCapacity, available, allowedTroopTypes, 1);
+        let assigned = assigner.chunkTroopsToHaul(targetCapacity, available, 1);
         assert.equal(1, assigned.spear);
         assert.equal(1, assigned.sword);
         assert.equal(100, assigned.axe);
@@ -140,8 +123,7 @@ describe('ScavengeTroopsAssigner.chunkTroopsToHaul', function() {
         available.heavy = 511;
 
         let targetCapacity = 16771;
-        let allowedTroopTypes = ['spear', 'sword', 'axe', 'light', 'heavy'];
-        let assigned = assigner.chunkTroopsToHaul(targetCapacity, available, allowedTroopTypes, 1);
+        let assigned = assigner.chunkTroopsToHaul(targetCapacity, available, 1);
         assigned.each(function(troopType, count) {
             assert.isAtLeast(count, 0, `${troopType} count should not be negative`);
         });

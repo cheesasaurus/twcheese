@@ -68,6 +68,8 @@ class ScavengeTroopsAssigner {
      * @param {float} haulFactor
      */
     assignTroops(usableOptionIds, availableTroopCounts, haulFactor = 1.0) {
+        availableTroopCounts = this.adjustAvailableTroopCounts(availableTroopCounts);
+        
         if (this.preferences.mode === ScavengeTroopsAssigner.MODE_ADDICT) {
             return this.assignTroopsForAddict(usableOptionIds, availableTroopCounts, haulFactor);
         }
@@ -82,7 +84,6 @@ class ScavengeTroopsAssigner {
      */
     assignTroopsForSanePerson(usableOptionIds, availableTroopCounts, haulFactor = 1.0) {
         let assignedCountsByOption = new Map();
-        let allowedTroopTypes = this.getAllowedTroopTypes();
         let optionIds = [...this.options.keys()].reverse();
 
         for (let optionId of optionIds) {
@@ -90,7 +91,7 @@ class ScavengeTroopsAssigner {
             if (usableOptionIds.includes(optionId)) {
                 let option = this.options.get(optionId);
                 let targetCapacity = option.calcTargetCapacity(this.preferences.targetDurationHours * 3600);
-                assignedCounts = this.chunkTroopsToHaul(targetCapacity, availableTroopCounts, allowedTroopTypes, haulFactor);
+                assignedCounts = this.chunkTroopsToHaul(targetCapacity, availableTroopCounts, haulFactor);
             } else {
                 assignedCounts = new TroopCounts();
             }            
@@ -109,10 +110,8 @@ class ScavengeTroopsAssigner {
      */
     assignTroopsForAddict(usableOptionIds, availableTroopCounts, haulFactor = 1.0) {
         let assignedCountsByOption = new Map();
-        let allowedTroopTypes = this.getAllowedTroopTypes();
         let optionIds = [...this.options.keys()].reverse();
 
-        availableTroopCounts = availableTroopCounts.filter(this.getAllowedTroopTypes());
         let availableCapacity = availableTroopCounts.carryCapacity() * haulFactor;
         let targetDurationSeconds = this.preferences.targetDurationHours * 3600;
 
@@ -138,7 +137,7 @@ class ScavengeTroopsAssigner {
                 let portionOfOptionFactors = inverseLootFactors[optionId] / inverseLootFactorSum;
                 let portionAvailableTroopsForOption = portionAvailableTroopsOverall * portionOfOptionFactors;
                 let targetCapacity = portionAvailableTroopsForOption * availableCapacity;
-                assignedCounts = this.chunkTroopsToHaul(targetCapacity, availableTroopCounts, allowedTroopTypes, haulFactor);
+                assignedCounts = this.chunkTroopsToHaul(targetCapacity, availableTroopCounts, haulFactor);
             } else {
                 assignedCounts = new TroopCounts();
             }            
@@ -149,7 +148,7 @@ class ScavengeTroopsAssigner {
         return assignedCountsByOption;
     }
 
-    chunkTroopsToHaul(targetCapacity, availableTroopCounts, allowedTroopTypes, haulFactor = 1.0) {
+    chunkTroopsToHaul(targetCapacity, availableTroopCounts, haulFactor = 1.0) {
         let assignedTroopCounts = new TroopCounts();
         let capacities = {};
         for (let chunk of this.preferences.troopOrder) {            
@@ -159,9 +158,6 @@ class ScavengeTroopsAssigner {
 
             let availableCapacity = 0;
             for (let troopType of chunk) {
-                if (!allowedTroopTypes.includes(troopType)) {
-                    continue;
-                }
                 let troopCount = availableTroopCounts[troopType];
                 capacities[troopType] = this.troopUtil.carryCapacity(troopType, haulFactor);
                 availableCapacity += troopCount * capacities[troopType];
@@ -169,9 +165,6 @@ class ScavengeTroopsAssigner {
             let chunkRatio = Math.min(1, targetCapacity / availableCapacity);
 
             for (let troopType of chunk) {
-                if (!allowedTroopTypes.includes(troopType)) {
-                    continue;
-                }
                 let troopCount = availableTroopCounts[troopType];                
                 assignedTroopCounts[troopType] = Math.round(troopCount * chunkRatio);
                 targetCapacity -= assignedTroopCounts[troopType] * capacities[troopType];

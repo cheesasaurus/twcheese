@@ -1,4 +1,19 @@
 import { ScavengeOption } from '/twcheese/src/Models/ScavengeOption.js';
+import { TroopCounts } from '/twcheese/src/Models/Troops.js';
+
+
+/**
+ * @param {HTMLDocument} gameDoc
+ * @return {TroopCounts}
+ */
+function scrapeAvailableTroopCounts(gameDoc) {
+    let availableCounts = new TroopCounts();
+    $(gameDoc).find('.units-entry-all').each(function() {
+        let troopType = this.dataset.unit;
+        availableCounts[troopType] = parseInt(this.innerHTML.match(/\d+/)[0]);
+    });
+    return availableCounts;
+}
 
 
 /**
@@ -129,6 +144,7 @@ function wrappedCode(string, firstParenIndex, openingChar = '(', closingChar = '
 
 
 export {
+    scrapeAvailableTroopCounts,
     scrapeScavengeModels,
     scrapeScavengeData,
     wrappedCode,

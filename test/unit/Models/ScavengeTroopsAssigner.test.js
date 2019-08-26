@@ -17,6 +17,51 @@ let sendableTroopTypes = ['spear', 'sword', 'axe', 'light', 'heavy', 'knight'];
 let assigner = new ScavengeTroopsAssigner(options, sendableTroopTypes, troopUtil);
 
 
+describe('ScavengeTroopsAssigner.adjustAvailableTroopCounts', function() {
+
+    afterEach(function resetTroopPreferences() {
+        assigner.initTroopPreferences();
+    });
+
+    it(`should remove troop types that aren't wanted to scavenge with`, function() {
+        assigner.preferences.troops.spear.maySend = false;
+
+        let available = new TroopCounts();
+        available.spear = 100;
+        available.sword = 100;
+
+        available = assigner.adjustAvailableTroopCounts(available);
+        assert.equal(0, available.spear);
+        assert.equal(100, available.sword);
+    });
+
+    it(`should subtract reserved troops`, function() {
+        assigner.preferences.troops.spear.reserved = 25;
+
+        let available = new TroopCounts();
+        available.spear = 100;
+        available.sword = 100;
+
+        available = assigner.adjustAvailableTroopCounts(available);
+        assert.equal(75, available.spear);
+        assert.equal(100, available.sword);
+    });
+
+    it(`should not result in negative troop counts`, function() {
+        assigner.preferences.troops.spear.reserved = 200;
+
+        let available = new TroopCounts();
+        available.spear = 100;
+        available.sword = 100;
+
+        available = assigner.adjustAvailableTroopCounts(available);
+        assert.equal(0, available.spear);
+        assert.equal(100, available.sword);
+    });
+
+});
+
+
 describe('ScavengeTroopsAssigner.chunkTroopsToHaul', function() {
 
     it('should handle buffed haul capacity', function() {

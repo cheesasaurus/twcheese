@@ -42,6 +42,27 @@ class ScavengeTroopsAssigner {
     }
 
     /**
+     * @return TroopCounts
+     */
+    getReservedTroopCounts() {
+        let troopCounts = new TroopCounts();
+        for (let troopType of this.sendableTroopTypes) {
+            troopCounts[troopType] = this.preferences.troops[troopType].reserved;
+        }
+        return troopCounts;
+    }
+
+    /**
+     * @return TroopCounts
+     */
+    adjustAvailableTroopCounts(availableTroopCounts) {
+        return availableTroopCounts
+            .filter(this.getAllowedTroopTypes())
+            .subtract(this.getReservedTroopCounts())
+            .zeroNegatives();
+    }
+
+    /**
      * @param {int[]} usableOptionIds 
      * @param {TroopCounts} availableTroopCounts
      * @param {float} haulFactor
@@ -135,7 +156,7 @@ class ScavengeTroopsAssigner {
             if (targetCapacity < 0) {
                 break;
             }
-            
+
             let availableCapacity = 0;
             for (let troopType of chunk) {
                 if (!allowedTroopTypes.includes(troopType)) {

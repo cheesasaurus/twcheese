@@ -119,6 +119,17 @@ class TroopCounts {
         return difference;
     }
 
+    /**
+     * get new TroopCounts, like this one but with any negative counts set to 0
+     */
+    zeroNegatives() {
+        let troopCounts = new TroopCounts();
+        for (let [troopType, count] of Object.entries(this)) {
+            troopCounts[troopType] = Math.max(0, count);
+        }
+        return troopCounts;
+    }
+
     toArray() {
         return troopTypes.map(type => this[type]);
     }

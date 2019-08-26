@@ -5,7 +5,8 @@ import {
     parseScavengeScreenParamCode,
     findVillageCode,
     scrapeScavengeData,
-    scrapeScavengeModels
+    scrapeScavengeModels,
+    scrapeAvailableTroopCounts
 } from '/twcheese/src/Scrape/scavenge.js';
 
 import { ScavengeOption } from '/twcheese/src/Models/ScavengeOption.js';
@@ -117,6 +118,7 @@ describe('scrapeScavengeModels', function() {
         let models = scrapeScavengeModels(content);
         
         assert(models.options instanceof Map);
+        assert(models.options.get(1) instanceof ScavengeOption);
         assert.equal(10, models.options.get(1).getLootPercent());
         assert.equal(25, models.options.get(2).getLootPercent());
         assert.equal(50, models.options.get(3).getLootPercent());
@@ -127,3 +129,20 @@ describe('scrapeScavengeModels', function() {
 
 });
 
+
+describe('scrapeAvailableTroopCounts', function() {
+
+    it('should work', function() {
+        let content = domSample('scavenge/content-is-scavenging-screen');
+
+        let troopCounts = scrapeAvailableTroopCounts(content);
+        assert.equal(0, troopCounts.spear);
+        assert.equal(9, troopCounts.sword);
+        assert.equal(0, troopCounts.axe);
+        assert.equal(0, troopCounts.spy);
+        assert.equal(6, troopCounts.light);
+        assert.equal(0, troopCounts.heavy);
+        assert.equal(1, troopCounts.knight);
+    });
+
+});

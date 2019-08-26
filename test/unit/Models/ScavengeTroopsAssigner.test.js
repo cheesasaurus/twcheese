@@ -1,7 +1,7 @@
 import { ScavengeOption } from '/twcheese/src/Models/ScavengeOption.js';
 import { ScavengeTroopsAssigner } from '/twcheese/src/Models/ScavengeTroopsAssigner.js';
 import { troopUtil, TroopCounts } from '/twcheese/src/Models/Troops.js';
-const assert = require('assert');
+const assert = require('chai').assert;
 const fs = require('fs');
 
 let optionBasesCode = fs.readFileSync(`test/data/html/scavenge/scavenge-option-bases-code`).toString();
@@ -84,6 +84,22 @@ describe('ScavengeTroopsAssigner.chunkTroopsToHaul', function() {
         assert.equal(1, assigned.sword);
         assert.equal(100, assigned.axe);
         assert.equal(100, assigned.light);
+    });
+
+    it('should not assign negative counts in later chunks when earlier chunks go over targetCapacity', function() {
+        let available = new TroopCounts();
+        available.spear = 1122;
+        available.sword = 903;
+        available.axe = 3590;
+        available.light = 2023;
+        available.heavy = 511;
+
+        let targetCapacity = 16771;
+        let allowedTroopTypes = ['spear', 'sword', 'axe', 'light', 'heavy'];
+        let assigned = assigner.chunkTroopsToHaul(targetCapacity, available, allowedTroopTypes, 1);
+        assigned.each(function(troopType, count) {
+            assert.isAtLeast(count, 0, `${troopType} count should not be negative`);
+        });
     });
 
 });

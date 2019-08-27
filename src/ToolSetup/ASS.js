@@ -38,7 +38,13 @@ async function init() {
     troopsAssigner = new ScavengeTroopsAssigner(models.options, models.sendableTroopTypes, troopUtil);
     haulFactor = models.haulFactor;
 
-    // todo: configure troopsAssigner
+    let exportedPreferences = userConfig.get('ASS.troopsAssigner');
+    if (exportedPreferences) {
+        troopsAssigner.preferences.import(exportedPreferences);
+    }
+    $(troopsAssigner.preferences).on('change', function() {
+        userConfig.set('ASS.troopsAssigner', troopsAssigner.preferences.export());
+    });    
 
     initCss(`
         .free_send_button:focus {

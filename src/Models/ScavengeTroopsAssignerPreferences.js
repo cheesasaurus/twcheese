@@ -27,6 +27,11 @@ class ScavengeTroopsAssignerPreferences {
         }
     }
 
+    setMode(mode) {
+        this.mode = mode;
+        $(this).trigger('change');
+    }
+
     isOptionAllowed(optionId) {
         return this.allowedOptionIds.has(optionId);
     }

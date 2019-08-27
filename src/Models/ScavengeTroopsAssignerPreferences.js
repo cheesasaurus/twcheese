@@ -40,6 +40,11 @@ class ScavengeTroopsAssignerPreferences {
         $(this).trigger('change');
     }
 
+    setTargetDuration(seconds) {
+        this.targetDurationSeconds = seconds;
+        $(this).trigger('change');
+    }
+
     /**
      * @return {string[]}
      */

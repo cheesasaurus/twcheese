@@ -20,6 +20,7 @@ class ScavengePreferencesWidget extends AbstractWidget {
 
     initStructure() {
         this.$el = $(this.createHtml().trim());
+        this.$targetDuration = this.$el.find('.target-duration');
         this.$options = this.$el.find('.options-section input');
         // todo
     }
@@ -27,11 +28,42 @@ class ScavengePreferencesWidget extends AbstractWidget {
     createHtml() {
         return `<div class="twcheese-scavenge-preferences-widget">
             <h3>Preferences</h3>
-
+            ${this.createTimingSectionHtml()}
+            <br/>
             ${this.createOptionsSectionHtml()}
 
         </div>`;
         // todo
+    }
+
+    createTimingSectionHtml() {
+        let overallSeconds = this.preferences.targetDurationSeconds;
+        let hours = Math.floor(overallSeconds / 3600);
+        let minutes = String(Math.floor(overallSeconds / 60) % 60).padStart(2, '0');
+        let pattern = "\\d+:\\d{2}";
+
+        return `
+            <table class="vis timing-section">
+                <tr><th>Timing</th></tr>
+                <tr>
+                    <td>
+                        Target duration:
+                        <input type="text" class="target-duration" value="${hours}:${minutes}" placeholder="2:00" required pattern="${pattern}">
+                        hours:minutes
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="radio" name="mode" value="${ScavengeTroopsAssignerPreferences.MODE_SANE_PERSON}">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="radio" name="mode" value="${ScavengeTroopsAssignerPreferences.MODE_ADDICT}">
+                    </td>
+                </tr>
+            </table>
+        `;
     }
 
     createOptionsSectionHtml() {
@@ -66,6 +98,23 @@ class ScavengePreferencesWidget extends AbstractWidget {
     watchSelf() {
         let prefs = this.preferences;
 
+        this.$targetDuration.on('change', function() {
+            if (!this.checkValidity()) {
+                return;
+            }
+            let [, hours, minutes] = this.value.match(/(\d+):(\d+)/);
+
+            let durationSeconds = parseInt(hours)*3600 + parseInt(minutes)*60;
+            if (durationSeconds < 3600) {
+                this.setCustomValidity('must be at least 1 hour');
+                return;
+            } else {
+                this.setCustomValidity('');
+            }
+
+            prefs.setTargetDuration(durationSeconds);
+        });
+
         this.$options.on('change', function() {
             let $option = $(this);
             prefs.setOptionAllowed($option.data('optionId'), $option.prop('checked'));
@@ -78,7 +127,16 @@ class ScavengePreferencesWidget extends AbstractWidget {
 
 
 initCss(`
-    .twcheese-scavenge-preferences-widget td {
+    .twcheese-scavenge-preferences-widget .options-section,
+    .twcheese-scavenge-preferences-widget .timing-section {
+        width: 100%;
+    }
+
+    .twcheese-scavenge-preferences-widget .target-duration {
+        width: 50px;
+    }
+
+    .twcheese-scavenge-preferences-widget .options-section td {
         height: 22px;
     }
 

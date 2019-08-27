@@ -57,6 +57,24 @@ class ScavengeTroopsAssignerPreferences {
         return troopCounts;
     }
 
+    export() {
+        return {
+            mode: this.mode,
+            allowedOptionIds: [...this.allowedOptionIds.values()],
+            targetDurationSeconds: this.targetDurationSeconds,
+            troops: this.troops,
+            troopOrder: this.troopOrder
+        }
+    }
+
+    import(exported) {
+        this.mode = exported.mode;
+        this.allowedOptionIds = new Set([exported.allowedOptionIds]);
+        this.targetDurationSeconds = exported.targetDurationSeconds;
+        this.troops = exported.troops;
+        this.troopOrder = exported.troopOrder;
+    }
+
 }
 
 ScavengeTroopsAssignerPreferences.MODE_SANE_PERSON = 'sane_person';

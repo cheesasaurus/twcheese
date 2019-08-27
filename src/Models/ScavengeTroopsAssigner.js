@@ -33,6 +33,14 @@ class ScavengeTroopsAssigner {
     }
 
     /**
+     * @param {TroopCounts} availableTroopCounts 
+     */
+    areTroopsSufficient(availableTroopCounts) {
+        availableTroopCounts = this.adjustAvailableTroopCounts(availableTroopCounts);
+        return availableTroopCounts.populationUsed() >= 10;
+    }
+
+    /**
      * @param {int[]} usableOptionIds 
      * @param {TroopCounts} availableTroopCounts
      * @param {float} haulFactor

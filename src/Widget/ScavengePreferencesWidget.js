@@ -22,6 +22,7 @@ class ScavengePreferencesWidget extends AbstractWidget {
         this.$el = $(this.createHtml().trim());
         this.$targetDuration = this.$el.find('.target-duration');
         this.$options = this.$el.find('.options-section input');
+        this.$modes = this.$el.find(`input[name='mode']`);
         // todo
     }
 
@@ -40,7 +41,13 @@ class ScavengePreferencesWidget extends AbstractWidget {
         let overallSeconds = this.preferences.targetDurationSeconds;
         let hours = Math.floor(overallSeconds / 3600);
         let minutes = String(Math.floor(overallSeconds / 60) % 60).padStart(2, '0');
-        let pattern = "\\d+:\\d{2}";
+        let durationPattern = "\\d+:\\d{2}";
+
+        let mode = this.preferences.mode;
+        let modeSane = ScavengeTroopsAssignerPreferences.MODE_SANE_PERSON;
+        let modeAddict = ScavengeTroopsAssignerPreferences.MODE_ADDICT;        
+        let checkSane = (mode === modeSane) ? 'checked' : '';
+        let checkAddict = (mode === modeAddict) ? 'checked' : '';
 
         return `
             <table class="vis timing-section">
@@ -48,18 +55,22 @@ class ScavengePreferencesWidget extends AbstractWidget {
                 <tr>
                     <td>
                         Target duration:
-                        <input type="text" class="target-duration" value="${hours}:${minutes}" placeholder="2:00" required pattern="${pattern}">
+                        <input type="text" class="target-duration" value="${hours}:${minutes}" placeholder="2:00" required pattern="${durationPattern}">
                         hours:minutes
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <input type="radio" name="mode" value="${ScavengeTroopsAssignerPreferences.MODE_SANE_PERSON}">
+                        <input type="radio" name="mode" value="${modeSane}" ${checkSane}>
+                        Max-out duration of best options first.
+                        <br/><span class="hint">(recommended if you'll be afk)</span>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <input type="radio" name="mode" value="${ScavengeTroopsAssignerPreferences.MODE_ADDICT}">
+                        <input type="radio" name="mode" value="${modeAddict}" ${checkAddict}>
+                        Aim for same duration across all options.
+                        <br/><span class="hint">(recommended if you can immediately resend whenever)</span>
                     </td>
                 </tr>
             </table>
@@ -120,6 +131,11 @@ class ScavengePreferencesWidget extends AbstractWidget {
             prefs.setOptionAllowed($option.data('optionId'), $option.prop('checked'));
         });
 
+        this.$modes.on('change', () => {
+            let mode = this.$modes.filter(':checked').val();
+            prefs.setMode(mode);
+        });
+
         // todo
     }
 
@@ -134,6 +150,11 @@ initCss(`
 
     .twcheese-scavenge-preferences-widget .target-duration {
         width: 50px;
+    }
+
+    .twcheese-scavenge-preferences-widget .timing-section .hint {
+        font-size: x-small;
+        margin-left: 25px;
     }
 
     .twcheese-scavenge-preferences-widget .options-section td {

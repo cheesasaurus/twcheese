@@ -88,10 +88,12 @@ function insertPreferencesLauncher() {
 
 
 function openPreferencesPopup() {
+    let onClose = prepareBestOption;
+
     Dialog.show('twcheese-scavenge-preferences-popup', function($container) {        
-        let widget = new ScavengePreferencesWidget(troopsAssigner.preferences, scavengeOptions);
+        let widget = new ScavengePreferencesWidget(troopsAssigner.preferences, scavengeOptions, troopsAssigner.sendableTroopTypes);
         widget.appendTo($container);
-    });
+    }, onClose);
 }
 
 

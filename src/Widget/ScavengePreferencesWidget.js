@@ -9,11 +9,13 @@ class ScavengePreferencesWidget extends AbstractWidget {
     /**
      * @param {ScavengeTroopsAssignerPreferences} preferences
      * @param {Map<ScavengeOption>} scavengeOptions
+     * @param {string[]} sendableTroopTypes
      */
-    constructor(preferences, scavengeOptions) {
+    constructor(preferences, scavengeOptions, sendableTroopTypes) {
         super();
         this.preferences = preferences;
         this.scavengeOptions = scavengeOptions;
+        this.sendableTroopTypes = sendableTroopTypes;
         this.initStructure();
         this.watchSelf();
     }
@@ -23,6 +25,8 @@ class ScavengePreferencesWidget extends AbstractWidget {
         this.$targetDuration = this.$el.find('.target-duration');
         this.$options = this.$el.find('.options-section input');
         this.$modes = this.$el.find(`input[name='mode']`);
+        this.$troopsAllowed = this.$el.find('.troop-allowed');
+        this.$troopsReserved = this.$el.find('.troop-reserved');
         // todo
     }
 
@@ -32,6 +36,13 @@ class ScavengePreferencesWidget extends AbstractWidget {
             ${this.createTimingSectionHtml()}
             <br/>
             ${this.createOptionsSectionHtml()}
+            <br/>
+            <table style="width: 100%;">
+                <tr>
+                    <td>${this.createTroopsSectionHtml()}</td>
+                    <td>${this.createTroopsOrderSectionHtml()}</td>
+                </tr>
+            </table>
 
         </div>`;
         // todo
@@ -106,6 +117,41 @@ class ScavengePreferencesWidget extends AbstractWidget {
         </tr>`;
     }
 
+    createTroopsSectionHtml() {
+        // todo
+        return `
+            <table class="vis troops-section">
+                <tr>
+                    <th>Use</th>
+                    <th>Reserved</th>
+                </tr>
+                ${this.sendableTroopTypes.map(type => this.createTroopRowHtml(type)).join('')}
+            </table>
+        `;
+    }
+
+    createTroopRowHtml(troopType) {
+        let checked = this.preferences.isTroopTypeAllowed(troopType) ? 'checked' : '';
+        let reservedCount = this.preferences.getReservedCount(troopType);
+        
+        return `<tr>
+            <td>
+                <input class="troop-allowed" type="checkbox" value="${troopType}" ${checked}>
+                <img src="${ImageSrc.troopIcon(troopType)}">
+            </td>
+            <td><input class="troop-reserved" data-troop-type="${troopType}" type="number" min="0" value="${reservedCount}"></td>
+        </tr>`;
+    }
+
+    createTroopsOrderSectionHtml() {
+        // todo
+        return `
+            <table class="vis troop-order-section">
+                <tr><th>Order</th></tr>
+            </table>
+        `;
+    }
+
     watchSelf() {
         let prefs = this.preferences;
 
@@ -136,6 +182,18 @@ class ScavengePreferencesWidget extends AbstractWidget {
             prefs.setMode(mode);
         });
 
+        this.$troopsAllowed.on('change', function() {
+            let $this = $(this);
+            prefs.setTroopAllowed($this.val(), $this.prop('checked'));
+        });
+
+        this.$troopsReserved.on('input', function() {
+            if (!this.checkValidity()) {
+                return;
+            }
+            prefs.setReservedCount(this.dataset.troopType, this.value);
+        });
+
         // todo
     }
 
@@ -143,9 +201,13 @@ class ScavengePreferencesWidget extends AbstractWidget {
 
 
 initCss(`
+
     .twcheese-scavenge-preferences-widget .options-section,
-    .twcheese-scavenge-preferences-widget .timing-section {
+    .twcheese-scavenge-preferences-widget .timing-section,
+    .twcheese-scavenge-preferences-widget .troops-section,
+    .twcheese-scavenge-preferences-widget .troop-order-section {
         width: 100%;
+        /*background-color: #edd8ad;*/
     }
 
     .twcheese-scavenge-preferences-widget .target-duration {
@@ -170,6 +232,19 @@ initCss(`
         vertical-align: middle;
         width: 18px;
         height: 18px;
+    }
+
+    .twcheese-scavenge-preferences-widget .troops-section td {
+        height: 26px;
+    }
+
+    .twcheese-scavenge-preferences-widget .troops-section td:first-child {
+        width: 45px;
+    }   
+
+    .twcheese-scavenge-preferences-widget .troops-section img,
+    .twcheese-scavenge-preferences-widget .troops-section input {
+        vertical-align: middle;
     }
     
 `);

@@ -57,6 +57,15 @@ class ScavengeTroopsAssignerPreferences {
         return this._sendableTroopTypes.filter(troopType => this.troops[troopType].maySend);
     }
 
+    isTroopTypeAllowed(troopType) {
+        return this.troops[troopType].maySend;
+    }
+
+    setTroopAllowed(troopType, isAllowed) {
+        this.troops[troopType].maySend = isAllowed;
+        $(this).trigger('change');
+    }
+
     /**
      * @return TroopCounts
      */
@@ -66,6 +75,15 @@ class ScavengeTroopsAssignerPreferences {
             troopCounts[troopType] = this.troops[troopType].reserved;
         }
         return troopCounts;
+    }
+
+    getReservedCount(troopType) {
+        return this.troops[troopType].reserved;
+    }
+
+    setReservedCount(troopType, count) {
+        this.troops[troopType].reserved = count;
+        $(this).trigger('change');
     }
 
     export() {

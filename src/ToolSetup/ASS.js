@@ -8,13 +8,14 @@ import {
 } from '/twcheese/src/Scrape/scavenge.js';
 import { troopUtil } from '/twcheese/src/Models/Troops.js';
 import { ScavengeTroopsAssigner } from '/twcheese/src/Models/ScavengeTroopsAssigner.js';
+import { ScavengePreferencesWidget } from '/twcheese/src/Widget/ScavengePreferencesWidget.js';
 import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.js';
 import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/ASS/Default.js';
 
 
 
 let initialized = false;
-let haulFactor, troopsAssigner;
+let haulFactor, troopsAssigner, scavengeOptions;
 
 async function useTool() {
     if (!atScavengeScreen()) {
@@ -44,7 +45,9 @@ async function init() {
     }
     $(troopsAssigner.preferences).on('change', function() {
         userConfig.set('ASS.troopsAssigner', troopsAssigner.preferences.export());
-    });    
+    });
+    scavengeOptions = models.options;
+    insertPreferencesLauncher();
 
     initCss(`
         .free_send_button:focus {
@@ -76,8 +79,25 @@ function suggestRedirectToScavengeScreen() {
 }
 
 
+function insertPreferencesLauncher() {
+    let $launcher = $(`<a href="#" style="font-size: small; margin-left: 20px;">&raquo; preferences</a>`)
+        .on('click', openPreferencesPopup);
+
+    $('#content_value').find('h3').eq(0).append($launcher);
+}
+
+
+function openPreferencesPopup() {
+    Dialog.show('twcheese-scavenge-preferences-popup', function($container) {        
+        let widget = new ScavengePreferencesWidget(troopsAssigner.preferences, scavengeOptions);
+        widget.appendTo($container);
+    });
+}
+
+
 function prepareBestOption(informUserOfIssues = true) {
     let usableOptionIds = scrapeUsableOptionIds(document);
+    usableOptionIds = troopsAssigner.adjustUsableOptionIds(usableOptionIds);
     if (usableOptionIds.length < 1) {
         if (informUserOfIssues) {
             window.UI.ErrorMessage(`Can't scavenge with this village right now`);

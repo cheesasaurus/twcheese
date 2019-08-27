@@ -37,6 +37,7 @@ class ScavengeTroopsAssignerPreferences {
         } else {
             this.allowedOptionIds.delete(optionId);
         }
+        $(this).trigger('change');
     }
 
     /**
@@ -69,7 +70,7 @@ class ScavengeTroopsAssignerPreferences {
 
     import(exported) {
         this.mode = exported.mode;
-        this.allowedOptionIds = new Set([exported.allowedOptionIds]);
+        this.allowedOptionIds = new Set(exported.allowedOptionIds);
         this.targetDurationSeconds = exported.targetDurationSeconds;
         this.troops = exported.troops;
         this.troopOrder = exported.troopOrder;

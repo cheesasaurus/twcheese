@@ -4,6 +4,11 @@ class ScavengeOption {
 
     constructor(base) {
         this.base = base;
+        this.id = base.id;
+    }
+
+    getName() {
+        return this.base.name;
     }
 
     getLootPercent() {

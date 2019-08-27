@@ -78,6 +78,35 @@ describe('ScavengeTroopsAssigner.adjustUsableOptionIds', function() {
 });
 
 
+describe('ScavengeTroopsAssigner.areTroopsSufficient', function() {
+
+    it('should handle not enough 1-pop troops', function() {
+        let available = new TroopCounts();
+        available.spear = 9;
+        assert.isFalse(assigner.areTroopsSufficient(available));
+    });
+
+    it('should handle enough 1-pop troops', function() {
+        let available = new TroopCounts();
+        available.spear = 10;
+        assert.isTrue(assigner.areTroopsSufficient(available));
+    });
+
+    it('should handle not enough multi-pop troops', function() {
+        let available = new TroopCounts();
+        available.light = 2;
+        assert.isFalse(assigner.areTroopsSufficient(available));
+    });
+
+    it('should handle enough multi-pop troops', function() {
+        let available = new TroopCounts();
+        available.light = 3;
+        assert.isTrue(assigner.areTroopsSufficient(available));
+    });
+
+});
+
+
 describe('ScavengeTroopsAssigner.chunkTroopsToHaul', function() {
 
     it('should handle buffed haul capacity', function() {

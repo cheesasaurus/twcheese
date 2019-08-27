@@ -86,7 +86,7 @@ function prepareBestOption(informUserOfIssues = true) {
     }
 
     let availableTroops = scrapeAvailableTroopCounts(document);
-    if (availableTroops.sum() < 1) { // todo: check at least 10 usable pop available according to assigner preferences
+    if (!troopsAssigner.areTroopsSufficient(availableTroops)) {
         if (informUserOfIssues) {
             window.UI.ErrorMessage(`Not enough troops available to scavenge right now`);
         }

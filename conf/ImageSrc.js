@@ -39,7 +39,8 @@ let ImageSrc = {
     },    
     buildingIcon: buildingType => game + `buildings/${buildingType}.png`,
     troopIcon: troopType => game + `unit/unit_${troopType}.png`,
-    dotIcon: color => game + `dots/${color}.png`
+    dotIcon: color => game + `dots/${color}.png`,
+    scavengeOption: optionId => game + `scavenging/options/${optionId}.png`,
 };
 
 export { ImageSrc };

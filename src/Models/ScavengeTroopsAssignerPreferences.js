@@ -13,7 +13,8 @@ class ScavengeTroopsAssignerPreferences {
         this.troopOrder = [
             ['axe', 'light', 'marcher'], // first chunk (sent together)
             ['spear', 'sword', 'archer'], // second chunk (sent together)
-            ['heavy'] // third chunk
+            ['heavy'], // third chunk
+            ['knight']
         ];
     }
 
@@ -83,6 +84,11 @@ class ScavengeTroopsAssignerPreferences {
 
     setReservedCount(troopType, count) {
         this.troops[troopType].reserved = count;
+        $(this).trigger('change');
+    }
+
+    setTroopOrder(troopOrder) {
+        this.troopOrder = troopOrder;
         $(this).trigger('change');
     }
 

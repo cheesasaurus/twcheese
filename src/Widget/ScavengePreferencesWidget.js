@@ -1,5 +1,6 @@
 import { AbstractWidget } from '/twcheese/src/Widget/AbstractWidget.js';
 import { ScavengeTroopsAssignerPreferences } from '/twcheese/src/Models/ScavengeTroopsAssignerPreferences.js';
+import { troopUtil } from '/twcheese/src/Models/Troops.js';
 import { ImageSrc } from '/twcheese/conf/ImageSrc.js';
 import { initCss } from '/twcheese/src/Util/UI.js';
 
@@ -17,6 +18,7 @@ class ScavengePreferencesWidget extends AbstractWidget {
         this.scavengeOptions = scavengeOptions;
         this.sendableTroopTypes = sendableTroopTypes;
         this.initStructure();
+        this.initTroopOrder();
         this.watchSelf();
     }
 
@@ -27,6 +29,7 @@ class ScavengePreferencesWidget extends AbstractWidget {
         this.$modes = this.$el.find(`input[name='mode']`);
         this.$troopsAllowed = this.$el.find('.troop-allowed');
         this.$troopsReserved = this.$el.find('.troop-reserved');
+        this.$troopGroups = this.$el.find('.troop-group');
         // todo
     }
 
@@ -40,6 +43,7 @@ class ScavengePreferencesWidget extends AbstractWidget {
             <table style="width: 100%;">
                 <tr>
                     <td>${this.createTroopsSectionHtml()}</td>
+                    <td style="width: 20px;"></td>
                     <td>${this.createTroopsOrderSectionHtml()}</td>
                 </tr>
             </table>
@@ -72,16 +76,20 @@ class ScavengePreferencesWidget extends AbstractWidget {
                 </tr>
                 <tr>
                     <td>
-                        <input type="radio" name="mode" value="${modeSane}" ${checkSane}>
-                        Max-out duration of best options first.
-                        <br/><span class="hint">(recommended if you'll be afk)</span>
+                        <label>
+                            <input type="radio" name="mode" value="${modeSane}" ${checkSane}>
+                            Max-out duration of best options first.
+                            <br/><span class="hint">(recommended if you'll be afk)</span>
+                        </label>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <input type="radio" name="mode" value="${modeAddict}" ${checkAddict}>
-                        Aim for same duration across all options.
-                        <br/><span class="hint">(recommended if you can immediately resend whenever)</span>
+                        <label>
+                            <input type="radio" name="mode" value="${modeAddict}" ${checkAddict}>
+                            Aim for same duration across all options.
+                            <br/><span class="hint">(recommended if you can immediately resend whenever)</span>
+                        </label>    
                     </td>
                 </tr>
             </table>
@@ -148,8 +156,76 @@ class ScavengePreferencesWidget extends AbstractWidget {
         return `
             <table class="vis troop-order-section">
                 <tr><th>Order</th></tr>
+                ${this.sendableTroopTypes.map(() => '<tr><td><div class="troop-group"></div></td></tr>').join('')}
             </table>
         `;
+    }
+
+    initTroopOrder() {
+        for (let [i, chunk] of Object.entries(this.preferences.troopOrder)) {
+            let $group = this.$troopGroups.eq(i);
+            for (let troopType of chunk) {
+                if (!troopUtil.existsOnWorld(troopType)) { // todo: this is dirty. the preferences shouldn't be initialized with invalid troop types
+                    continue;
+                }
+                let $troopType = $(`<img class="troop" draggable="true" data-troop-type="${troopType}" src="${ImageSrc.troopIcon(troopType)}">`);
+                $group.append($troopType);
+            }
+        }
+
+        let $draggingTroop;
+
+        this.$troopGroups
+            .on('dragover', function(e) {
+                e.preventDefault(); // allows dropping
+            })
+            .on('dragenter', function(e) {
+                $(this).addClass('dragging-over');
+            })
+            .on('dragleave', function(e) {
+                $(this).removeClass('dragging-over');
+            })
+            .on('drop', function(e) {
+                e.preventDefault();
+                $(this).append($draggingTroop);
+                $(this).removeClass('dragging-over');
+                updateTroopOrderPreferences();
+            });
+
+        this.$troopGroups.find('.troop')
+            .on('dragstart', function(e) {
+                let dt = e.originalEvent.dataTransfer;
+                $draggingTroop = $(this);
+                dt.setDragImage($draggingTroop.clone()[0], 0, 0);
+                dt.dropEffect = 'move';
+                $draggingTroop.addClass('dragging');
+            })
+            .on('dragend', function(e) {
+                $draggingTroop.removeClass('dragging');
+                $draggingTroop = null;
+            });
+
+        let updateTroopOrderPreferences = () => {
+            let order = determineTroopOrder();
+            this.preferences.setTroopOrder(order);
+        }
+
+        let determineTroopOrder = () => {
+            let chunks = [];
+            this.$troopGroups.each(function() {
+                let $group = $(this);
+                let $troops = $group.find('.troop');
+                if ($troops.length < 1) {
+                    return;
+                }
+                let chunk = [];
+                $troops.each(function() {
+                    chunk.push($(this).data('troopType'));
+                });
+                chunks.push(chunk);
+            });            
+            return chunks;
+        }
     }
 
     watchSelf() {
@@ -193,8 +269,6 @@ class ScavengePreferencesWidget extends AbstractWidget {
             }
             prefs.setReservedCount(this.dataset.troopType, this.value);
         });
-
-        // todo
     }
 
 }
@@ -219,6 +293,10 @@ initCss(`
         margin-left: 25px;
     }
 
+    .twcheese-scavenge-preferences-widget .timing-section input[type='radio'] {
+        vertical-align: middle;
+    }
+
     .twcheese-scavenge-preferences-widget .options-section td {
         height: 22px;
     }
@@ -234,7 +312,8 @@ initCss(`
         height: 18px;
     }
 
-    .twcheese-scavenge-preferences-widget .troops-section td {
+    .twcheese-scavenge-preferences-widget .troops-section td,
+    .twcheese-scavenge-preferences-widget .troop-order-section td {
         height: 26px;
     }
 
@@ -245,6 +324,39 @@ initCss(`
     .twcheese-scavenge-preferences-widget .troops-section img,
     .twcheese-scavenge-preferences-widget .troops-section input {
         vertical-align: middle;
+    }
+
+    .twcheese-scavenge-preferences-widget .troop-reserved {
+        width: 50px;
+    }
+
+    .twcheese-scavenge-preferences-widget .troop-group {
+        position: relative;
+        border: 1px solid black;
+        border-radius: 3px;
+        height: 18px;
+        width: 176px;
+        padding: 3px;
+    }
+
+    .twcheese-scavenge-preferences-widget .troop-group.dragging-over {
+        background-color: darkOrange;
+    }
+
+    .twcheese-scavenge-preferences-widget .troop {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        cursor: move;
+        margin: 0 3px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    .twcheese-scavenge-preferences-widget .troop.dragging {
+        opacity: 0.1;
     }
     
 `);

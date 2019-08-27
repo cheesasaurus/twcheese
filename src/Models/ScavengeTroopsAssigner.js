@@ -27,13 +27,21 @@ class ScavengeTroopsAssigner {
 
     /**
      * @param {int[]} usableOptionIds 
+     */
+    adjustUsableOptionIds(usableOptionIds) {
+        return usableOptionIds.filter(optionId => this.preferences.isOptionAllowed(optionId));
+    }
+
+    /**
+     * @param {int[]} usableOptionIds 
      * @param {TroopCounts} availableTroopCounts
      * @param {float} haulFactor
      */
     assignTroops(usableOptionIds, availableTroopCounts, haulFactor = 1.0) {
+        usableOptionIds = this.adjustUsableOptionIds(usableOptionIds);
         availableTroopCounts = this.adjustAvailableTroopCounts(availableTroopCounts);
 
-        if (this.preferences.mode === ScavengeTroopsAssigner.MODE_ADDICT) {
+        if (this.preferences.mode === ScavengeTroopsAssignerPreferences.MODE_ADDICT) {
             return this.assignTroopsForAddict(usableOptionIds, availableTroopCounts, haulFactor);
         }
         return this.assignTroopsForSanePerson(usableOptionIds, availableTroopCounts, haulFactor);
@@ -137,9 +145,6 @@ class ScavengeTroopsAssigner {
     }
 
 }
-
-ScavengeTroopsAssigner.MODE_SANE_PERSON = 'sane_person';
-ScavengeTroopsAssigner.MODE_ADDICT = 'addict'
 
 
 export { ScavengeTroopsAssigner };

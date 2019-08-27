@@ -7,6 +7,7 @@ class ScavengeTroopsAssignerPreferences {
         this._sendableTroopTypes = sendableTroopTypes;
 
         this.mode = ScavengeTroopsAssignerPreferences.MODE_SANE_PERSON;
+        this.allowedOptionIds = new Set([1, 2, 3, 4]);
         this.targetDurationSeconds = 2 * 3600;
         this.initTroops();
         this.troopOrder = [
@@ -23,6 +24,18 @@ class ScavengeTroopsAssignerPreferences {
                 maySend: true,
                 reserved: 0
             };
+        }
+    }
+
+    isOptionAllowed(optionId) {
+        return this.allowedOptionIds.has(optionId);
+    }
+
+    setOptionAllowed(optionId, isAllowed = true) {
+        if (isAllowed) {
+            this.allowedOptionIds.add(optionId);
+        } else {
+            this.allowedOptionIds.delete(optionId);
         }
     }
 

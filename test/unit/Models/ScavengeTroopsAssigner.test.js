@@ -1,5 +1,6 @@
 import { ScavengeOption } from '/twcheese/src/Models/ScavengeOption.js';
 import { ScavengeTroopsAssigner } from '/twcheese/src/Models/ScavengeTroopsAssigner.js';
+import { ScavengeTroopsAssignerPreferences } from '/twcheese/src/Models/ScavengeTroopsAssignerPreferences.js';
 import { troopUtil, TroopCounts } from '/twcheese/src/Models/Troops.js';
 const assert = require('chai').assert;
 const fs = require('fs');
@@ -19,8 +20,8 @@ let assigner = new ScavengeTroopsAssigner(options, sendableTroopTypes, troopUtil
 
 describe('ScavengeTroopsAssigner.adjustAvailableTroopCounts', function() {
 
-    afterEach(function resetTroopPreferences() {
-        assigner.preferences.initTroops();
+    afterEach(function resetPreferences() {
+        assigner.preferences = new ScavengeTroopsAssignerPreferences(sendableTroopTypes);
     });
 
     it(`should remove troop types that aren't wanted to scavenge with`, function() {
@@ -57,6 +58,21 @@ describe('ScavengeTroopsAssigner.adjustAvailableTroopCounts', function() {
         available = assigner.adjustAvailableTroopCounts(available);
         assert.equal(0, available.spear);
         assert.equal(100, available.sword);
+    });
+
+});
+
+
+describe('ScavengeTroopsAssigner.adjustUsableOptionIds', function() {
+
+    afterEach(function resetPreferences() {
+        assigner.preferences = new ScavengeTroopsAssignerPreferences(sendableTroopTypes);
+    });
+
+    it(`should remove options that aren't wanted to be used`, function() {
+        assigner.preferences.setOptionAllowed(1, false);
+        let usableOptionIds = [1, 2, 3];
+        assert.deepEqual([2, 3], assigner.adjustUsableOptionIds(usableOptionIds));
     });
 
 });

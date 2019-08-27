@@ -20,7 +20,7 @@ let assigner = new ScavengeTroopsAssigner(options, sendableTroopTypes, troopUtil
 describe('ScavengeTroopsAssigner.adjustAvailableTroopCounts', function() {
 
     afterEach(function resetTroopPreferences() {
-        assigner.initTroopPreferences();
+        assigner.preferences.initTroops();
     });
 
     it(`should remove troop types that aren't wanted to scavenge with`, function() {

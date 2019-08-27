@@ -1,4 +1,5 @@
 import { TroopCounts } from '/twcheese/src/Models/Troops.js';
+import { ScavengeTroopsAssignerPreferences } from '/twcheese/src/Models/ScavengeTroopsAssignerPreferences.js';
 
 class ScavengeTroopsAssigner {
 
@@ -11,45 +12,7 @@ class ScavengeTroopsAssigner {
         this.options = options;
         this.sendableTroopTypes = sendableTroopTypes;
         this.troopUtil = troopUtil;
-
-        this.preferences = {
-            mode: ScavengeTroopsAssigner.MODE_SANE_PERSON,
-            targetDurationHours: 2,
-            troops: {},
-            troopOrder: [
-                ['axe', 'light', 'marcher'], // first chunk (sent together)
-                ['spear', 'sword', 'archer'], // second chunk (sent together)
-                ['heavy'] // third chunk
-            ]
-        };
-        this.initTroopPreferences();
-    }
-
-    initTroopPreferences() {
-        for (let troopType of this.sendableTroopTypes) {
-            this.preferences.troops[troopType] = {
-                maySend: true,
-                reserved: 0
-            };
-        }
-    }
-
-    /**
-     * @return {string[]}
-     */
-    getAllowedTroopTypes() {
-        return this.sendableTroopTypes.filter(troopType => this.preferences.troops[troopType].maySend);
-    }
-
-    /**
-     * @return TroopCounts
-     */
-    getReservedTroopCounts() {
-        let troopCounts = new TroopCounts();
-        for (let troopType of this.sendableTroopTypes) {
-            troopCounts[troopType] = this.preferences.troops[troopType].reserved;
-        }
-        return troopCounts;
+        this.preferences = new ScavengeTroopsAssignerPreferences(sendableTroopTypes);
     }
 
     /**
@@ -57,8 +20,8 @@ class ScavengeTroopsAssigner {
      */
     adjustAvailableTroopCounts(availableTroopCounts) {
         return availableTroopCounts
-            .filter(this.getAllowedTroopTypes())
-            .subtract(this.getReservedTroopCounts())
+            .filter(this.preferences.getAllowedTroopTypes())
+            .subtract(this.preferences.getReservedTroopCounts())
             .zeroNegatives();
     }
 
@@ -69,7 +32,7 @@ class ScavengeTroopsAssigner {
      */
     assignTroops(usableOptionIds, availableTroopCounts, haulFactor = 1.0) {
         availableTroopCounts = this.adjustAvailableTroopCounts(availableTroopCounts);
-        
+
         if (this.preferences.mode === ScavengeTroopsAssigner.MODE_ADDICT) {
             return this.assignTroopsForAddict(usableOptionIds, availableTroopCounts, haulFactor);
         }
@@ -90,7 +53,7 @@ class ScavengeTroopsAssigner {
             let assignedCounts;
             if (usableOptionIds.includes(optionId)) {
                 let option = this.options.get(optionId);
-                let targetCapacity = option.calcTargetCapacity(this.preferences.targetDurationHours * 3600);
+                let targetCapacity = option.calcTargetCapacity(this.preferences.targetDurationSeconds);
                 assignedCounts = this.chunkTroopsToHaul(targetCapacity, availableTroopCounts, haulFactor);
             } else {
                 assignedCounts = new TroopCounts();
@@ -113,7 +76,7 @@ class ScavengeTroopsAssigner {
         let optionIds = [...this.options.keys()].reverse();
 
         let availableCapacity = availableTroopCounts.carryCapacity() * haulFactor;
-        let targetDurationSeconds = this.preferences.targetDurationHours * 3600;
+        let targetDurationSeconds = this.preferences.targetDurationSeconds;
 
         let targetCapacitySum = 0;
         let inverseLootFactors = {};

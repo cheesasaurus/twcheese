@@ -30,7 +30,6 @@ class ScavengePreferencesWidget extends AbstractWidget {
         this.$troopsAllowed = this.$el.find('.troop-allowed');
         this.$troopsReserved = this.$el.find('.troop-reserved');
         this.$troopGroups = this.$el.find('.troop-group');
-        // todo
     }
 
     createHtml() {
@@ -47,9 +46,7 @@ class ScavengePreferencesWidget extends AbstractWidget {
                     <td>${this.createTroopsOrderSectionHtml()}</td>
                 </tr>
             </table>
-
         </div>`;
-        // todo
     }
 
     createTimingSectionHtml() {
@@ -126,12 +123,18 @@ class ScavengePreferencesWidget extends AbstractWidget {
     }
 
     createTroopsSectionHtml() {
-        // todo
+        let helpTooltip = [
+            `Reserved troops won't be sent scavenging.`,
+            `<br/>`,
+            `<br/>Example:`,
+            ` :: You have 500 spears and 100 are reserved. At most, 400 spears would be sent scavenging.`
+        ].join('');
+
         return `
             <table class="vis troops-section">
                 <tr>
                     <th>Use</th>
-                    <th>Reserved</th>
+                    <th>Reserved <img src="${ImageSrc.info}" title="${helpTooltip}" class="tooltip info"></th>
                 </tr>
                 ${this.sendableTroopTypes.map(type => this.createTroopRowHtml(type)).join('')}
             </table>
@@ -152,10 +155,17 @@ class ScavengePreferencesWidget extends AbstractWidget {
     }
 
     createTroopsOrderSectionHtml() {
-        // todo
+        let helpTooltip = [
+            `Troops in upper groups will be sent before troops in lower groups.`,
+            `<br/>`,
+            `<br/>Troops within the same group will be split proportionally by count available.`
+        ].join('');
+
         return `
             <table class="vis troop-order-section">
-                <tr><th>Order</th></tr>
+                <tr>
+                    <th>Order <img src="${ImageSrc.info}" title="${helpTooltip}" class="tooltip info"></th>
+                </tr>
                 ${this.sendableTroopTypes.map(() => '<tr><td><div class="troop-group"></div></td></tr>').join('')}
             </table>
         `;
@@ -267,7 +277,8 @@ class ScavengePreferencesWidget extends AbstractWidget {
             if (!this.checkValidity()) {
                 return;
             }
-            prefs.setReservedCount(this.dataset.troopType, this.value);
+            let count = parseInt(this.value) || 0;
+            prefs.setReservedCount(this.dataset.troopType, count);
         });
     }
 
@@ -281,7 +292,15 @@ initCss(`
     .twcheese-scavenge-preferences-widget .troops-section,
     .twcheese-scavenge-preferences-widget .troop-order-section {
         width: 100%;
-        /*background-color: #edd8ad;*/
+    }
+
+    
+    .twcheese-scavenge-preferences-widget .info {
+        width: 14px;
+        height: 14px;
+        vertical-align: middle;
+        position: relative;
+        top: -1px;
     }
 
     .twcheese-scavenge-preferences-widget .target-duration {
@@ -327,7 +346,7 @@ initCss(`
     }
 
     .twcheese-scavenge-preferences-widget .troop-reserved {
-        width: 50px;
+        width: 70px;
     }
 
     .twcheese-scavenge-preferences-widget .troop-group {

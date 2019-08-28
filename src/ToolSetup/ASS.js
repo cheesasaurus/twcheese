@@ -102,7 +102,7 @@ function prepareBestOption(informUserOfIssues = true) {
     usableOptionIds = troopsAssigner.adjustUsableOptionIds(usableOptionIds);
     if (usableOptionIds.length < 1) {
         if (informUserOfIssues) {
-            window.UI.ErrorMessage(`Can't scavenge with this village right now`);
+            window.UI.ErrorMessage(`Can't scavenge right now because there's no usable options`);
         }        
         return;
     }

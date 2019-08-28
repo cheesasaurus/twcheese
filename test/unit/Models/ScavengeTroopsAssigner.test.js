@@ -21,7 +21,7 @@ let assigner = new ScavengeTroopsAssigner(options, sendableTroopTypes, troopUtil
 describe('ScavengeTroopsAssigner.adjustAvailableTroopCounts', function() {
 
     afterEach(function resetPreferences() {
-        assigner.preferences = new ScavengeTroopsAssignerPreferences(sendableTroopTypes);
+        assigner.preferences.reset();
     });
 
     it(`should remove troop types that aren't wanted to scavenge with`, function() {
@@ -66,7 +66,7 @@ describe('ScavengeTroopsAssigner.adjustAvailableTroopCounts', function() {
 describe('ScavengeTroopsAssigner.adjustUsableOptionIds', function() {
 
     afterEach(function resetPreferences() {
-        assigner.preferences = new ScavengeTroopsAssignerPreferences(sendableTroopTypes);
+        assigner.preferences.reset();
     });
 
     it(`should remove options that aren't wanted to be used`, function() {

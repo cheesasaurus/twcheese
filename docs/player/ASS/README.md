@@ -14,7 +14,7 @@ javascript:
 1. Fills in troops to scavenge
 2. Focuses the start button of the option your troops are intended to be used for
 
-Behavior is configurable.
+Behavior is configurable.\
 ![preferences](preferences.png)
 
 Also spawns an expandable sidebar:\

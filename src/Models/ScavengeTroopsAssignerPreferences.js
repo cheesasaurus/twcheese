@@ -5,7 +5,10 @@ class ScavengeTroopsAssignerPreferences {
 
     constructor(sendableTroopTypes) {
         this._sendableTroopTypes = sendableTroopTypes;
+        this.reset();        
+    }
 
+    reset() {
         this.mode = ScavengeTroopsAssignerPreferences.MODE_SANE_PERSON;
         this.allowedOptionIds = new Set([1, 2, 3, 4]);
         this.targetDurationSeconds = 2 * 3600;

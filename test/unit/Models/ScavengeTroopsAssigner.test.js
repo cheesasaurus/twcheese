@@ -1,6 +1,5 @@
 import { ScavengeOption } from '/twcheese/src/Models/ScavengeOption.js';
 import { ScavengeTroopsAssigner } from '/twcheese/src/Models/ScavengeTroopsAssigner.js';
-import { ScavengeTroopsAssignerPreferences } from '/twcheese/src/Models/ScavengeTroopsAssignerPreferences.js';
 import { troopUtil, TroopCounts } from '/twcheese/src/Models/Troops.js';
 const assert = require('chai').assert;
 const fs = require('fs');

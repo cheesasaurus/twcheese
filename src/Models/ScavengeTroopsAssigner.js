@@ -145,11 +145,62 @@ class ScavengeTroopsAssigner {
 
             for (let troopType of chunk) {
                 let troopCount = availableTroopCounts[troopType];                
-                assignedTroopCounts[troopType] = Math.round(troopCount * chunkRatio);
+                assignedTroopCounts[troopType] = Math.floor(troopCount * chunkRatio);
                 targetCapacity -= assignedTroopCounts[troopType] * capacities[troopType];
             }
+
+            if (targetCapacity > 0) {
+                this.troopsToTopOff(targetCapacity, availableTroopCounts, assignedTroopCounts, chunk, capacities)
+                    .each(function(troopType, count) {
+                        targetCapacity -= count * (capacities[troopType] || 0);
+                        assignedTroopCounts[troopType] += count;
+                    });
+            }
+
         }
         return assignedTroopCounts;
+    }
+
+    /**
+     * @param {int} targetCapacity 
+     * @param {TroopCounts} availableTroopCounts 
+     * @param {TroopCounts} assignedTroopCounts 
+     * @param {string[]} troopTypes
+     * @return {TroopCounts}
+     */
+    troopsToTopOff(targetCapacity, availableTroopCounts, assignedTroopCounts, troopTypes, capacities) {
+        let extraCounts = new TroopCounts();
+
+        while (targetCapacity > 0) {
+            let unassignedExists = false;
+            let closestType = null;
+            let smallestDiff = Number.MAX_SAFE_INTEGER;
+            
+            for (let troopType of troopTypes) {
+                if (availableTroopCounts[troopType] > assignedTroopCounts[troopType] + extraCounts[troopType]) {
+                    unassignedExists = true;
+
+                    let diff = Math.abs(targetCapacity - capacities[troopType]);
+                    if (diff < smallestDiff) {
+                        smallestDiff = diff;
+                        closestType = troopType;
+                    }
+                }
+            }
+
+            if (!unassignedExists) {
+                break;
+            }
+
+            if (targetCapacity < Math.abs(targetCapacity - capacities[closestType])) {
+                // adding more troops would put us farther from the target than we already are
+                break;
+            }
+            extraCounts[closestType] += 1;
+            targetCapacity -= capacities[closestType];
+        }
+
+        return extraCounts;
     }
 
 }

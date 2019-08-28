@@ -13,7 +13,6 @@ import { ProcessFactory } from '/twcheese/src/Models/Debug/Build/ProcessFactory.
 import { processCfg as debugCfgDefault } from '/twcheese/dist/tool/cfg/debug/ASS/Default.js';
 
 
-
 let initialized = false;
 let haulFactor, troopsAssigner, scavengeOptions;
 
@@ -49,6 +48,8 @@ async function init() {
     scavengeOptions = models.options;
     insertPreferencesLauncher();
 
+    insertNarcissim();
+
     initCss(`
         .free_send_button:focus {
             color: yellow;
@@ -80,10 +81,29 @@ function suggestRedirectToScavengeScreen() {
 
 
 function insertPreferencesLauncher() {
-    let $launcher = $(`<a href="#" style="font-size: small; margin-left: 20px;">&raquo; preferences</a>`)
-        .on('click', openPreferencesPopup);
+    let $launcher = $(`<a href="#">&raquo; preferences</a>`)
+        .css({
+            fontSize: 'small',
+            marginLeft: '10px'
+        })
+        .on('click', function(e) {
+            e.preventDefault();
+            openPreferencesPopup();
+        });
 
     $('#content_value').find('h3').eq(0).append($launcher);
+}
+
+
+function insertNarcissim() {
+    let $narcissism = $(`<span>Script created by <a href="https://forum.tribalwars.net/index.php?members/28484">cheesasaurus</a></span>`)
+        .css({
+            float: 'right',
+            fontSize: 'xx-small',
+            fontWeight: 'normal'
+        });
+
+    $('#content_value').find('h3').eq(0).append($narcissism);
 }
 
 

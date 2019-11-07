@@ -12,7 +12,7 @@ class ScavengePreferencesWidget extends AbstractWidget {
      * @param {Map<ScavengeOption>} scavengeOptions
      * @param {string[]} sendableTroopTypes
      */
-    constructor(preferences, scavengeOptions, sendableTroopTypes) {
+    constructor(preferences, scavengeOptions, sendableTroopTypes, langage = 'en') {
         super();
         this.preferences = preferences;
         this.scavengeOptions = scavengeOptions;
@@ -20,10 +20,11 @@ class ScavengePreferencesWidget extends AbstractWidget {
         this.initStructure();
         this.initTroopOrder();
         this.watchSelf();
+        this.langage = langage;
     }
 
     initStructure() {
-        this.$el = $(this.createHtml().trim());
+        this.$el = $(this.createHtml(this.langage).trim());
         this.$targetDuration = this.$el.find('.target-duration');
         this.$options = this.$el.find('.options-section input');
         this.$modes = this.$el.find(`input[name='mode']`);
@@ -32,24 +33,42 @@ class ScavengePreferencesWidget extends AbstractWidget {
         this.$troopGroups = this.$el.find('.troop-group');
     }
 
-    createHtml() {
-        return `<div class="twcheese-scavenge-preferences-widget">
-            <h3>Preferences</h3>
-            ${this.createTimingSectionHtml()}
-            <br/>
-            ${this.createOptionsSectionHtml()}
-            <br/>
-            <table style="width: 100%;">
-                <tr>
-                    <td>${this.createTroopsSectionHtml()}</td>
-                    <td style="width: 20px;"></td>
-                    <td>${this.createTroopsOrderSectionHtml()}</td>
-                </tr>
-            </table>
-        </div>`;
+    createHtml(langage = 'en') {
+        let rendered_window = ''
+        if (langage == 'fr'){
+            rendered_window = `<div class="twcheese-scavenge-preferences-widget">
+                <h3>Préférences</h3>
+                ${this.createTimingSectionHtml(langage)}
+                <br/>
+                ${this.createOptionsSectionHtml(langage)}
+                <br/>
+                <table style="width: 100%;">
+                    <tr>
+                        <td>${this.createTroopsSectionHtml(langage)}</td>
+                        <td style="width: 20px;"></td>
+                        <td>${this.createTroopsOrderSectionHtml(langage)}</td>
+                    </tr>
+                </table>
+            </div>`;
+        } else {
+            rendered_window = `<div class="twcheese-scavenge-preferences-widget">
+                <h3>Preferences</h3>
+                ${this.createTimingSectionHtml()}
+                <br/>
+                ${this.createOptionsSectionHtml()}
+                <br/>
+                <table style="width: 100%;">
+                    <tr>
+                        <td>${this.createTroopsSectionHtml()}</td>
+                        <td style="width: 20px;"></td>
+                        <td>${this.createTroopsOrderSectionHtml()}</td>
+                    </tr>
+                </table>
+            </div>`;
+        }
     }
 
-    createTimingSectionHtml() {
+    createTimingSectionHtml(langage = 'en') {
         let overallSeconds = this.preferences.targetDurationSeconds;
         let hours = Math.floor(overallSeconds / 3600);
         let minutes = String(Math.floor(overallSeconds / 60) % 60).padStart(2, '0');
@@ -61,7 +80,40 @@ class ScavengePreferencesWidget extends AbstractWidget {
         let checkSane = (mode === modeSane) ? 'checked' : '';
         let checkAddict = (mode === modeAddict) ? 'checked' : '';
 
-        return `
+        let rendered_timing_table = '';
+        if (langage == 'fr'){
+            rendered_timing_table = `
+            <table class="vis timing-section">
+                <tr><th>Temps</th></tr>
+                <tr>
+                    <td>
+                        Temps de trajet:
+                        <input type="text" class="target-duration" value="${hours}:${minutes}" placeholder="2:00" required pattern="${durationPattern}">
+                        heures:minutes
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>
+                            <input type="radio" name="mode" value="${modeSane}" ${checkSane}>
+                            Temps maximum de la/les meilleure(s) option(s).
+                            <br/><span class="hint">(recommandé si vous êtes AFK)</span>
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>
+                            <input type="radio" name="mode" value="${modeAddict}" ${checkAddict}>
+                            Même durée pour toutes les options.
+                            <br/><span class="hint">(récommandé si vous pouvez renvoyer directement)</span>
+                        </label>    
+                    </td>
+                </tr>
+            </table>
+        `;
+        } else {
+            rendered_timing_table = `
             <table class="vis timing-section">
                 <tr><th>Timing</th></tr>
                 <tr>
@@ -91,26 +143,53 @@ class ScavengePreferencesWidget extends AbstractWidget {
                 </tr>
             </table>
         `;
+        }
+        return rendered_timing_table;
     }
 
-    createOptionsSectionHtml() {
+    createOptionsSectionHtml(langage = 'en') {
         let optionsArr = [...this.scavengeOptions.values()];
-
-        return `
+        
+        let rendered_option_table ='';
+        if (langage == 'fr'){
+            rendered_option_table = `
             <table class="vis options-section">
-                <tr><th colspan="2">Options to use</th></tr>
-                ${optionsArr.map(option => this.createOptionRowHtml(option)).join('')}
+                <tr><th colspan="2">Options à utiliser</th></tr>
+                ${optionsArr.map(option => this.createOptionRowHtml(langage, option)).join('')}
             </table>
         `;
+        } else {
+            rendered_option_table =  `
+            <table class="vis options-section">
+                <tr><th colspan="2">Options to use</th></tr>
+                ${optionsArr.map(option => this.createOptionRowHtml(langage, option)).join('')}
+            </table>
+        `;
+        }
+
+        return rendered_option_table;
     }
 
-    createOptionRowHtml(option) {
+    createOptionRowHtml(langage = 'en', option) {
         let checked = '';
+        let rendered_options_list = '';
         if (this.preferences.isOptionAllowed(option.id)) {
             checked = 'checked';
         }
-
-        return `<tr>
+        
+        if (langage == 'fr'{
+            rendered_options_list = `<tr>
+            <td>
+                <label>
+                    <input type="checkbox" ${checked} data-option-id="${option.id}">
+                    <img src="${ImageSrc.scavengeOption(option.id)}">
+                    <span>${option.getName()}</span>
+                </label>
+            </td>
+            <td>(${option.getLootPercent()}% de capacité)</td>
+        </tr>`;
+        } else {
+            rendered_options_list = `<tr>
             <td>
                 <label>
                     <input type="checkbox" ${checked} data-option-id="${option.id}">
@@ -120,25 +199,49 @@ class ScavengePreferencesWidget extends AbstractWidget {
             </td>
             <td>(${option.getLootPercent()}% carry capacity)</td>
         </tr>`;
+        }
+
+        return rendered_options_list;
     }
 
-    createTroopsSectionHtml() {
-        let helpTooltip = [
-            `Reserved troops won't be sent scavenging.`,
-            `<br/>`,
-            `<br/>Example:`,
-            ` :: You have 500 spears and 100 are reserved. At most, 400 spears would be sent scavenging.`
-        ].join('');
+    createTroopsSectionHtml(langage = 'en') {
+        let rendered_table_unit = '';
+        
+        if (langage == 'fr'){
+            rendered_table_unit = `
+                <table class="vis troops-section">
+                    <tr>
+                        <th>Utilisé</th>
+                        <th>Reserve <img src="${ImageSrc.info}" title="${helpTooltip}" class="tooltip info"></th>
+                    </tr>
+                    ${this.sendableTroopTypes.map(type => this.createTroopRowHtml(type)).join('')}
+                </table>
+            `;
+            let helpTooltip = [
+                `Les troupes en réserve ne seront pas envoyées en collecte.`,
+                `<br/>`,
+                `<br/>Exemple:`,
+                ` :: Vous avez 500 lanciers et 100 sont en réserve. Donc, 400 lanciers seront envoyés en collecte.`
+            ].join('');
+        } else {
+            rendered_table_unit = `
+                <table class="vis troops-section">
+                    <tr>
+                        <th>Use</th>
+                        <th>Reserved <img src="${ImageSrc.info}" title="${helpTooltip}" class="tooltip info"></th>
+                    </tr>
+                    ${this.sendableTroopTypes.map(type => this.createTroopRowHtml(type)).join('')}
+                </table>
+            `;
+            let helpTooltip = [
+                `Reserved troops won't be sent scavenging.`,
+                `<br/>`,
+                `<br/>Example:`,
+                ` :: You have 500 spears and 100 are reserved. At most, 400 spears would be sent scavenging.`
+            ].join('');
+        }
 
-        return `
-            <table class="vis troops-section">
-                <tr>
-                    <th>Use</th>
-                    <th>Reserved <img src="${ImageSrc.info}" title="${helpTooltip}" class="tooltip info"></th>
-                </tr>
-                ${this.sendableTroopTypes.map(type => this.createTroopRowHtml(type)).join('')}
-            </table>
-        `;
+        return rendered_table_unit`;
     }
 
     createTroopRowHtml(troopType) {
@@ -154,17 +257,28 @@ class ScavengePreferencesWidget extends AbstractWidget {
         </tr>`;
     }
 
-    createTroopsOrderSectionHtml() {
-        let helpTooltip = [
-            `Troops in upper groups will be sent before troops in lower groups.`,
-            `<br/>`,
-            `<br/>Troops within the same group will be split proportionally by count available.`
-        ].join('');
-
+    createTroopsOrderSectionHtml(langage = 'en') {
+        if (langage == 'fr'){
+             let helpTooltip = [
+                `Les groupes représentent les priorités d'envois des unités.`,
+                `<br/>`,
+                `<br/>Les troupes qui sont dans le même groupe seront répartis propotionnellement.`
+            ].join('');
+            let order_str = 'Ordre';
+        } else {
+             let helpTooltip = [
+                `Troops in upper groups will be sent before troops in lower groups.`,
+                `<br/>`,
+                `<br/>Troops within the same group will be split proportionally by count available.`
+            ].join('');
+            let order_str = 'Order';
+        }
+        
+        
         return `
             <table class="vis troop-order-section">
                 <tr>
-                    <th>Order <img src="${ImageSrc.info}" title="${helpTooltip}" class="tooltip info"></th>
+                    <th>`+ order_str +` <img src="${ImageSrc.info}" title="${helpTooltip}" class="tooltip info"></th>
                 </tr>
                 ${this.sendableTroopTypes.map(() => '<tr><td><div class="troop-group"></div></td></tr>').join('')}
             </table>

@@ -218,6 +218,37 @@ switch (game_data.market) {
         language['report']['unread'] = '(novo)';
         break;
 
+    // Brazil
+    case 'br':        
+        language['buildings']['main'] = 'Edifício principal';
+        language['buildings']['barracks'] = 'Quartel';
+        language['buildings']['stable'] = 'Estábulo';
+        language['buildings']['garage'] = 'Oficina';
+        language['buildings']['church'] = 'Igreja';
+        language['buildings']['church_f'] = 'Primeira igreja';
+        language['buildings']['snob'] = 'Academia';
+        language['buildings']['smith'] = 'Ferreiro';
+        language['buildings']['place'] = 'Praça de reunião';
+        language['buildings']['statue'] = 'Estátua';
+        language['buildings']['market'] = 'Mercado';
+        language['buildings']['wood'] = 'Bosque';
+        language['buildings']['stone'] = 'Poço de argila';
+        language['buildings']['iron'] = 'Mina de ferro';
+        language['buildings']['farm'] = 'Fazenda';
+        language['buildings']['storage'] = 'Armazém';
+        language['buildings']['hide'] = 'Esconderijo';
+        language['buildings']['wall'] = 'Muralha';
+        language['buildings']['watchtower'] = 'Torre de vigia';
+
+        language['report']['catDamage'] = 'Dano - catapultas:';
+        language['report']['ramDamage'] = 'Dano - aríetes:';
+        language['report']['haul'] = 'Saque:';
+        language['report']['loyalty'] = 'Lealdade:';
+        language['report']['unitsInTransit'] = 'Tropas defensivas em trânsito';
+        language['report']['deletedPlayer'] = '(apagado)';
+        language['report']['unread'] = '(novo)';
+        break;
+
 }
 
 function escapeSingleQuotes(str) {

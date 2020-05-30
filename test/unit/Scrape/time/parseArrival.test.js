@@ -103,4 +103,32 @@ describe('parseArrival', function() {
         assertServerTime(expected, actual);
     });
 
+    it('should handle br format', function() {
+        let actual = parseArrival('mai 20, 2020  11:54:33:503', 'br');
+        let expected = {
+            year: 2020,
+            month: 4,
+            date: 20,
+            hours: 11,
+            minutes: 54,
+            seconds: 33,
+            millis: 503
+        };
+        assertServerTime(expected, actual);
+    });
+
+    it('should handle br format with millis disabled', function() {
+        let actual = parseArrival('mai 20, 2020  11:54:33', 'br');
+        let expected = {
+            year: 2020,
+            month: 4,
+            date: 20,
+            hours: 11,
+            minutes: 54,
+            seconds: 33,
+            millis: 0
+        };
+        assertServerTime(expected, actual);
+    });
+
 });

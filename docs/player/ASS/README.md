@@ -6,7 +6,7 @@ Use this at the scavenging screen.
 javascript:
 (window.TwCheese && TwCheese.tryUseTool('ASS'))
 || $.ajax('https://cheesasaurus.github.io/twcheese/launch/ASS.js?'
-+~~((new Date())/3e5),{cache:1});void 0;
++~~((new Date())/3e5),{cache:1,dataType:"script"});void 0;
 ```
 
 ## What it does

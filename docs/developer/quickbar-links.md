@@ -5,7 +5,7 @@ example:
 javascript:
 (window.TwCheese && TwCheese.tryUseTool('OverviewHauls'))
 || $.ajax('https://cheesasaurus.github.io/twcheese/launch/OverviewHauls.js?'
-+~~((new Date())/3e5),{cache:1});void 0;
++~~((new Date())/3e5),{cache:1,dataType:"script"});void 0;
 ```
 
 Q: Why `$.ajax` instead of `$.getScript`?\

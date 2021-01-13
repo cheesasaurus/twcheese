@@ -16,7 +16,8 @@ window.TwCheese = {
         return new Promise((resolve, reject) => {
             $.ajax(`${this.ROOT}/dist/vendor.js`, {
                 complete: resolve,
-                error: handleJqXhrError(reject)
+                error: handleJqXhrError(reject),
+                dataType: "script"
             });
         });
     },
@@ -26,7 +27,8 @@ window.TwCheese = {
             $.ajax(`${this.ROOT}/dist/vendor.min.js?${cacheBuster}`, {
                 cache: true,
                 complete: resolve,
-                error: handleJqXhrError(reject)
+                error: handleJqXhrError(reject),
+                dataType: "script"
             });
         });
     },
@@ -46,7 +48,8 @@ window.TwCheese = {
             $.ajax(`${this.ROOT}/dist/tool/setup-only/${toolId}.min.js?${cacheBuster}`, {
                 cache: true,
                 complete: resolve,
-                error: handleJqXhrError(reject)
+                error: handleJqXhrError(reject),
+                dataType: "script"
             });
         });         
     },

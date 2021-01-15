@@ -1,0 +1,40 @@
+- type: PhaseQuestion
+  internalName: Entry
+  questions:
+    - type: QuestionSelect
+      ask: What's broken?
+      options:
+        - answer: Wrong values shown in commands list
+          value: wrong_values
+          followUp:
+            - type: PhaseAttempt
+              internalName: Determine command url
+              action: trySelectCommandFromTable
+              instructions: Select a problematic row.
+              success:
+                - type: PhaseAttempt
+                  internalName: Read selected command
+                  action: tryScrapeCommandScreen
+                  success:
+                    - type: PhaseQuestion
+                      internalName: Command scraper
+                      lookAt: parentResult.document.documentElement.outerHTML
+                      questions:
+                        - type: QuestionValue
+                          ask: Arrival
+                          examine: parentResult.command.arrival
+                        - type: QuestionValue
+                          ask: Haul
+                          examine: parentResult.command.haul
+                        - type: QuestionValue
+                          ask: Haul capacity
+                          examine: parentResult.command.haulCapacity
+        - answer: Something else
+          value: other
+
+- type: PhaseQuestion
+  internalName: extra info
+  questions:
+    - type: QuestionFreeForm
+      ask: Additional information
+      placeholderText: e.g. "iron isn't shown"

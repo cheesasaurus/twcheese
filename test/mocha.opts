@@ -1,0 +1,6 @@
+--recursive
+--require esm
+--require test/initDom.js
+--require test/initGameStubs.js
+--require test/initVendorLibs.js
+--require test/initConfig.js

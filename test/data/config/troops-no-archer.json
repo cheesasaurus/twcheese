@@ -1,0 +1,115 @@
+{
+    "props": {
+        "spear": {
+            "build_time": 816,
+            "pop": 1,
+            "speed": 18.000000000504,
+            "attack": 10,
+            "defense": 15,
+            "defense_cavalry": 45,
+            "defense_archer": 20,
+            "carry": 25
+        },
+        "sword": {
+            "build_time": 1200,
+            "pop": 1,
+            "speed": 21.999999999296,
+            "attack": 25,
+            "defense": 50,
+            "defense_cavalry": 25,
+            "defense_archer": 40,
+            "carry": 15
+        },
+        "axe": {
+            "build_time": 1056,
+            "pop": 1,
+            "speed": 18.000000000504,
+            "attack": 40,
+            "defense": 10,
+            "defense_cavalry": 5,
+            "defense_archer": 10,
+            "carry": 10
+        },
+        "spy": {
+            "build_time": 720,
+            "pop": 2,
+            "speed": 8.99999999928,
+            "attack": null,
+            "defense": 2,
+            "defense_cavalry": 1,
+            "defense_archer": 2,
+            "carry": null
+        },
+        "light": {
+            "build_time": 1440,
+            "pop": 4,
+            "speed": 9.999999998,
+            "attack": 130,
+            "defense": 30,
+            "defense_cavalry": 40,
+            "defense_archer": 30,
+            "carry": 80
+        },
+        "heavy": {
+            "build_time": 2880,
+            "pop": 6,
+            "speed": 11.0000000011,
+            "attack": 150,
+            "defense": 200,
+            "defense_cavalry": 80,
+            "defense_archer": 180,
+            "carry": 50
+        },
+        "ram": {
+            "build_time": 3840,
+            "pop": 5,
+            "speed": 29.9999999976,
+            "attack": 2,
+            "defense": 20,
+            "defense_cavalry": 50,
+            "defense_archer": 20,
+            "carry": null
+        },
+        "catapult": {
+            "build_time": 5760,
+            "pop": 8,
+            "speed": 29.9999999976,
+            "attack": 100,
+            "defense": 100,
+            "defense_cavalry": 50,
+            "defense_archer": 100,
+            "carry": null
+        },
+        "knight": {
+            "build_time": 17280,
+            "pop": 10,
+            "speed": 9.999999998,
+            "attack": 150,
+            "defense": 250,
+            "defense_cavalry": 400,
+            "defense_archer": 150,
+            "carry": 100
+        },
+        "snob": {
+            "build_time": 14400,
+            "pop": 100,
+            "speed": 34.9999999993,
+            "attack": 30,
+            "defense": 100,
+            "defense_cavalry": 50,
+            "defense_archer": 100,
+            "carry": null
+        },
+        "militia": {
+            "build_time": 1,
+            "pop": null,
+            "speed": 0.016666666666667,
+            "attack": null,
+            "defense": 15,
+            "defense_cavalry": 45,
+            "defense_archer": 25,
+            "carry": null
+        }
+    },
+    "timeUpdated": 1566638498335
+}

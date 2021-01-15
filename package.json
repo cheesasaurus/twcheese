@@ -1,0 +1,49 @@
+{
+  "name": "twcheese",
+  "version": "1.0.0",
+  "description": "tribal wars scripts",
+  "main": "launch/",
+  "dependencies": {
+    "chai": "^4.2.0",
+    "clean-directory": "^1.0.0",
+    "esm": "^3.2.25",
+    "gulp": "^4.0.2",
+    "gulp-cli": "^2.2.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-header": "^2.0.9",
+    "gulp-hub": "^4.2.0",
+    "gulp-jsbeautifier": "^3.0.0",
+    "gulp-rename": "^1.4.0",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-uglify-es": "^1.0.4",
+    "jquery": "^3.4.1",
+    "jsdom": "^15.1.1",
+    "mocha": "^6.1.4",
+    "plugin-error": "^1.0.1",
+    "webpack": "^4.35.3",
+    "yaml": "^1.6.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.0.1"
+  },
+  "scripts": {
+    "prebuild": "node ./build/checkConfigurationAttempted.js",
+    "build": "./node_modules/.bin/gulp",
+    "test": "./node_modules/.bin/mocha",
+    "preinstall": "node ./build/checkConfigurationAttempted.js",
+    "postinstall": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cheesasaurus/twcheese.git"
+  },
+  "keywords": [
+    "tribal wars"
+  ],
+  "author": "Nicholas Toby",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/cheesasaurus/twcheese/issues"
+  },
+  "homepage": "https://github.com/cheesasaurus/twcheese#readme"
+}

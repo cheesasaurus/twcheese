@@ -1,0 +1,29 @@
+Battle Report Enhancer
+market: en, uk, us, cz, se, gr, hr
+author Nick Toby (cheesasaurus@gmail.com)
+ 
+==== when viewing a report ====
+use script on: game.php?screen=report&view=x (a report)
+effect: include some extra features on the page:
+    -loyalty calculations
+    -raiding calculator
+    -demolition calculator
+    -remaining defense
+    -opponents defeated
+    -population summary
+    -timing summary
+    -twcheese's json encoded representation of the report (for copy+pasting somewhere that other scripts would interpret it)
+    -renamer (limit of 256 characters?)
+
+==== when viewing the reports folder, with the 'Attacks' or 'Defenses' filter on ====
+use script on:	game.php?screen=report&mode=attack || game.php?screen=report&mode=defense
+effects:
+    -include some extra features on the page:
+        - selector bar (has options to select reports based on various criteria)
+        - mass renamer (renames all selected reports to a format readable by the BRE)
+        - extended report information (information displayed can be customized to the user's preferences)
+        - links to "attack again with the same troops"
+        - text that can be copied to create "attack again with the same troops" links that can be saved in notebook or bookmarked in browser;
+ 
+==== license ====
+Copyright (C) 2011  Nick Toby

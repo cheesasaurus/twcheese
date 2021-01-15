@@ -1,0 +1,64 @@
+<table id="contentContainer" width="100%" align="center">
+	        <tbody><tr>
+	            <td>
+					<table class="content-border" width="100%" cellspacing="0">
+	                    <tbody><tr>
+	                        <td id="inner-border">
+								<table class="main" align="left">
+	                                <tbody><tr>
+										<td id="content_value">
+                                            
+                                            <h2>Support for Guest511552s village</h2>
+
+<table class="vis" width="400">
+	<tbody><tr>
+		<th colspan="3">
+			<span class="quickedit" id="quickedit-rename" data-id="1241593133">
+				<span class="quickedit-content">
+					<span class="quickedit-label" id="command_comment">
+						 Command					</span>
+
+										<a class="rename-icon" href="#" title="Rename"></a>
+									</span>
+			</span>
+		</th>
+	</tr>
+
+<tr><td rowspan="2">Origin</td><td>Player:</td><td><a href="/game.php?village=20373&amp;screen=info_player&amp;id=1194659">cheesasaurus</a></td></tr>
+<tr><td>Village:</td><td><span class="village_anchor contexted" data-player="1194659" data-id="20373"><a href="/game.php?village=20373&amp;screen=info_village&amp;id=20373">cheesasauruss village (600|410) K46</a><a class="ctx" href="#"></a></span></td></tr>
+<tr><td rowspan="2">Destination</td><td>Player:</td><td><a href="/game.php?village=20373&amp;screen=info_player&amp;id=11511552">Guest511552</a></td></tr>
+<tr><td>Village:</td><td><span class="village_anchor contexted" data-player="11511552" data-id="21031"><a href="/game.php?village=20373&amp;screen=info_village&amp;id=21031">Guest511552s village (601|409) K46</a><a class="ctx" href="#"></a></span></td></tr>
+<tr><td colspan="2">Duration:</td><td>0:25:43</td></tr><tr><td colspan="2">Arrival:</td><td>Jun 17, 2019  19:03:28<span class="small grey">:595</span></td></tr>
+<tr><td colspan="2">Arrival in:</td><td><span class="">0:21:58</span></td></tr>
+
+<tr><td colspan="3"><a href="/game.php?village=20373&amp;screen=place&amp;action=cancel&amp;id=1241593133&amp;h=13d72c4c">» cancel</a></td></tr>
+
+<tr>
+  <td colspan="3">
+                    <a href="/game.php?village=20373&amp;screen=place">» Rally point</a>
+            </td>
+</tr>
+
+</tbody></table><br>
+
+
+			<table class="vis">
+		<tbody><tr><th width="50"><a href="#" class="unit_link" data-unit="spear"><img src="https://dsen.innogamescdn.com/asset/5cfabaf2/graphic/unit/unit_spear.png" title="Spear fighter" alt="" class=""></a></th><th width="50"><a href="#" class="unit_link" data-unit="sword"><img src="https://dsen.innogamescdn.com/asset/5cfabaf2/graphic/unit/unit_sword.png" title="Swordsman" alt="" class=""></a></th><th width="50"><a href="#" class="unit_link" data-unit="axe"><img src="https://dsen.innogamescdn.com/asset/5cfabaf2/graphic/unit/unit_axe.png" title="Axeman" alt="" class=""></a></th><th width="50"><a href="#" class="unit_link" data-unit="spy"><img src="https://dsen.innogamescdn.com/asset/5cfabaf2/graphic/unit/unit_spy.png" title="Scout" alt="" class=""></a></th><th width="50"><a href="#" class="unit_link" data-unit="light"><img src="https://dsen.innogamescdn.com/asset/5cfabaf2/graphic/unit/unit_light.png" title="Light cavalry" alt="" class=""></a></th><th width="50"><a href="#" class="unit_link" data-unit="heavy"><img src="https://dsen.innogamescdn.com/asset/5cfabaf2/graphic/unit/unit_heavy.png" title="Heavy cavalry" alt="" class=""></a></th><th width="50"><a href="#" class="unit_link" data-unit="ram"><img src="https://dsen.innogamescdn.com/asset/5cfabaf2/graphic/unit/unit_ram.png" title="Ram" alt="" class=""></a></th><th width="50"><a href="#" class="unit_link" data-unit="catapult"><img src="https://dsen.innogamescdn.com/asset/5cfabaf2/graphic/unit/unit_catapult.png" title="Catapult" alt="" class=""></a></th><th width="50"><a href="#" class="unit_link" data-unit="knight"><img src="https://dsen.innogamescdn.com/asset/5cfabaf2/graphic/unit/unit_knight.png" title="Paladin" alt="" class=""></a></th><th width="50"><a href="#" class="unit_link" data-unit="snob"><img src="https://dsen.innogamescdn.com/asset/5cfabaf2/graphic/unit/unit_snob.png" title="Nobleman" alt="" class=""></a></th></tr>
+		<tr><td class="unit-item unit-item-spear">1</td><td class="unit-item unit-item-sword hidden">0</td><td class="unit-item unit-item-axe hidden">0</td><td class="unit-item unit-item-spy hidden">0</td><td class="unit-item unit-item-light hidden">0</td><td class="unit-item unit-item-heavy hidden">0</td><td class="unit-item unit-item-ram hidden">0</td><td class="unit-item unit-item-catapult hidden">0</td><td class="unit-item unit-item-knight hidden">0</td><td class="unit-item unit-item-snob hidden">0</td></tr>
+		</tbody></table>
+	
+
+<script>
+	$(function(){
+		$('.quickedit').QuickEdit( { show_icons: false, label_element: '#command_comment', url: TribalWars.buildURL('POST', 'info_command', { ajaxaction: 'edit_other_comment', id: '__ID__' } ) } );
+	});
+</script>
+	                               		</td>
+									</tr>
+								</tbody></table>
+							</td>
+						</tr>
+					</tbody></table>
+				</td>
+			</tr>
+		</tbody></table>

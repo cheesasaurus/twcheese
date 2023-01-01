@@ -20,7 +20,7 @@
     "jsdom": "^15.1.1",
     "mocha": "^6.1.4",
     "plugin-error": "^1.0.1",
-    "webpack": "^4.35.3",
+    "webpack": "^5.75.0",
     "yaml": "^1.6.0"
   },
   "devDependencies": {

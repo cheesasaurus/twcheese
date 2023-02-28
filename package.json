@@ -18,7 +18,7 @@
     "gulp-uglify-es": "^1.0.4",
     "jquery": "^3.4.1",
     "jsdom": "^15.1.1",
-    "mocha": "^6.1.4",
+    "mocha": "^6.2.3",
     "plugin-error": "^1.0.1",
     "webpack": "^4.35.3",
     "yaml": "^1.6.0"
